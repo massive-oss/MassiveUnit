@@ -162,7 +162,7 @@ massive.munit.async.AsyncDelegate.prototype.timeoutHandler = function() {
 massive.munit.async.AsyncDelegate.prototype.timer = null;
 massive.munit.async.AsyncDelegate.prototype.__class__ = massive.munit.async.AsyncDelegate;
 massive.munit.MUnitException = function(message,info) { if( message === $_ ) return; {
-	this.type = { fileName : "MUnitException.hx", lineNumber : 63, className : "massive.munit.MUnitException", methodName : "new"}.className;
+	this.type = { fileName : "MUnitException.hx", lineNumber : 34, className : "massive.munit.MUnitException", methodName : "new"}.className;
 	this.message = message;
 	this.info = info;
 }}
@@ -170,7 +170,7 @@ massive.munit.MUnitException.__name__ = ["massive","munit","MUnitException"];
 massive.munit.MUnitException.prototype.info = null;
 massive.munit.MUnitException.prototype.message = null;
 massive.munit.MUnitException.prototype.toString = function() {
-	var str = this.type + ": ";
+	var str = this.type + ":  ";
 	if(this.info == null) str += this.message;
 	else str += ((((((this.message + " at ") + this.info.className) + "#") + this.info.methodName) + " (") + this.info.lineNumber) + ")";
 	return str;
@@ -179,7 +179,7 @@ massive.munit.MUnitException.prototype.type = null;
 massive.munit.MUnitException.prototype.__class__ = massive.munit.MUnitException;
 massive.munit.UnhandledException = function(message,info) { if( message === $_ ) return; {
 	massive.munit.MUnitException.apply(this,[message,info]);
-	this.type = { fileName : "UnhandledException.hx", lineNumber : 46, className : "massive.munit.UnhandledException", methodName : "new"}.className;
+	this.type = { fileName : "UnhandledException.hx", lineNumber : 17, className : "massive.munit.UnhandledException", methodName : "new"}.className;
 }}
 massive.munit.UnhandledException.__name__ = ["massive","munit","UnhandledException"];
 massive.munit.UnhandledException.__super__ = massive.munit.MUnitException;
@@ -263,12 +263,6 @@ massive.munit.TestClassHelper.prototype.parse = function(type) {
 			}
 		}
 	}
-	this.tests.sort($closure(this,"sortTestsByName"));
-}
-massive.munit.TestClassHelper.prototype.sortTestsByName = function(x,y) {
-	if(x.result.name == y.result.name) return 0;
-	if(x.result.name > y.result.name) return 1;
-	else return -1;
 }
 massive.munit.TestClassHelper.prototype.test = null;
 massive.munit.TestClassHelper.prototype.tests = null;
@@ -292,7 +286,7 @@ massive.munit.async.IAsyncDelegateObserver.prototype.__class__ = massive.munit.a
 massive.munit.TestRunner = function(resultClient) { if( resultClient === $_ ) return; {
 	this.clients = new Array();
 	this.addResultClient(resultClient);
-	this.set_asyncFactory(this.createAsyncFactory());
+	this.asyncFactory = this.createAsyncFactory();
 	this.running = false;
 }}
 massive.munit.TestRunner.__name__ = ["massive","munit","TestRunner"];
@@ -348,7 +342,6 @@ massive.munit.TestRunner.prototype.clientCompletionHandler = function(resultClie
 		this.running = false;
 	}
 }
-massive.munit.TestRunner.prototype.clientCount = null;
 massive.munit.TestRunner.prototype.clients = null;
 massive.munit.TestRunner.prototype.completionHandler = null;
 massive.munit.TestRunner.prototype.createAsyncFactory = function() {
@@ -480,9 +473,6 @@ massive.munit.TestRunner.prototype.executeTestCases = function() {
 	}}
 }
 massive.munit.TestRunner.prototype.failCount = null;
-massive.munit.TestRunner.prototype.get_clientCount = function() {
-	return this.clients.length;
-}
 massive.munit.TestRunner.prototype.passCount = null;
 massive.munit.TestRunner.prototype.run = function(testSuiteClasses) {
 	if(this.running) return;
@@ -509,12 +499,6 @@ massive.munit.TestRunner.prototype.run = function(testSuiteClasses) {
 	this.execute();
 }
 massive.munit.TestRunner.prototype.running = null;
-massive.munit.TestRunner.prototype.set_asyncFactory = function(value) {
-	if(value == this.asyncFactory) return value;
-	if(this.running) throw new massive.munit.MUnitException("Can't change AsyncFactory while tests are running",{ fileName : "TestRunner.hx", lineNumber : 117, className : "massive.munit.TestRunner", methodName : "set_asyncFactory"});
-	value.observer = this;
-	return this.asyncFactory = value;
-}
 massive.munit.TestRunner.prototype.startTime = null;
 massive.munit.TestRunner.prototype.suiteIndex = null;
 massive.munit.TestRunner.prototype.testCount = null;
@@ -774,7 +758,7 @@ haxe.Log.clear = function() {
 haxe.Log.prototype.__class__ = haxe.Log;
 massive.munit.async.MissingAsyncDelegateException = function(message,info) { if( message === $_ ) return; {
 	massive.munit.MUnitException.apply(this,[message,info]);
-	this.type = { fileName : "MissingAsyncDelegateException.hx", lineNumber : 47, className : "massive.munit.async.MissingAsyncDelegateException", methodName : "new"}.className;
+	this.type = { fileName : "MissingAsyncDelegateException.hx", lineNumber : 18, className : "massive.munit.async.MissingAsyncDelegateException", methodName : "new"}.className;
 }}
 massive.munit.async.MissingAsyncDelegateException.__name__ = ["massive","munit","async","MissingAsyncDelegateException"];
 massive.munit.async.MissingAsyncDelegateException.__super__ = massive.munit.MUnitException;
@@ -830,6 +814,7 @@ massive.munit.client.HTTPClient.prototype.onData = function(data) {
 	if(this.get_completeHandler() != null) (this.get_completeHandler())(this);
 }
 massive.munit.client.HTTPClient.prototype.onError = function(msg) {
+	haxe.Log.trace("\n                                        HTTPClient.onError: " + msg,{ fileName : "HTTPClient.hx", lineNumber : 171, className : "massive.munit.client.HTTPClient", methodName : "onError"});
 	if(this.queueRequest) {
 		massive.munit.client.HTTPClient.responsePending = false;
 		massive.munit.client.HTTPClient.dispatchNextRequest();
@@ -879,35 +864,27 @@ massive.munit.Assert.isFalse = function(value,info) {
 }
 massive.munit.Assert.isNull = function(value,info) {
 	massive.munit.Assert.assertionCount++;
-	if(value != null) massive.munit.Assert.fail(("Value [" + value) + "] was not NULL",info);
+	if(value != null) massive.munit.Assert.fail("Value was NOT NULL: " + value,info);
 }
 massive.munit.Assert.isNotNull = function(value,info) {
 	massive.munit.Assert.assertionCount++;
-	if(value == null) massive.munit.Assert.fail(("Value [" + value) + "] was NULL",info);
+	if(value == null) massive.munit.Assert.fail("Value was NULL: " + value,info);
 }
 massive.munit.Assert.isNaN = function(value,info) {
 	massive.munit.Assert.assertionCount++;
-	if(!Math.isNaN(value)) massive.munit.Assert.fail(("Value [" + value) + "]  was not NaN",info);
+	if(!Math.isNaN(value)) massive.munit.Assert.fail("Value was not NaN: " + value,info);
 }
 massive.munit.Assert.isNotNaN = function(value,info) {
 	massive.munit.Assert.assertionCount++;
-	if(Math.isNaN(value)) massive.munit.Assert.fail(("Value [" + value) + "] was NaN",info);
-}
-massive.munit.Assert.isType = function(value,type) {
-	massive.munit.Assert.assertionCount++;
-	if(!Std["is"](value,type)) massive.munit.Assert.fail((("Value [" + value) + "] was not of type: ") + Type.getClassName(type),{ fileName : "Assert.hx", lineNumber : 127, className : "massive.munit.Assert", methodName : "isType"});
-}
-massive.munit.Assert.isNotType = function(value,type) {
-	massive.munit.Assert.assertionCount++;
-	if(Std["is"](value,type)) massive.munit.Assert.fail((("Value [" + value) + "] was of type: ") + Type.getClassName(type),{ fileName : "Assert.hx", lineNumber : 139, className : "massive.munit.Assert", methodName : "isNotType"});
+	if(Math.isNaN(value)) massive.munit.Assert.fail("Value was NaN: " + value,info);
 }
 massive.munit.Assert.areEqual = function(expected,actual,info) {
 	massive.munit.Assert.assertionCount++;
-	if(expected != actual) massive.munit.Assert.fail(((("Value [" + actual) + "] was not equal to expected value [") + expected) + "]",info);
+	if(expected != actual) massive.munit.Assert.fail(((("Value [" + actual) + "] was NOT EQUAL to expected value [") + expected) + "]",info);
 }
 massive.munit.Assert.areNotEqual = function(expected,actual,info) {
 	massive.munit.Assert.assertionCount++;
-	if(expected == actual) massive.munit.Assert.fail(((("Value [" + actual) + "] was equal to value [") + expected) + "]",info);
+	if(expected == actual) massive.munit.Assert.fail(((("Value [" + actual) + "] was EQUAL to value [") + expected) + "]",info);
 }
 massive.munit.Assert.fail = function(msg,info) {
 	throw new massive.munit.AssertionException(msg,info);
@@ -961,7 +938,7 @@ StringBuf.prototype.toString = function() {
 StringBuf.prototype.__class__ = StringBuf;
 massive.munit.AssertionException = function(msg,info) { if( msg === $_ ) return; {
 	massive.munit.MUnitException.apply(this,[msg,info]);
-	this.type = { fileName : "AssertionException.hx", lineNumber : 49, className : "massive.munit.AssertionException", methodName : "new"}.className;
+	this.type = { fileName : "AssertionException.hx", lineNumber : 20, className : "massive.munit.AssertionException", methodName : "new"}.className;
 }}
 massive.munit.AssertionException.__name__ = ["massive","munit","AssertionException"];
 massive.munit.AssertionException.__super__ = massive.munit.MUnitException;
@@ -1025,7 +1002,7 @@ TestMain.prototype.completionHandler = function(successful) {
 TestMain.prototype.__class__ = TestMain;
 massive.munit.async.AsyncTimeoutException = function(message,info) { if( message === $_ ) return; {
 	massive.munit.MUnitException.apply(this,[message,info]);
-	this.type = { fileName : "AsyncTimeoutException.hx", lineNumber : 47, className : "massive.munit.async.AsyncTimeoutException", methodName : "new"}.className;
+	this.type = { fileName : "AsyncTimeoutException.hx", lineNumber : 18, className : "massive.munit.async.AsyncTimeoutException", methodName : "new"}.className;
 }}
 massive.munit.async.AsyncTimeoutException.__name__ = ["massive","munit","async","AsyncTimeoutException"];
 massive.munit.async.AsyncTimeoutException.__super__ = massive.munit.MUnitException;
@@ -1817,7 +1794,7 @@ massive.munit.client.PrintClient.prototype.init = function() {
 	this.newline = "\n";
 	this.textArea = js.Lib.document.getElementById("haxe:trace");
 	if(this.textArea == null) {
-		var error = ((((("MissingElementException: 'haxe:trace' element not found at " + { fileName : "PrintClient.hx", lineNumber : 138, className : "massive.munit.client.PrintClient", methodName : "init"}.className) + "#") + { fileName : "PrintClient.hx", lineNumber : 138, className : "massive.munit.client.PrintClient", methodName : "init"}.methodName) + "(") + { fileName : "PrintClient.hx", lineNumber : 138, className : "massive.munit.client.PrintClient", methodName : "init"}.lineNumber) + ")";
+		var error = ((((("MissingElementException: 'haxe:trace' element not found at " + { fileName : "PrintClient.hx", lineNumber : 109, className : "massive.munit.client.PrintClient", methodName : "init"}.className) + "#") + { fileName : "PrintClient.hx", lineNumber : 109, className : "massive.munit.client.PrintClient", methodName : "init"}.methodName) + "(") + { fileName : "PrintClient.hx", lineNumber : 109, className : "massive.munit.client.PrintClient", methodName : "init"}.lineNumber) + ")";
 		js.Lib.alert(error);
 	}
 }
@@ -1946,8 +1923,6 @@ massive.munit.TestResult = function(p) { if( p === $_ ) return; {
 	this.name = "";
 	this.className = "";
 	this.async = false;
-	this.error = null;
-	this.failure = null;
 }}
 massive.munit.TestResult.__name__ = ["massive","munit","TestResult"];
 massive.munit.TestResult.prototype.async = null;
@@ -1956,7 +1931,7 @@ massive.munit.TestResult.prototype.error = null;
 massive.munit.TestResult.prototype.executionTime = null;
 massive.munit.TestResult.prototype.failure = null;
 massive.munit.TestResult.prototype.get_location = function() {
-	return ((this.name == "" && this.className == "")?"":(this.className + "#") + this.name);
+	return (this.className + "#") + this.name;
 }
 massive.munit.TestResult.prototype.location = null;
 massive.munit.TestResult.prototype.name = null;

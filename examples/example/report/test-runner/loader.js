@@ -298,17 +298,6 @@ LoaderJS.prototype.touchMoveHandler = function(event) {
 	event.preventDefault();
 }
 LoaderJS.prototype.__class__ = LoaderJS;
-LoaderSWF = function(p) { if( p === $_ ) return; {
-	LoaderJS.apply(this,[]);
-	this.isFlashRunner = true;
-}}
-LoaderSWF.__name__ = ["LoaderSWF"];
-LoaderSWF.__super__ = LoaderJS;
-for(var k in LoaderJS.prototype ) LoaderSWF.prototype[k] = LoaderJS.prototype[k];
-LoaderSWF.main = function() {
-	return new LoaderSWF();
-}
-LoaderSWF.prototype.__class__ = LoaderSWF;
 IntIter = function(min,max) { if( min === $_ ) return; {
 	this.min = min;
 	this.max = max;
@@ -414,4 +403,4 @@ js.Boot.__init();
 	}
 }
 js.Lib.onerror = null;
-$Main.init = LoaderSWF.main();
+$Main.init = LoaderJS.main();
