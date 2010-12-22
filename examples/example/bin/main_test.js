@@ -117,52 +117,40 @@ massive.munit.async.AsyncDelegate = function(testCase,handler,delegateHandler,ti
 	this.delegateHandler = delegateHandler;
 	this.info = info;
 	this.params = [];
-	this.set_timedOut(false);
+	this.timedOut = false;
 	if(timeout == null || timeout <= 0) timeout = 400;
-	this.timer = massive.munit.util.Timer.delay($closure(this,"timeoutHandler"),timeout);
+	this.timeoutDelay = timeout;
+	this.timer = massive.munit.util.Timer.delay($closure(this,"timeoutHandler"),this.timeoutDelay);
 }}
 massive.munit.async.AsyncDelegate.__name__ = ["massive","munit","async","AsyncDelegate"];
 massive.munit.async.AsyncDelegate.prototype.delegateHandler = null;
-massive.munit.async.AsyncDelegate.prototype.get_handlerName = function() {
-	var fields = Reflect.fields(this.testCase);
-	{
-		var _g = 0;
-		while(_g < fields.length) {
-			var field = fields[_g];
-			++_g;
-			if(Reflect.field(this.testCase,field) == this.handler) return field;
-		}
-	}
-	return "";
-}
-massive.munit.async.AsyncDelegate.prototype.get_timedOut = function() {
-	var v = this.timedOut;
-	return v;
-}
 massive.munit.async.AsyncDelegate.prototype.handler = null;
-massive.munit.async.AsyncDelegate.prototype.handlerName = null;
 massive.munit.async.AsyncDelegate.prototype.info = null;
 massive.munit.async.AsyncDelegate.prototype.observer = null;
 massive.munit.async.AsyncDelegate.prototype.params = null;
+massive.munit.async.AsyncDelegate.prototype.responseHandler = function(params) {
+	if(this.timedOut) return;
+	this.timer.stop();
+	if(params == null) params = [];
+	this.params = params;
+	if(this.observer != null) this.observer.asyncExecuteHandler(this);
+}
 massive.munit.async.AsyncDelegate.prototype.runTest = function() {
 	this.handler.apply(this.testCase,this.params);
 }
-massive.munit.async.AsyncDelegate.prototype.set_timedOut = function(value) {
-	this.timedOut = value;
-	return value;
-}
 massive.munit.async.AsyncDelegate.prototype.testCase = null;
 massive.munit.async.AsyncDelegate.prototype.timedOut = null;
+massive.munit.async.AsyncDelegate.prototype.timeoutDelay = null;
 massive.munit.async.AsyncDelegate.prototype.timeoutHandler = function() {
 	this.handler = null;
 	this.delegateHandler = null;
-	this.set_timedOut(true);
+	this.timedOut = true;
 	if(this.observer != null) this.observer.asyncTimeoutHandler(this);
 }
 massive.munit.async.AsyncDelegate.prototype.timer = null;
 massive.munit.async.AsyncDelegate.prototype.__class__ = massive.munit.async.AsyncDelegate;
 massive.munit.MUnitException = function(message,info) { if( message === $_ ) return; {
-	this.type = { fileName : "MUnitException.hx", lineNumber : 34, className : "massive.munit.MUnitException", methodName : "new"}.className;
+	this.type = { fileName : "MUnitException.hx", lineNumber : 65, className : "massive.munit.MUnitException", methodName : "new"}.className;
 	this.message = message;
 	this.info = info;
 }}
@@ -170,7 +158,7 @@ massive.munit.MUnitException.__name__ = ["massive","munit","MUnitException"];
 massive.munit.MUnitException.prototype.info = null;
 massive.munit.MUnitException.prototype.message = null;
 massive.munit.MUnitException.prototype.toString = function() {
-	var str = this.type + ":  ";
+	var str = this.type + ": ";
 	if(this.info == null) str += this.message;
 	else str += ((((((this.message + " at ") + this.info.className) + "#") + this.info.methodName) + " (") + this.info.lineNumber) + ")";
 	return str;
@@ -179,7 +167,7 @@ massive.munit.MUnitException.prototype.type = null;
 massive.munit.MUnitException.prototype.__class__ = massive.munit.MUnitException;
 massive.munit.UnhandledException = function(message,info) { if( message === $_ ) return; {
 	massive.munit.MUnitException.apply(this,[message,info]);
-	this.type = { fileName : "UnhandledException.hx", lineNumber : 17, className : "massive.munit.UnhandledException", methodName : "new"}.className;
+	this.type = { fileName : "UnhandledException.hx", lineNumber : 48, className : "massive.munit.UnhandledException", methodName : "new"}.className;
 }}
 massive.munit.UnhandledException.__name__ = ["massive","munit","UnhandledException"];
 massive.munit.UnhandledException.__super__ = massive.munit.MUnitException;
@@ -263,6 +251,12 @@ massive.munit.TestClassHelper.prototype.parse = function(type) {
 			}
 		}
 	}
+	this.tests.sort($closure(this,"sortTestsByName"));
+}
+massive.munit.TestClassHelper.prototype.sortTestsByName = function(x,y) {
+	if(x.result.name == y.result.name) return 0;
+	if(x.result.name > y.result.name) return 1;
+	else return -1;
 }
 massive.munit.TestClassHelper.prototype.test = null;
 massive.munit.TestClassHelper.prototype.tests = null;
@@ -286,7 +280,7 @@ massive.munit.async.IAsyncDelegateObserver.prototype.__class__ = massive.munit.a
 massive.munit.TestRunner = function(resultClient) { if( resultClient === $_ ) return; {
 	this.clients = new Array();
 	this.addResultClient(resultClient);
-	this.asyncFactory = this.createAsyncFactory();
+	this.set_asyncFactory(this.createAsyncFactory());
 	this.running = false;
 }}
 massive.munit.TestRunner.__name__ = ["massive","munit","TestRunner"];
@@ -342,6 +336,7 @@ massive.munit.TestRunner.prototype.clientCompletionHandler = function(resultClie
 		this.running = false;
 	}
 }
+massive.munit.TestRunner.prototype.clientCount = null;
 massive.munit.TestRunner.prototype.clients = null;
 massive.munit.TestRunner.prototype.completionHandler = null;
 massive.munit.TestRunner.prototype.createAsyncFactory = function() {
@@ -473,6 +468,9 @@ massive.munit.TestRunner.prototype.executeTestCases = function() {
 	}}
 }
 massive.munit.TestRunner.prototype.failCount = null;
+massive.munit.TestRunner.prototype.get_clientCount = function() {
+	return this.clients.length;
+}
 massive.munit.TestRunner.prototype.passCount = null;
 massive.munit.TestRunner.prototype.run = function(testSuiteClasses) {
 	if(this.running) return;
@@ -499,6 +497,12 @@ massive.munit.TestRunner.prototype.run = function(testSuiteClasses) {
 	this.execute();
 }
 massive.munit.TestRunner.prototype.running = null;
+massive.munit.TestRunner.prototype.set_asyncFactory = function(value) {
+	if(value == this.asyncFactory) return value;
+	if(this.running) throw new massive.munit.MUnitException("Can't change AsyncFactory while tests are running",{ fileName : "TestRunner.hx", lineNumber : 119, className : "massive.munit.TestRunner", methodName : "set_asyncFactory"});
+	value.observer = this;
+	return this.asyncFactory = value;
+}
 massive.munit.TestRunner.prototype.startTime = null;
 massive.munit.TestRunner.prototype.suiteIndex = null;
 massive.munit.TestRunner.prototype.testCount = null;
@@ -758,7 +762,7 @@ haxe.Log.clear = function() {
 haxe.Log.prototype.__class__ = haxe.Log;
 massive.munit.async.MissingAsyncDelegateException = function(message,info) { if( message === $_ ) return; {
 	massive.munit.MUnitException.apply(this,[message,info]);
-	this.type = { fileName : "MissingAsyncDelegateException.hx", lineNumber : 18, className : "massive.munit.async.MissingAsyncDelegateException", methodName : "new"}.className;
+	this.type = { fileName : "MissingAsyncDelegateException.hx", lineNumber : 49, className : "massive.munit.async.MissingAsyncDelegateException", methodName : "new"}.className;
 }}
 massive.munit.async.MissingAsyncDelegateException.__name__ = ["massive","munit","async","MissingAsyncDelegateException"];
 massive.munit.async.MissingAsyncDelegateException.__super__ = massive.munit.MUnitException;
@@ -814,7 +818,6 @@ massive.munit.client.HTTPClient.prototype.onData = function(data) {
 	if(this.get_completeHandler() != null) (this.get_completeHandler())(this);
 }
 massive.munit.client.HTTPClient.prototype.onError = function(msg) {
-	haxe.Log.trace("\n                                        HTTPClient.onError: " + msg,{ fileName : "HTTPClient.hx", lineNumber : 171, className : "massive.munit.client.HTTPClient", methodName : "onError"});
 	if(this.queueRequest) {
 		massive.munit.client.HTTPClient.responsePending = false;
 		massive.munit.client.HTTPClient.dispatchNextRequest();
@@ -864,27 +867,35 @@ massive.munit.Assert.isFalse = function(value,info) {
 }
 massive.munit.Assert.isNull = function(value,info) {
 	massive.munit.Assert.assertionCount++;
-	if(value != null) massive.munit.Assert.fail("Value was NOT NULL: " + value,info);
+	if(value != null) massive.munit.Assert.fail(("Value [" + value) + "] was not NULL",info);
 }
 massive.munit.Assert.isNotNull = function(value,info) {
 	massive.munit.Assert.assertionCount++;
-	if(value == null) massive.munit.Assert.fail("Value was NULL: " + value,info);
+	if(value == null) massive.munit.Assert.fail(("Value [" + value) + "] was NULL",info);
 }
 massive.munit.Assert.isNaN = function(value,info) {
 	massive.munit.Assert.assertionCount++;
-	if(!Math.isNaN(value)) massive.munit.Assert.fail("Value was not NaN: " + value,info);
+	if(!Math.isNaN(value)) massive.munit.Assert.fail(("Value [" + value) + "]  was not NaN",info);
 }
 massive.munit.Assert.isNotNaN = function(value,info) {
 	massive.munit.Assert.assertionCount++;
-	if(Math.isNaN(value)) massive.munit.Assert.fail("Value was NaN: " + value,info);
+	if(Math.isNaN(value)) massive.munit.Assert.fail(("Value [" + value) + "] was NaN",info);
+}
+massive.munit.Assert.isType = function(value,type) {
+	massive.munit.Assert.assertionCount++;
+	if(!Std["is"](value,type)) massive.munit.Assert.fail((("Value [" + value) + "] was not of type: ") + Type.getClassName(type),{ fileName : "Assert.hx", lineNumber : 129, className : "massive.munit.Assert", methodName : "isType"});
+}
+massive.munit.Assert.isNotType = function(value,type) {
+	massive.munit.Assert.assertionCount++;
+	if(Std["is"](value,type)) massive.munit.Assert.fail((("Value [" + value) + "] was of type: ") + Type.getClassName(type),{ fileName : "Assert.hx", lineNumber : 141, className : "massive.munit.Assert", methodName : "isNotType"});
 }
 massive.munit.Assert.areEqual = function(expected,actual,info) {
 	massive.munit.Assert.assertionCount++;
-	if(expected != actual) massive.munit.Assert.fail(((("Value [" + actual) + "] was NOT EQUAL to expected value [") + expected) + "]",info);
+	if(expected != actual) massive.munit.Assert.fail(((("Value [" + actual) + "] was not equal to expected value [") + expected) + "]",info);
 }
 massive.munit.Assert.areNotEqual = function(expected,actual,info) {
 	massive.munit.Assert.assertionCount++;
-	if(expected == actual) massive.munit.Assert.fail(((("Value [" + actual) + "] was EQUAL to value [") + expected) + "]",info);
+	if(expected == actual) massive.munit.Assert.fail(((("Value [" + actual) + "] was equal to value [") + expected) + "]",info);
 }
 massive.munit.Assert.fail = function(msg,info) {
 	throw new massive.munit.AssertionException(msg,info);
@@ -938,7 +949,7 @@ StringBuf.prototype.toString = function() {
 StringBuf.prototype.__class__ = StringBuf;
 massive.munit.AssertionException = function(msg,info) { if( msg === $_ ) return; {
 	massive.munit.MUnitException.apply(this,[msg,info]);
-	this.type = { fileName : "AssertionException.hx", lineNumber : 20, className : "massive.munit.AssertionException", methodName : "new"}.className;
+	this.type = { fileName : "AssertionException.hx", lineNumber : 51, className : "massive.munit.AssertionException", methodName : "new"}.className;
 }}
 massive.munit.AssertionException.__name__ = ["massive","munit","AssertionException"];
 massive.munit.AssertionException.__super__ = massive.munit.MUnitException;
@@ -980,7 +991,6 @@ TestMain = function(p) { if( p === $_ ) return; {
 	suites.push(TestSuite);
 	var runner = new massive.munit.TestRunner(new massive.munit.client.HTTPClient(new massive.munit.client.PrintClient(),"http://localhost:2000/"));
 	runner.addResultClient(new massive.munit.client.HTTPClient(new massive.munit.client.JUnitReportClient(),"http://localhost:2000/"));
-	runner.addResultClient(new massive.munit.client.PrintClient());
 	runner.completionHandler = $closure(this,"completionHandler");
 	runner.run(suites);
 }}
@@ -1002,7 +1012,7 @@ TestMain.prototype.completionHandler = function(successful) {
 TestMain.prototype.__class__ = TestMain;
 massive.munit.async.AsyncTimeoutException = function(message,info) { if( message === $_ ) return; {
 	massive.munit.MUnitException.apply(this,[message,info]);
-	this.type = { fileName : "AsyncTimeoutException.hx", lineNumber : 18, className : "massive.munit.async.AsyncTimeoutException", methodName : "new"}.className;
+	this.type = { fileName : "AsyncTimeoutException.hx", lineNumber : 49, className : "massive.munit.async.AsyncTimeoutException", methodName : "new"}.className;
 }}
 massive.munit.async.AsyncTimeoutException.__name__ = ["massive","munit","async","AsyncTimeoutException"];
 massive.munit.async.AsyncTimeoutException.__super__ = massive.munit.MUnitException;
@@ -1086,22 +1096,6 @@ TestSuite.__name__ = ["TestSuite"];
 TestSuite.__super__ = massive.munit.TestSuite;
 for(var k in massive.munit.TestSuite.prototype ) TestSuite.prototype[k] = massive.munit.TestSuite.prototype[k];
 TestSuite.prototype.__class__ = TestSuite;
-if(!massive.munit.async.delegate) massive.munit.async.delegate = {}
-massive.munit.async.delegate.AsyncDispatcherDelegate = function(testCase,handler,timeout,info) { if( testCase === $_ ) return; {
-	massive.munit.async.AsyncDelegate.apply(this,[testCase,handler,$closure(this,"asyncHanlder"),timeout,info]);
-}}
-massive.munit.async.delegate.AsyncDispatcherDelegate.__name__ = ["massive","munit","async","delegate","AsyncDispatcherDelegate"];
-massive.munit.async.delegate.AsyncDispatcherDelegate.__super__ = massive.munit.async.AsyncDelegate;
-for(var k in massive.munit.async.AsyncDelegate.prototype ) massive.munit.async.delegate.AsyncDispatcherDelegate.prototype[k] = massive.munit.async.AsyncDelegate.prototype[k];
-massive.munit.async.delegate.AsyncDispatcherDelegate.prototype.asyncHanlder = function(message,target) {
-	if(this.get_timedOut()) return;
-	this.timer.stop();
-	this.params = [message,target];
-	if(this.observer != null) this.observer.asyncExecuteHandler(this);
-}
-massive.munit.async.delegate.AsyncDispatcherDelegate.prototype.message = null;
-massive.munit.async.delegate.AsyncDispatcherDelegate.prototype.target = null;
-massive.munit.async.delegate.AsyncDispatcherDelegate.prototype.__class__ = massive.munit.async.delegate.AsyncDispatcherDelegate;
 haxe.Http = function(url) { if( url === $_ ) return; {
 	this.url = url;
 	this.headers = new Hash();
@@ -1739,12 +1733,6 @@ massive.munit.async.AsyncFactory.prototype.createBasicHandler = function(testCas
 	this.asyncDelegateCount++;
 	return dispatcher.delegateHandler;
 }
-massive.munit.async.AsyncFactory.prototype.createDispatchHandler = function(testCase,handler,timeout,info) {
-	var dispatcher = new massive.munit.async.delegate.AsyncDispatcherDelegate(testCase,handler,timeout,info);
-	dispatcher.observer = this.observer;
-	this.asyncDelegateCount++;
-	return dispatcher.delegateHandler;
-}
 massive.munit.async.AsyncFactory.prototype.observer = null;
 massive.munit.async.AsyncFactory.prototype.__class__ = massive.munit.async.AsyncFactory;
 massive.munit.client.PrintClient = function(p) { if( p === $_ ) return; {
@@ -1794,7 +1782,7 @@ massive.munit.client.PrintClient.prototype.init = function() {
 	this.newline = "\n";
 	this.textArea = js.Lib.document.getElementById("haxe:trace");
 	if(this.textArea == null) {
-		var error = ((((("MissingElementException: 'haxe:trace' element not found at " + { fileName : "PrintClient.hx", lineNumber : 109, className : "massive.munit.client.PrintClient", methodName : "init"}.className) + "#") + { fileName : "PrintClient.hx", lineNumber : 109, className : "massive.munit.client.PrintClient", methodName : "init"}.methodName) + "(") + { fileName : "PrintClient.hx", lineNumber : 109, className : "massive.munit.client.PrintClient", methodName : "init"}.lineNumber) + ")";
+		var error = ((((("MissingElementException: 'haxe:trace' element not found at " + { fileName : "PrintClient.hx", lineNumber : 140, className : "massive.munit.client.PrintClient", methodName : "init"}.className) + "#") + { fileName : "PrintClient.hx", lineNumber : 140, className : "massive.munit.client.PrintClient", methodName : "init"}.methodName) + "(") + { fileName : "PrintClient.hx", lineNumber : 140, className : "massive.munit.client.PrintClient", methodName : "init"}.lineNumber) + ")";
 		js.Lib.alert(error);
 	}
 }
@@ -1833,6 +1821,7 @@ massive.munit.client.PrintClient.prototype.set_completeHandler = function(value)
 massive.munit.client.PrintClient.prototype.textArea = null;
 massive.munit.client.PrintClient.prototype.__class__ = massive.munit.client.PrintClient;
 massive.munit.client.PrintClient.__interfaces__ = [massive.munit.ITestResultClient];
+if(!massive.munit.async.delegate) massive.munit.async.delegate = {}
 massive.munit.async.delegate.AsyncBasicDelegate = function(testCase,handler,timeout,info) { if( testCase === $_ ) return; {
 	massive.munit.async.AsyncDelegate.apply(this,[testCase,handler,$closure(this,"asyncHanlder"),timeout,info]);
 }}
@@ -1840,9 +1829,7 @@ massive.munit.async.delegate.AsyncBasicDelegate.__name__ = ["massive","munit","a
 massive.munit.async.delegate.AsyncBasicDelegate.__super__ = massive.munit.async.AsyncDelegate;
 for(var k in massive.munit.async.AsyncDelegate.prototype ) massive.munit.async.delegate.AsyncBasicDelegate.prototype[k] = massive.munit.async.AsyncDelegate.prototype[k];
 massive.munit.async.delegate.AsyncBasicDelegate.prototype.asyncHanlder = function() {
-	if(this.get_timedOut()) return;
-	this.timer.stop();
-	if(this.observer != null) this.observer.asyncExecuteHandler(this);
+	this.responseHandler();
 }
 massive.munit.async.delegate.AsyncBasicDelegate.prototype.__class__ = massive.munit.async.delegate.AsyncBasicDelegate;
 Hash = function(p) { if( p === $_ ) return; {
@@ -1923,6 +1910,8 @@ massive.munit.TestResult = function(p) { if( p === $_ ) return; {
 	this.name = "";
 	this.className = "";
 	this.async = false;
+	this.error = null;
+	this.failure = null;
 }}
 massive.munit.TestResult.__name__ = ["massive","munit","TestResult"];
 massive.munit.TestResult.prototype.async = null;
@@ -1931,7 +1920,7 @@ massive.munit.TestResult.prototype.error = null;
 massive.munit.TestResult.prototype.executionTime = null;
 massive.munit.TestResult.prototype.failure = null;
 massive.munit.TestResult.prototype.get_location = function() {
-	return (this.className + "#") + this.name;
+	return ((this.name == "" && this.className == "")?"":(this.className + "#") + this.name);
 }
 massive.munit.TestResult.prototype.location = null;
 massive.munit.TestResult.prototype.name = null;

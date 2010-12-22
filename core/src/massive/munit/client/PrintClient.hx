@@ -250,6 +250,6 @@ class PrintClient implements ITestResultClient
 
 	private function customTrace(value, ?info:haxe.PosInfos)
 	{
-		print(info.fileName + "|" + info.lineNumber + "| " + Std.string(value) + newline);
+		print("TRACE: " + info.fileName + "|" + info.lineNumber + "| " + Std.string(value) + newline);
 	}
 }
