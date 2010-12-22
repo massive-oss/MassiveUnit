@@ -1,0 +1,5 @@
+version=0.2.0.116
+src=test
+bin=bin
+report=report
+hxml=test.hxml

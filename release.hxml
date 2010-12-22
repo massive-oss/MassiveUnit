@@ -1,0 +1,7 @@
+-cmd haxe build.hxml
+#-cmd haxe test.hxml
+-cmd haxelib run mlib incrementVersion
+
+#temp - to prevent submission
+-cmd haxelib run mlib install
+#-cmd haxelib run mlib submit

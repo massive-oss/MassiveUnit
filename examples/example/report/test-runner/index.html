@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html> 
+<head>
+	<meta charset="utf-8">
+	<title>Massive Unit Test Runner</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+	<style type="text/css" media="screen">html,body,div,ul,ol,li,dl,dt,dd,h1,h2,h3,h4,h5,h6,pre,form,p,blockquote,fieldset,input,hr {margin:0; padding:0;}</style>
+	
+	<script type="text/javascript" src="swfobject.js"></script>
+	<script type="text/javascript" src="loader.js"></script>
+	<SCRIPT language="JavaScript"> 
+<!-- 
+	
+	function testResult(success)
+	{ 
+		var result = success ? 1 : 0;
+		showTestResultColor(result);
+		
+		window.opener = top;
+		window.close();
+	} 
+	
+	function showTestResultColor(result)
+	{ 
+		var color;
+		switch(result)
+		{
+			case -1:
+				color = "white";
+			break;
+			case 0:
+				color = "red";
+			break;
+			case 1:
+				color = "green";
+			break;
+			default:
+				color = "yellow";
+			break;
+		}
+		document.bgColor = color;
+	}
+
+	//--> 
+	</SCRIPT>
+	
+</head>
+<body >
+	<div id="haxe:trace"></div>
+</body>
+</html>

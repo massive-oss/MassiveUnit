@@ -1,0 +1,21 @@
+-main Main
+-cp src
+-swf9 bin/main.swf
+
+--next
+
+-main Main
+-cp src
+-swf bin/main8.swf
+
+--next
+
+-main Main
+-cp src
+-js bin/main.js
+
+--next
+
+-main Main
+-cp src
+-neko bin/main.n

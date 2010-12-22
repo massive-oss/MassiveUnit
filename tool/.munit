@@ -1,0 +1,5 @@
+version=0.2.0.106
+src=test
+bin=../bin
+report=../report/tool
+hxml=test.hxml

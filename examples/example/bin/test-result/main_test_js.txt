@@ -1,0 +1,15 @@
+<testsuites>
+<testsuite errors="0" failures="0" hostname="" name="SampleTest" tests="3" time="0.153" timestamp="Tue Dec 14 2010 16:30:20 GMT+1100 (EST)">
+<testcase classname="SampleTest" name="testAahr" time="0" />
+<testcase classname="SampleTest" name="testBlah" time="0" />
+<testcase classname="SampleTest" name="testConstructor" time="0.153" />
+<system-out></system-out>
+<system-err></system-err>
+</testsuite>
+<testsuite errors="0" failures="0" hostname="" name="sub.ItemTest" tests="2" time="0" timestamp="Tue Dec 14 2010 16:30:20 GMT+1100 (EST)">
+<testcase classname="sub.ItemTest" name="testBlah" time="0" />
+<testcase classname="sub.ItemTest" name="testConstructor" time="0" />
+<system-out></system-out>
+<system-err></system-err>
+</testsuite>
+</testsuites>

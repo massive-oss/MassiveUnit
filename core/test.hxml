@@ -1,0 +1,29 @@
+# Flash 9+
+-main TestMain
+-cp test
+-cp src
+-swf9 ../bin/munit_test.swf
+
+--next
+
+#Flash 8
+-main TestMain
+-cp test
+-cp src
+-swf ../bin/munit8_test.swf
+
+--next
+
+# JavaScript
+-main TestMain
+-cp test
+-cp src
+-js ../bin/munit_test.js
+
+--next
+
+# Neko
+-main TestMain
+-cp test
+-cp src
+-neko ../bin/munit_test.n

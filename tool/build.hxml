@@ -1,0 +1,54 @@
+-main massive.munit.AllClasses
+-cp src
+-cp ../core/src
+-lib mlib
+-neko ../bin/munit_tool_all.n
+
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/config.mtt@config
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/help.mtt@help
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/help_config.txt@help_config
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/help_gen.txt@help_gen
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/help_run.txt@help_run
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/help_test.txt@help_test
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/test-example.mtt@test-example
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/test-hxml.mtt@test-hxml
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/test-main.mtt@test-main
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/test-suite.mtt@test-suite
+--next
+
+
+-main massive.munit.MunitCommandLineRunner
+-cp src
+-cp ../core/src
+-lib mlib
+-neko ../bin/munit.n
+
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/config.mtt@config
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/help.mtt@help
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/help_config.txt@help_config
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/help_gen.txt@help_gen
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/help_run.txt@help_run
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/help_test.txt@help_test
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/test-example.mtt@test-example
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/test-hxml.mtt@test-hxml
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/test-main.mtt@test-main
+-resource /Users/dominic/Documents/Workspace/MassiveUnit/tool/template/test-suite.mtt@test-suite
+--next
+
+-main massive.munit.ServerMain
+-cp src
+-cp ../core/src
+-lib mlib
+-neko ../bin/index.n
+
+--next
+
+-main LoaderJS
+-cp src
+-js ../bin/loader-js.js
+
+--next
+
+-main LoaderSWF
+-cp src
+-js ../bin/loader-swf.js

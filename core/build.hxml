@@ -1,0 +1,25 @@
+# Flash 9+
+-main massive.munit.AllClasses
+-cp src
+-swf9 ../bin/munit_all.swf
+
+--next
+
+#Flash 8
+-main massive.munit.AllClasses
+-cp src
+-swf ../bin/munit_all.swf
+
+--next
+
+# JavaScript
+-main massive.munit.AllClasses
+-cp src
+-js ../bin/munit_all.js
+
+--next
+
+# Neko
+-main massive.munit.AllClasses
+-cp src
+-neko ../bin/munit_all.n

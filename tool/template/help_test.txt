@@ -1,0 +1,36 @@
+usage: test [hxmlPath] [srcPath] [binPath] [reportPath] [-browser name]
+
+    Compiles all the test targets in an hxml file and then runs each 
+    supported target to determine results
+
+Optional Arguments:
+
+   hxmlPath    : The relative or absolute path to an hxml file containing
+                 one or more targets
+                 (Defaults to 'hxml' path in config settings)
+
+   srcPath     : Custom test src directory path for generating test suites
+                 (Defaults to test src path in config settings)
+
+   binPath     : The relative or absolute path to a compiled test app or
+                 bin directory containing applications ending in '_test.*'
+                 (Defaults to 'bin' path in config settings)
+
+   reportPath  : The relative or absolute path to a directory where
+                 unit test reports will be saved
+                 (Defaults to 'report' path in config settings)
+
+Optional Parameters
+
+   -[platform]    : One or more specific target platforms to compile
+                    Valid options are '-swf' '-swf9', '-js' and '-neko'
+
+   -browser name  : Optional value to launch a URL from a specific browser.
+                    Uses the default browser if not set.
+
+   -nogen         : Don't execute gen command prior to build
+
+   -norun         : Don't execute run command after build
+
+
+

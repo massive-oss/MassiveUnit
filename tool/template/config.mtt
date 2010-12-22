@@ -1,0 +1,5 @@
+version=::version::
+src=::src::
+bin=::bin::
+report=::report::
+hxml=::hxml::

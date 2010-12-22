@@ -1,0 +1,21 @@
+usage: run [binPath] [reportPath]
+
+    Runs a unit test application and saves results to output directory
+    
+Optional Arguments:
+
+   binPath         : The relative or absolute path to a compiled test app or
+                     bin directory containing applications ending in '_test.*'
+                     (Defaults to 'bin' path in config settings)
+
+   reportPath      : The relative or absolute path to a directory where
+                     unit test reports will be saved
+                     (Defaults to 'report' path in config settings)
+
+Optional Parameters:
+
+   -[platform]     : One or more specific target platforms to compile
+                     Valid options are '-swf' '-swf9', '-js' and '-neko'
+
+   -browser nam	   : Optional value to launch a URL from a specific browser.
+                     Uses the default browser if not set.

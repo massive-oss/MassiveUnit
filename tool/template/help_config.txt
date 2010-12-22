@@ -1,0 +1,8 @@
+usage: config
+
+    Updates project specific settings for munit. Saves them to a .munit file.
+
+Options:
+
+   -reset    : Allows user to override previous settings 
+   -delete   : Removes the existing configuration settings 

@@ -1,0 +1,5 @@
+version=0.2.0.132
+src=test
+bin=../bin
+report=../report/core
+hxml=test.hxml
