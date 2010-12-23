@@ -27,8 +27,6 @@
 * 
 ****/
 
-
-
 package massive.munit;
 
 import haxe.rtti.Meta;

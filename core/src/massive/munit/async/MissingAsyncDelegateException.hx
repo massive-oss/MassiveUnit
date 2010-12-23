@@ -27,8 +27,6 @@
 * 
 ****/
 
-
-
 package massive.munit.async;
 import haxe.PosInfos;
 import massive.munit.MUnitException;

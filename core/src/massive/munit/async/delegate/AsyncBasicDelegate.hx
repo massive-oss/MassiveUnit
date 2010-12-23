@@ -27,8 +27,6 @@
 * 
 ****/
 
-
-
 package massive.munit.async.delegate;
 
 import haxe.PosInfos;
