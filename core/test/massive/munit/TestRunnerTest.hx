@@ -1,5 +1,6 @@
 package massive.munit;
 import massive.munit.client.PrintClient;
+import massive.munit.async.AsyncFactory;
 
 /**
  * ...
@@ -48,14 +49,14 @@ class TestRunnerTest
 	}
 	
 	@Test("Async")
-	public function testRun(factory:MUnitAsyncFactory):Void
+	public function testRun(factory:AsyncFactory):Void
 	{
 		// save assertion count in this runner instance. Ugly.
 		assertionCount = Assert.assertionCount;
 		
 		var suites = new Array<Class<massive.munit.TestSuite>>();
 		suites.push(TestSuiteStub);
-		runner.completionHandler = factory.createTestRunnerHandler(this, completionHandler, 5000);
+		runner.completionHandler = factory.createHandler(this, completionHandler, 5000);
 		runner.run(suites);
 	}
 	

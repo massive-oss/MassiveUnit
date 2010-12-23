@@ -26,7 +26,7 @@ class TestMain
 		var runner:TestRunner = new TestRunner(new HTTPClient(new PrintClient(), "http://localhost:2000"));	
 //		var runner:TestRunner = new TestRunner(new PrintClient());	
 //		runner.addResultClient(new PrintClient());
-		runner.asyncFactory = new MUnitAsyncFactory(runner);
+//		runner.asyncFactory = new MUnitAsyncFactory(runner);
 		runner.completionHandler = completionHandler;
 		runner.run(suites);
 	}

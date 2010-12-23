@@ -11,6 +11,7 @@ import massive.munit.async.AsyncFactory;
 class SampleTest 
 {
 	private var timer:Timer;
+	private var handler:Dynamic;
 	
 	public function new() 
 	{
@@ -37,27 +38,21 @@ class SampleTest
 	{
 	}
 	
-	@Test("Async")
-	public function testConstructor(asyncFactory:AsyncFactory):Void
+	@Test
+	public function testConstructor():Void
 	{
-		var handler:Dynamic = asyncFactory.createBasicHandler(this, onTestConstructor, 5000);
+		Assert.isTrue(true);
+	}
+		
+	@Test("Async")
+	public function testAsyncOperation(factory:AsyncFactory):Void
+	{
+		var handler:Dynamic = factory.createHandler(this, onTestConstructor, 1000);
 		timer = Timer.delay(handler, 200);
 	}
 	
 	private function onTestConstructor():Void
 	{
 		Assert.isFalse(false);
-	}
-	
-	@Test
-	public function testBlah():Void
-	{
-		Assert.isTrue(true);
-	}
-	
-	@Test
-	public function testAahr():Void
-	{
-		Assert.isTrue(true);
 	}
 }

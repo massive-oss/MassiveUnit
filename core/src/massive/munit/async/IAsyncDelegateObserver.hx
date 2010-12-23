@@ -27,8 +27,6 @@
 * 
 ****/
 
-
-
 package massive.munit.async;
 
 /**
@@ -43,7 +41,7 @@ interface IAsyncDelegateObserver
 	 * 
 	 * @param	delegate		delegate which received the successful callback
 	 */
-	function asyncExecuteHandler(delegate:AsyncDelegate):Void;
+	function asyncResponseHandler(delegate:AsyncDelegate):Void;
 	
 	/**
 	 * Called when an AsyncDelegate being observed does not receive its asynchronous callback

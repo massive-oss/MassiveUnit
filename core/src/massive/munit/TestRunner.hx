@@ -27,8 +27,6 @@
 * 
 ****/
 
-
-
 package massive.munit;
 
 import haxe.PosInfos;
@@ -329,7 +327,7 @@ class TestRunner implements IAsyncDelegateObserver
 	 * 
 	 * @param	delegate		delegate which received the successful callback
 	 */
-	public function asyncExecuteHandler(delegate:AsyncDelegate):Void
+	public function asyncResponseHandler(delegate:AsyncDelegate):Void
 	{
 		var testCaseData:Dynamic = activeHelper.current();
 		testCaseData.test = delegate.runTest;

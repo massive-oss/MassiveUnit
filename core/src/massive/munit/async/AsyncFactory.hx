@@ -27,13 +27,10 @@
 * 
 ****/
 
-
-
 package massive.munit.async;
 
 import haxe.PosInfos;
-
-import massive.munit.async.delegate.AsyncBasicDelegate;
+import massive.munit.MUnitException;
 
 /**
  * Factory for asynchronous delegates.
@@ -48,7 +45,7 @@ import massive.munit.async.delegate.AsyncBasicDelegate;
  *     @Test("Async")
  *     public function testTimer(factory:AsyncFactory):Void
  *     {
- *         var handler:Dynamic = factory.createBasicHandler(this, onTestTimer);
+ *         var handler:Dynamic = factory.createHandler(this, onTestTimer);
  *         Timer.delay(onTestTimer, 100);
  *     }
  *     
@@ -64,16 +61,19 @@ import massive.munit.async.delegate.AsyncBasicDelegate;
 class AsyncFactory 
 {
 	/**
-	 * The number of asynchronous delegates created by this factory.
+	 * Observer for all AsyncDelegates this factory creates.
 	 */
-	public var asyncDelegateCount(default, null):Int;
-	
 	public var observer:IAsyncDelegateObserver;
 
 	/**
+	 * The number of AsyncDelegates created by this factory.
+	 */
+	public var asyncDelegateCount(default, null):Int;
+		
+	/**
 	 * Class constructor.
 	 * 
-	 * @param	observer			an observer for all asynchronous delegates this factory creates
+	 * @param	observer			an observer for all AsyncDelegate this factory creates
 	 */
 	public function new(observer:IAsyncDelegateObserver) 
 	{
@@ -82,17 +82,17 @@ class AsyncFactory
 	}
 	
 	/**
-	 * Create a basic AsyncDelegate which requires no parameters to be passed to its handler.
+	 * Create an AsyncDelegate which handles variable number of parameters to be passed to its handler.
 	 * 
 	 * @param	testCase			test case instance where the async test originated
 	 * @param	handler				the handler in the test case for a successful async response
 	 * @param	?timeout			[optional] number of milliseconds to wait before timing out
 	 * @param	?info				[optional] pos infos of the test which requests an instance of this delegate
-	 * @return	an AsyncDelegate for handling MassiveUI Dispatcher notifications
+	 * @return	a delegate function for handling the asynchronous response from an async test case
 	 */
-	public function createBasicHandler(testCase:Dynamic, handler:Dynamic, ?timeout:Int, ?info:PosInfos):Dynamic
+	public function createHandler(testCase:Dynamic, handler:Dynamic, ?timeout:Int, ?info:PosInfos):Dynamic
 	{
-		var dispatcher:AsyncBasicDelegate = new AsyncBasicDelegate(testCase, handler, timeout, info);
+		var dispatcher:AsyncDelegate = new AsyncDelegate(testCase, handler, timeout, info);
 		dispatcher.observer = observer;
 		asyncDelegateCount++;
 		return dispatcher.delegateHandler;

@@ -27,7 +27,7 @@ class AsyncFactoryTest implements IAsyncDelegateObserver
 	public function testCreateBasicHandler():Void
 	{
 		var factory:AsyncFactory = new AsyncFactory(this);
-		var handler:Dynamic = factory.createBasicHandler(this, onTestCreateBasicHandler, 333);
+		var handler:Dynamic = factory.createHandler(this, onTestCreateBasicHandler, 333);
 
 		Assert.isNotNull(handler);
 		
@@ -45,7 +45,7 @@ class AsyncFactoryTest implements IAsyncDelegateObserver
 		handlerCalled = true;
 	}
 	
-	public function asyncExecuteHandler(delegate:AsyncDelegate):Void
+	public function asyncResponseHandler(delegate:AsyncDelegate):Void
 	{
 		execHandlerCalled = true;
 		delegate.runTest();

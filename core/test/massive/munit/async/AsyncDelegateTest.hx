@@ -11,6 +11,7 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 {
 	private var delegate:AsyncDelegate;
 	private var handler:Dynamic;
+	private var handlerCalled:Bool;
 	public function new() 
 	{}
 	
@@ -19,12 +20,13 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 	{
 		handler = null;
 		delegate = null;
+		handlerCalled = false;
 	}
 	
 	@Test
 	public function testConstructorThreeParams():Void
 	{
-		var delegate:AsyncDelegate = new AsyncDelegate(this, asyncTestHanlder, asyncDelegateTestHanlder); 
+		var delegate:AsyncDelegate = new AsyncDelegate(this, asyncTestHanlder); 
 		
 		Assert.areEqual(AsyncDelegate.DEFAULT_TIMEOUT, delegate.timeoutDelay);
 		Assert.isNull(delegate.observer);
@@ -35,21 +37,17 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 	@Test
 	public function testConstructorFourParamas():Void
 	{
-		var delegate:AsyncDelegate = new AsyncDelegate(this, asyncTestHanlder, asyncDelegateTestHanlder, 200);
+		var delegate:AsyncDelegate = new AsyncDelegate(this, asyncTestHanlder, 200);
 		Assert.areEqual(200, delegate.timeoutDelay);
 	}
 	
 	@Test("Async")
-	public function testTimeout(factory:MUnitAsyncFactory):Void
+	public function testTimeout(factory:AsyncFactory):Void
 	{
-		delegate = new AsyncDelegate(this, asyncTestHanlder, asyncDelegateTestHanlder, 10); 
+		handler = factory.createHandler(this, onTestTimeout);
+		
+		delegate = new AsyncDelegate(this, asyncTestHanlder, 10); 
 		delegate.observer = this;
-		handler = factory.createBasicHandler(this, onTestTimeout);
-	}
-	
-	private function onTestTimeout():Void
-	{
-		Assert.isTrue(true);
 	}
 		
 	public function asyncTimeoutHandler(delegate:AsyncDelegate):Void
@@ -59,33 +57,47 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 		handler(); // should trigger onTestTimeout
 	}
 	
-	@Test("Async")
-	public function testHandler(factory:MUnitAsyncFactory):Void
+	private function onTestTimeout():Void
 	{
-		handler = factory.createBasicHandler(this, onTestTimeout);
-
-		delegate = new AsyncDelegate(this, asyncTestHanlder, asyncDelegateTestHanlder); 
+		Assert.isTrue(true); // need to assert in handler or we'll get an exception
+	}
+	
+	//-----------------------------
+	
+	@Test("Async")
+	public function testHandler(factory:AsyncFactory):Void
+	{
+		handler = factory.createHandler(this, onTestHandler);
+		
+		delegate = new AsyncDelegate(this, asyncTestHanlder);
 		delegate.observer = this;		
 		Timer.delay(asyncDelegateTestHanlder, 10);
 	}
 
 	private function asyncDelegateTestHanlder():Void
 	{
-		delegate.responseHandler(); // should trigger asyncExecuteHandler
+		var param = true;
+		delegate.delegateHandler(param); // should trigger asyncResponseHandler
 	}
 	
-	public function asyncExecuteHandler(delegate:AsyncDelegate):Void
+	public function asyncResponseHandler(delegate:AsyncDelegate):Void
 	{	
 		Assert.isFalse(delegate.timedOut);
 		Assert.areEqual(this.delegate, delegate);
-		handler(); // should trigger onTestTimeout
+		handlerCalled = false;
+		delegate.runTest(); // should trigger asyncTestHanlder 
+		Assert.isTrue(handlerCalled);
+		handler();
+	}
+
+	private function asyncTestHanlder(param:Bool):Void
+	{
+		Assert.isTrue(param);
+		handlerCalled = true;
 	}
 
 	private function onTestHandler():Void
 	{
-		Assert.isTrue(true);
-	}
-
-	private function asyncTestHanlder():Void
-	{}
+		Assert.isTrue(true); // need to assert in async handler or we'll get an exception
+	}	
 }
