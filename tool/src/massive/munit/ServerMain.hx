@@ -16,8 +16,6 @@ class ServerMain
 	public static inline var FAILED:String = "FAILED";
 	public static inline var ERROR:String = "ERROR";
 
-	public static inline var EXIT:String = "EXIT";
-
 	static function main()
 	{
 		new ServerMain();
@@ -63,7 +61,7 @@ class ServerMain
 				result = writePrintData(data, platformDir);
 		}
 
-		var results:String = "Tests " + result + " under " + platform + " using client " + client;		
+		var results:String = "Tests " + result + " under " + platform + " using " + client + " client";		
 		// Send result back as response data to the client which sent the request
 		trace(results);
 

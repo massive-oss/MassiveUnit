@@ -25,7 +25,6 @@ class TestMain
 
 		var runner:TestRunner = new TestRunner(new HTTPClient(new PrintClient(), "http://localhost:2000/"));	
 		runner.addResultClient(new HTTPClient(new JUnitReportClient(), "http://localhost:2000/"));
-		runner.addResultClient(new PrintClient());
 		runner.completionHandler = completionHandler;
 		runner.run(suites);
 	}
