@@ -27,8 +27,6 @@
 * 
 ****/
 
-
-
 package massive.munit.client;
 import massive.munit.ITestResultClient;
 import massive.munit.TestResult;

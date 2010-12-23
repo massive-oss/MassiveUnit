@@ -27,8 +27,6 @@
 * 
 ****/
 
-
-
 package massive.munit.client;
 import massive.munit.AssertionException;
 import massive.munit.ITestResultClient;
