@@ -27,8 +27,6 @@
 * 
 ****/
 
-
-
 package massive.munit.client;
 import massive.munit.AssertionException;
 import massive.munit.ITestResultClient;
@@ -44,12 +42,13 @@ import massive.munit.util.MathUtil;
  * <pre>
  * MUnit Results
  * ------------------------------
+ * 
  * Class: SampleTest ...
  * Class: sub.ItemTest ..
  * 
- * ------------------------------
  * PASSED
- * Tests: 5  Passed: 5  Failed: 0 Errors: 0 Time: 0.428
+ * Tests: 5  Passed: 5  Failed: 0 Errors: 0 Time: 0.202
+ * ==============================
  * </pre>
  * 
  * @author Mike Stead
@@ -189,9 +188,10 @@ class PrintClient implements ITestResultClient
 	public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, time:Float):Dynamic
 	{
 		printExceptions();
-		print(newline + newline + "------------------------------" + newline);
+		print(newline + newline);
 		print((passCount == testCount) ? "PASSED" : "FAILED");
 		print(newline + "Tests: " + testCount + "  Passed: " + passCount + "  Failed: " + failCount + " Errors: " + errorCount + " Time: " + MathUtil.round(time, 5) + newline);
+		print("==============================" + newline);
 		haxe.Log.trace = originalTrace;
 		if (completionHandler != null) completionHandler(this); 
 		return output;
