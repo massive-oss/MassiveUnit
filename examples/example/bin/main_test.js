@@ -150,7 +150,7 @@ massive.munit.async.AsyncDelegate.prototype.timeoutHandler = function() {
 massive.munit.async.AsyncDelegate.prototype.timer = null;
 massive.munit.async.AsyncDelegate.prototype.__class__ = massive.munit.async.AsyncDelegate;
 massive.munit.MUnitException = function(message,info) { if( message === $_ ) return; {
-	this.type = { fileName : "MUnitException.hx", lineNumber : 65, className : "massive.munit.MUnitException", methodName : "new"}.className;
+	this.type = { fileName : "MUnitException.hx", lineNumber : 63, className : "massive.munit.MUnitException", methodName : "new"}.className;
 	this.message = message;
 	this.info = info;
 }}
@@ -167,7 +167,7 @@ massive.munit.MUnitException.prototype.type = null;
 massive.munit.MUnitException.prototype.__class__ = massive.munit.MUnitException;
 massive.munit.UnhandledException = function(message,info) { if( message === $_ ) return; {
 	massive.munit.MUnitException.apply(this,[message,info]);
-	this.type = { fileName : "UnhandledException.hx", lineNumber : 48, className : "massive.munit.UnhandledException", methodName : "new"}.className;
+	this.type = { fileName : "UnhandledException.hx", lineNumber : 46, className : "massive.munit.UnhandledException", methodName : "new"}.className;
 }}
 massive.munit.UnhandledException.__name__ = ["massive","munit","UnhandledException"];
 massive.munit.UnhandledException.__super__ = massive.munit.MUnitException;
@@ -762,7 +762,7 @@ haxe.Log.clear = function() {
 haxe.Log.prototype.__class__ = haxe.Log;
 massive.munit.async.MissingAsyncDelegateException = function(message,info) { if( message === $_ ) return; {
 	massive.munit.MUnitException.apply(this,[message,info]);
-	this.type = { fileName : "MissingAsyncDelegateException.hx", lineNumber : 49, className : "massive.munit.async.MissingAsyncDelegateException", methodName : "new"}.className;
+	this.type = { fileName : "MissingAsyncDelegateException.hx", lineNumber : 47, className : "massive.munit.async.MissingAsyncDelegateException", methodName : "new"}.className;
 }}
 massive.munit.async.MissingAsyncDelegateException.__name__ = ["massive","munit","async","MissingAsyncDelegateException"];
 massive.munit.async.MissingAsyncDelegateException.__super__ = massive.munit.MUnitException;
@@ -883,11 +883,11 @@ massive.munit.Assert.isNotNaN = function(value,info) {
 }
 massive.munit.Assert.isType = function(value,type) {
 	massive.munit.Assert.assertionCount++;
-	if(!Std["is"](value,type)) massive.munit.Assert.fail((("Value [" + value) + "] was not of type: ") + Type.getClassName(type),{ fileName : "Assert.hx", lineNumber : 129, className : "massive.munit.Assert", methodName : "isType"});
+	if(!Std["is"](value,type)) massive.munit.Assert.fail((("Value [" + value) + "] was not of type: ") + Type.getClassName(type),{ fileName : "Assert.hx", lineNumber : 127, className : "massive.munit.Assert", methodName : "isType"});
 }
 massive.munit.Assert.isNotType = function(value,type) {
 	massive.munit.Assert.assertionCount++;
-	if(Std["is"](value,type)) massive.munit.Assert.fail((("Value [" + value) + "] was of type: ") + Type.getClassName(type),{ fileName : "Assert.hx", lineNumber : 141, className : "massive.munit.Assert", methodName : "isNotType"});
+	if(Std["is"](value,type)) massive.munit.Assert.fail((("Value [" + value) + "] was of type: ") + Type.getClassName(type),{ fileName : "Assert.hx", lineNumber : 139, className : "massive.munit.Assert", methodName : "isNotType"});
 }
 massive.munit.Assert.areEqual = function(expected,actual,info) {
 	massive.munit.Assert.assertionCount++;
@@ -949,7 +949,7 @@ StringBuf.prototype.toString = function() {
 StringBuf.prototype.__class__ = StringBuf;
 massive.munit.AssertionException = function(msg,info) { if( msg === $_ ) return; {
 	massive.munit.MUnitException.apply(this,[msg,info]);
-	this.type = { fileName : "AssertionException.hx", lineNumber : 51, className : "massive.munit.AssertionException", methodName : "new"}.className;
+	this.type = { fileName : "AssertionException.hx", lineNumber : 49, className : "massive.munit.AssertionException", methodName : "new"}.className;
 }}
 massive.munit.AssertionException.__name__ = ["massive","munit","AssertionException"];
 massive.munit.AssertionException.__super__ = massive.munit.MUnitException;
@@ -1010,7 +1010,7 @@ TestMain.prototype.completionHandler = function(successful) {
 TestMain.prototype.__class__ = TestMain;
 massive.munit.async.AsyncTimeoutException = function(message,info) { if( message === $_ ) return; {
 	massive.munit.MUnitException.apply(this,[message,info]);
-	this.type = { fileName : "AsyncTimeoutException.hx", lineNumber : 49, className : "massive.munit.async.AsyncTimeoutException", methodName : "new"}.className;
+	this.type = { fileName : "AsyncTimeoutException.hx", lineNumber : 47, className : "massive.munit.async.AsyncTimeoutException", methodName : "new"}.className;
 }}
 massive.munit.async.AsyncTimeoutException.__name__ = ["massive","munit","async","AsyncTimeoutException"];
 massive.munit.async.AsyncTimeoutException.__super__ = massive.munit.MUnitException;
