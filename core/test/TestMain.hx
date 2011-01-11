@@ -51,7 +51,7 @@ class TestMain
 		suites.push(TestSuite);
 
 		var runner:TestRunner = new TestRunner(new HTTPClient(new JUnitReportClient(), "http://localhost:2000"));	
-		var runner:TestRunner = new TestRunner(new PrintClient());	
+		runner.addResultClient(new PrintClient());	
 		runner.completionHandler = completionHandler;
 		runner.run(suites);
 	}

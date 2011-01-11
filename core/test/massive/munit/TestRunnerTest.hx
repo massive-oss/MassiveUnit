@@ -26,7 +26,7 @@
  * or implied, of Massive Interactive.
  */
 package massive.munit;
-import massive.munit.client.PrintClient;
+import massive.munit.client.JUnitReportClient;
 import massive.munit.async.AsyncFactory;
 
 /**
@@ -52,8 +52,9 @@ class TestRunnerTest
 	@After
 	public function tearDown():Void
 	{
-		runner = null;
+		client.completionHandler = null;
 		client = null;
+		runner = null;
 	}
 	
 	@Test
@@ -68,9 +69,8 @@ class TestRunnerTest
 	{
 		Assert.areEqual(1, runner.clientCount);		
 		runner.addResultClient(client);
-		Assert.areEqual(1, runner.clientCount);
-		
-		var client2 = new PrintClient();
+		Assert.areEqual(1, runner.clientCount);		
+		var client2 = new JUnitReportClient();
 		runner.addResultClient(client2);
 		Assert.areEqual(2, runner.clientCount);
 	}

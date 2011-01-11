@@ -236,7 +236,7 @@ class TestRunner implements IAsyncDelegateObserver
 		for (testCaseData in activeHelper)
 		{
 			testCount++;
-			Reflect.callMethod(activeHelper.test, activeHelper.before, []);
+			Reflect.callMethod(activeHelper.test, activeHelper.before, emptyParams);
 			testStartTime = Timer.stamp();
 			executeTestCase(testCaseData, testCaseData.result.async);
 			if (!asyncPending) Reflect.callMethod(activeHelper.test, activeHelper.after, emptyParams);
@@ -335,7 +335,7 @@ class TestRunner implements IAsyncDelegateObserver
 		
 		asyncPending = false;
 		executeTestCase(testCaseData, false);
-		activeHelper.after();
+		Reflect.callMethod(activeHelper.test, activeHelper.after, emptyParams);
 		execute();
 	}
 
@@ -355,7 +355,7 @@ class TestRunner implements IAsyncDelegateObserver
 		asyncPending = false;
 		errorCount++;
 		for (c in clients) c.addError(result);
-		activeHelper.after();
+		Reflect.callMethod(activeHelper.test, activeHelper.after, emptyParams);
 		execute();
 	}
 	
