@@ -26,6 +26,7 @@
  * or implied, of Massive Interactive.
  */
 package massive.munit;
+import massive.haxe.util.ReflectUtil;
 
 /**
  * ...
@@ -55,16 +56,18 @@ class TestResultTest
 	public function testLocation():Void
 	{
 		var result:TestResult = new TestResult();
-		result.name = here.methodName;
-		Assert.areEqual("#" + here.methodName, result.location);
+		var positionInfo = ReflectUtil.here();
+		
+		result.name = positionInfo.methodName;
+		Assert.areEqual("#" + positionInfo.methodName, result.location);
 		
 		result = new TestResult();
-		result.className = here.className;
-		Assert.areEqual(here.className + "#", result.location);
+		result.className = positionInfo.className;
+		Assert.areEqual(positionInfo.className + "#", result.location);
 		
 		result = new TestResult();
-		result.name = here.methodName;
-		result.className = here.className;
-		Assert.areEqual(here.className + "#" + here.methodName, result.location);
+		result.name = positionInfo.methodName;
+		result.className = positionInfo.className;
+		Assert.areEqual(positionInfo.className + "#" + positionInfo.methodName, result.location);
 	}
 }

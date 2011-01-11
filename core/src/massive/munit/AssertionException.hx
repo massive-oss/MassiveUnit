@@ -29,6 +29,7 @@
 
 package massive.munit;
 import haxe.PosInfos;
+import massive.haxe.util.ReflectUtil;
 
 /**
  * Exception thrown when an assertion is made which is not correct.
@@ -46,6 +47,6 @@ class AssertionException extends MUnitException
 	public function new(msg:String, ?info:PosInfos) 
 	{
 		super(msg, info);
-		type = here.className;
+		type = ReflectUtil.here().className;
 	}
 }

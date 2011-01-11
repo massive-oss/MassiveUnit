@@ -30,6 +30,7 @@
 package massive.munit.async;
 import haxe.PosInfos;
 import massive.munit.MUnitException;
+import massive.haxe.util.ReflectUtil;
 
 /**
  * Exception thrown when an asynchronous test does not create an AsyncDelegate.
@@ -44,6 +45,6 @@ class MissingAsyncDelegateException extends MUnitException
 	public function new(message:String, ?info:PosInfos) 
 	{
 		super(message, info);
-		type = here.className;
+		type = ReflectUtil.here().className;
 	}
 }

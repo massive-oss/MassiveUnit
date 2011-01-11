@@ -1,6 +1,7 @@
 # Flash 9+
 -main massive.munit.AllClasses
 -cp src
+-lib mlib
 -swf9 ../bin/munit_all.swf
 
 --next
@@ -8,6 +9,7 @@
 #Flash 8
 -main massive.munit.AllClasses
 -cp src
+-lib mlib
 -swf ../bin/munit_all.swf
 
 --next
@@ -15,6 +17,7 @@
 # JavaScript
 -main massive.munit.AllClasses
 -cp src
+-lib mlib
 -js ../bin/munit_all.js
 
 --next
@@ -22,4 +25,5 @@
 # Neko
 -main massive.munit.AllClasses
 -cp src
+-lib mlib
 -neko ../bin/munit_all.n

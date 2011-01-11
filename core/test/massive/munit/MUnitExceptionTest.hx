@@ -26,6 +26,7 @@
  * or implied, of Massive Interactive.
  */
 package massive.munit;
+import massive.haxe.util.ReflectUtil;
 
 /**
  * ...
@@ -51,10 +52,11 @@ class MUnitExceptionTest
 	public function testToString():Void
 	{
 		var msg:String = "custom msg";
-		var line:Int = here.lineNumber + 1;
-		var e:MUnitException = new MUnitException(msg, here);
+		var line:Int = ReflectUtil.here().lineNumber + 1;
+		var e:MUnitException = new MUnitException(msg, ReflectUtil.here());
 		
-		var str:String = Type.getClassName(MUnitException) + ": " + msg + " at " + here.className + "#" + here.methodName + " (" + line + ")";
+		var positionInfo = ReflectUtil.here();
+		var str:String = Type.getClassName(MUnitException) + ": " + msg + " at " + positionInfo.className + "#" + positionInfo.methodName + " (" + line + ")";
 		Assert.areEqual(str, e.toString());
 	}
 }

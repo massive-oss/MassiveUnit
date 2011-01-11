@@ -30,6 +30,7 @@
 package massive.munit.async;
 import haxe.PosInfos;
 import massive.munit.MUnitException;
+import massive.haxe.util.ReflectUtil;
 
 /**
  * Exception thrown when a test makes an assertion which is incorrect.
@@ -44,6 +45,6 @@ class AsyncTimeoutException extends MUnitException
 	public function new(message:String, ?info:PosInfos) 
 	{
 		super(message, info);
-		type = here.className;
+		type = ReflectUtil.here().className;
 	}
 }

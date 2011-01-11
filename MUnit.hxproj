@@ -15,6 +15,7 @@
   <classpaths>
     <class path="core\src" />
     <class path="core\test" />
+    <class path="..\MassiveLib\haxe\src" />
   </classpaths>
   <!-- Build options -->
   <build>

@@ -29,29 +29,16 @@
 
 package massive.munit;
 import haxe.PosInfos;
+import massive.haxe.Exception;
+import massive.haxe.util.ReflectUtil;
 
 /**
  * Base exception type for all exceptions raised by munit.
  * 
  * @author Mike Stead
  */
-class MUnitException 
+class MUnitException extends Exception
 {
-	/**
-	 * The exception type.
-	 */
-	public var type(default, null):String;
-	
-	/**
-	 * The message describing the exception.
-	 */
-	public var message(default, null):String;
-	
-	/**
-	 * The pos infos from where the exception was thrown.
-	 */
-	public var info(default, null):PosInfos;
-	
 	/**
 	 * Class constructor.
 	 * 
@@ -60,21 +47,7 @@ class MUnitException
 	 */
 	public function new(message:String, ?info:PosInfos) 
 	{
-		type = here.className;
-		this.message = message;
-		this.info = info;
-	}
-	
-	/**
-	 * Returns a string representation of this exception.
-	 * 
-	 * @return a string representation of this exception
-	 */
-	public function toString():String
-	{
-		var str:String = type + ": ";
-		if (info == null) str += message;
-		else str += message + " at " + info.className + "#" + info.methodName + " (" + info.lineNumber + ")";
-		return str;
+		super(message, info);
+		type = ReflectUtil.here().className;
 	}
 }

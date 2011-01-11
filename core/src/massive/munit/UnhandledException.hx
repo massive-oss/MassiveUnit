@@ -29,6 +29,7 @@
 
 package massive.munit;
 import haxe.PosInfos;
+import massive.haxe.util.ReflectUtil;
 
 /**
  * Exception thrown when a test triggers an exception in code which was not captured.
@@ -43,6 +44,6 @@ class UnhandledException extends MUnitException
 	public function new(message:String, info:PosInfos) 
 	{
 		super(message, info);
-		type = here.className;
+		type = ReflectUtil.here().className;
 	}
 }

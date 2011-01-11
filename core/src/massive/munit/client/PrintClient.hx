@@ -32,6 +32,7 @@ import massive.munit.AssertionException;
 import massive.munit.ITestResultClient;
 import massive.munit.TestResult;
 import massive.munit.util.MathUtil;
+import massive.haxe.util.ReflectUtil;
 
 /**
  * Generates basic text formatted test result output.
@@ -136,7 +137,8 @@ class PrintClient implements ITestResultClient
 			textArea = js.Lib.document.getElementById("haxe:trace");
 			if (textArea == null) 
 			{
-				var error:String = "MissingElementException: 'haxe:trace' element not found at " + here.className + "#" + here.methodName + "(" + here.lineNumber + ")";
+				var positionInfo = ReflectUtil.here();
+				var error:String = "MissingElementException: 'haxe:trace' element not found at " + positionInfo.className + "#" + positionInfo.methodName + "(" + positionInfo.lineNumber + ")";
 				js.Lib.alert(error);
 			}
 		#end
