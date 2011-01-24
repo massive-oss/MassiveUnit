@@ -216,6 +216,7 @@ class RunCommand extends MUnitCommand
 		FileSys.setCwd(console.originalDir.nativePath);
 		
 		resetOutputDirectories();
+		var serverExitCode:Int = 0;
 		
 		for (file in files)
 		{
@@ -229,6 +230,8 @@ class RunCommand extends MUnitCommand
 
 			var serverThread:Thread = Thread.create(runServer);
 			serverThread.sendMessage(Thread.current());
+			
+			
 
 			var launchExitCode:Int;
 			if (file.extension == "n") launchExitCode = launchNeko(file);
@@ -239,7 +242,7 @@ class RunCommand extends MUnitCommand
 				errors.push("Problem launching a target application " + file + " (" + launchExitCode + ")");
 				continue;
 			}
-			var serverExitCode:Int = Thread.readMessage(true);
+			serverExitCode = Thread.readMessage(true);
 
 			tmpRunnerDir.deleteDirectory();
 
@@ -249,32 +252,58 @@ class RunCommand extends MUnitCommand
 				tmpDir.copyTo(reportTestDir);
 				tmpDir.deleteDirectory(true);
 			}
+		
+			var forceExit:Bool = false;
 			
 			switch(serverExitCode)
 			{
 				case 0: testPassCount ++;
 				case -1: testFailCount ++;
 				case -2: testErrorCount ++;
-				default: errors.push("Problem running munit server for " + file + " (" + serverExitCode + ")");
+				default: forceExit = true;
+			}
+			
+			
+			if(forceExit == true)
+			{
+				errors.push("Problem running munit server for " + file + " (" + serverExitCode + ")");
+				
+				if(serverExitCode == 255)
+				{
+					//this is server exception - so skip other files
+					break;
+				}	
 			}
 		}
-	
+
+
 		FileSys.setCwd(console.dir.nativePath);
 
 		print("------------------------------");
-		print("PLATFORMS TESTED: " + testRunCount + ", PASSED: " + testPassCount + ", FAILED: " + testFailCount + ", ERRORS: " + testErrorCount);
-		
+		print("PLATFORMS TESTED: " + testRunCount + ", PASSED: " + testPassCount + ", FAILED: " + testFailCount + ", ERRORS: " + (testErrorCount + errors.length));
+
+
 		if(errors.length > 0)
 		{
 			for(e in errors)
 			{
 				print(e);
 			}
-			exit(1);
+			
+			if(serverExitCode > 0)
+			{
+				exit(serverExitCode);
+			}
+			else
+			{
+				exit(1);
+			}
 		}
+
 		exit(0);
+		
 	}
-	
+
 	private function resetOutputDirectories():Void
 	{
 		if (!reportRunnerDir.exists) reportRunnerDir.createDirectory();
@@ -287,7 +316,7 @@ class RunCommand extends MUnitCommand
 	private function runServer():Void
 	{
 		var main:Thread = Thread.readMessage(true);
-		
+
 		var process:Process = new Process("nekotools", ["server"]);		
 		var exitCode:Int = process.exitCode();
 
