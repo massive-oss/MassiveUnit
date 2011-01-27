@@ -2,6 +2,7 @@
 -main TestMain
 -cp ::src::
 -lib munit
+-lib mlib
 -swf9 ::bin::/main_test.swf
 
 --next
@@ -10,6 +11,7 @@
 -main TestMain
 -cp ::src::
 -lib munit
+-lib mlib
 -swf ::bin::/main8_test.swf
 
 --next
@@ -18,6 +20,7 @@
 -main TestMain
 -cp ::src::
 -lib munit
+-lib mlib
 -js ::bin::/main_test.js
 
 --next
@@ -26,4 +29,5 @@
 -main TestMain
 -cp ::src::
 -lib munit
+-lib mlib
 -neko ::bin::/main_test.n
