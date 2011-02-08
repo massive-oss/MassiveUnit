@@ -42,7 +42,7 @@ class ConfigCommand extends MUnitCommand
 	{
 		super();
 		
-		afterCommands.push(GenerateCommand);
+		addPreRequisite(GenerateCommand);
 	}
 	
 

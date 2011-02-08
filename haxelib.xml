@@ -2,6 +2,6 @@
 	<user name="massive"/>
 	<tag v="cross" />
 	<description>MassiveUnit is a cross-platform haXe unit testing framework from Massive Interactive that utilises haxe metadata markup for test cases and includes tools for generating, compiling and running test cases from the command line.</description>
-	<version name="0.9.0.2">Add dependency to mlib and fix issue with local server not exiting.</version>
+	<version name="0.9.0.3">Updated command line tool to work with latest version of mlib</version>
 	<depends name="mlib"/>
 </project>

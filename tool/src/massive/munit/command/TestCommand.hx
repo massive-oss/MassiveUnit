@@ -94,7 +94,7 @@ class TestCommand extends MUnitCommand
 		
 		if(noGen != "true")
 		{
-			beforeCommands.push(GenerateCommand);
+			addPreRequisite(GenerateCommand);
 		}
 		
 		//prevent generation from occuring
@@ -102,7 +102,7 @@ class TestCommand extends MUnitCommand
 		
 		if(noRun != "true")
 		{
-			afterCommands.push(RunCommand);
+			addPostRequisite(RunCommand);
 		}
 
 
