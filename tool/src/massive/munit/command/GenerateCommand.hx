@@ -33,16 +33,39 @@ import massive.haxe.util.TemplateUtil;
 class GenerateCommand extends MUnitCommand
 {
 	private var dir:File;
-	private var hxml:File;
+	private var hxmlOutput:File;
+	private var includeHxml:Bool;
+	private var testFilter:String;
 	
 	public function new():Void
 	{
 		super();
+		testFilter = null;
+		includeHxml = true;
 	}
 	
 	override public function initialise():Void
 	{
 		var testSrcPath = console.getNextArg();
+		dir = initialiseTestSourceDirectory(testSrcPath);
+		
+		includeHxml = console.getOption("nohxml") != "true";
+		
+		if(!includeHxml)
+		{
+			var hxmlPath  = console.getNextArg();
+			hxmlOutput = initialiseHxmlOutputFile(hxmlPath);
+		}
+	
+		
+		
+		testFilter = console.getOption("-filter");
+	}
+
+	
+	private function initialiseTestSourceDirectory(?testSrcPath:String=null):File
+	{
+		var dir:File;
 		
 		if(testSrcPath == null)
 		{
@@ -68,96 +91,129 @@ class GenerateCommand extends MUnitCommand
 			}
 		}
 		
-		if(console.getOption("nohxml") == "true") return;
-	
-		//hxml
-		var hxmlPath  = console.getNextArg();
-		
-		var defaultHxml:File = config.hxml;
-		
-		if(hxmlPath == null && defaultHxml == null)
-		{
-			error("Default hxml path is not set. Please run munit config or specify a hxml file path.");	
-		}
-		
-		if(hxmlPath == null && !defaultHxml.exists )
-		{
-			hxmlPath = defaultHxml.nativePath;
-		}
-	
-		if(hxmlPath != null)
-		{
-			hxml = File.create(hxmlPath, config.dir); 
-			
-			if(hxml == null)
-			{
-				error("Invalid hxml path " + hxmlPath);
-			}	
-		}
+		return dir;
 	}
+
+	
+	private function initialiseHxmlOutputFile(?hxmlPath:String=null):File
+	{
+		var hxmlOutput:File = null;
+		
+		if(hxmlPath == null) 
+		{
+			if( config.hxml == null)	error("Default hxml path is not set. Please run munit config or specify a hxml file path.");
+			else hxmlOutput =  config.hxml;
+		}
+		else
+		{
+			hxmlOutput = File.create(hxmlPath, config.dir); 
+		}
+		
+		
+		
+		if(hxmlOutput == null || !hxmlOutput.isFile) error("Invalid hxml path " + hxmlPath);
+		
+		
+		return hxmlOutput;
+	}
+	
 
 	override public function execute():Void
 	{
-		var testMain:File = dir.resolvePath("TestMain.hx");
-		var testMainTmp:File = dir.resolvePath("TestMain.tmp");
-		var testSuite:File = dir.resolvePath("TestSuite.hx");
-		var testExample:File = dir.resolvePath("ExampleTest.hx");
-		
-		var firstTime:Bool = !testMain.exists;
-		
-		var content:String;
+		if(!hasTestMain())
+		{
+			creatTestMainClass();
+			createExampleTestClass();
 			
-		if(firstTime)
-		{
-			//create an example test class for reference
-			content = TemplateUtil.getTemplate("test-example");
-			testExample.writeString(content, true);
-		}
-		else
-		{
-			//remove existing files so they dont get added to the tests
-			testMain.moveTo(testMainTmp);
-			testSuite.deleteFile();
-		}
-
-		var files:Array<File> = dir.getRecursiveDirectoryListing(~/.*Test\.hx$/);
-		var imports:String = "";
-		var tests:String = "";
-		var cls:String;
+			if(includeHxml) createTestHxmlFile();
 		
+		}
+		
+		createTestSuiteClass();
+	}
+	
+	
+	private function hasTestMain():Bool
+	{
+		var testMain:File = dir.resolvePath("TestMain.hx");
+		return testMain.exists;
+	}
+
+	
+	private function creatTestMainClass():Void
+	{
+		var testMain:File = dir.resolvePath("TestMain.hx");
+		var content = TemplateUtil.getTemplate("test-main", {url:RunCommand.SERVER_URL});
+		testMain.writeString(content, true);
+	}
+	
+	private function createExampleTestClass():Void
+	{
+		//create an example test class for reference
+		var testExample:File = dir.resolvePath("ExampleTest.hx");
+		var content = TemplateUtil.getTemplate("test-example");
+		testExample.writeString(content, true);
+	}
+	
+	private function createTestHxmlFile():Void
+	{
+		if(hxmlOutput == null) return;
+		if(hxmlOutput.exists) return;
+			
+		var src:String = config.src != null ? config.dir.getRelativePath(config.src) + "" : "";
+		var bin:String = config.bin != null ? config.dir.getRelativePath(config.bin) + "": "";
+
+		//write out stub hxml file
+		var content = TemplateUtil.getTemplate("test-hxml", {src:src, bin:bin});
+		hxmlOutput.writeString(content, true);
+		
+	}
+	
+	
+	private function createTestSuiteClass():Void
+	{
+		var classes:Array<String> = getFilteredClassesInDirectory(dir);
+		var content:String = generateTestSuiteClassFromClasses(classes);
+
+		var testSuite:File = dir.resolvePath("TestSuite.hx");
+		testSuite.writeString(content, true);
+	}	
+	
+	private function getFilteredClassesInDirectory(dir:File):Array<String>
+	{
+	
+		var files:Array<File> = dir.getRecursiveDirectoryListing(~/.*Test\.hx$/);
+	
+		var classes:Array<String> = [];
+		var clasz:String;
+
 		for(file in files)
 		{
-			cls = dir.getRelativePath(file).substr(0, -3);
-			cls = cls.split("/").join(".");
-
-		//	print(cls);
+			clasz = dir.getRelativePath(file).substr(0, -3);
+			clasz = clasz.split("/").join(".");
+			if(clasz == "TestMain") continue;
+			if(testFilter != null && clasz.indexOf(testFilter) == -1) continue;
 			
-			imports += "\nimport " + cls + ";";
-			tests += "\n		add(" + cls + ");";
-		}
-
-		content = TemplateUtil.getTemplate("test-suite", {imports:imports,tests:tests});
-		testSuite.writeString(content, true);
+			classes.push(clasz);
+			
+		}	
 		
-		if(firstTime)
+		return classes;
+	}
+	
+	private function generateTestSuiteClassFromClasses(classes:Array<String>):String
+	{
+		var imports:String = "";
+		var tests:String = "";
+		
+		for(clasz in classes)
 		{
-			content = TemplateUtil.getTemplate("test-main", {url:RunCommand.SERVER_URL});
-			testMain.writeString(content, true);
-		}
-		else
-		{
-			testMainTmp.moveTo(testMain);	
+			imports += "\nimport " + clasz + ";";
+			tests += "\n		add(" + clasz + ");";
 		}
 		
-		if(hxml != null)
-		{
-			var src:String = config.src != null ? config.dir.getRelativePath(config.src) + "" : "";
-			var bin:String = config.bin != null ? config.dir.getRelativePath(config.bin) + "": "";
-			
-			//write out stub hxml file
-			content = TemplateUtil.getTemplate("test-hxml", {src:src, bin:bin});
-			hxml.writeString(content, true);
-			
-		}
-	}	
+		return TemplateUtil.getTemplate("test-suite", {imports:imports,tests:tests});
+	}
+	
+
 }

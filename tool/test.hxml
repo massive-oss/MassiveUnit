@@ -4,4 +4,4 @@
 -cp src
 -cp ../core/src
 -lib mlib
--neko ../bin/munit_tool_test.n
+-neko ../bin/test/tool/munit_tool_test.n

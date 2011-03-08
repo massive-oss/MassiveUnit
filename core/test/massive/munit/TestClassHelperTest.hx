@@ -75,4 +75,22 @@ class TestClassHelperTest
 		Assert.isFalse(helper.hasNext());
 		Assert.isNull(helper.next());
 	}
+	
+	@Test
+	public function testIteratorDebug():Void
+	{
+		var helper:TestClassHelper = new TestClassHelper(TestClassStub, true);
+		
+		Assert.isTrue(helper.hasNext());
+		Assert.isNotNull(helper.current());
+		Assert.areEqual(helper.test.exampleTestOne, helper.current().test);
+		Assert.areEqual(helper.test.exampleTestOne, helper.next().test);
+		Assert.areEqual(helper.test.exampleTestOne, helper.current().test);
+		
+		Assert.isFalse(helper.current().result.async);		
+		Assert.areEqual(helper.test, helper.current().scope);
+
+		Assert.isFalse(helper.hasNext());
+		Assert.isNull(helper.next());
+	}
 }

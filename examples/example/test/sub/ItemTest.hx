@@ -35,6 +35,7 @@ class ItemTest extends Item
 	{
 	}
 	
+	@TestDebug
 	@Test
 	public function testConstructor():Void
 	{

@@ -42,7 +42,7 @@ class ConfigCommand extends MUnitCommand
 	{
 		super();
 		
-		addPreRequisite(GenerateCommand);
+		addPostRequisite(GenerateCommand);
 	}
 	
 
@@ -85,15 +85,15 @@ class ConfigCommand extends MUnitCommand
 		if(!src.exists) src.createDirectory();
 		if(!src.isDirectory) throw "src path is not a valid directory " + arg;
 		
-		arg = console.getNextArg("bin dir (defaults to 'bin')");
+		arg = console.getNextArg("output dir (defaults to 'build')");
 		
-		if(arg == null) arg = "bin";
+		if(arg == null) arg = "build";
 		
 		bin = File.create(arg, config.dir);
 		
-		if(bin == null) throw "invaid bin path " + arg;
+		if(bin == null) throw "invaid output path " + arg;
 		if(!bin.exists) bin.createDirectory();
-		if(!bin.isDirectory) throw "bin path is not a valid directory " + arg;
+		if(!bin.isDirectory) throw "output path is not a valid directory " + arg;
 		
 		
 		arg = console.getNextArg("report dir (defaults to 'report')");

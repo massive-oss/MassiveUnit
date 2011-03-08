@@ -404,9 +404,16 @@ class RunCommand extends MUnitCommand
 	
 	private function launchNeko(file:File):Int
 	{
+		//copy the application to test_runner/test.*
+		var reportRunnerFile:File = reportRunnerDir.resolvePath("test." + file.extension);
+		file.copyTo(reportRunnerFile);
+		
+		
 		var parameters:Array<String> = [];
 		parameters.push("neko");
-		parameters.push(file.nativePath);
+		parameters.push(reportRunnerFile.nativePath);
+		
+		
 		
 		neko.Lib.println(parameters.join(" "));
 		

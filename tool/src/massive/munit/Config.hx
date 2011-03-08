@@ -65,8 +65,13 @@ class Config
 		
 	private function load():Void
 	{
-		var lines:Array<String> = configFile.readString().split("\n");
-		
+		parseConfig(configFile.readString());
+	}
+	
+	private function parseConfig(string:String)
+	{
+		var lines:Array<String>  = string.split("\n");
+	
 		for(line in lines)
 		{
 			line = StringTools.trim(line);
@@ -83,9 +88,9 @@ class Config
 			switch(args[0])
 			{
 				case "version": configVersion = value;
-				case "src": src = File.create(value, dir);
-				case "bin": bin = File.create(value, dir);
-				case "report": report = File.create(value, dir);
+				case "src": src = File.create(value, dir, true);
+				case "bin": bin = File.create(value, dir, true);
+				case "report": report = File.create(value, dir, true);
 				case "hxml": hxml = File.create(value, dir);
 				
 			}
@@ -107,9 +112,9 @@ class Config
 	
 	public function createDefault(?src:File=null, ?bin:File=null, ?report:File=null, ?hxml:File=null):Void
 	{
-		this.src = src != null ? src : dir.resolveDirectory("test");
-		this.bin = bin != null ? bin : dir.resolveDirectory("bin");
-		this.report = report != null ? report : dir.resolveDirectory("report");
+		this.src = src != null ? src : dir.resolveDirectory("test", true);
+		this.bin = bin != null ? bin : dir.resolveDirectory("bin", true);
+		this.report = report != null ? report : dir.resolveDirectory("report", true);
 		this.hxml = hxml != null ? hxml : dir.resolveFile("test.hxml");
 		this.configVersion = currentVersion;
 		

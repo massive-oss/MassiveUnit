@@ -1,13 +1,16 @@
 usage: gen [srcPath] [hxmlPath]
 
-    The 'gen' task is used to create and update the test runner classes. The 
-    first time this command runs it will generate a TestMain, TestSuite and
-    ExampleTest class in the test src directory provided. On subsequent 
-    runs it will only update the TestSuite with all the test files in the 
-    src directory so not to overwrite any customisation in TestMain.
-    
-    All test classes must follow the following naming convention to be
-    included in the generated TestSuite: *Test.hx 
+    The 'gen' task is used to create and update the test runner classes.
+
+    The first time this command runs it will generate a TestMain, TestSuite
+    ExampleTest and test.hxml in the current directory.
+
+    On subsequent runs it will only update the TestSuite to include the
+    test classes insde the test source directory (All files ending in *Test.hx)
+ 	
+    To target a single class or package use the -filter option (This will only
+    include Test classes matching the string provided. 
+  
     
     Refer to the generated TestExample for sync and async test usage.
     
@@ -24,3 +27,7 @@ Optional Arguments
 Options
 
    -nohxml   : skip hxml creation;
+
+   -filter [name] : reference to a class or package. Any Test classes matching the string
+                   will be included in the test suite.
+

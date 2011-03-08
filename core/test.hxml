@@ -3,7 +3,7 @@
 -cp test
 -cp src
 -lib mlib
--swf9 ../bin/munit_test.swf
+-swf9 ../bin/test/core/munit_test.swf
 
 --next
 
@@ -12,7 +12,7 @@
 -cp test
 -cp src
 -lib mlib
--swf ../bin/munit8_test.swf
+-swf ../bin/test/core/munit8_test.swf
 
 --next
 
@@ -21,7 +21,7 @@
 -cp test
 -cp src
 -lib mlib
--js ../bin/munit_test.js
+-js ../bin/test/core/munit_test.js
 
 --next
 
@@ -30,4 +30,4 @@
 -cp test
 -cp src
 -lib mlib
--neko ../bin/munit_test.n
+-neko ../bin/test/core/munit_test.n

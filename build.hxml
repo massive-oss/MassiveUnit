@@ -4,7 +4,7 @@
 
 #compile core library
 -cmd cd core
--cmd haxe build.hxml
+#-cmd haxe build.hxml
 
 
 #compile tool
@@ -12,13 +12,10 @@
 ##-cmd haxelib run mlib hxml build.hxml -resource template -target neko
 -cmd haxe build.hxml
 
-
 -cmd cd ../
 
-
 #run tests
-#-cmd haxe test.hxml
-
+-cmd haxe test.hxml
 
 #package up and install over current version
 -cmd haxelib run mlib install

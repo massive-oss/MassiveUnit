@@ -122,6 +122,8 @@ class TestRunner implements IAsyncDelegateObserver
 	
 	private var startTime:Float;
 	private var testStartTime:Float;
+	
+	private var isDebug(default, null):Bool;
 
 
 	/**
@@ -135,6 +137,7 @@ class TestRunner implements IAsyncDelegateObserver
 		addResultClient(resultClient);
 		asyncFactory = createAsyncFactory();
 		running = false;
+		isDebug = false;
 	}
 	
 	/**
@@ -148,6 +151,18 @@ class TestRunner implements IAsyncDelegateObserver
 
 		resultClient.completionHandler = clientCompletionHandler;
 		clients.push(resultClient);
+	}
+	
+	
+	/**
+	 * Run one or more suites of unit tests containing @TestDebug.
+	 * 
+	 * @param	testSuiteClasses		
+	 */
+	public function debug(testSuiteClasses:Array<Class<TestSuite>>):Void
+	{
+		isDebug = true;
+		run(testSuiteClasses);
 	}
 	
 	/**
@@ -206,7 +221,7 @@ class TestRunner implements IAsyncDelegateObserver
 			{
 				if (activeHelper == null || activeHelper.type != testClass)
 				{
-					activeHelper = new TestClassHelper(testClass);						
+					activeHelper = new TestClassHelper(testClass, isDebug);						
 					Reflect.callMethod(activeHelper.test, activeHelper.beforeClass, emptyParams);
 				}
 				executeTestCases();

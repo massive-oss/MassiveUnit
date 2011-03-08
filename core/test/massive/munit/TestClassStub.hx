@@ -60,6 +60,7 @@ class TestClassStub
 	}
 	
 	@Test
+	@TestDebug
 	public function exampleTestOne():Void
 	{
 		Assert.isTrue(false);
@@ -76,4 +77,5 @@ class TestClassStub
 	{
 		Assert.isTrue(true);
 	}
+	
 }

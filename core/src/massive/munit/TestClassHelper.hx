@@ -76,13 +76,19 @@ class TestClassHelper
 	public inline static var META_PARAM_ASYNC_TEST:String = "Async";
 	
 	/**
+	 * Meta tag marking test method in class.
+	 */
+	public inline static var META_TAG_TEST_DEBUG:String = "TestDebug";
+	
+	/**
 	 * Array of all valid meta tags.
 	 */
 	public static var META_TAGS = [META_TAG_BEFORE_CLASS,
 									META_TAG_AFTER_CLASS,
 									META_TAG_BEFORE,
 									META_TAG_AFTER,
-									META_TAG_TEST];
+									META_TAG_TEST,
+									META_TAG_TEST_DEBUG];
 
 	/**
 	 * The type of the test class this helper is wrapping.
@@ -118,14 +124,18 @@ class TestClassHelper
 	private var index(default, null):Int;
 	private var className(default, null):String;
 
+	
+	private var isDebug(default, null):Bool;
+
 	/**
 	 * Class constructor.
 	 * 
 	 * @param	type			type of test class this helper is wrapping
 	 */
-	public function new(type:Class<Dynamic>) 
+	public function new(type:Class<Dynamic>, ?isDebug:Bool=false) 
 	{
 		this.type = type;
+		this.isDebug = isDebug;
 		tests = [];
 		index = 0;
 		className = Type.getClassName(type);
@@ -201,12 +211,15 @@ class TestClassHelper
 							case META_TAG_AFTER:
 								after = f;
 							case META_TAG_TEST:
-								var result:TestResult = new TestResult();
-								result.async = (args != null && args[0] == META_PARAM_ASYNC_TEST);
-								result.className = className;
-								result.name = field;
-								var data:TestCaseData = { test:f, scope:test, result:result };
-								tests.push(data);
+								if(!isDebug)
+								{
+									addTest(field, f, test, args);
+								}
+							case META_TAG_TEST_DEBUG:
+								if(isDebug)
+								{
+									addTest(field, f, test, args);
+								}		
 						}
 					}
 				}
@@ -214,6 +227,16 @@ class TestClassHelper
 		}
 		
 		tests.sort(sortTestsByName);
+	}
+	
+	private function addTest(field:String, testFunction:Dynamic, testInstance:Dynamic, args:Array<String>):Void
+	{
+		var result:TestResult = new TestResult();
+		result.async = (args != null && args[0] == META_PARAM_ASYNC_TEST);
+		result.className = className;
+		result.name = field;
+		var data:TestCaseData = { test:testFunction, scope:testInstance, result:result };
+		tests.push(data);
 	}
 	
 	private function sortTestsByName(x:TestCaseData, y:TestCaseData):Int
