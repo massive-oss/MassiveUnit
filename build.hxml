@@ -4,7 +4,7 @@
 
 #compile core library
 -cmd cd core
-#-cmd haxe build.hxml
+-cmd haxe build.hxml
 
 
 #compile tool

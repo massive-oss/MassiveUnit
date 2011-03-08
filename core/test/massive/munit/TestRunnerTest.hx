@@ -54,6 +54,7 @@ class TestRunnerTest
 	{
 		client.completionHandler = null;
 		client = null;
+		runner.completionHandler = null;
 		runner = null;
 	}
 	
@@ -113,16 +114,17 @@ class TestRunnerTest
 		assertionCount = Assert.assertionCount;
 		
 		var suites = new Array<Class<massive.munit.TestSuite>>();
-		suites.push(TestSuiteStub);
-	
-		runner.debug(suites);
 		
+		suites.push(TestSuiteStub);
+		runner.debug(suites);
+
+		// restore assertion count
 		Assert.assertionCount = assertionCount;
 		
-		Assert.areEqual(1, client.testCount);
-		Assert.areEqual(1, client.finalTestCount);
-		Assert.areEqual(0, client.passCount);
-		Assert.areEqual(0, client.finalPassCount);
+		Assert.areEqual(2, client.testCount);
+		Assert.areEqual(2, client.finalTestCount);
+		Assert.areEqual(1, client.passCount);
+		Assert.areEqual(1, client.finalPassCount);
 		Assert.areEqual(1, client.failCount);
 		Assert.areEqual(1, client.finalFailCount);
 		Assert.areEqual(0, client.errorCount);

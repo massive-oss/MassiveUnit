@@ -78,4 +78,9 @@ class TestClassStub
 		Assert.isTrue(true);
 	}
 	
+	@TestDebug
+	public function exampleTestThree():Void
+	{
+		Assert.isTrue(true);
+	}
 }
