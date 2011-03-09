@@ -88,8 +88,6 @@ class TestRunnerTest
 		runner.run(suites);
 	}
 	
-
-	
 	private function completionHandler(isSuccessful:Bool):Void
 	{
 		// restore assertion count
@@ -107,8 +105,8 @@ class TestRunnerTest
 	}
 	
 	
-	@Test
-	public function testDebug():Void
+	@Test("Async")
+	public function testDebug(factory:AsyncFactory):Void
 	{
 		// save assertion count in this runner instance. Ugly.
 		assertionCount = Assert.assertionCount;
@@ -116,20 +114,7 @@ class TestRunnerTest
 		var suites = new Array<Class<massive.munit.TestSuite>>();
 		
 		suites.push(TestSuiteStub);
+		runner.completionHandler = factory.createHandler(this, completionHandler, 5000);
 		runner.debug(suites);
-
-		// restore assertion count
-		Assert.assertionCount = assertionCount;
-		
-		Assert.areEqual(2, client.testCount);
-		Assert.areEqual(2, client.finalTestCount);
-		Assert.areEqual(1, client.passCount);
-		Assert.areEqual(1, client.finalPassCount);
-		Assert.areEqual(1, client.failCount);
-		Assert.areEqual(1, client.finalFailCount);
-		Assert.areEqual(0, client.errorCount);
-		Assert.areEqual(0, client.finalErrorCount);
-	}
-	
-	
+	}	
 }
