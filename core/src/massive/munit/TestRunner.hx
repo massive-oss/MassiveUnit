@@ -338,7 +338,9 @@ class TestRunner implements IAsyncDelegateObserver
 			if (completionHandler != null)
 			{
 				var successful:Bool = (passCount == testCount);
-				completionHandler(successful);
+				var handler:Dynamic = completionHandler;
+				
+				Timer.delay(function() { handler(successful); }, 1);
 			}
 			running = false;
 		}
