@@ -27,3 +27,5 @@ Thumbs.db
 ###############
 bin/
 report/
+
+.svn
