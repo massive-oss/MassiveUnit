@@ -1,7 +1,7 @@
 MassiveUnit
 ====================
 
-MassiveUnit is a meta-data driven unit testing framework for cross-platform haXe development.
+MassiveUnit is a metadata driven unit testing framework for cross-platform haXe development.
 
 It includes tools for creating, updating, compiling and running unit test cases from the command line.
 
