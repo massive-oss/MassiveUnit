@@ -50,7 +50,12 @@ class TestCommand extends MUnitCommand
 	{
 		targetTypes = new Array();
 		
-		if(console.getOption("swf") == "true") targetTypes.push(TargetType.swf);
+		if(console.getOption("swf") == "true")
+		{
+			targetTypes.push(TargetType.swf);
+			targetTypes.push(TargetType.swf9);
+		}
+		if(console.getOption("swf8") == "true")	targetTypes.push(TargetType.swf);
 		if(console.getOption("swf9") == "true") targetTypes.push(TargetType.swf9);
 		if(console.getOption("js") == "true") targetTypes.push(TargetType.js);
 		if(console.getOption("neko") == "true") targetTypes.push(TargetType.neko);

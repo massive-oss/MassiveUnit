@@ -181,8 +181,10 @@ massive.munit.UnhandledException.__name__ = ["massive","munit","UnhandledExcepti
 massive.munit.UnhandledException.__super__ = massive.munit.MUnitException;
 for(var k in massive.munit.MUnitException.prototype ) massive.munit.UnhandledException.prototype[k] = massive.munit.MUnitException.prototype[k];
 massive.munit.UnhandledException.prototype.__class__ = massive.munit.UnhandledException;
-massive.munit.TestClassHelper = function(type) { if( type === $_ ) return; {
+massive.munit.TestClassHelper = function(type,isDebug) { if( type === $_ ) return; {
+	if(isDebug == null) isDebug = false;
 	this.type = type;
+	this.isDebug = isDebug;
 	this.tests = [];
 	this.index = 0;
 	this.className = Type.getClassName(type);
@@ -202,6 +204,7 @@ massive.munit.TestClassHelper.prototype.after = null;
 massive.munit.TestClassHelper.prototype.tests = null;
 massive.munit.TestClassHelper.prototype.index = null;
 massive.munit.TestClassHelper.prototype.className = null;
+massive.munit.TestClassHelper.prototype.isDebug = null;
 massive.munit.TestClassHelper.prototype.hasNext = function() {
 	return this.index < this.tests.length;
 }
@@ -245,12 +248,14 @@ massive.munit.TestClassHelper.prototype.parse = function(type) {
 								this.after = f;
 							}break;
 							case "Test":{
-								var result = new massive.munit.TestResult();
-								result.async = args != null && args[0] == "Async";
-								result.className = this.className;
-								result.name = field;
-								var data = { test : f, scope : this.test, result : result};
-								this.tests.push(data);
+								if(!this.isDebug) {
+									this.addTest(field,f,this.test,args);
+								}
+							}break;
+							case "TestDebug":{
+								if(this.isDebug) {
+									this.addTest(field,f,this.test,args);
+								}
 							}break;
 							}
 						}
@@ -260,6 +265,14 @@ massive.munit.TestClassHelper.prototype.parse = function(type) {
 		}
 	}
 	this.tests.sort($closure(this,"sortTestsByName"));
+}
+massive.munit.TestClassHelper.prototype.addTest = function(field,testFunction,testInstance,args) {
+	var result = new massive.munit.TestResult();
+	result.async = args != null && args[0] == "Async";
+	result.className = this.className;
+	result.name = field;
+	var data = { test : testFunction, scope : testInstance, result : result};
+	this.tests.push(data);
 }
 massive.munit.TestClassHelper.prototype.sortTestsByName = function(x,y) {
 	if(x.result.name == y.result.name) return 0;
@@ -290,6 +303,7 @@ massive.munit.TestRunner = function(resultClient) { if( resultClient === $_ ) re
 	this.addResultClient(resultClient);
 	this.set_asyncFactory(this.createAsyncFactory());
 	this.running = false;
+	this.isDebug = false;
 }}
 massive.munit.TestRunner.__name__ = ["massive","munit","TestRunner"];
 massive.munit.TestRunner.prototype.completionHandler = null;
@@ -318,6 +332,7 @@ massive.munit.TestRunner.prototype.set_asyncFactory = function(value) {
 massive.munit.TestRunner.prototype.emptyParams = null;
 massive.munit.TestRunner.prototype.startTime = null;
 massive.munit.TestRunner.prototype.testStartTime = null;
+massive.munit.TestRunner.prototype.isDebug = null;
 massive.munit.TestRunner.prototype.addResultClient = function(resultClient) {
 	{
 		var _g = 0, _g1 = this.clients;
@@ -329,6 +344,10 @@ massive.munit.TestRunner.prototype.addResultClient = function(resultClient) {
 	}
 	resultClient.set_completeHandler($closure(this,"clientCompletionHandler"));
 	this.clients.push(resultClient);
+}
+massive.munit.TestRunner.prototype.debug = function(testSuiteClasses) {
+	this.isDebug = true;
+	this.run(testSuiteClasses);
 }
 massive.munit.TestRunner.prototype.run = function(testSuiteClasses) {
 	if(this.running) return;
@@ -364,7 +383,7 @@ massive.munit.TestRunner.prototype.execute = function() {
 			while( $it0.hasNext() ) { var testClass = $it0.next();
 			{
 				if(this.activeHelper == null || this.activeHelper.type != testClass) {
-					this.activeHelper = new massive.munit.TestClassHelper(testClass);
+					this.activeHelper = new massive.munit.TestClassHelper(testClass,this.isDebug);
 					this.activeHelper.beforeClass.apply(this.activeHelper.test,this.emptyParams);
 				}
 				this.executeTestCases();
@@ -481,7 +500,10 @@ massive.munit.TestRunner.prototype.clientCompletionHandler = function(resultClie
 	if(++this.clientCompleteCount == this.clients.length) {
 		if(this.completionHandler != null) {
 			var successful = this.passCount == this.testCount;
-			this.completionHandler(successful);
+			var handler = this.completionHandler;
+			massive.munit.util.Timer.delay(function() {
+				handler(successful);
+			},1);
 		}
 		this.running = false;
 	}
@@ -937,10 +959,10 @@ sub.ItemTest.prototype.tearDown = function() {
 	null;
 }
 sub.ItemTest.prototype.testConstructor = function() {
-	massive.munit.Assert.isFalse(false,{ fileName : "ItemTest.hx", lineNumber : 41, className : "sub.ItemTest", methodName : "testConstructor"});
+	massive.munit.Assert.isFalse(false,{ fileName : "ItemTest.hx", lineNumber : 43, className : "sub.ItemTest", methodName : "testConstructor"});
 }
 sub.ItemTest.prototype.testBlah = function() {
-	massive.munit.Assert.isTrue(true,{ fileName : "ItemTest.hx", lineNumber : 47, className : "sub.ItemTest", methodName : "testBlah"});
+	massive.munit.Assert.isTrue(true,{ fileName : "ItemTest.hx", lineNumber : 49, className : "sub.ItemTest", methodName : "testBlah"});
 }
 sub.ItemTest.prototype.__class__ = sub.ItemTest;
 StringBuf = function(p) { if( p === $_ ) return; {
@@ -2059,7 +2081,8 @@ massive.munit.TestClassHelper.META_TAG_BEFORE = "Before";
 massive.munit.TestClassHelper.META_TAG_AFTER = "After";
 massive.munit.TestClassHelper.META_TAG_TEST = "Test";
 massive.munit.TestClassHelper.META_PARAM_ASYNC_TEST = "Async";
-massive.munit.TestClassHelper.META_TAGS = ["BeforeClass","AfterClass","Before","After","Test"];
+massive.munit.TestClassHelper.META_TAG_TEST_DEBUG = "TestDebug";
+massive.munit.TestClassHelper.META_TAGS = ["BeforeClass","AfterClass","Before","After","Test","TestDebug"];
 massive.munit.util.Timer.arr = new Array();
 massive.munit.client.HTTPClient.DEFAULT_ID = "HTTPClient";
 massive.munit.client.HTTPClient.CLIENT_HEADER_KEY = "munit-clientId";
@@ -2068,7 +2091,7 @@ massive.munit.client.HTTPClient.REQUEST_ID_KEY = "munit-requestId";
 massive.munit.client.HTTPClient.queue = [];
 massive.munit.client.HTTPClient.responsePending = false;
 massive.munit.Assert.assertionCount = 0;
-sub.ItemTest.__meta__ = { fields : { beforeClass : { BeforeClass : null}, afterClass : { AfterClass : null}, setup : { Before : null}, tearDown : { After : null}, testConstructor : { Test : null}, testBlah : { Test : null}}};
+sub.ItemTest.__meta__ = { fields : { beforeClass : { BeforeClass : null}, afterClass : { AfterClass : null}, setup : { Before : null}, tearDown : { After : null}, testConstructor : { TestDebug : null, Test : null}, testBlah : { Test : null}}};
 SampleTest.__meta__ = { fields : { beforeClass : { BeforeClass : null}, afterClass : { AfterClass : null}, setup : { Before : null}, tearDown : { After : null}, testConstructor : { Test : null}, testAsyncOperation : { Test : ["Async"]}}};
 js.Lib.onerror = null;
 massive.munit.client.JUnitReportClient.DEFAULT_ID = "junit";

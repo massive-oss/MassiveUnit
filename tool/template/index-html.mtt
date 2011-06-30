@@ -17,7 +17,8 @@
 		showTestResultColor(result);
 		
 		window.opener = top;
-		window.close();
+		::if keepBrowserAlive:: ::else::window.close(); ::end::
+		
 	} 
 	
 	function showTestResultColor(result)

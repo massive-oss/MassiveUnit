@@ -137,15 +137,12 @@ class TestRunner implements IAsyncDelegateObserver
 		addResultClient(resultClient);
 		asyncFactory = createAsyncFactory();
 		running = false;
-	
 		
-		#if debug
+		#if (testDebug||testdebug)
 		isDebug = true;
 		#else
 		isDebug = false;
-		#end
-		
-		
+		#end	
 	}
 	
 	/**

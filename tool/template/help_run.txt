@@ -15,7 +15,10 @@ Optional Arguments:
 Optional Parameters:
 
    -[platform]     : One or more specific target platforms to compile
-                     Valid options are '-swf' '-swf9', '-js' and '-neko'
+	                 Valid options are '-swf' (both swf8 and swf9)
+	                 '-swf8' '-swf9', '-js' and '-neko'
 
    -browser nam	   : Optional value to launch a URL from a specific browser.
                      Uses the default browser if not set.
+
+   -keep-browser-alive: Don't automatically close browser once tests complete.

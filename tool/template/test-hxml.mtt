@@ -1,6 +1,7 @@
 # Flash 9+
 -main TestMain
 -cp ::src::
+#-D testDebug
 -lib munit
 -lib mlib
 -swf9 ::bin::/main_test.swf

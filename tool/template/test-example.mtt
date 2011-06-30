@@ -56,5 +56,15 @@ class ExampleTest
 	{
 		Assert.isFalse(false);
 	}
+	
+	
+	/**
+	* test that only runs when compiled with the -D testDebug flag
+	*/
+	@TestDebug
+	public function testExampleThatOnlyRunsWithDebugFlag():Void
+	{
+		Assert.isTrue(true);
+	}
 
 }

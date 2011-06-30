@@ -41,6 +41,7 @@ import neko.Lib;
 import neko.Sys;
 import neko.io.Path;
 import massive.haxe.log.Log;
+import massive.haxe.util.TemplateUtil;
 
 class RunCommand extends MUnitCommand
 {
@@ -59,9 +60,12 @@ class RunCommand extends MUnitCommand
 	
 	private var targetTypes:Array<TargetType>;
 	
+	private var keepBrowserAlive:Bool;
+	
 	public function new():Void
 	{
 		super();
+		keepBrowserAlive = false;
 
 	}
 	
@@ -69,7 +73,12 @@ class RunCommand extends MUnitCommand
 	{
 		targetTypes = new Array();
 
-		if(console.getOption("swf") == "true") targetTypes.push(TargetType.swf);
+		if(console.getOption("swf") == "true")
+		{
+			targetTypes.push(TargetType.swf9);
+			targetTypes.push(TargetType.swf);
+		}
+		if(console.getOption("swf8") == "true") targetTypes.push(TargetType.swf);
 		if(console.getOption("swf9") == "true") targetTypes.push(TargetType.swf9);
 		if(console.getOption("js") == "true") targetTypes.push(TargetType.js);
 		if(console.getOption("neko") == "true") targetTypes.push(TargetType.neko);
@@ -78,8 +87,6 @@ class RunCommand extends MUnitCommand
 		{
 			targetTypes = config.targetTypes.concat([]);
 		}
-		
-	
 		
 		var binPath:String = console.getNextArg();
 		var file:File;
@@ -124,8 +131,17 @@ class RunCommand extends MUnitCommand
 			{
 				//Log.debug("Matching file: " + file);
 				for(type in targetTypes)
-				{		
-					if(type == TargetType.swf)
+				{	
+					if(type == TargetType.swf9 && file.extension == "swf")
+					{
+						if(file.fileName.indexOf("8_test.swf") == -1)
+						{
+							files.unshift(file);
+							break;
+						}
+
+					}	
+					else if(type == TargetType.swf)
 					{
 						if(file.fileName.indexOf("8_test.swf") != -1)
 						{
@@ -133,19 +149,15 @@ class RunCommand extends MUnitCommand
 							break;
 						}
 					}
-					else if(type == TargetType.swf9 && file.extension == "swf")
-					{
-						files.push(file);
-						break;
-					}
+				
 					else if(type == TargetType.js && file.extension == "js")
 					{
-						files.push(file);
+						files.unshift(file);
 						break;
 					}
 					else if(type == TargetType.neko && file.extension == "n")
 					{
-						files.push(file);
+						files.unshift(file);
 						break;
 					}
 				}
@@ -203,6 +215,14 @@ class RunCommand extends MUnitCommand
 		}
 		
 		Log.debug("browser: " + browser);
+		
+		if(console.getOption("keep-browser-alive") != null)
+		{
+			keepBrowserAlive = true;
+			Log.debug("keepBrowserAlive: " + keepBrowserAlive);
+		}
+
+		
 	}
 
 	override public function execute():Void
@@ -350,15 +370,16 @@ class RunCommand extends MUnitCommand
 		main.sendMessage(code);	
 	}
 	
+
+	
 	private function launchFile(file:File):Int
 	{
-		var resourceDir:File = console.originalDir.resolveDirectory("resource");
-
-		//copy test runner files
-		resourceDir.copyTo(reportRunnerDir);
-
+		createStaticRunnerResources();
+	
 		//copy the application to test_runner/test.*
 		file.copyTo(reportRunnerDir.resolvePath("test." + file.extension));
+		
+		
 
 		var jsFile:File = reportRunnerDir.resolvePath("loader.js");
 
@@ -401,6 +422,21 @@ class RunCommand extends MUnitCommand
 
 		return exitCode;
 	}
+	
+	private function createStaticRunnerResources():Void
+	{
+		var resourceDir:File = console.originalDir.resolveDirectory("resource");
+
+		//copy test runner files
+		resourceDir.copyTo(reportRunnerDir);
+		
+		
+		//create index.html file
+		var indexHtml:File = reportRunnerDir.resolvePath("index.html");
+		var content = TemplateUtil.getTemplate("index-html", {keepBrowserAlive:keepBrowserAlive});
+		indexHtml.writeString(content, true);
+	}
+	
 	
 	private function launchNeko(file:File):Int
 	{

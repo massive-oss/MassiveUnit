@@ -14,6 +14,7 @@
 -resource template/test-hxml.mtt@test-hxml
 -resource template/test-main.mtt@test-main
 -resource template/test-suite.mtt@test-suite
+-resource template/index-html.mtt@index-html
 --next
 
 
@@ -33,6 +34,7 @@
 -resource template/test-hxml.mtt@test-hxml
 -resource template/test-main.mtt@test-main
 -resource template/test-suite.mtt@test-suite
+-resource template/index-html.mtt@index-html
 --next
 
 -main massive.munit.ServerMain

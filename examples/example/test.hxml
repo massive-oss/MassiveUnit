@@ -1,5 +1,6 @@
 # Flash 9+
 -main TestMain
+-D testDebug
 -cp src
 -cp test
 -lib munit
