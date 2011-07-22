@@ -18,11 +18,11 @@
 			{
 				case -1: color = "white";
 					break;
-				case 0: color = "red";
+				case 0: color = "#d54242";// red
 					break;
-				case 1: color = "green";
+				case 1: color = "#6bae75";// green
 					break;
-				default: color = "yellow";
+				default: color = "#d5c942";// yellow
 					break;
 			}
 

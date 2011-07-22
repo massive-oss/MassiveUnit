@@ -293,14 +293,18 @@ class RunCommand extends MUnitCommand
 			launchFile(indexPage);
 		else
 			resultMonitor.sendMessage("quit");
-			
+		
 		var complete = Thread.readMessage(true);
-		serverProcess.close();
 
-		//tmpRunnerDir.deleteDirectory();
+		serverProcess.kill();
+
+//		var t = Sys.time();
+		tmpRunnerDir.deleteDirectory();
 		tmpDir.copyTo(reportTestDir);
 		tmpDir.deleteDirectory(true);
 		FileSys.setCwd(console.dir.nativePath);
+//		print(Sys.time() - t); // 4+ secs on mac
+
 	}
 	
 	private function monitorResults():Void
