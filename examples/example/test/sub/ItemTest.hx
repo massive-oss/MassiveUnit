@@ -39,7 +39,6 @@ class ItemTest extends Item
 	@Test
 	public function testConstructor():Void
 	{
-		//throw "foo";
 		Assert.isFalse(false);
 	}
 	

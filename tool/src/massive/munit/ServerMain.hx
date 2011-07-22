@@ -42,7 +42,10 @@ class ServerMain
 	public static inline var PASSED:String = "PASSED";
 	public static inline var FAILED:String = "FAILED";
 	public static inline var ERROR:String = "ERROR";
+	public static inline var END:String = "END";
 
+	private var tmpDir:File;
+	
 	static function main()
 	{
 		new ServerMain();
@@ -56,21 +59,30 @@ class ServerMain
 	private function processData():Void
 	{
 		var client:String = neko.Web.getClientHeader(HTTPClient.CLIENT_HEADER_KEY);
-		var platform:String = neko.Web.getClientHeader(HTTPClient.PLATFORM_HEADER_KEY);		
-		var requestId:String = neko.Web.getClientHeader(HTTPClient.REQUEST_ID_KEY);
+		var platform:String = neko.Web.getClientHeader(HTTPClient.PLATFORM_HEADER_KEY);
+		
+		tmpDir = File.current.resolveDirectory("tmp", true);
+		tmpDir.createDirectory();
 
+		if (client == BrowserTestsCompleteReporter.CLIENT_RUNNER_HOST)
+		{
+			recordResult(END + "\n");
+			return;
+		}
+		
+		if (client == null || platform == null)
+			return;
+		
 		var hash:Hash<String> = neko.Web.getParams();
 		var data:String = hash.get("data"); // gets variable 'data' from posted data
 
-		if(data == null)
+		if (data == null)
 		{
 			neko.Lib.print("Error: Invalid content sent to server: \n" + hash);
+			recordResult(END + "\n");
 			neko.Sys.exit(-1);
 		}
-
-		var tmpDir:File = File.current.resolveDirectory("tmp", true);
-		tmpDir.createDirectory();
-
+		
 		var clientDir:File = tmpDir.resolveDirectory(client, true);
 		clientDir.createDirectory();
 
@@ -87,21 +99,39 @@ class ServerMain
 			default:
 				result = writePrintData(data, platformDir);
 		}
-
-		var results:String = "Tests " + result + " under " + platform + " using " + client + " client";		
-		// Send result back as response data to the client which sent the request
-		trace(results);
-
-		// Log our results. This is sent to stderr for process running this server to pick up
-		neko.Web.logMessage(results);
-		neko.Web.flush();
 		
-		if (requestId == "0") 
+		var results:String = "Tests " + result + " under " + platform + " using " + client + " client\n";
+		recordResult(results);
+	}
+	
+	private function recordResult(result:String)
+	{
+		var MAX_WRITE_ATTEMPTS = 4;
+		Lib.println(result);
+		var writeAttempts = 0;
+		var writeSuccess = false;
+		
+		do
 		{
-			// Allow a short delay to give time to return the response
-			Timer.delay(shutdownServer, 1);
+			var file:File = tmpDir.resolvePath("results.txt");
+			var contents = file.readString();
+			if (contents == null)
+				contents = "";
+			contents += result;
+			
+			try {
+				file.writeString(contents, true);
+				writeSuccess = true;
+			}
+			catch (e:Dynamic) {
+				Sys.sleep(0.1);
+			}
 		}
-	}	
+		while (!writeSuccess && writeAttempts++ < MAX_WRITE_ATTEMPTS);
+		
+		if (writeAttempts >= MAX_WRITE_ATTEMPTS)
+			neko.Web.logMessage("ERROR: Server could not write test result to results.txt file");
+	}
 	
 	//------------------------ Write JUnit Report Data
 	
@@ -124,14 +154,20 @@ class ServerMain
 			var failures:Int = Std.parseInt(test.get("failures"));
 			var errors:Int = Std.parseInt(test.get("errors"));
 			
-			if (failures == null) failures = 0;
-			if (errors == null) errors = 0;
+			if (failures == null) 
+				failures = 0;
+			if (errors == null) 
+				errors = 0;
+			
 			var failed:Bool = (failures > 0 || errors > 0);
 			
-			if (failed && result != FAILED) result = FAILED;
-			else if (!failed && result == "") result = PASSED;
+			if (failed && result != FAILED) 
+				result = FAILED;
+			else if (!failed && result == "") 
+				result = PASSED;
 		}
-		if (result == "") result = ERROR;
+		if (result == "") 
+			result = ERROR;
 
 		return result;
 	}
@@ -150,15 +186,12 @@ class ServerMain
 
 		for (line in lines)
 		{	
-			if (line.indexOf("PASSED") == 0) return PASSED;
-			else if(line.indexOf("FAILED") == 0) return FAILED;
+			if (line.indexOf("PASSED") == 0) 
+				return PASSED;
+			else if (line.indexOf("FAILED") == 0) 
+				return FAILED;
 		}
 		
 		return ERROR;
-	}
-	
-	private function shutdownServer():Void
-	{
-		Sys.exit(0);
 	}
 }

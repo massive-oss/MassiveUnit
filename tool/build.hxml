@@ -14,7 +14,11 @@
 -resource template/test-hxml.mtt@test-hxml
 -resource template/test-main.mtt@test-main
 -resource template/test-suite.mtt@test-suite
--resource template/index-html.mtt@index-html
+-resource template/js_runner-html.mtt@js_runner-html
+-resource template/swf_runner-html.mtt@swf_runner-html
+-resource template/runner-html.mtt@runner-html
+-resource template/target-headers-html.mtt@target-headers-html
+
 --next
 
 
@@ -34,7 +38,11 @@
 -resource template/test-hxml.mtt@test-hxml
 -resource template/test-main.mtt@test-main
 -resource template/test-suite.mtt@test-suite
--resource template/index-html.mtt@index-html
+-resource template/js_runner-html.mtt@js_runner-html
+-resource template/swf_runner-html.mtt@swf_runner-html
+-resource template/runner-html.mtt@runner-html
+-resource template/target-headers-html.mtt@target-headers-html
+
 --next
 
 -main massive.munit.ServerMain
@@ -45,12 +53,8 @@
 
 --next
 
--main LoaderJS
+-main BrowserTestsCompleteReporter
 -cp src
--js ../bin/loader-js.js
-
---next
-
--main LoaderSWF
--cp src
--js ../bin/loader-swf.js
+-cp ../core/src
+-lib mlib
+-js ../bin/tests-complete.js

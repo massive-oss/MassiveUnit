@@ -29,6 +29,7 @@ package massive.munit.command;
 
 import massive.neko.io.File;
 import massive.haxe.util.TemplateUtil;
+import massive.munit.client.HTTPClient;
 
 class GenerateCommand extends MUnitCommand
 {
@@ -143,7 +144,7 @@ class GenerateCommand extends MUnitCommand
 	private function creatTestMainClass():Void
 	{
 		var testMain:File = dir.resolvePath("TestMain.hx");
-		var content = TemplateUtil.getTemplate("test-main", {url:RunCommand.SERVER_URL});
+		var content = TemplateUtil.getTemplate("test-main", {url:HTTPClient.DEFAULT_SERVER_URL});
 		testMain.writeString(content, true);
 	}
 	

@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+	<title>Massive Unit Test Runner</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <script type="text/javascript" src="swfobject.js"></script>
+    
+    <script type="text/javascript">
+		SWFObject.embedSWF("::runnerName::", "swfContainer", "1024", "768", "10.1.0", {}, {}, {allowFullScreen:true, bgcolor:0, allowScriptAccess:"always", wmode:"transparent", scale:"noscale"});
+    </script>
+	
+	<script language="JavaScript"> 
+		function testResult(success)
+		{ 
+			setBackgroundResultColor(success ? 1 : 0);
+			parent.testComplete();
+		}
+		
+		function setBackgroundResultColor(result)
+		{ 
+			var color;
+			switch(result)
+			{
+				case -1: color = "white";
+					break;
+				case 0: color = "red";
+					break;
+				case 1: color = "green";
+					break;
+				default: color = "yellow";
+					break;
+			}
+			document.body.style.background = color;
+		}
+	</script>
+
+	<style type="text/css">
+		html, body, div { margin:0; padding:0; }
+	</style>
+  </head>
+  <body>
+    <div id="swfContainer">
+      <p>Please install flash</p>
+    </div>
+	<div id="haxe:trace"></div>
+  </body>
+</html>

@@ -39,6 +39,7 @@ import massive.munit.util.Timer;
  */
 class HTTPClient implements ITestResultClient
 {
+	public inline static var DEFAULT_SERVER_URL:String = "http://localhost:2000";
 	/**
 	 * Default id of this client.
 	 */
@@ -48,27 +49,21 @@ class HTTPClient implements ITestResultClient
 	 * HTTP header key. Contains id of client the HTTPClient is decorating.
 	 */
 	public inline static var CLIENT_HEADER_KEY:String = "munit-clientId";
-	
+
 	/**
 	 * HTTP header key. Contains id of platform being tests (flash9,flash,js,neko,cpp,php).
 	 */
 	public inline static var PLATFORM_HEADER_KEY:String = "munit-platformId";
-	
-	/**
-	 * HTTP header key. If this HTTPClient is using the global queue for its requests
-	 * then this header contains the position of the request in the queue.
-	 */
-	public inline static var REQUEST_ID_KEY:String = "munit-requestId";
-	
+
 	/* Global sequental (FIFO) http request queue */
 	private static var queue:Array<Http> = [];
 	private static var responsePending:Bool = false;
-	
+
 	/**
 	 * The unique identifier for the client.
 	 */
 	public var id(default, null):String;
-	
+
 	/**
 	 * Handler which if present, is called when the client has completed sending the test results to the specificied url. 
 	 * This will be called once an HTTP response has been recieved.
@@ -87,7 +82,7 @@ class HTTPClient implements ITestResultClient
 	private var url:String;
 	private var httpRequest:Http;
 	private var queueRequest:Bool;
-	
+
 	/**
 	 * 
 	 * @param	client				the test result client to decorate
@@ -95,7 +90,7 @@ class HTTPClient implements ITestResultClient
 	 * @param	?queueRequest		[optional] whether to add http requests to a global queue. Default is true.
 	 * @param	?httpRequest		[optional] a custom http request to use to dispatch the result.
 	 */
-	public function new(client:ITestResultClient, url:String, ?queueRequest:Bool = true, ?httpRequest:Http) 
+	public function new(client:ITestResultClient, ?url:String = DEFAULT_SERVER_URL, ?queueRequest:Bool = true, ?httpRequest:Http) 
 	{
 		id = DEFAULT_ID;
 		this.client = client;
@@ -103,7 +98,7 @@ class HTTPClient implements ITestResultClient
 		this.queueRequest = queueRequest;
 		this.httpRequest = httpRequest;
 	}
-	
+
 	/**
 	 * Called when a test passes.
 	 *  
@@ -113,7 +108,7 @@ class HTTPClient implements ITestResultClient
 	{
 		client.addPass(result);
 	}
-	
+
 	/**
 	 * Called when a test fails.
 	 *  
@@ -123,7 +118,7 @@ class HTTPClient implements ITestResultClient
 	{
 		client.addFail(result);
 	}
-	
+
 	/**
 	 * Called when a test triggers an unexpected exception.
 	 *  
@@ -133,7 +128,7 @@ class HTTPClient implements ITestResultClient
 	{
 		client.addError(result);
 	}
-	
+
 	/**
 	 * Called when all tests are complete.
 	 *  
@@ -150,7 +145,7 @@ class HTTPClient implements ITestResultClient
 		sendResult(result);
 		return result;
 	}
-	
+
 	private function sendResult(result):Void
 	{
 		if (httpRequest == null) 
@@ -161,21 +156,22 @@ class HTTPClient implements ITestResultClient
 			httpRequest.onData = onData;
 			httpRequest.onError = onError;
 		}
-		
+
 		httpRequest.setParameter("data", result);
-		
+
 		if (queueRequest)
 		{
 			queue.unshift(httpRequest);
-			Timer.delay(dispatchNextRequest, 50); // simple invalidation to capture multiple reqests
+			dispatchNextRequest();
+			//Timer.delay(dispatchNextRequest, 1); // simple invalidation to capture multiple reqests
 		}
 		else httpRequest.request(true);
 	}
-	
+
 	private function platform():String
 	{
-		#if flash9 return "flash9";
-		#elseif flash return "flash";
+		#if (flash8 || flash7 || flash6) return "as2";
+		#elseif flash return "as3";
 		#elseif js return "js";
 		#elseif neko return "neko";
 		#elseif cpp return "cpp";
@@ -183,7 +179,7 @@ class HTTPClient implements ITestResultClient
 		#end
 		return "unknown";
 	}
-	
+
 	private function onData(data:String):Void
 	{
 		if (queueRequest)
@@ -193,7 +189,7 @@ class HTTPClient implements ITestResultClient
 		}
 		if (completionHandler != null) completionHandler(this); 
 	}
-	
+
 	private function onError(msg:String):Void
 	{
 //		trace("\n                                        HTTPClient.onError: " + msg);	
@@ -204,14 +200,13 @@ class HTTPClient implements ITestResultClient
 		}
 		if (completionHandler != null) completionHandler(this); 
 	}
-	
+
 	private static function dispatchNextRequest():Void
 	{
 		if (responsePending || queue.length == 0) return;
 		responsePending = true;
-		
+
 		var httpRequest:Http = queue.pop();
-		httpRequest.setHeader(REQUEST_ID_KEY, "" + queue.length);
 		httpRequest.request(true);
 	}
 }

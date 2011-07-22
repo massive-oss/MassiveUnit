@@ -66,8 +66,6 @@ class TestMain
 		{
 			#if flash
 				flash.external.ExternalInterface.call("testResult", successful);	
-			#elseif flash9
-				flash.external.ExternalInterface.call("testResult", successful);	
 			#elseif js
 				js.Lib.eval("testResult(" + successful + ");");
 			#elseif neko

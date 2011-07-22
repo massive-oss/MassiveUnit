@@ -15,7 +15,7 @@
 -cmd cd ../
 
 #run tests
--cmd haxe test.hxml
+#-cmd haxe test.hxml
 
 #package up and install over current version
 -cmd haxelib run mlib install

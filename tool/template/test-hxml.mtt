@@ -4,7 +4,8 @@
 #-D testDebug
 -lib munit
 -lib mlib
--swf9 ::bin::/main_test.swf
+-swf-version 9
+-swf ::bin::/as3_test.swf
 
 --next
 
@@ -13,7 +14,8 @@
 -cp ::src::
 -lib munit
 -lib mlib
--swf ::bin::/main8_test.swf
+-swf-version 8
+-swf ::bin::/as2_test.swf
 
 --next
 
@@ -22,7 +24,7 @@
 -cp ::src::
 -lib munit
 -lib mlib
--js ::bin::/main_test.js
+-js ::bin::/js_test.js
 
 --next
 
@@ -31,4 +33,4 @@
 -cp ::src::
 -lib munit
 -lib mlib
--neko ::bin::/main_test.n
+-neko ::bin::/neko_test.n

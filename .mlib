@@ -5,8 +5,7 @@
 		<resource type="license" path="resource/license.mtt" />
 		<resource path="examples" dest="examples" />
 		<resource path="tool/resource/" dest="resource/" />
+		<resource path="bin/tests-complete.js" dest="resource/" />
 		<resource path="bin/index.n" dest="" />
-		<resource path="bin/loader-js.js" dest="resource/" />
-		<resource path="bin/loader-swf.js" dest="resource/" />
 	</resources>	
 </mlib>

@@ -55,8 +55,8 @@ class TestCommand extends MUnitCommand
 			targetTypes.push(TargetType.swf);
 			targetTypes.push(TargetType.swf9);
 		}
-		if(console.getOption("swf8") == "true")	targetTypes.push(TargetType.swf);
-		if(console.getOption("swf9") == "true") targetTypes.push(TargetType.swf9);
+		if(console.getOption("as2") == "true")	targetTypes.push(TargetType.swf);
+		if(console.getOption("as3") == "true") targetTypes.push(TargetType.swf9);
 		if(console.getOption("js") == "true") targetTypes.push(TargetType.js);
 		if(console.getOption("neko") == "true") targetTypes.push(TargetType.neko);
 		
@@ -64,7 +64,6 @@ class TestCommand extends MUnitCommand
 		{
 			targetTypes = config.targetTypes.concat([]);
 		}
-		
 
 		//hxml
 		var hxmlPath =  console.getNextArg();
@@ -92,8 +91,6 @@ class TestCommand extends MUnitCommand
 			}
 		}
 		
-		
-		
 		//prevent generation from occuring
 		var noGen:String  = console.getOption("-nogen");
 		
@@ -109,21 +106,15 @@ class TestCommand extends MUnitCommand
 		{
 			addPostRequisite(RunCommand);
 		}
-
-
 	}
 
 	override public function execute():Void
 	{
-		
-		var contents:String = hxml.readString();
-		
+		var contents:String = hxml.readString();		
 		var lines:Array<String> = contents.split("\n");
+		var target:Target = new Target();
 		
 		targets = [];
-	
-	
-		var target:Target = new Target();
 		
 		for(line in lines)
 		{
@@ -142,7 +133,8 @@ class TestCommand extends MUnitCommand
 				{
 					var s:String = Std.string(type);
 				
-					if(line.indexOf("-" + s) == 0 && target.type == null)
+					var targetMatcher = new EReg("^-" + s + "\\s+", "");
+					if(targetMatcher.match(line)/*line.indexOf("-" + s) == 0*/ && target.type == null)
 					{
 						target.type = type;
 						target.file = File.create(line.substr(s.length + 2), File.current);
@@ -150,13 +142,8 @@ class TestCommand extends MUnitCommand
 				}
 			}
 		}
-		
-		
 
 		targets.push(target);
-		
-		
-		
 		
 		for(target in targets)
 		{
@@ -171,7 +158,4 @@ class TestCommand extends MUnitCommand
 		
 		Log.debug("All targets compiled successfully");
 	}
-	
-	
-
 }
