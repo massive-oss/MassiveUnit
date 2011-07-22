@@ -243,10 +243,11 @@ class RunCommand extends MUnitCommand
 		var frameCols = "";
 		var frames = "";
 		var frameTitles = "";
+		var colCount = Math.round(100 / pageNames.length);
 		for (pageName in pageNames)
 		{
 			frameCols += "*,";
-			frameTitles += '<td>' + pageName.substr(0, pageName.indexOf('_')).toUpperCase() + '</td>';
+			frameTitles += '<td width="' + colCount + '%">' + pageName.substr(0, pageName.indexOf('_')).toUpperCase() + '</td>';
 			frames += '<frame src="' + pageName + '" scrolling="no" NORESIZE/>\n';
 		}
 		

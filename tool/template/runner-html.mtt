@@ -25,11 +25,11 @@
 		</script>
 		
 		<style type="text/css">
-			html, body, div { margin:0; padding:0; height:100%; background:#eee; }
+			html, body, div { margin:0; padding:0; height:100%; background:#eee; overflow:hidden; }
 		</style>
 		
 	</head>
-	<frameset rows="50,*" border="1" bordercolor="black">
+	<frameset rows="83,*" border="1" bordercolor="#ccc">
 		<frame src="target_headers.html"/>
 		<frameset cols="::frameCols::" border="1">
 			::frames::
