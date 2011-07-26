@@ -320,11 +320,15 @@ class RunCommand extends MUnitCommand
 		
 		// Note: Tried using FileSystem.stat mod date to see changes in results.txt but 
 		//       writes are too quick so using line count instead.
-		var fileName = tmpDir.nativePath + "/results.txt";
+		var fileName = tmpDir.nativePath + "results.txt";
 		var file = null;
 		var lineCount = 0;
 		do
 		{
+			
+			if (Thread.readMessage(false) == "quit")
+				break;
+			
 			if (!neko.FileSystem.exists(fileName))
 				continue;
 			
@@ -369,9 +373,6 @@ class RunCommand extends MUnitCommand
 					break;
 				}
 			}
-			
-			if (Thread.readMessage(false) == "quit")
-				break;
 		}
 		while (true);
 		

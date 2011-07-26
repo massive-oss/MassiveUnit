@@ -55,10 +55,15 @@ class TestCommand extends MUnitCommand
 			targetTypes.push(TargetType.swf);
 			targetTypes.push(TargetType.swf9);
 		}
-		if(console.getOption("as2") == "true")	targetTypes.push(TargetType.swf);
-		if(console.getOption("as3") == "true") targetTypes.push(TargetType.swf9);
-		if(console.getOption("js") == "true") targetTypes.push(TargetType.js);
-		if(console.getOption("neko") == "true") targetTypes.push(TargetType.neko);
+
+		if(console.getOption("as2") == "true")
+			targetTypes.push(TargetType.swf);
+		if(console.getOption("as3") == "true") 
+			targetTypes.push(TargetType.swf9);
+		if(console.getOption("js") == "true") 
+			targetTypes.push(TargetType.js);
+		if(console.getOption("neko") == "true") 
+			targetTypes.push(TargetType.neko);
 		
 		if(targetTypes.length == 0)
 		{
@@ -132,9 +137,11 @@ class TestCommand extends MUnitCommand
 				for(type in targetTypes)
 				{
 					var s:String = Std.string(type);
+					if (s == "swf9") // swf9 is deprecated use -swf-version 9 instead
+						s = "swf";
 				
 					var targetMatcher = new EReg("^-" + s + "\\s+", "");
-					if(targetMatcher.match(line)/*line.indexOf("-" + s) == 0*/ && target.type == null)
+					if(targetMatcher.match(line) && target.type == null)
 					{
 						target.type = type;
 						target.file = File.create(line.substr(s.length + 2), File.current);
@@ -147,9 +154,11 @@ class TestCommand extends MUnitCommand
 		
 		for(target in targets)
 		{
-			if(target.type == null && targetTypes.length < config.targetTypes.length ) continue;
+			if(target.type == null && targetTypes.length < config.targetTypes.length ) 
+				continue;
 			
 			Log.debug("Compile " + target.type + " -- " + target);
+
 			if(HaxeWrapper.compile(target.hxml) > 0)
 			{
 				error("Error compiling hxml for " + target.type + "\n" + target);

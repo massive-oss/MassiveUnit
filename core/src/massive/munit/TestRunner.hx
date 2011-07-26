@@ -26,8 +26,6 @@
 * or implied, of Massive Interactive.
 ****/
 
-
-
 package massive.munit;
 
 import haxe.PosInfos;
