@@ -1,4 +1,4 @@
-v0.9.0.3 - 27.7.2011
+v0.9.1.2 - 27.7.2011
 
 - Updated test runner tool to run multiple target tests in parallel instead of sequentially (good speed boost).
 - Local result server is now opened once per test run instead of for each target in test run.
