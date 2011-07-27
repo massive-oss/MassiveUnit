@@ -1,0 +1,8 @@
+v0.9.0.3 - 27.7.2011
+
+- Updated test runner tool to run multiple target tests in parallel instead of sequentially (good speed boost).
+- Local result server is now opened once per test run instead of for each target in test run.
+- Fix major bug where local results server could crash when receiving result string.
+- Browser based tests are now presented in multi-framed browser page.
+- Reversed option to close browser on completion so default is to keep it open now. -kill-browser to close it (Chrome only due to javascript restrictions)
+- Remove -swf8 and -swf9 options and replace with -as2 and -as3. Sorry if this causes any headaches but wanted to future proof this. -as2 (ActionScript 2) covers Flash v6-v8, -as3 (ActoinScript 3) for anything greater. Can still use -swf option to run both as2 and as3 tests.

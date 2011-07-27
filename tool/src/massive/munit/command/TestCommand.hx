@@ -40,6 +40,7 @@ class TestCommand extends MUnitCommand
 	private var hxml:File;
 	private var targets:Array<Target>;
 	private var targetTypes:Array<TargetType>;
+	private var testsAborted:Bool;
 
 	public function new():Void
 	{
@@ -95,6 +96,12 @@ class TestCommand extends MUnitCommand
 				error("Cannot locate hxml file: " + hxmlPath);
 			}
 		}
+
+		if (invalidHxmlFormat())
+		{
+			testsAborted = true;
+			return;
+		}
 		
 		//prevent generation from occuring
 		var noGen:String  = console.getOption("-nogen");
@@ -113,8 +120,29 @@ class TestCommand extends MUnitCommand
 		}
 	}
 
+	// In v0.9.0.3 we made a significant change to the required format of test.hxml. 
+	// This ensures everything is in place
+	function invalidHxmlFormat():Bool
+	{
+		var contents:String = hxml.readString();		
+		var lines:Array<String> = contents.split("\n");
+		var invalid = false;
+		for (line in lines)
+		{
+			if (line.indexOf("main_test.") != -1)
+			{
+				neko.Lib.println("Error: The naming convention main_test.<type> is deprecated. Please update your test.hxml file to generate the file(s) 'as2_test.swf', 'as3_test.swf', 'js_test.js', 'neko_test.n' respectively. [Cause: " + line + "]");
+				invalid = true;
+			}
+		}
+		return invalid;
+	}
+
 	override public function execute():Void
 	{
+		if (testsAborted)
+			return;
+		
 		var contents:String = hxml.readString();		
 		var lines:Array<String> = contents.split("\n");
 		var target:Target = new Target();
@@ -123,6 +151,7 @@ class TestCommand extends MUnitCommand
 		
 		for(line in lines)
 		{
+
 			if(line.indexOf("--next") == 0)
 			{
 				targets.push(target);
