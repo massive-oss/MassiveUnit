@@ -323,6 +323,7 @@ class RunCommand extends MUnitCommand
 		var fileName = tmpDir.nativePath + "results.txt";
 		var file = null;
 		var lineCount = 0;
+		var platformMap = new Hash<Bool>(); 
 		do
 		{
 			
@@ -354,6 +355,7 @@ class RunCommand extends MUnitCommand
 				while (i < lineCount)
 				{
 					var line = lines[i++];
+
 					if (line != ServerMain.END)
 					{
 						if (checkIfTestPassed(line))
@@ -363,7 +365,14 @@ class RunCommand extends MUnitCommand
 						else
 							testErrorCount++;
 						
-						print(line);
+						var parts = line.split("under ");
+						if (parts.length > 1)
+						{
+							var platform = parts[1].split(" ")[0];
+							platformMap.set(platform, true);
+
+							print(line);
+						}
 					}
 				}
 								
@@ -375,9 +384,11 @@ class RunCommand extends MUnitCommand
 			}
 		}
 		while (true);
+
+		var platformCount = Lambda.count(platformMap);
 		
 		print("------------------------------");
-		print("PLATFORMS TESTED: " + lineCount + ", PASSED: " + testPassCount + ", FAILED: " + testFailCount + ", ERRORS: " + testErrorCount + ", TIME: " + MathUtil.round(Sys.time() - startTime, 5));
+		print("PLATFORMS TESTED: " + platformCount + ", PASSED: " + testPassCount + ", FAILED: " + testFailCount + ", ERRORS: " + testErrorCount + ", TIME: " + MathUtil.round(Sys.time() - startTime, 5));
 		mainThread.sendMessage("done");
 	}
 	
