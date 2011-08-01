@@ -86,9 +86,16 @@ class GenerateCommand extends MUnitCommand
 		else
 		{
 			dir = File.create(testSrcPath, console.dir);
-			if(!dir.exists)
+			if (!dir.exists)
 			{
-				error("test src directory does not exist (" + testSrcPath + ")");
+				try
+				{
+					dir.createDirectory();
+				}
+				catch(e:Dynamic)
+				{
+					error("Could not create test directory: " + e);
+				}
 			}
 		}
 		
