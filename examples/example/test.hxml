@@ -4,7 +4,8 @@
 -cp src
 -cp test
 -lib munit
--swf9 bin/as3_test.swf
+-swf-version 9
+-swf bin/as3_test.swf
 
 --next
 -main TestMain

@@ -56,7 +56,7 @@ class HTTPClient implements ITestResultClient
 	public inline static var PLATFORM_HEADER_KEY:String = "munit-platformId";
 
 	/* Global sequental (FIFO) http request queue */
-	private static var queue:Array<Http> = [];
+	private static var queue:Array<URLRequest> = [];
 	private static var responsePending:Bool = false;
 
 	/**
@@ -80,7 +80,7 @@ class HTTPClient implements ITestResultClient
 
 	private var client:ITestResultClient;
 	private var url:String;
-	private var httpRequest:Http;
+	private var request:URLRequest;
 	private var queueRequest:Bool;
 
 	/**
@@ -90,13 +90,12 @@ class HTTPClient implements ITestResultClient
 	 * @param	?queueRequest		[optional] whether to add http requests to a global queue. Default is true.
 	 * @param	?httpRequest		[optional] a custom http request to use to dispatch the result.
 	 */
-	public function new(client:ITestResultClient, ?url:String = DEFAULT_SERVER_URL, ?queueRequest:Bool = true, ?httpRequest:Http) 
+	public function new(client:ITestResultClient, ?url:String = DEFAULT_SERVER_URL, ?queueRequest:Bool = true) 
 	{
 		id = DEFAULT_ID;
 		this.client = client;
 		this.url = url;
 		this.queueRequest = queueRequest;
-		this.httpRequest = httpRequest;
 	}
 
 	/**
@@ -148,24 +147,22 @@ class HTTPClient implements ITestResultClient
 
 	private function sendResult(result):Void
 	{
-		if (httpRequest == null) 
-		{
-			httpRequest = new Http(url);
-			httpRequest.setHeader(CLIENT_HEADER_KEY, client.id);
-			httpRequest.setHeader(PLATFORM_HEADER_KEY, platform());
-			httpRequest.onData = onData;
-			httpRequest.onError = onError;
-		}
-
-		httpRequest.setParameter("data", result);
+		request = new URLRequest(url);
+		request.setHeader(CLIENT_HEADER_KEY, client.id);
+		request.setHeader(PLATFORM_HEADER_KEY, platform());
+		request.onData = onData;
+		request.onError = onError;
+		request.data = result;
 
 		if (queueRequest)
 		{
-			queue.unshift(httpRequest);
+			queue.unshift(request);
 			dispatchNextRequest();
-			//Timer.delay(dispatchNextRequest, 1); // simple invalidation to capture multiple reqests
 		}
-		else httpRequest.request(true);
+		else 
+		{
+			request.send();
+		}
 	}
 
 	private function platform():String
@@ -187,26 +184,127 @@ class HTTPClient implements ITestResultClient
 			responsePending = false;
 			dispatchNextRequest();
 		}
-		if (completionHandler != null) completionHandler(this); 
+		if (completionHandler != null)
+			completionHandler(this); 
 	}
 
 	private function onError(msg:String):Void
 	{
-//		trace("\n                                        HTTPClient.onError: " + msg);	
 		if (queueRequest)
 		{
 			responsePending = false;
 			dispatchNextRequest();
 		}
-		if (completionHandler != null) completionHandler(this); 
+		if (completionHandler != null) 
+			completionHandler(this); 
 	}
 
 	private static function dispatchNextRequest():Void
 	{
-		if (responsePending || queue.length == 0) return;
+		if (responsePending || queue.length == 0) 
+			return;
+		
 		responsePending = true;
 
-		var httpRequest:Http = queue.pop();
-		httpRequest.request(true);
+		var request = queue.pop();
+		request.send();
 	}
+}
+
+// TODO This is a simple wrapper so we can post data. Should get propper one into mlib.
+
+class URLRequest
+{
+	public var onData:Dynamic -> Void;
+	public var onError:Dynamic ->Void;
+	public var data:Dynamic;
+
+	var url:String;
+	var headers:Hash<String>;
+
+	#if (js || neko || cpp)
+		public var client:Http;
+	#elseif flash9
+		public var client:flash.net.URLRequest;
+	#elseif flash
+		public var client:flash.LoadVars;
+	#end
+
+
+	public function new(url:String)
+	{
+		this.url = url;
+		createClient(url);
+		setHeader("Content-Type", "text/plain");
+	}
+
+	function createClient(url:String)
+	{
+		#if (js || neko || cpp)
+			client = new Http(url);
+		#elseif flash9
+			client = new flash.net.URLRequest(url);
+		#elseif flash			
+			client = new flash.LoadVars();
+		#end		
+	}
+
+	public function setHeader(name:String, value:String)
+	{
+		#if (js || neko || cpp)
+			client.setHeader(name, value);
+		#elseif flash9
+			client.requestHeaders.push(new flash.net.URLRequestHeader(name, value));
+		#elseif flash
+			client.addRequestHeader(name, value);
+		#end
+	}
+
+	public function send()
+	{
+		#if (js || neko || cpp)
+			client.onData = onData;
+			client.onError = onError;
+			#if js
+				client.setPostData(data);
+			#else
+				client.setParameter("data", data);
+			#end
+			client.request(true);
+		#elseif flash9
+			client.data = data;
+			client.method = "POST";
+			var loader = new flash.net.URLLoader();
+			loader.addEventListener(flash.events.Event.COMPLETE, internalOnData);
+			loader.addEventListener(flash.events.IOErrorEvent.IO_ERROR, internalOnError);
+
+			loader.load(client);
+		#elseif flash
+			var result = new flash.LoadVars();
+			result.onData = internalOnData;
+
+			client.data = data;
+			client.sendAndLoad(url, result, "POST");
+		#end		
+	}
+
+	#if flash9
+		function internalOnData(event:flash.events.Event) 
+		{
+			onData(event.target.data);
+		}
+
+		function internalOnError(event:flash.events.Event)
+		{
+			onError("Invalid Server Response.");
+		}
+	#elseif flash
+		function internalOnData(value:String)
+		{
+			if (value == null)
+				onError("Invalid Server Response.");
+			else
+				onData(value);
+		}
+	#end
 }

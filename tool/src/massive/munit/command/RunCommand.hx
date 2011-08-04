@@ -47,6 +47,8 @@ import massive.munit.util.MathUtil;
 
 class RunCommand extends MUnitCommand
 {	
+	public static inline var DEFAULT_SERVER_TIMEOUT_SEC:Int = 30;
+
 	private var files:Array<File>;
 	
 	private var browser:String;
@@ -66,11 +68,15 @@ class RunCommand extends MUnitCommand
 	private var nekoFile:File;
 	private var hasBrowserTests:Bool;
 	private var hasNekoTests:Bool;
+	private var serverTimeoutTimeSec:Int;
 	
 	public function new():Void
 	{
 		super();
 		killBrowser = false;
+
+		// TODO: Configure this through args to munit. ms 4/8/11
+		serverTimeoutTimeSec = DEFAULT_SERVER_TIMEOUT_SEC;
 	}
 	
 	override public function initialise():Void
@@ -195,7 +201,7 @@ class RunCommand extends MUnitCommand
 		
 		Log.debug("report: " + reportDir);
 	}
-		
+
 	function checkForCustomBrowser()
 	{
 		reportRunnerDir = reportDir.resolveDirectory("test-runner");
@@ -285,10 +291,11 @@ class RunCommand extends MUnitCommand
 		
 		resultMonitor.sendMessage(Thread.current());
 		resultMonitor.sendMessage(serverProcess);
+		resultMonitor.sendMessage(serverTimeoutTimeSec);
 		
 		if (hasNekoTests)
 			launchNeko(nekoFile);
-		
+
 		if (hasBrowserTests)
 			launchFile(indexPage);
 		else
@@ -299,6 +306,10 @@ class RunCommand extends MUnitCommand
 		serverProcess.kill();
 
 //		var t = Sys.time();
+
+		if (reportTestDir.exists)
+			reportTestDir.deleteDirectoryContents();
+
 		tmpRunnerDir.deleteDirectory();
 		tmpDir.copyTo(reportTestDir);
 		tmpDir.deleteDirectory(true);
@@ -311,12 +322,18 @@ class RunCommand extends MUnitCommand
 	{
 		var mainThread = Thread.readMessage(true);
 		var serverProcess = Thread.readMessage(true);
+		var serverTimeoutTimeSec = Thread.readMessage(true);
 		var testRunCount = 0;
 		var testPassCount = 0;
 		var testFailCount = 0;
 		var testErrorCount = 0;
 		
 		var startTime = Sys.time();
+		var lastResultTime = startTime;
+		var serverHung = false;
+
+		if (serverTimeoutTimeSec == null || serverTimeoutTimeSec < 10)
+			serverTimeoutTimeSec = DEFAULT_SERVER_TIMEOUT_SEC;
 		
 		// Note: Tried using FileSystem.stat mod date to see changes in results.txt but 
 		//       writes are too quick so using line count instead.
@@ -326,7 +343,11 @@ class RunCommand extends MUnitCommand
 		var platformMap = new Hash<Bool>(); 
 		do
 		{
-			
+			if ((Sys.time() - lastResultTime) > serverTimeoutTimeSec)
+			{
+				serverHung = true;
+				break;
+			}
 			if (Thread.readMessage(false) == "quit")
 				break;
 			
@@ -352,6 +373,10 @@ class RunCommand extends MUnitCommand
 			{
 				var i = lineCount;
 				lineCount = lines.length;
+
+				if ( i < lineCount)
+					lastResultTime = Sys.time();
+				
 				while (i < lineCount)
 				{
 					var line = lines[i++];
@@ -385,10 +410,15 @@ class RunCommand extends MUnitCommand
 		}
 		while (true);
 
+
 		var platformCount = Lambda.count(platformMap);
 		
 		print("------------------------------");
 		print("PLATFORMS TESTED: " + platformCount + ", PASSED: " + testPassCount + ", FAILED: " + testFailCount + ", ERRORS: " + testErrorCount + ", TIME: " + MathUtil.round(Sys.time() - startTime, 5));
+
+		if (serverHung)
+			print("ERROR: Local results server appeared to hang so test reporting was cancelled.");
+
 		mainThread.sendMessage("done");
 	}
 	
@@ -457,7 +487,7 @@ class RunCommand extends MUnitCommand
 		parameters.push(reportRunnerFile.nativePath);
 
 		neko.Lib.println(parameters.join(" "));
-		
+
 		var exitCode:Int = neko.Sys.command(parameters.join(" "));
 		if (exitCode > 0)
 			neko.Lib.println("Error running " + file);

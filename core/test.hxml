@@ -3,8 +3,8 @@
 -cp test
 -cp src
 -lib mlib
--swf9 ../bin/test/core/munit_test.swf
-
+-swf ../bin/test/core/as3_test.swf
+-swf-version 9
 --next
 
 #Flash 8
@@ -12,7 +12,8 @@
 -cp test
 -cp src
 -lib mlib
--swf ../bin/test/core/munit8_test.swf
+-swf-version 8
+-swf ../bin/test/core/as2_test.swf
 
 --next
 
@@ -21,7 +22,7 @@
 -cp test
 -cp src
 -lib mlib
--js ../bin/test/core/munit_test.js
+-js ../bin/test/core/js_test.js
 
 --next
 
@@ -30,4 +31,4 @@
 -cp test
 -cp src
 -lib mlib
--neko ../bin/test/core/munit_test.n
+-neko ../bin/test/core/neko_test.n

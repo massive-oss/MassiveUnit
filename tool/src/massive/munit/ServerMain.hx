@@ -53,7 +53,16 @@ class ServerMain
 
 	public function new():Void
 	{
-		processData();
+		try 
+		{
+			processData();
+		}
+		catch(e:Dynamic)
+		{
+			neko.Lib.print("Error: Server terminated with fatal error. \n");
+			recordResult(END + "\n");
+			neko.Sys.exit(-1);
+		}
 	}
 		
 	private function processData():Void
@@ -74,11 +83,14 @@ class ServerMain
 			return;
 		
 		var hash:Hash<String> = neko.Web.getParams();
-		var data:String = hash.get("data"); // gets variable 'data' from posted data
+		var data:String = hash.get("data"); // gets variable 'data' from posted data (as2 LoadVars)
+
+		if (data == null)
+			data = neko.Web.getPostData();
 
 		if (data == null)
 		{
-			neko.Lib.print("Error: Invalid content sent to server: \n" + hash);
+			neko.Lib.print("Error: Invalid content sent to server: \n" + data);
 			recordResult(END + "\n");
 			neko.Sys.exit(-1);
 		}
