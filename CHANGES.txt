@@ -1,3 +1,12 @@
+v0.9.1.3 - 18.8.2011
+
+- Fixed win bug where spaces in path to neko test file would cause file not to be found.
+- Updated munit config to generate template test.hxml file if one doesn't exist.
+- Gen command now creates test directory if one doesn't exist.
+- Update command line runner help files.
+- Made sure HTTPClient POSTs reports across all supported platforms.
+- Still open issue of nekoserver hanging. See http://lists.motion-twin.com/pipermail/neko/2011-August/002913.html
+
 v0.9.1.2 - 27.7.2011
 
 - Updated test runner tool to run multiple target tests in parallel instead of sequentially (good speed boost).
