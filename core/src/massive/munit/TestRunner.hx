@@ -277,7 +277,14 @@ class TestRunner implements IAsyncDelegateObserver
 				{
 					throw new MissingAsyncDelegateException("No AsyncDelegate was created in async test at " + result.location, null);
 				}
+				// FIXME: Lift this restriction on asserting in async test host.
+				//        Issues around asserts being caught and cancelling async test.
+		        //        ms 3/12/10
 
+		        if (Assert.assertionCount > assertionCount)
+		        {
+			        throw new AssertionException("Assertion(s) were made before async test returned at " + result.location, null);
+			    }
 				asyncPending = true;
 			}
 			else
@@ -298,6 +305,8 @@ class TestRunner implements IAsyncDelegateObserver
 		}
 		catch (ae:AssertionException)
 		{
+			trace("asyncPending? " + asyncPending + " " + activeHelper.current());
+
 			result.executionTime = Timer.stamp() - testStartTime;
 			result.failure = ae;
 			failCount++;
