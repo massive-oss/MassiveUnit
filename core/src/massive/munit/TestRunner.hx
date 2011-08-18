@@ -277,14 +277,7 @@ class TestRunner implements IAsyncDelegateObserver
 				{
 					throw new MissingAsyncDelegateException("No AsyncDelegate was created in async test at " + result.location, null);
 				}
-				// TODO: Look at this again.
-				//       Not sure about this one, should prob be able to assert in async
-				//       test. Just want to be able to capture if test is not actually async
-				//       ms 3/12/10
-				if (Assert.assertionCount > assertionCount)
-				{
-					throw new AssertionException("Assertion(s) were made before async test returned at " + result.location, null);
-				}
+
 				asyncPending = true;
 			}
 			else
