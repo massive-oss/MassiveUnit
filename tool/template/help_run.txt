@@ -15,10 +15,12 @@ Optional Arguments:
 Optional Parameters:
 
    -[platform]     : One or more specific target platforms to compile
-	                 Valid options are '-swf' (both swf8 and swf9)
-	                 '-swf8' '-swf9', '-js' and '-neko'
+	             Valid options are '-swf' (both -as2 and -as3) '-as2' 
+                     '-as3', '-js' and '-neko'. If not target(s) provided all found
+                     test.hxml will be run.
 
-   -browser nam	   : Optional value to launch a URL from a specific browser.
+   -browser name   : Optional value to launch a URL from a specific browser.
                      Uses the default browser if not set.
 
-   -keep-browser-alive: Don't automatically close browser once tests complete.
+   -kill-browser   : Attempt to close browser window / tab when web tests are complete.
+                     Works in Chrome but not other browsers due to JS security.
