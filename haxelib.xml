@@ -2,7 +2,12 @@
 	<user name="massive"/>
 	<tag v="cross" />
 	<description>MassiveUnit is a cross-platform haXe unit testing framework from Massive Interactive that utilises haxe metadata markup for test cases and includes tools for generating, compiling and running test cases from the command line.</description>
-	<version name="0.9.1.2">Switched sequential target testing to parallel testing for speed increase. Removed -swf8 and -swf9 options and replaced them with -as2 and -as3. Removed -keep-browser-alive option and replaced it with -kill-browser (Chrome only due to restrictions). Added new frame based test result viewer in browser.
-	</version>
+	<version name="0.9.1.3">1) Fixed win bug where spaces in path to neko test file would cause file not to be found.
+2) Updated munit config to generate template test.hxml file if one doesn't exist.
+3) Gen command now creates test directory if one doesn't exist.
+4) Update command line runner help files.
+5) Made sure HTTPClient POSTs reports across all supported platforms.
+6) Still open issue of nekoserver hanging. See http://lists.motion-twin.com/pipermail/neko/2011-August/002913.html
+    </version>
 	<depends name="mlib"/>
 </project>
