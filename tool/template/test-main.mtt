@@ -16,15 +16,15 @@ import js.Dom;
 
 class TestMain 
 {		
-	static function main(){	new TestMain();}
+	static function main(){	new TestMain(); }
 
 	public function new()
 	{
 		var suites = new Array<Class<massive.munit.TestSuite>>();
 		suites.push(TestSuite);
 
-		var runner:TestRunner = new TestRunner(new HTTPClient(new JUnitReportClient(), "::url::"));	
-		runner.addResultClient(new PrintClient());
+		var runner:TestRunner = new TestRunner(new PrintClient());
+		runner.addResultClient(new HTTPClient(new JUnitReportClient()));	
 		runner.completionHandler = completionHandler;
 		runner.run(suites);
 	}

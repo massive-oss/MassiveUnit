@@ -29,6 +29,7 @@ package massive.munit.command;
 
 import massive.neko.io.File;
 import massive.neko.io.FileSys;
+import massive.haxe.util.TemplateUtil;
 
 class ConfigCommand extends MUnitCommand
 {
@@ -109,12 +110,22 @@ class ConfigCommand extends MUnitCommand
 		
 		arg = console.getNextArg("hxml file (defaults to test.hxml)");
 		
-		if(arg == null) arg = "test.hxml";
+		if (arg == null) arg = "test.hxml";
 		
 		hxml = File.create(arg, config.dir);
 		
 		if(hxml == null) throw "invaid hxml path" + arg;
 		if(hxml.isDirectory) throw "hxml path is a directory " + arg;
+
+		if(!hxml.exists)
+		{
+			var src:String = src != null ? config.dir.getRelativePath(src) + "" : "";
+			var bin:String = bin != null ? config.dir.getRelativePath(bin) + "": "";
+
+			var content = TemplateUtil.getTemplate("test-hxml", {src:src, bin:bin});
+			hxml.writeString(content, true);
+		}
+
 	}
 
 	override public function execute():Void
