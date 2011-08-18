@@ -484,7 +484,7 @@ class RunCommand extends MUnitCommand
 		
 		var parameters:Array<String> = [];
 		parameters.push("neko");
-		parameters.push(reportRunnerFile.nativePath);
+		parameters.push('"' + reportRunnerFile.nativePath + '"');
 
 		neko.Lib.println(parameters.join(" "));
 
