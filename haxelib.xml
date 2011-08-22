@@ -2,7 +2,7 @@
 	<user name="massive"/>
 	<tag v="cross" />
 	<description>MassiveUnit is a cross-platform haXe unit testing framework from Massive Interactive that utilises haxe metadata markup for test cases and includes tools for generating, compiling and running test cases from the command line.</description>
-	<version name="0.9.1.3">1) Fixed win bug where spaces in path to neko test file would cause file not to be found.
+	<version name="0.9.1.4">Added haxelib docs to package (should appear on lib.haxe.org). Previous changes in 0.9.1.3: 1) Fixed win bug where spaces in path to neko test file would cause file not to be found.
 2) Updated munit config to generate template test.hxml file if one doesn't exist.
 3) Gen command now creates test directory if one doesn't exist.
 4) Update command line runner help files.

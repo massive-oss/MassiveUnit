@@ -27,3 +27,11 @@
 -cp src
 -lib mlib
 -neko ../bin/munit_all.n
+
+
+--next
+
+
+#xml docs
+-cmd haxe -xml ../bin/haxedoc.xml -cp src -lib mlib massive.munit.AllClasses
+
