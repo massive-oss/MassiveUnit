@@ -305,8 +305,6 @@ class TestRunner implements IAsyncDelegateObserver
 		}
 		catch (ae:AssertionException)
 		{
-			trace("asyncPending? " + asyncPending + " " + activeHelper.current());
-
 			result.executionTime = Timer.stamp() - testStartTime;
 			result.failure = ae;
 			failCount++;
