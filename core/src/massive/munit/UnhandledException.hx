@@ -29,6 +29,7 @@
 package massive.munit;
 import haxe.PosInfos;
 import massive.haxe.util.ReflectUtil;
+import haxe.Stack;
 
 /**
  * Exception thrown when a test triggers an exception in code which was not captured.
@@ -42,7 +43,27 @@ class UnhandledException extends MUnitException
 	 */
 	public function new(message:String, info:PosInfos) 
 	{
-		super(message, info);
+		super(message + getStackTrace(), info);
 		type = ReflectUtil.here().className;
+	}
+
+	function getStackTrace():String
+	{
+		var s = "";
+		var stack:Array<haxe.StackItem> = Stack.exceptionStack();
+		while (stack.length > 0)
+		{
+			switch(stack.shift()) 
+			{
+         		case FilePos(item, file, line): s += "\n" + file + " (" + line + ")";
+         		case Module(m):
+         		case Method(classname, method):
+         		case Lambda(v):
+         		case CFunction:
+            }
+        }
+        if (s != "")
+        	s += "\n";
+        return s;
 	}
 }
