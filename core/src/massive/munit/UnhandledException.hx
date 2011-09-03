@@ -53,6 +53,8 @@ class UnhandledException extends MUnitException
 		var stackTrace = getStackTrace(source);
 		if (stackTrace == "")
 			stackTrace = " at " + testLocation;
+		else
+			stackTrace = " " + stackTrace.substr(1); // remove first "\t"
 		return stackTrace;
 	}
 	
@@ -66,7 +68,9 @@ class UnhandledException extends MUnitException
 				lines.shift(); // remove repeated error name
 				s = lines.join("\n");
 			}
-		#else
+		#end
+		if (s == "")
+		{
 			var stack:Array<haxe.StackItem> = Stack.exceptionStack();
 			while (stack.length > 0)
 			{
@@ -79,7 +83,7 @@ class UnhandledException extends MUnitException
 	         		case CFunction:
 	            }
 	        }
-        #end
+		}
         return s;
 	}
 }
