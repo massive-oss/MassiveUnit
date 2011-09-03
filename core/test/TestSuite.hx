@@ -11,7 +11,6 @@ import massive.munit.TestClassHelperTest;
 import massive.munit.TestResultTest;
 import massive.munit.TestRunnerTest;
 import massive.munit.TestSuiteTest;
-import massive.munit.UnhandledExceptionTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -36,6 +35,5 @@ class TestSuite extends massive.munit.TestSuite
 		add(massive.munit.TestResultTest);
 		add(massive.munit.TestRunnerTest);
 		add(massive.munit.TestSuiteTest);
-		add(massive.munit.UnhandledExceptionTest);
 	}
 }

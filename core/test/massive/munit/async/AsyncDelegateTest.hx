@@ -68,7 +68,7 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 		Assert.areEqual(200, delegate.timeoutDelay);
 	}
 	
-	@Test("Async")
+	@AsyncTest
 	public function testTimeout(factory:AsyncFactory):Void
 	{
 		handler = factory.createHandler(this, onTestTimeout);
@@ -91,7 +91,7 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 	
 	//-----------------------------
 	
-	@Test("Async")
+	@AsyncTest
 	public function testHandler(factory:AsyncFactory):Void
 	{
 		handler = factory.createHandler(this, onTestHandler);

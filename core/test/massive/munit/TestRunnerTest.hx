@@ -76,7 +76,7 @@ class TestRunnerTest
 		Assert.areEqual(2, runner.clientCount);
 	}
 	
-	@Test("Async")
+	@AsyncTest
 	public function testRun(factory:AsyncFactory):Void
 	{
 		// save assertion count in this runner instance. Ugly.
@@ -105,7 +105,7 @@ class TestRunnerTest
 	}
 	
 	
-	@Test("Async")
+	@AsyncTest
 	public function testDebug(factory:AsyncFactory):Void
 	{
 		// save assertion count in this runner instance. Ugly.

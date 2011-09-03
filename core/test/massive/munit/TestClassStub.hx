@@ -66,7 +66,7 @@ class TestClassStub
 		Assert.isTrue(false);
 	}
 	
-	@Test("Async")
+	@AsyncTest
 	public function exampleTestTwo(factory:AsyncFactory):Void
 	{
 		var handler:Dynamic = factory.createHandler(this, onExampleTestTwo, 200);
