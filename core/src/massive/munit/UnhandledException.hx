@@ -39,31 +39,47 @@ import haxe.Stack;
 class UnhandledException extends MUnitException
 {
 	/**
-	 * {@inheritDoc}
+	 * @param source	exception which went unhandled
+     * @param location 	test location which triggered exception
 	 */
-	public function new(message:String, info:PosInfos) 
+	public function new(source:Dynamic, testLocation:String) 
 	{
-		super(message + getStackTrace(), info);
+		super(source.toString() + formatLocation(source, testLocation), null);
 		type = ReflectUtil.here().className;
 	}
-
-	function getStackTrace():String
+	
+	function formatLocation(source:Dynamic, testLocation:String):String
+	{
+		var stackTrace = getStackTrace(source);
+		if (stackTrace == "")
+			stackTrace = " at " + testLocation;
+		return stackTrace;
+	}
+	
+	function getStackTrace(source:Dynamic):String
 	{
 		var s = "";
-		var stack:Array<haxe.StackItem> = Stack.exceptionStack();
-		while (stack.length > 0)
-		{
-			switch(stack.shift()) 
+		#if flash9
+			if (Std.is(source, flash.errors.Error))
 			{
-         		case FilePos(item, file, line): s += "\n" + file + " (" + line + ")";
-         		case Module(m):
-         		case Method(classname, method):
-         		case Lambda(v):
-         		case CFunction:
-            }
-        }
-        if (s != "")
-        	s += "\n";
+				var lines = source.getStackTrace().split("\n");
+				lines.shift(); // remove repeated error name
+				s = lines.join("\n");
+			}
+		#else
+			var stack:Array<haxe.StackItem> = Stack.exceptionStack();
+			while (stack.length > 0)
+			{
+				switch(stack.shift()) 
+				{
+	         		case FilePos(item, file, line): s += "\tat " + file + " (" + line + ")\n";
+	         		case Module(m):
+	         		case Method(classname, method): s += "\tat " + classname + "#" + method + "\n";
+	         		case Lambda(v):
+	         		case CFunction:
+	            }
+	        }
+        #end
         return s;
 	}
 }

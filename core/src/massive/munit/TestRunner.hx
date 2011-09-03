@@ -314,14 +314,8 @@ class TestRunner implements IAsyncDelegateObserver
 		{
 			result.executionTime = Timer.stamp() - testStartTime;
 			if (!Std.is(e, MUnitException))
-			{
-				// Tried using stack trace (both flash9 and haxe.Stack.exceptionStack()
-				// to get the line number of where the exception originated but neither
-				// provide this information. Just going with providing the originating 
-				// class + function.
-				// mike 8/12/10
-				e = new UnhandledException(e.toString() + " at " + result.location, null);
-			}
+				e = new UnhandledException(e, result.location);
+			
 			result.error = e;
 			errorCount++;
 			for (c in clients) c.addError(result);
