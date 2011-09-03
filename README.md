@@ -30,7 +30,7 @@ Test cases use haXe metadata to simplify creating tests (and avoid needing to ex
 
 Unlike the default haxe unit test classes, MassiveUnit supports asynchronous testing
 
-	@Test("Async")
+	@AsyncTest
 	public function testAsyncExample(factory:AsyncFactory):Void
 	{
 		...
