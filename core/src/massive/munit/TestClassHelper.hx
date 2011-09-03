@@ -69,14 +69,21 @@ class TestClassHelper
 	 * Meta tag marking test method in class.
 	 */
 	public inline static var META_TAG_TEST:String = "Test";
+	
+	/**
+     * Meta tag marking asynchronous test method in class.
+     */
+	public inline static var META_TAG_ASYNC_TEST:String = "AsyncTest";
 		
 	/**
 	 * Param for META_TAG_TEST, marking test method in class as asynchronous.
+     *
+     * @deprecated As of 0.9.1.4, use @AsyncTest instead.
 	 */
 	public inline static var META_PARAM_ASYNC_TEST:String = "Async";
 	
 	/**
-	 * Meta tag marking test method in class.
+	 * Meta tag marking test method in class for execution in debug mode only.
 	 */
 	public inline static var META_TAG_TEST_DEBUG:String = "TestDebug";
 	
@@ -88,6 +95,7 @@ class TestClassHelper
 									META_TAG_BEFORE,
 									META_TAG_AFTER,
 									META_TAG_TEST,
+									META_TAG_ASYNC_TEST,
 									META_TAG_TEST_DEBUG];
 
 	/**
@@ -180,26 +188,70 @@ class TestClassHelper
 	}
 	
 	private function parse(type:Class<Dynamic>):Void
-	{		
+	{
 		test = Type.createEmptyInstance(type);
-		var fields:Array<String> = Type.getInstanceFields(type);
-		var meta:Dynamic = Meta.getFields(type);
 		
-		if (meta == null) return;
+		var inherintanceChain = getInheritanceChain(type);
+		var fieldMeta = collateFieldMeta(inherintanceChain);
+		scanForTests(fieldMeta);
+	}
 		
-		for (field in fields)
+	function getInheritanceChain(clazz:Class<Dynamic>):Array<Class<Dynamic>>
+	{
+		var inherintanceChain = [clazz];
+		while ((clazz = Type.getSuperClass(clazz)) != null)
+			inherintanceChain.push(clazz);
+		return inherintanceChain;
+	}
+	
+	function collateFieldMeta(inherintanceChain:Array<Class<Dynamic>>):Dynamic
+	{
+		var meta = {};
+		
+		while (inherintanceChain.length > 0)
 		{
-			var f:Dynamic = Reflect.field(test, field);
+			var clazz = inherintanceChain.pop();
+			var newMeta = Meta.getFields(clazz);			
+			var markedFieldNames = Reflect.fields(newMeta);
 			
-			if (Reflect.isFunction(f) && Reflect.hasField(meta, field))
+			for (fieldName in markedFieldNames)
 			{
-				var funcMeta:Dynamic = Reflect.field(meta, field);
+				var recordedFieldTags = Reflect.field(meta, fieldName);
+				var newFieldTags = Reflect.field(newMeta, fieldName);
+				
+				if (recordedFieldTags == null)
+				{
+					Reflect.setField(meta, fieldName, newFieldTags);
+				}
+				else
+				{
+					var newTagNames = Reflect.fields(newFieldTags);
+					for (tagName in newTagNames)
+					{
+						var tagValue = Reflect.field(newFieldTags, tagName);
+						Reflect.setField(recordedFieldTags, tagName, tagValue);
+					}
+				}
+			}
+		}
+		return meta;
+	}
+	
+	function scanForTests(fieldMeta:Dynamic)
+	{
+		var fieldNames = Reflect.fields(fieldMeta);
+		for (fieldName in fieldNames)
+		{
+			var f:Dynamic = Reflect.field(test, fieldName);
+			if (Reflect.isFunction(f))
+			{
+				var funcMeta:Dynamic = Reflect.field(fieldMeta, fieldName);
 				for (tag in META_TAGS)
 				{
 					if (Reflect.hasField(funcMeta, tag))
 					{
 						var args:Array<String> = Reflect.field(funcMeta, tag);
-						
+						var isAsync = (args != null && args[0] == META_PARAM_ASYNC_TEST); // deprecated support for @Test("Async")
 						switch(tag)
 						{
 							case META_TAG_BEFORE_CLASS:
@@ -210,40 +262,30 @@ class TestClassHelper
 								before = f;
 							case META_TAG_AFTER:
 								after = f;
+							case META_TAG_ASYNC_TEST:
+								if (!isDebug)
+									addTest(fieldName, f, test, true);
 							case META_TAG_TEST:
-								if(!isDebug)
-								{
-									addTest(field, f, test, args);
-								}
+								if (!isDebug)
+									addTest(fieldName, f, test, isAsync);
 							case META_TAG_TEST_DEBUG:
-								if(isDebug)
-								{
-									addTest(field, f, test, args);
-								}		
+								if (isDebug)
+									addTest(fieldName, f, test, isAsync);
 						}
 					}
 				}
 			}
 		}
-		
-		tests.sort(sortTestsByName);
 	}
 	
-	private function addTest(field:String, testFunction:Dynamic, testInstance:Dynamic, args:Array<String>):Void
+	private function addTest(field:String, testFunction:Dynamic, testInstance:Dynamic, isAsync:Bool):Void
 	{
 		var result:TestResult = new TestResult();
-		result.async = (args != null && args[0] == META_PARAM_ASYNC_TEST);
+		result.async = isAsync;
 		result.className = className;
 		result.name = field;
 		var data:TestCaseData = { test:testFunction, scope:testInstance, result:result };
 		tests.push(data);
-	}
-	
-	private function sortTestsByName(x:TestCaseData, y:TestCaseData):Int
-	{
-		if (x.result.name == y.result.name) return 0;
-		if (x.result.name > y.result.name) return 1;
-		else return -1;
 	}
 	
 	private function nullFunc():Void

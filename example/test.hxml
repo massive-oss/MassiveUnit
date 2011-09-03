@@ -1,0 +1,35 @@
+# Flash as3
+-main TestMain
+-cp src
+-cp test
+-lib munit
+-swf-version 9
+-swf bin/as3_test.swf
+
+--next
+
+# Flash as2
+-main TestMain
+-cp src
+-cp test
+-lib munit
+-swf-version 8
+-swf bin/as2_test.swf
+
+--next
+
+# JavaScript
+-main TestMain
+-cp src
+-cp test
+-lib munit
+-js bin/js_test.js
+
+--next
+
+# Neko
+-main TestMain
+-cp src
+-cp test
+-lib munit
+-neko bin/neko_test.n
