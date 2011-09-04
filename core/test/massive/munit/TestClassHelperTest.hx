@@ -83,6 +83,7 @@ class TestClassHelperTest
 		
 		Assert.isTrue(helper.hasNext());
 		Assert.isNotNull(helper.current());
+		
 		Assert.areEqual(helper.test.exampleTestOne, helper.current().test);
 		Assert.areEqual(helper.test.exampleTestOne, helper.next().test);
 		Assert.areEqual(helper.test.exampleTestOne, helper.current().test);

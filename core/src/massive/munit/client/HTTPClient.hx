@@ -27,6 +27,7 @@
 ****/
 
 package massive.munit.client;
+
 import haxe.Http;
 import massive.munit.ITestResultClient;
 import massive.munit.TestResult;
@@ -127,6 +128,16 @@ class HTTPClient implements ITestResultClient
 	{
 		client.addError(result);
 	}
+	
+	/**
+	 * Called when a test has been ignored.
+	 *
+	 * @param	result			an ignored test
+	 */
+	public function addIgnore(result:TestResult):Void
+	{
+		client.addIgnore(result);	
+	}
 
 	/**
 	 * Called when all tests are complete.
@@ -135,12 +146,13 @@ class HTTPClient implements ITestResultClient
 	 * @param	passCount		total number of tests which passed
 	 * @param	failCount		total number of tests which failed
 	 * @param	errorCount		total number of tests which were erroneous
+	 * @param	ignoreCount		total number of ignored tests
 	 * @param	time			number of milliseconds taken for all tests to be executed
 	 * @return	collated test result data if any
 	 */
-	public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, time:Float):Dynamic
+	public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
 	{
-		var result = client.reportFinalStatistics(testCount, passCount, failCount, errorCount, time);
+		var result = client.reportFinalStatistics(testCount, passCount, failCount, errorCount, ignoreCount, time);
 		sendResult(result);
 		return result;
 	}

@@ -42,13 +42,14 @@ class TestResultClientStub implements ITestResultClient
 	public var passCount:Int;
 	public var failCount:Int;
 	public var errorCount:Int;
+	public var ignoreCount:Int;
 	public var time:Float;
 	
 	public var finalTestCount:Int;
 	public var finalPassCount:Int;
 	public var finalFailCount:Int;
 	public var finalErrorCount:Int;
-
+	public var finalIgnoreCount:Int;
 
 	public var completionHandler(get_completeHandler, set_completeHandler):ITestResultClient -> Void;
 	private function get_completeHandler():ITestResultClient -> Void 
@@ -68,6 +69,7 @@ class TestResultClientStub implements ITestResultClient
 		passCount = 0;
 		failCount = 0;
 		errorCount = 0;
+		ignoreCount = 0;
 		time = 0.0;
 	}
 
@@ -89,15 +91,22 @@ class TestResultClientStub implements ITestResultClient
 		testCount++;
 		errorCount++;
 	}
+	
+	public function addIgnore(result:TestResult):Void
+	{
+		ignoreCount++;
+	}
 
-	public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, time:Float):Dynamic
+	public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
 	{
 		finalTestCount = testCount;
 		finalPassCount = passCount;
 		finalFailCount = failCount;
 		finalErrorCount = errorCount;
+		finalIgnoreCount = ignoreCount;
 		this.time = time;
-		if (completionHandler != null) completionHandler(this);
+		if (completionHandler != null) 
+			completionHandler(this);
 	}
 	
 	public function toString():String

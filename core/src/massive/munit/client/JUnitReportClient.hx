@@ -142,6 +142,20 @@ class JUnitReportClient implements ITestResultClient
 		testSuiteXML.add("</error>" + newline);
 		testSuiteXML.add("</testcase>" + newline);
 	}
+	
+	/**
+	 * Called when a test has been ignored.
+	 *
+	 * @param	result			an ignored test
+	 */
+	public function addIgnore(result:TestResult):Void
+	{
+		// TODO: Looks like the "skipped" element is not in the official junit report schema
+		//       so ignoring the reporting of this for now. 
+		//       https://issues.apache.org/bugzilla/show_bug.cgi?id=43969
+		//
+		//       ms 4.9.2011
+	}
 
 	/**
 	 * Called when all tests are complete.
@@ -150,10 +164,11 @@ class JUnitReportClient implements ITestResultClient
 	 * @param	passCount		total number of tests which passed
 	 * @param	failCount		total number of tests which failed
 	 * @param	errorCount		total number of tests which were erroneous
+	 * @param	ignoreCount		total number of ignored tests
 	 * @param	time			number of milliseconds taken for all tests to be executed
 	 * @return	collated test result data
 	 */
-	public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, time:Float):Dynamic
+	public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
 	{
 		endTestSuite();
 		xml.add("</testsuites>");

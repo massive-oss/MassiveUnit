@@ -99,6 +99,7 @@ class TestRunner implements IAsyncDelegateObserver
 	private var failCount:Int;
 	private var errorCount:Int;
 	private var passCount:Int;
+	private var ignoreCount:Int;
 	private var clientCompleteCount:Int;
 	
 	private var clients:Array<ITestResultClient>;
@@ -185,6 +186,7 @@ class TestRunner implements IAsyncDelegateObserver
 		failCount = 0;
 		errorCount = 0;
 		passCount = 0;
+		ignoreCount = 0;
 		suiteIndex = 0;
 		clientCompleteCount = 0;
 		Assert.assertionCount = 0; // don't really like this static but can't see way around it atm. ms 17/12/10
@@ -246,7 +248,8 @@ class TestRunner implements IAsyncDelegateObserver
 		if (!asyncPending)
 		{
 			var time:Float = Timer.stamp() - startTime;
-			for (client in clients) client.reportFinalStatistics(testCount, passCount, failCount, errorCount, time);
+			for (client in clients) 
+				client.reportFinalStatistics(testCount, passCount, failCount, errorCount, ignoreCount, time);
 		}
 	}
 	
@@ -254,12 +257,24 @@ class TestRunner implements IAsyncDelegateObserver
 	{
 		for (testCaseData in activeHelper)
 		{
-			testCount++;
-			Reflect.callMethod(activeHelper.test, activeHelper.before, emptyParams);
-			testStartTime = Timer.stamp();
-			executeTestCase(testCaseData, testCaseData.result.async);
-			if (!asyncPending) Reflect.callMethod(activeHelper.test, activeHelper.after, emptyParams);
-			else return;
+			if (testCaseData.result.ignore)
+			{
+				ignoreCount++;
+				for (c in clients) 
+					c.addIgnore(cast testCaseData.result);
+			}
+			else
+			{
+				testCount++; // note we don't include ignored in final test count
+				Reflect.callMethod(activeHelper.test, activeHelper.before, emptyParams);
+				testStartTime = Timer.stamp();
+				executeTestCase(testCaseData, testCaseData.result.async);
+				
+				if (!asyncPending)
+					Reflect.callMethod(activeHelper.test, activeHelper.after, emptyParams);
+				else
+					break;
+			}
 		}
 	}
 
@@ -295,7 +310,8 @@ class TestRunner implements IAsyncDelegateObserver
 					result.passed = true;
 					result.executionTime = Timer.stamp() - testStartTime;
 					passCount++;
-					for (c in clients) c.addPass(result);
+					for (c in clients) 
+						c.addPass(result);
 				}
 				else 
 				{
@@ -308,7 +324,8 @@ class TestRunner implements IAsyncDelegateObserver
 			result.executionTime = Timer.stamp() - testStartTime;
 			result.failure = ae;
 			failCount++;
-			for (c in clients) c.addFail(result);
+			for (c in clients) 
+				c.addFail(result);
 		}
 		catch (e:Dynamic)
 		{
@@ -318,7 +335,8 @@ class TestRunner implements IAsyncDelegateObserver
 			
 			result.error = e;
 			errorCount++;
-			for (c in clients) c.addError(result);
+			for (c in clients) 
+				c.addError(result);
 		}
 	}
 	

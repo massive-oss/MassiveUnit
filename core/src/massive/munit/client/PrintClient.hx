@@ -47,7 +47,7 @@ import massive.haxe.util.ReflectUtil;
  * Class: sub.ItemTest ..
  * 
  * PASSED
- * Tests: 5  Passed: 5  Failed: 0 Errors: 0 Time: 0.202
+ * Tests: 5  Passed: 5  Failed: 0 Errors: 0 Ignored: 0 Time: 0.202
  * ==============================
  * </pre>
  * 
@@ -89,9 +89,11 @@ class PrintClient implements ITestResultClient
 	
 	private var failures:String;
 	private var errors:String;
+	private var ignored:String;
 	private var output:String;
 	private var currentTestClass:String;
 	private var originalTrace:Dynamic;
+	private var includeIgnoredReport:Bool;
 	
 	#if flash9
 		private var textField:flash.text.TextField;
@@ -101,12 +103,10 @@ class PrintClient implements ITestResultClient
 		private var textArea:Dynamic;
 	#end
 
-	/**
-	 * Class constructor.
-	 */
-	public function new()
+	public function new(?includeIgnoredReport:Bool = false)
 	{
 		id = DEFAULT_ID;
+		this.includeIgnoredReport = includeIgnoredReport;
 		init();
 		print("MUnit Results" + newline);
 		print("------------------------------" + newline);
@@ -119,6 +119,7 @@ class PrintClient implements ITestResultClient
 		output = "";
 		failures = "";
 		errors = "";
+		ignored = "";
 		currentTestClass = "";
 		newline = "\n";
 
@@ -177,21 +178,42 @@ class PrintClient implements ITestResultClient
 	}
 	
 	/**
+	 * Called when a test has been ignored.
+	 *
+	 * @param	result			an ignored test
+	 */
+	public function addIgnore(result:TestResult):Void
+	{
+		checkForNewTestClass(result);
+		print(",");
+		if (includeIgnoredReport)
+			ignored += newline + result.location + " - " + result.description;
+	}
+	
+	/**
 	 * Called when all tests are complete.
 	 *  
 	 * @param	testCount		total number of tests run
 	 * @param	passCount		total number of tests which passed
 	 * @param	failCount		total number of tests which failed
 	 * @param	errorCount		total number of tests which were erroneous
+	 * @param	ignoreCount		total number of ignored tests
 	 * @param	time			number of milliseconds taken for all tests to be executed
 	 * @return	collated test result data
 	 */
-	public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, time:Float):Dynamic
+	public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
 	{
 		printExceptions();
 		print(newline + newline);
+		if (includeIgnoredReport && ignored != "")
+		{
+			print("Ignored:" + newline);
+			print("------------------------------");
+			print(ignored);
+		}
+		print(newline + newline);
 		print((passCount == testCount) ? "PASSED" : "FAILED");
-		print(newline + "Tests: " + testCount + "  Passed: " + passCount + "  Failed: " + failCount + " Errors: " + errorCount + " Time: " + MathUtil.round(time, 5) + newline);
+		print(newline + "Tests: " + testCount + "  Passed: " + passCount + "  Failed: " + failCount + " Errors: " + errorCount + " Ignored: " + ignoreCount + " Time: " + MathUtil.round(time, 5) + newline);
 		print("==============================" + newline);
 		haxe.Log.trace = originalTrace;
 		if (completionHandler != null) completionHandler(this); 

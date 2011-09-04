@@ -72,14 +72,22 @@ interface ITestResultClient
 	function addError(result:TestResult):Void;
 	
 	/**
+	 * Called when a test has been ignored.
+	 *
+	 * @param	result			an ignored test
+	 */
+	function addIgnore(result:TestResult):Void;
+	
+	/**
 	 * Called when all tests are complete.
 	 *  
 	 * @param	testCount		total number of tests run
 	 * @param	passCount		total number of tests which passed
 	 * @param	failCount		total number of tests which failed
 	 * @param	errorCount		total number of tests which were erroneous
+	 * @param	ignoreCount		total number of ignored tests
 	 * @param	time			number of milliseconds taken for all tests to be executed
 	 * @return	collated test result data if any
 	 */
-	function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, time:Float):Dynamic;
+	function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic;
 }

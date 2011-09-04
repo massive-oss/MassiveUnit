@@ -57,6 +57,11 @@ class TestResult
 	public var className:String;
 	
 	/**
+     * An optional description.
+     */
+	public var description:String;
+	
+	/**
 	 * The fully qualified location of this test. (i.e. package.ClassName#method)
 	 */
 	public var location(get_location, null):String;
@@ -69,6 +74,11 @@ class TestResult
 	 * Whether the test is asynchronous or not.
 	 */
 	public var async:Bool;
+	
+	/**
+     * Whether the test is ignored or not.
+     */
+    public var ignore:Bool;
 	
 	/**
 	 * If this test failed, the assertion exception that was captured.
@@ -89,7 +99,9 @@ class TestResult
 		executionTime = 0.0;
 		name = "";
 		className = "";
+		description = "";
 		async = false;
+		ignore = false;
 		error = null;
 		failure = null;
 	}

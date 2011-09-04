@@ -50,8 +50,8 @@ class TestMain
 		var suites = new Array<Class<massive.munit.TestSuite>>();
 		suites.push(TestSuite);
 
-		var runner:TestRunner = new TestRunner(new HTTPClient(new JUnitReportClient()));	
-		runner.addResultClient(new PrintClient());	
+		var runner:TestRunner = new TestRunner(new PrintClient());	
+		//runner.addResultClient(new HTTPClient(new JUnitReportClient()));	
 		runner.completionHandler = completionHandler;
 		runner.run(suites);
 	}

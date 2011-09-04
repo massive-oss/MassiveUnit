@@ -74,6 +74,11 @@ class TestClassHelper
      * Meta tag marking asynchronous test method in class.
      */
 	public inline static var META_TAG_ASYNC_TEST:String = "AsyncTest";
+	
+	/**
+     * Meta tag marking a test method or entire test class to ignore.
+     */
+    public inline static var META_TAG_IGNORE:String = "Ignore";
 		
 	/**
 	 * Param for META_TAG_TEST, marking test method in class as asynchronous.
@@ -128,12 +133,10 @@ class TestClassHelper
 	 */
 	public var after(default, null):Dynamic;
 	
-	private var tests(default, null):Array<TestCaseData>;
-	private var index(default, null):Int;
-	private var className(default, null):String;
-
-	
-	private var isDebug(default, null):Bool;
+	private var tests:Array<TestCaseData>;
+	private var index:Int;
+	private var className:String;
+	private var isDebug:Bool;
 
 	/**
 	 * Class constructor.
@@ -148,7 +151,6 @@ class TestClassHelper
 		index = 0;
 		className = Type.getClassName(type);
 		
-		// Assign empty function so we can call'em without worry about runtime errors
 		beforeClass = nullFunc;
 		afterClass = nullFunc;
 		before = nullFunc;
@@ -194,6 +196,7 @@ class TestClassHelper
 		var inherintanceChain = getInheritanceChain(type);
 		var fieldMeta = collateFieldMeta(inherintanceChain);
 		scanForTests(fieldMeta);
+		tests.sort(sortTestsByName); // not pc as allows for possible test dependencies but useful for report consistency
 	}
 		
 	function getInheritanceChain(clazz:Class<Dynamic>):Array<Class<Dynamic>>
@@ -207,10 +210,9 @@ class TestClassHelper
 	function collateFieldMeta(inherintanceChain:Array<Class<Dynamic>>):Dynamic
 	{
 		var meta = {};
-		
 		while (inherintanceChain.length > 0)
 		{
-			var clazz = inherintanceChain.pop();
+			var clazz = inherintanceChain.pop(); // start at root
 			var newMeta = Meta.getFields(clazz);			
 			var markedFieldNames = Reflect.fields(newMeta);
 			
@@ -219,15 +221,34 @@ class TestClassHelper
 				var recordedFieldTags = Reflect.field(meta, fieldName);
 				var newFieldTags = Reflect.field(newMeta, fieldName);
 				
+				var newTagNames = Reflect.fields(newFieldTags);
 				if (recordedFieldTags == null)
 				{
-					Reflect.setField(meta, fieldName, newFieldTags);
+					// need to create copy of tags as may need to remove
+					// some later and this could impact other tests which
+					// extends the same class.
+					var tagsCopy = {};
+					for (tagName in newTagNames)
+						Reflect.setField(tagsCopy, tagName, Reflect.field(newFieldTags, tagName));
+						
+					Reflect.setField(meta, fieldName, tagsCopy);
 				}
 				else
 				{
-					var newTagNames = Reflect.fields(newFieldTags);
+					var ignored = false;
 					for (tagName in newTagNames)
 					{
+						if (tagName == META_TAG_IGNORE)
+							ignored = true;
+						
+						// TODO: Support @TestDebug ignore scenarios too. ms 4.9.2011
+						
+						// @Test in subclass takes precendence over @Ignore in parent
+						if (!ignored && (tagName == META_TAG_TEST || 
+										tagName == META_TAG_ASYNC_TEST) && 
+										Reflect.hasField(recordedFieldTags, META_TAG_IGNORE))
+							Reflect.deleteField(recordedFieldTags, META_TAG_IGNORE);
+						
 						var tagValue = Reflect.field(newFieldTags, tagName);
 						Reflect.setField(recordedFieldTags, tagName, tagValue);
 					}
@@ -246,48 +267,80 @@ class TestClassHelper
 			if (Reflect.isFunction(f))
 			{
 				var funcMeta:Dynamic = Reflect.field(fieldMeta, fieldName);
-				for (tag in META_TAGS)
+				searchForMatchingTags(fieldName, f, funcMeta);
+			}
+		}
+	}
+	
+	function searchForMatchingTags(fieldName:String, func:Dynamic, funcMeta:Dynamic)
+	{
+		for (tag in META_TAGS)
+		{
+			if (Reflect.hasField(funcMeta, tag))
+			{
+				var args:Array<String> = Reflect.field(funcMeta, tag);
+				var description = (args != null) ? args[0] : "";
+				var isAsync = (args != null && description == META_PARAM_ASYNC_TEST); // deprecated support for @Test("Async")
+				var isIgnored = Reflect.hasField(funcMeta, META_TAG_IGNORE);
+				
+				if (isAsync) 
 				{
-					if (Reflect.hasField(funcMeta, tag))
-					{
-						var args:Array<String> = Reflect.field(funcMeta, tag);
-						var isAsync = (args != null && args[0] == META_PARAM_ASYNC_TEST); // deprecated support for @Test("Async")
-						switch(tag)
-						{
-							case META_TAG_BEFORE_CLASS:
-								beforeClass = f;
-							case META_TAG_AFTER_CLASS:
-								afterClass = f;
-							case META_TAG_BEFORE:
-								before = f;
-							case META_TAG_AFTER:
-								after = f;
-							case META_TAG_ASYNC_TEST:
-								if (!isDebug)
-									addTest(fieldName, f, test, true);
-							case META_TAG_TEST:
-								if (!isDebug)
-									addTest(fieldName, f, test, isAsync);
-							case META_TAG_TEST_DEBUG:
-								if (isDebug)
-									addTest(fieldName, f, test, isAsync);
-						}
-					}
+					description = "";
+				}
+				else if (isIgnored)
+				{
+					args = Reflect.field(funcMeta, META_TAG_IGNORE);
+					description = (args != null) ? args[0] : "";
+				}
+				
+				switch(tag)
+				{
+					case META_TAG_BEFORE_CLASS:
+						beforeClass = func;
+					case META_TAG_AFTER_CLASS:
+						afterClass = func;
+					case META_TAG_BEFORE:
+						before = func;
+					case META_TAG_AFTER:
+						after = func;
+					case META_TAG_ASYNC_TEST:
+						if (!isDebug)
+							addTest(fieldName, func, test, true, isIgnored, description);
+					case META_TAG_TEST:
+						if (!isDebug)
+							addTest(fieldName, func, test, isAsync, isIgnored, description);
+					case META_TAG_TEST_DEBUG:
+						if (isDebug)
+							addTest(fieldName, func, test, isAsync, isIgnored, description);
 				}
 			}
 		}
 	}
 	
-	private function addTest(field:String, testFunction:Dynamic, testInstance:Dynamic, isAsync:Bool):Void
+	private function addTest(field:String, 
+							testFunction:Dynamic, 
+							testInstance:Dynamic, 
+							isAsync:Bool, 
+							isIgnored:Bool, 
+							description:String):Void
 	{
 		var result:TestResult = new TestResult();
 		result.async = isAsync;
+		result.ignore = isIgnored;
 		result.className = className;
+		result.description = description;
 		result.name = field;
 		var data:TestCaseData = { test:testFunction, scope:testInstance, result:result };
 		tests.push(data);
 	}
 	
+	private function sortTestsByName(x:TestCaseData, y:TestCaseData):Int
+	{
+		if (x.result.name == y.result.name) return 0;
+		if (x.result.name > y.result.name) return 1;
+		else return -1;
+	}
+
 	private function nullFunc():Void
 	{}
 }
