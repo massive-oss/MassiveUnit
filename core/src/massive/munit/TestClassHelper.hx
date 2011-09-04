@@ -76,7 +76,7 @@ class TestClassHelper
 	public inline static var META_TAG_ASYNC_TEST:String = "AsyncTest";
 	
 	/**
-     * Meta tag marking a test method or entire test class to ignore.
+     * Meta tag marking a test method to ignore.
      */
     public inline static var META_TAG_IGNORE:String = "Ignore";
 		
