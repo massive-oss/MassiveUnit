@@ -1,4 +1,7 @@
-v0.9.1.4 - 03.9.2011
+v0.9.1.5 - 5.9.2011
+- Added support for @Ignore("optional explanation") tag against @Test method. More info here https://github.com/massiveinteractive/MassiveUnit/wiki/Working-with-test-classes
+
+v0.9.1.4 - 3.9.2011
 
 - Added support for tag inheritance, i.e. @Test in super classes now picked up.
 - Added support for stack trace in uncaught exceptions for AS3 and Neko targets (unable to get this info in other supported targets).
