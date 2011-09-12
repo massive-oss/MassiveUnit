@@ -251,15 +251,22 @@ class PrintClient implements ITestResultClient
 		#if flash9
 			textField.appendText(value);
 			textField.scrollV = textField.maxScrollV;
+			printToExternalInterface(value);
 		#elseif flash
 			value = untyped flash.Boot.__string_rec(value, "");
 			textField.text += value;
 			textField.scroll = textField.maxscroll;
+			printToExternalInterface(value);
 		#elseif js
 			value = untyped js.Boot.__string_rec(value, "");
 			var v:String = StringTools.htmlEscape(value);
 			v = v.split(newline).join("<br/>");
-			if (textArea != null) textArea.innerHTML += v;
+			if (textArea != null)
+			{
+				textArea.innerHTML += v;
+				js.Lib.window.scrollTo(0,js.Lib.document.body.scrollHeight);
+
+			}
 		#elseif neko
 			neko.Lib.print(value);
 		#elseif cpp
@@ -267,9 +274,30 @@ class PrintClient implements ITestResultClient
 		#elseif php
 			php.Lib.print(value);
 		#end
+
+	
 		
 		output += value;
 	}
+
+	#if (flash || flash9)
+	function printToExternalInterface(value:Dynamic)
+	{
+		if(!flash.external.ExternalInterface.available) return;
+
+		try
+		{
+			var v:String = StringTools.htmlEscape(value);
+			v = v.split(newline).join("<br/>");
+			flash.external.ExternalInterface.call("testPrint", v);
+		}
+		catch(e:Dynamic)
+		{
+			trace(e);
+		}
+
+	}
+	#end
 
 	private function customTrace(value, ?info:haxe.PosInfos)
 	{

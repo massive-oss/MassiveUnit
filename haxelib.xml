@@ -2,6 +2,6 @@
 	<user name="massive"/>
 	<tag v="cross" />
 	<description>MassiveUnit is a cross-platform haXe unit testing framework from Massive Interactive that utilises haxe metadata markup for test cases and includes tools for generating, compiling and running test cases from the command line.</description>
-	<version name="0.9.1.5">Added support for @Ignore("optional explanation") tag against @Test method. More info here https://github.com/massiveinteractive/MassiveUnit/wiki/Working-with-test-classes</version>
+	<version name="0.9.1.6">HTML Test runner now displays both js and as2/as3 results consistantly (text size, css, etc).</version>
 	<depends name="mlib"/>
 </project>

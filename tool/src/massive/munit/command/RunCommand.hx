@@ -254,7 +254,7 @@ class RunCommand extends MUnitCommand
 		{
 			frameCols += "*,";
 			frameTitles += '<td width="' + colCount + '%">' + pageName.substr(0, pageName.indexOf('_')).toUpperCase() + '</td>';
-			frames += '<frame src="' + pageName + '" scrolling="no" NORESIZE/>\n';
+			frames += '<frame src="' + pageName + '" scrolling="yes" NORESIZE/>\n';
 		}
 		
 		frameCols = frameCols.substr(0, -1);			

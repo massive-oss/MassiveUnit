@@ -10,10 +10,31 @@
     </script>
 	
 	<script language="JavaScript"> 
+		
+		var printingToJavaScript = false;
+
+		function testPrint(value)
+		{
+			if(!printingToJavaScript)
+			{
+				printingToJavaScript = true;
+				var swf = document.getElementById("swfContainer");
+				swf.width = 0;
+				swf.height = 0;
+
+			}
+			var textArea = document.getElementById("haxe:trace");
+			textArea.innerHTML += value;
+			window.scrollTo(0,document.body.scrollHeight);
+
+		}
+
 		function testResult(success)
 		{ 
+			window.scrollTo(0,document.body.scrollHeight);
 			setBackgroundResultColor(success ? 1 : 0);
 			parent.testComplete();
+
 		}
 		
 		function setBackgroundResultColor(result)
@@ -32,16 +53,18 @@
 			}
 			document.body.style.background = color;
 		}
+
+	
 	</script>
 
 	<style type="text/css">
-		html, body, div { margin:0; padding:0; }
+		html, body, div { margin:0; padding:0;}
+		.output {padding:20px;}
+		#swfContainer {position: absolute;}
 	</style>
   </head>
   <body>
-    <div id="swfContainer">
-      <p>Please install flash</p>
-    </div>
-	<div id="haxe:trace"></div>
+	<div id="haxe:trace" class="output"></div>
+	<div id="swfContainer" ></div>
   </body>
 </html>
