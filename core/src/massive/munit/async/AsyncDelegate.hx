@@ -70,8 +70,10 @@ class AsyncDelegate
 	private var testCase:Dynamic;
 	private var handler:Dynamic;
 	private var timer:Timer;
+
+
 	private var deferredTimer:Timer;
-	
+
 	/* An array of values to be passed as parameters to the test class handler.
 	 * This should be populated inside the delegateHandler when it's called.
 	 */ 
@@ -113,7 +115,7 @@ class AsyncDelegate
 	{		
 		if (timedOut) return;
 		timer.stop();
-		if(deferredTimer!=null)deferredTimer.stop();
+		if(deferredTimer!=null) deferredTimer.stop();
 		
 		if (params == null) params = [];
 		this.params = params;
@@ -122,10 +124,14 @@ class AsyncDelegate
 	}
 	
 
-
 	private function timeoutHandler():Void
 	{
-		deferredTimer = Timer.delay(actualTimeoutHandler, 10);
+		#if flash
+			//pushing timeout onto next frame to prevent raxe condition bug when flash framerate drops too low and timeout timer executes prior to response on same frame
+			deferredTimer = Timer.delay(actualTimeoutHandler, 10);
+		#else
+			actualTimeoutHandler();
+		#end
 	}
 
 	private function actualTimeoutHandler()
