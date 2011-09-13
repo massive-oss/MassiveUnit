@@ -4,7 +4,7 @@
 	<title>Massive Unit Test Runner</title>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     
-	<script language="JavaScript"> 
+	<script language='JavaScript' type='text/JavaScript'> 
 		function testResult(success)
 		{ 
 			window.scrollTo(0,document.body.scrollHeight);
@@ -38,6 +38,6 @@
   </head>
   <body>
 	<div id="haxe:trace" class="output"></div>
-    <script type="text/javascript" src="::runnerName::"></script>
+    <script language='JavaScript' type='text/JavaScript' src="::runnerName::"></script>
   </body>
 </html>

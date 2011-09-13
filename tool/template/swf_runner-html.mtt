@@ -3,38 +3,54 @@
   <head>
 	<title>Massive Unit Test Runner</title>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-    <script type="text/javascript" src="swfobject.js"></script>
+    <script ltype="text/JavaScript" language="JavaScript" src="swfobject.js"></script>
     
-    <script type="text/javascript">
-		SWFObject.embedSWF("::runnerName::", "swfContainer", "1024", "768", "10.1.0", {}, {}, {allowFullScreen:true, bgcolor:0, allowScriptAccess:"always", wmode:"transparent", scale:"noscale"});
-    </script>
-	
-	<script language="JavaScript"> 
+    <script type="text/JavaScript" language="JavaScript" >
+		SWFObject.embedSWF("::runnerName::", "swfContainer", "100%", "100%", "10.1.0", {}, {}, {allowFullScreen:true, bgcolor:0, allowScriptAccess:"always", wmode:"transparent", scale:"noscale"});
+   		
+   		var printOutput = "";
+   		var printTimeout;
+   		var printResult = false;
 		
-		var printingToJavaScript = false;
+		function testHideSwf()
+		{	
+			var swf = document.getElementById("swfContainer");
+			swf.width = 0;
+			swf.height = 0;
+			return true;
+		}
 
 		function testPrint(value)
 		{
-			if(!printingToJavaScript)
-			{
-				printingToJavaScript = true;
-				var swf = document.getElementById("swfContainer");
-				swf.width = 0;
-				swf.height = 0;
-
-			}
-			var textArea = document.getElementById("haxe:trace");
-			textArea.innerHTML += value;
-			window.scrollTo(0,document.body.scrollHeight);
-
+			printOutput += value;
+			if(printTimeout ==  null) printTimeout = setTimeout("doActualPrint()", 1);
+			return true;
 		}
 
 		function testResult(success)
 		{ 
+			printResult = success;
+			setTimeout("doActualTestResult()", 1);
+			return true;
+		}
+	
+	
+		function doActualPrint()
+		{
+			printTimeout = null;
+			var textArea = document.getElementById("haxe:trace");
+			textArea.innerHTML += printOutput;
+			printOutput = "";
 			window.scrollTo(0,document.body.scrollHeight);
-			setBackgroundResultColor(success ? 1 : 0);
-			parent.testComplete();
+		}
 
+	
+
+		function doActualTestResult()
+		{
+			window.scrollTo(0,document.body.scrollHeight);
+			setBackgroundResultColor(printResult ? 1 : 0);
+			parent.testComplete();
 		}
 		
 		function setBackgroundResultColor(result)
@@ -64,7 +80,8 @@
 	</style>
   </head>
   <body>
-	<div id="haxe:trace" class="output"></div>
 	<div id="swfContainer" ></div>
+	<div id="haxe:trace" class="output"></div>
+	
   </body>
 </html>

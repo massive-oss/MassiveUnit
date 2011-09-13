@@ -32,6 +32,7 @@ import massive.munit.ITestResultClient;
 import massive.munit.TestResult;
 import massive.munit.util.MathUtil;
 import massive.haxe.util.ReflectUtil;
+import massive.munit.util.Timer;
 
 /**
  * Generates basic text formatted test result output.
@@ -90,10 +91,12 @@ class PrintClient implements ITestResultClient
 	private var failures:String;
 	private var errors:String;
 	private var ignored:String;
-	private var output:String;
+	private var output(default, null):String;
 	private var currentTestClass:String;
 	private var originalTrace:Dynamic;
 	private var includeIgnoredReport:Bool;
+
+
 	
 	#if flash9
 		private var textField:flash.text.TextField;
@@ -101,6 +104,12 @@ class PrintClient implements ITestResultClient
 		private var textField:flash.TextField;
 	#elseif js
 		private var textArea:Dynamic;
+	#end
+
+	#if flash
+		var hasExternalInterface:Bool;
+		var externalInterfaceBuffer:String;
+		var externalInterfaceTimer:Timer;
 	#end
 
 	public function new(?includeIgnoredReport:Bool = false)
@@ -133,6 +142,7 @@ class PrintClient implements ITestResultClient
 			textField = flash.Lib.current.createTextField("__munitOutput", 20000, 0, 0, flash.Stage.width, flash.Stage.height);
 			textField.wordWrap = true;
 			textField.selectable = true;
+
 		#elseif js
 			textArea = js.Lib.document.getElementById("haxe:trace");
 			if (textArea == null) 
@@ -142,8 +152,15 @@ class PrintClient implements ITestResultClient
 				js.Lib.alert(error);
 			}
 		#end
+
+		#if flash
+			hasExternalInterface = flash.external.ExternalInterface.available;
+			externalInterfaceBuffer = "";
+			externalInterfaceTimer = null;
+		#end
 	}
-	
+
+
 	/**
 	 * Called when a test passes.
 	 *  
@@ -258,12 +275,10 @@ class PrintClient implements ITestResultClient
 			textField.scroll = textField.maxscroll;
 			printToExternalInterface(value);
 		#elseif js
-			value = untyped js.Boot.__string_rec(value, "");
-			var v:String = StringTools.htmlEscape(value);
-			v = v.split(newline).join("<br/>");
+		
 			if (textArea != null)
 			{
-				textArea.innerHTML += v;
+				textArea.innerHTML += serialiseToHTML(value);
 				js.Lib.window.scrollTo(0,js.Lib.document.body.scrollHeight);
 
 			}
@@ -274,28 +289,47 @@ class PrintClient implements ITestResultClient
 		#elseif php
 			php.Lib.print(value);
 		#end
-
-	
-		
 		output += value;
 	}
 
-	#if (flash || flash9)
+	function serialiseToHTML(value:Dynamic):String
+	{
+		#if js
+		value = untyped js.Boot.__string_rec(value, "");
+		#end
+
+		var v:String = StringTools.htmlEscape(value);
+		v = v.split(newline).join("<br/>");
+		return v;
+	}
+
+	#if flash
 	function printToExternalInterface(value:Dynamic)
 	{
-		if(!flash.external.ExternalInterface.available) return;
+		if(!hasExternalInterface) return;
 
+		externalInterfaceBuffer += serialiseToHTML(value);
+		
+		if(externalInterfaceTimer == null)
+		{
+			externalInterfaceTimer = Timer.delay(printExternalInterfaceBuffer, 100);
+		}
+	}
+
+	function printExternalInterfaceBuffer()
+	{
 		try
 		{
-			var v:String = StringTools.htmlEscape(value);
-			v = v.split(newline).join("<br/>");
-			flash.external.ExternalInterface.call("testPrint", v);
+			var s = externalInterfaceBuffer;
+		
+			externalInterfaceBuffer = "";
+			externalInterfaceTimer = null;
+			flash.external.ExternalInterface.call("testPrint", s);
 		}
 		catch(e:Dynamic)
 		{
-			trace(e);
+			customTrace(e);
 		}
-
 	}
 	#end
 

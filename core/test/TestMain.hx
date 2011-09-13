@@ -45,12 +45,16 @@ class TestMain
 {		
 	static function main(){	new TestMain();}
 
+
 	public function new()
-	{
+	{		
+		#if flash
+		flash.external.ExternalInterface.call("testHideSwf");	
+		#end
 		var suites = new Array<Class<massive.munit.TestSuite>>();
 		suites.push(TestSuite);
 
-		var runner:TestRunner = new TestRunner(new PrintClient());	
+		var runner:TestRunner = new TestRunner(new PrintClient(true));	
 		//runner.addResultClient(new HTTPClient(new JUnitReportClient()));	
 		runner.completionHandler = completionHandler;
 		runner.run(suites);
