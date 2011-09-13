@@ -2,6 +2,6 @@
 	<user name="massive"/>
 	<tag v="cross" />
 	<description>MassiveUnit is a cross-platform haXe unit testing framework from Massive Interactive that utilises haxe metadata markup for test cases and includes tools for generating, compiling and running test cases from the command line.</description>
-	<version name="0.9.1.6">HTML Test runner now displays both js and as2/as3 results consistantly (text size, css, etc).</version>
+	<version name="0.9.1.6">Improved HTML Test Runner output (displays as2/as3 results in HTML using sames styles as JS). Fixed AsyncTest race condition bug where timeout and response handlers execute out of order when both occur on same frame (as2/as3 targets only)</version>
 	<depends name="mlib"/>
 </project>
