@@ -28,12 +28,16 @@
 			}
 
 			document.body.style.backgroundColor = color;
+
 		}
 	</script>
 
 	<style type="text/css">
 		html, body, div { margin:0; padding:0;}
-		.output {padding:20px;}
+		.output
+		{
+			padding:20px;
+		}
 	</style>
   </head>
   <body>

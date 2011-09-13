@@ -253,32 +253,35 @@ class PrintClient implements ITestResultClient
 	{
 		if (errors != "") 
 		{
-			print(errors + newline);
+			print(errors + newline, ERROR);
 			errors = "";
 		}
 		if (failures != "")
 		{
-			print(failures + newline);
+			print(failures + newline, FAILURE);
 			failures = "";
 		}
 	}
 	
-	private function print(value:Dynamic):Void
+	private function print(value:Dynamic, ?level:PrintLevel=null):Void
 	{
+		if(level == null) level = NONE;
+		var htmlValue = serialiseToHTML(value, level);
+		
 		#if flash9
 			textField.appendText(value);
 			textField.scrollV = textField.maxScrollV;
-			printToExternalInterface(value);
+			printToExternalInterface(htmlValue);
 		#elseif flash
 			value = untyped flash.Boot.__string_rec(value, "");
 			textField.text += value;
 			textField.scroll = textField.maxscroll;
-			printToExternalInterface(value);
+			printToExternalInterface(htmlValue);
 		#elseif js
 		
 			if (textArea != null)
 			{
-				textArea.innerHTML += serialiseToHTML(value);
+				textArea.innerHTML += htmlValue;
 				js.Lib.window.scrollTo(0,js.Lib.document.body.scrollHeight);
 
 			}
@@ -292,7 +295,7 @@ class PrintClient implements ITestResultClient
 		output += value;
 	}
 
-	function serialiseToHTML(value:Dynamic):String
+	function serialiseToHTML(value:Dynamic, level:PrintLevel):String
 	{
 		#if js
 		value = untyped js.Boot.__string_rec(value, "");
@@ -300,6 +303,13 @@ class PrintClient implements ITestResultClient
 
 		var v:String = StringTools.htmlEscape(value);
 		v = v.split(newline).join("<br/>");
+
+		switch(level)
+		{
+			case FAILURE: v = "<b>" + v + "</b>";
+			case ERROR: v = "<b>" + v + "</b>";
+			default: null;
+		}
 		return v;
 	}
 
@@ -308,11 +318,11 @@ class PrintClient implements ITestResultClient
 	{
 		if(!hasExternalInterface) return;
 
-		externalInterfaceBuffer += serialiseToHTML(value);
+		externalInterfaceBuffer += value;
 		
 		if(externalInterfaceTimer == null)
 		{
-			externalInterfaceTimer = Timer.delay(printExternalInterfaceBuffer, 100);
+			externalInterfaceTimer = Timer.delay(printExternalInterfaceBuffer, 200);
 		}
 	}
 
@@ -337,4 +347,12 @@ class PrintClient implements ITestResultClient
 	{
 		print("TRACE: " + info.fileName + "|" + info.lineNumber + "| " + Std.string(value) + newline);
 	}
+}
+
+enum PrintLevel
+{
+	NONE;
+	FAILURE;
+	ERROR;
+
 }

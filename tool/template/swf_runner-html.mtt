@@ -67,15 +67,18 @@
 				default: color = "#d5c942";// yellow
 					break;
 			}
+
 			document.body.style.background = color;
 		}
 
 	
 	</script>
-
 	<style type="text/css">
 		html, body, div { margin:0; padding:0;}
-		.output {padding:20px;}
+		.output
+		{
+			padding:20px;
+		}
 		#swfContainer {position: absolute;}
 	</style>
   </head>
