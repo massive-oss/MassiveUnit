@@ -163,11 +163,15 @@ class TestCommand extends MUnitCommand
 			
 			if(target.type == null)
 			{
+			
 				for(type in targetTypes)
 				{
 					var s:String = Std.string(type);
-					if (s == "swf9") // swf9 is deprecated use -swf-version 9 instead
+					if (s == "swf9")
+					{
+						//swf9 is deprecated use -swf-version 9 instead
 						s = "swf";
+					}
 				
 					var targetMatcher = new EReg("^-" + s + "\\s+", "");
 					if(targetMatcher.match(line) && target.type == null)
@@ -186,6 +190,11 @@ class TestCommand extends MUnitCommand
 			if(target.type == null && targetTypes.length < config.targetTypes.length ) 
 				continue;
 			
+			if(target.type == TargetType.swf || target.type == TargetType.swf9)
+			{
+				target.hxml = updateSwfHeader(target.hxml);
+			}
+
 			Log.debug("Compile " + target.type + " -- " + target);
 
 			if(HaxeWrapper.compile(target.hxml) > 0)
@@ -195,5 +204,23 @@ class TestCommand extends MUnitCommand
 		}
 		
 		Log.debug("All targets compiled successfully");
+	}
+
+	function updateSwfHeader(hxml:String):String
+	{
+		var result:String = "";
+		var lines:Array<String> = hxml.split("\n");
+		for(line in lines)
+		{
+			var headerMatcher = new EReg("^-swf-header", "");
+			//200:300:40:FF0000
+			if(headerMatcher.match(line))
+			{
+				line = "-swf-header 800:600:60:FFFFFF";
+			}
+
+			result += "\n" + line;
+		}
+		return result;
 	}
 }

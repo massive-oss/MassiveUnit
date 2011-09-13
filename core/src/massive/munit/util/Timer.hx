@@ -133,7 +133,7 @@ class Timer
 	}
 	#end
 
-	public static function delay(f:Void -> Void, time_ms:Int) 
+	public static function delay(f:Void -> Void, time_ms:Int):Timer
 	{
 		var t = new Timer(time_ms);
 		t.run = function()

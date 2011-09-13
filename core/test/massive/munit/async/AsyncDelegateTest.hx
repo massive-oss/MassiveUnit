@@ -53,7 +53,7 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 	@Test
 	public function testConstructorThreeParams():Void
 	{
-		var delegate:AsyncDelegate = new AsyncDelegate(this, asyncTestHanlder); 
+		var delegate:AsyncDelegate = new AsyncDelegate(this, asyncTestHandler); 
 		
 		Assert.areEqual(AsyncDelegate.DEFAULT_TIMEOUT, delegate.timeoutDelay);
 		Assert.isNull(delegate.observer);
@@ -64,17 +64,16 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 	@Test
 	public function testConstructorFourParamas():Void
 	{
-		var delegate:AsyncDelegate = new AsyncDelegate(this, asyncTestHanlder, 200);
+		var delegate:AsyncDelegate = new AsyncDelegate(this, asyncTestHandler, 200);
 		Assert.areEqual(200, delegate.timeoutDelay);
 	}
 	
 	@AsyncTest
 	public function testTimeout(factory:AsyncFactory):Void
 	{
-		handler = factory.createHandler(this, onTestTimeout);
-		
-		delegate = new AsyncDelegate(this, asyncTestHanlder, 10); 
+		delegate = new AsyncDelegate(this, asyncTestHandler, 10); 
 		delegate.observer = this;
+		handler = factory.createHandler(this, onTestTimeout);//created after delegate to ensure delegate timer executes beofre handler one (interval bug in flash when under heavy load)
 	}
 		
 	public function asyncTimeoutHandler(delegate:AsyncDelegate):Void
@@ -96,7 +95,7 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 	{
 		handler = factory.createHandler(this, onTestHandler);
 		
-		delegate = new AsyncDelegate(this, asyncTestHanlder);
+		delegate = new AsyncDelegate(this, asyncTestHandler);
 		delegate.observer = this;		
 		Timer.delay(asyncDelegateTestHanlder, 10);
 	}
@@ -112,12 +111,12 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 		Assert.isFalse(delegate.timedOut);
 		Assert.areEqual(this.delegate, delegate);
 		handlerCalled = false;
-		delegate.runTest(); // should trigger asyncTestHanlder 
+		delegate.runTest(); // should trigger asyncTestHandler 
 		Assert.isTrue(handlerCalled);
 		handler();
 	}
 
-	private function asyncTestHanlder(param:Bool):Void
+	private function asyncTestHandler(param:Bool):Void
 	{
 		Assert.isTrue(param);
 		handlerCalled = true;

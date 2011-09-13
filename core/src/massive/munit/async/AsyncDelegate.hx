@@ -70,6 +70,7 @@ class AsyncDelegate
 	private var testCase:Dynamic;
 	private var handler:Dynamic;
 	private var timer:Timer;
+	private var deferredTimer:Timer;
 	
 	/* An array of values to be passed as parameters to the test class handler.
 	 * This should be populated inside the delegateHandler when it's called.
@@ -112,6 +113,7 @@ class AsyncDelegate
 	{		
 		if (timedOut) return;
 		timer.stop();
+		if(deferredTimer!=null)deferredTimer.stop();
 		
 		if (params == null) params = [];
 		this.params = params;
@@ -119,8 +121,16 @@ class AsyncDelegate
 		if (observer != null) observer.asyncResponseHandler(this);
 	}
 	
+
+
 	private function timeoutHandler():Void
 	{
+		deferredTimer = Timer.delay(actualTimeoutHandler, 10);
+	}
+
+	private function actualTimeoutHandler()
+	{
+		deferredTimer = null;
 		handler = null;
 		delegateHandler = null;
 		timedOut = true;
