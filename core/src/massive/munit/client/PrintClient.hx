@@ -155,8 +155,12 @@ class PrintClient implements ITestResultClient
 
 		#if flash
 			hasExternalInterface = flash.external.ExternalInterface.available;
-			externalInterfaceBuffer = "";
-			externalInterfaceTimer = null;
+			if(hasExternalInterface)
+			{
+				flash.external.ExternalInterface.call("testHideSwf");	
+				externalInterfaceBuffer = "";
+				externalInterfaceTimer = null;
+			}
 		#end
 	}
 

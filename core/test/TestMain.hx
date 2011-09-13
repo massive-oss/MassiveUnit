@@ -48,9 +48,6 @@ class TestMain
 
 	public function new()
 	{		
-		#if flash
-		flash.external.ExternalInterface.call("testHideSwf");	
-		#end
 		var suites = new Array<Class<massive.munit.TestSuite>>();
 		suites.push(TestSuite);
 
