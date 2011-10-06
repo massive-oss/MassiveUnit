@@ -35,6 +35,7 @@ import massive.neko.io.FileSys;
 import massive.haxe.util.RegExpUtil;
 import massive.munit.client.HTTPClient;
 import neko.io.Process;
+import neko.FileSystem;
 import neko.vm.Thread;
 import neko.vm.Mutex;
 import neko.Lib;
@@ -351,7 +352,7 @@ class RunCommand extends MUnitCommand
 			if (Thread.readMessage(false) == "quit")
 				break;
 			
-			if (!neko.FileSystem.exists(fileName))
+			if (!FileSystem.exists(fileName))
 				continue;
 			
 			if (file == null)
@@ -470,9 +471,9 @@ class RunCommand extends MUnitCommand
 		
 		parameters.push(targetLocation);
 
-		var exitCode:Int = neko.Sys.command(parameters.join(" "));
+		var exitCode:Int = Sys.command(parameters.join(" "));
 		if (exitCode > 0)
-			neko.Lib.println("Error running " + targetLocation);
+			Lib.println("Error running " + targetLocation);
 		
 		return exitCode;
 	}
@@ -486,11 +487,11 @@ class RunCommand extends MUnitCommand
 		parameters.push("neko");
 		parameters.push('"' + reportRunnerFile.nativePath + '"');
 
-		neko.Lib.println(parameters.join(" "));
+		Lib.println(parameters.join(" "));
 
-		var exitCode:Int = neko.Sys.command(parameters.join(" "));
+		var exitCode:Int = Sys.command(parameters.join(" "));
 		if (exitCode > 0)
-			neko.Lib.println("Error running " + file);
+			Lib.println("Error running " + file);
 		
 		return exitCode;
 	}

@@ -27,12 +27,13 @@
  */
 package massive.munit.command;
 
+import massive.haxe.log.Log;
 import massive.neko.haxe.HaxeWrapper;
 import massive.neko.io.File;
 import massive.neko.io.FileSys;
 import massive.neko.util.PathUtil;
 import massive.munit.Config;
-import massive.haxe.log.Log;
+import neko.Lib;
 
 class TestCommand extends MUnitCommand
 {
@@ -131,7 +132,7 @@ class TestCommand extends MUnitCommand
 		{
 			if (line.indexOf("main_test.") != -1)
 			{
-				neko.Lib.println("Error: The naming convention main_test.<type> is deprecated. Please update your test.hxml file to generate the file(s) 'as2_test.swf', 'as3_test.swf', 'js_test.js', 'neko_test.n' respectively. [Cause: " + line + "]");
+				Lib.println("Error: The naming convention main_test.<type> is deprecated. Please update your test.hxml file to generate the file(s) 'as2_test.swf', 'as3_test.swf', 'js_test.js', 'neko_test.n' respectively. [Cause: " + line + "]");
 				invalid = true;
 			}
 		}

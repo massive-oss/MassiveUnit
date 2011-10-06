@@ -199,14 +199,6 @@ class Config
 	*/
 }
 
-enum TargetType
-{
-	swf;
-	swf9;
-	js;
-	neko;
-}
-
 class Target
 {
 	public var type:TargetType;
@@ -223,3 +215,12 @@ class Target
 		return "Target " + [type, file];
 	}
 }
+
+enum TargetType
+{
+	swf;
+	swf9;
+	js;
+	neko;
+}
+
