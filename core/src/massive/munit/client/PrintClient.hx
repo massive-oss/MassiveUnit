@@ -231,8 +231,8 @@ class PrintClient implements ITestResultClient
 			print("Ignored:" + newline);
 			print("------------------------------");
 			print(ignored);
+			print(newline + newline);
 		}
-		print(newline + newline);
 		print((passCount == testCount) ? "PASSED" : "FAILED");
 		print(newline + "Tests: " + testCount + "  Passed: " + passCount + "  Failed: " + failCount + " Errors: " + errorCount + " Ignored: " + ignoreCount + " Time: " + MathUtil.round(time, 5) + newline);
 		print("==============================" + newline);
@@ -349,7 +349,7 @@ class PrintClient implements ITestResultClient
 
 	private function customTrace(value, ?info:haxe.PosInfos)
 	{
-		print("TRACE: " + info.fileName + "|" + info.lineNumber + "| " + Std.string(value) + newline);
+		print(newline + "TRACE: " + info.fileName + "|" + info.lineNumber + "| " + Std.string(value));
 	}
 }
 

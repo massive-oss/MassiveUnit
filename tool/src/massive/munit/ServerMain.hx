@@ -149,13 +149,15 @@ class ServerMain
 	
 	private function writeJUnitReportData(data:String, dir:File):String
 	{
-		var xml:Xml = Xml.parse(data);
-		
+		var xml:Xml = Xml.parse(data);		
+		var suites = xml.firstChild().elementsNamed("testsuite");
+			
 		var rawDir:File = dir.resolveDirectory("xml", true);
 		rawDir.createDirectory();
 		
 		var result:String = "";
-		for (test in xml.firstChild().elementsNamed("testsuite"))
+		var count = 0;
+		for (test in suites)
 		{
 			var fileName:String = "TEST-" + test.get("name") + ".xml";
 			var file:File = rawDir.resolvePath(fileName);
@@ -177,8 +179,12 @@ class ServerMain
 				result = FAILED;
 			else if (!failed && result == "") 
 				result = PASSED;
+			count++;
 		}
-		if (result == "") 
+		
+		if (count == 0)
+			result = PASSED; // no tests run
+		else if (result == "") 
 			result = ERROR;
 
 		return result;
@@ -195,7 +201,7 @@ class ServerMain
 		
 		var lines:Array<String> = data.split("\n");
 		lines.reverse();
-
+		
 		for (line in lines)
 		{	
 			if (line.indexOf("PASSED") == 0) 
