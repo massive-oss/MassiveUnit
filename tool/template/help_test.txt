@@ -37,5 +37,7 @@ Optional Parameters
    -kill-browser  : Attempt to close browser window / tab when web tests are complete.
                      Works in Chrome but not other browsers due to JS security.
 
+   -debug         : Runs tests in debug mode, targeting only tests marked with '@TestDebug'
+                    Also adds the 'debug' compiler flag to the build.
 
 

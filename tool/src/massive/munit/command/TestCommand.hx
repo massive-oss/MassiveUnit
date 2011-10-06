@@ -194,6 +194,12 @@ class TestCommand extends MUnitCommand
 			{
 				target.hxml = updateSwfHeader(target.hxml);
 			}
+			
+			if(console.getOption("-debug") == "true")
+			{
+				target.hxml += "-D testDebug\n";
+				target.hxml += "-D debug\n";				
+			}
 
 			Log.debug("Compile " + target.type + " -- " + target);
 
