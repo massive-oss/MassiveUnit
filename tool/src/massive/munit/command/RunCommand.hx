@@ -76,7 +76,7 @@ class RunCommand extends MUnitCommand
 		super();
 		killBrowser = false;
 
-		// TODO: Configure this through args to munit. ms 4/8/11
+		// TODO: Configure this through args to munit for CI. ms 4/8/11
 		serverTimeoutTimeSec = DEFAULT_SERVER_TIMEOUT_SEC;
 	}
 	
@@ -88,6 +88,7 @@ class RunCommand extends MUnitCommand
 		locateReportDir();
 		checkForCustomBrowser();
 		checkForBrowserKeepAliveFlag();
+		resetOutputDirectories();
 		generateTestRunnerPages();
 	}
 	
@@ -141,42 +142,49 @@ class RunCommand extends MUnitCommand
 		Log.debug("binPath: " + binDir);
 	}
 	
+
 	function gatherTestRunnerFiles()
 	{
-		if (binDir.isDirectory)
+		if (!binDir.isDirectory)
+			return;
+			
+		var reg:EReg = ~/_test\.(n|swf|js)$/;
+		var tempFiles:Array<File> = binDir.getDirectoryListing(reg);
+		
+		files = [];
+		var length = 0;
+
+		for (file in tempFiles)
 		{
-			var reg:EReg = ~/_test\.(n|swf|js)$/;
-			
-			var tempFiles:Array<File> = binDir.getDirectoryListing(reg);
-			
-			files = []; 
-	
-			for (file in tempFiles)
+			for (type in targetTypes)
 			{
-				for (type in targetTypes)
+				if (file.extension == "swf")
 				{
-					if (file.extension == "swf")
-					{
-						if (type == TargetType.swf9 && file.fileName.indexOf("as3_test.swf") != -1)
-							files.push(file);
-						else if (type == TargetType.swf && file.fileName.indexOf("as2_test.swf") != -1)
-							files.push(file);
-					}
-					else if (type == TargetType.js && file.extension == "js")
+					if (type == TargetType.swf9 && file.fileName.indexOf("as3_test.swf") != -1)
 						files.push(file);
-					else if (type == TargetType.neko && file.extension == "n")
-					{
+					else if (type == TargetType.swf && file.fileName.indexOf("as2_test.swf") != -1)
 						files.push(file);
-						hasNekoTests = true;
-					}
+				}
+				else if (type == TargetType.js && file.extension == "js")
+					files.push(file);
+				else if (type == TargetType.neko && file.extension == "n")
+				{
+					files.push(file);
+					hasNekoTests = true;
 				}
 			}
 			
-			Log.debug(files.length + " targets");
+			// remove old tests not being run
+			if (length == files.length)
+				file.deleteFile();
 			
-			for (file in files)
-				Log.debug("   " + file);
+			length = files.length;
 		}
+		
+		Log.debug(files.length + " targets");
+		
+		for (file in files)
+			Log.debug("   " + file);
 	}
 
 	function locateReportDir()
@@ -224,9 +232,21 @@ class RunCommand extends MUnitCommand
 		}		
 	}
 	
+	function resetOutputDirectories():Void
+	{
+		if (!reportRunnerDir.exists) 
+			reportRunnerDir.createDirectory();
+		else 
+			reportRunnerDir.deleteDirectoryContents(RegExpUtil.SVN_REGEX, true);
+
+		if (!reportTestDir.exists) 
+			reportTestDir.createDirectory();
+		else 
+			reportTestDir.deleteDirectoryContents(RegExpUtil.SVN_REGEX, true);			
+	}
+	
 	function generateTestRunnerPages()
 	{
-		resetOutputDirectories();
 		var pageNames = [];
 		for (file in files)
 		{			
@@ -306,8 +326,6 @@ class RunCommand extends MUnitCommand
 
 		serverProcess.kill();
 
-//		var t = Sys.time();
-
 		if (reportTestDir.exists)
 			reportTestDir.deleteDirectoryContents();
 
@@ -315,8 +333,6 @@ class RunCommand extends MUnitCommand
 		tmpDir.copyTo(reportTestDir);
 		tmpDir.deleteDirectory(true);
 		FileSys.setCwd(console.dir.nativePath);
-//		print(Sys.time() - t); // 4+ secs on mac
-
 	}
 	
 	private function monitorResults():Void
@@ -436,19 +452,6 @@ class RunCommand extends MUnitCommand
 	private function checkIfTestFailed(result:String):Bool
 	{
 		return result.indexOf(ServerMain.FAILED) != -1;
-	}
-	
-	private function resetOutputDirectories():Void
-	{
-		if (!reportRunnerDir.exists) 
-			reportRunnerDir.createDirectory();
-		else 
-			reportRunnerDir.deleteDirectoryContents(RegExpUtil.SVN_REGEX, true);
-
-		if (!reportTestDir.exists) 
-			reportTestDir.createDirectory();
-		else 
-			reportTestDir.deleteDirectoryContents(RegExpUtil.SVN_REGEX, true);			
 	}
 	
 	private function launchFile(file:File):Int

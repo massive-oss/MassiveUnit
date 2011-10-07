@@ -60,8 +60,6 @@ class MunitCommandLineRunner extends CommandLineRunner
 	
 	override private function createCommandInstance(commandClass:Class<ICommand>):ICommand
 	{
-		
-		
 		var command:ICommand = super.createCommandInstance(commandClass);
 		
 		var className:String = Type.getClassName(commandClass);	
@@ -73,11 +71,9 @@ class MunitCommandLineRunner extends CommandLineRunner
 		return cmd;
 	}
 	
-	
 	override public function printHeader():Void
 	{	
 		print("Massive Unit - Copyright " + Date.now().getFullYear() + " Massive Interactive. Version " + version);
-	
 	}
 	
 	override public function printUsage():Void
@@ -91,15 +87,12 @@ class MunitCommandLineRunner extends CommandLineRunner
 		{
 			print(Resource.getString("help"));
 		}
-		
 	}
-	
 	
 	private function getVersion():String
 	{
 		if (version == null)
 		{
-
 			var versionPath:String = console.originalDir.name;
 			var a:Array<String> = versionPath.split(",");
 			version = a.join(".");
@@ -107,10 +100,4 @@ class MunitCommandLineRunner extends CommandLineRunner
 
 		return version;
 	}
-	
-
-	
-
-
-
 }
