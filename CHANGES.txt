@@ -1,3 +1,11 @@
+v0.9.1.7 - 7.10.2011
+- Added -debug flag to command line tool to run only tests marked with @TestDebug. 
+- Switched to using monospace font when printing results in browser.
+- Now auto removes old test runner files not being executed in latest test run.
+
+v0.9.1.6 - 13.9.2011
+- Improved HTML Test Runner output (displays as2/as3 results in HTML using same styles as JS). Fixed AsyncTest race condition bug where timeout and response handlers execute out of order when both occur on same frame (as2/as3 targets only)
+
 v0.9.1.5 - 5.9.2011
 - Added support for @Ignore("optional explanation") tag against @Test method. More info here https://github.com/massiveinteractive/MassiveUnit/wiki/Working-with-test-classes
 
