@@ -33,7 +33,7 @@
 	</script>
 
 	<style type="text/css">
-		html, body, div { margin:0; padding:0;}
+		html, body, div { margin:0; padding:0; font-family: monaco, Andale Mono, Courier New, monospace; font-size:12px;}
 		.output
 		{
 			padding:20px;
