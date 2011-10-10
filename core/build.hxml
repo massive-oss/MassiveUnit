@@ -37,5 +37,5 @@
 
 
 #xml docs
-#-cmd haxe -xml ../bin/haxedoc.xml -cp src -lib mlib massive.munit.AllClasses
+-cmd haxe -xml ../bin/haxedoc.xml -cp src -lib mlib -lib hamcrest massive.munit.AllClasses
 
