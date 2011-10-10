@@ -1,6 +1,7 @@
 # Flash 9+
 -main massive.munit.AllClasses
 -cp src
+-lib hamcrest
 -lib mlib
 -swf9 ../bin/munit_all.swf
 
@@ -9,6 +10,7 @@
 #Flash 8
 -main massive.munit.AllClasses
 -cp src
+-lib hamcrest
 -lib mlib
 -swf ../bin/munit_all.swf
 
@@ -17,6 +19,7 @@
 # JavaScript
 -main massive.munit.AllClasses
 -cp src
+-lib hamcrest
 -lib mlib
 -js ../bin/munit_all.js
 
@@ -25,13 +28,14 @@
 # Neko
 -main massive.munit.AllClasses
 -cp src
+-lib hamcrest
 -lib mlib
 -neko ../bin/munit_all.n
 
 
---next
+#--next
 
 
 #xml docs
--cmd haxe -xml ../bin/haxedoc.xml -cp src -lib mlib massive.munit.AllClasses
+#-cmd haxe -xml ../bin/haxedoc.xml -cp src -lib mlib massive.munit.AllClasses
 

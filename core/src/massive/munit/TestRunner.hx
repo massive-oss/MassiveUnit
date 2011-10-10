@@ -288,10 +288,6 @@ class TestRunner implements IAsyncDelegateObserver
 			{
 				var delegateCount:Int = asyncFactory.asyncDelegateCount;
 				Reflect.callMethod(testCaseData.scope, testCaseData.test, [asyncFactory]);
-				if (asyncFactory.asyncDelegateCount == delegateCount)
-				{
-					throw new MissingAsyncDelegateException("No AsyncDelegate was created in async test at " + result.location, null);
-				}
 				// FIXME: Lift this restriction on asserting in async test host.
 				//        Issues around asserts being caught and cancelling async test.
 		        //        ms 3/12/10
@@ -305,38 +301,39 @@ class TestRunner implements IAsyncDelegateObserver
 			else
 			{
 				Reflect.callMethod(testCaseData.scope, testCaseData.test, emptyParams);
-				if (Assert.assertionCount > assertionCount)
-				{
-					result.passed = true;
-					result.executionTime = Timer.stamp() - testStartTime;
-					passCount++;
-					for (c in clients) 
-						c.addPass(result);
-				}
-				else 
-				{
-					throw new AssertionException("No assertions made in test case at " + result.location, null);
-				}
+				
+				result.passed = true;
+				result.executionTime = Timer.stamp() - testStartTime;
+				passCount++;
+				for (c in clients) 
+					c.addPass(result);
 			}
 		}
-		catch (ae:AssertionException)
+		catch(e:Dynamic)
 		{
-			result.executionTime = Timer.stamp() - testStartTime;
-			result.failure = ae;
-			failCount++;
-			for (c in clients) 
-				c.addFail(result);
-		}
-		catch (e:Dynamic)
-		{
-			result.executionTime = Timer.stamp() - testStartTime;
-			if (!Std.is(e, MUnitException))
-				e = new UnhandledException(e, result.location);
+			if (Std.is(e, org.hamcrest.AssertionException))
+				e = new AssertionException(e.message, e.info);
 			
-			result.error = e;
-			errorCount++;
-			for (c in clients) 
-				c.addError(result);
+			if (Std.is(e, AssertionException))
+			{
+				result.executionTime = Timer.stamp() - testStartTime;
+				result.failure = e;
+				failCount++;
+				for (c in clients) 
+					c.addFail(result);			
+			}
+			else
+			{
+				result.executionTime = Timer.stamp() - testStartTime;
+				if (!Std.is(e, MUnitException))
+					e = new UnhandledException(e, result.location);
+				
+				result.error = e;
+				errorCount++;
+				for (c in clients) 
+					c.addError(result);
+			}
+		
 		}
 	}
 	

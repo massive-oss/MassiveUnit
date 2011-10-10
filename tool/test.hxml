@@ -4,4 +4,5 @@
 -cp src
 -cp ../core/src
 -lib mlib
+-lib hamcrest
 -neko ../bin/test/tool/munit_tool_test.n

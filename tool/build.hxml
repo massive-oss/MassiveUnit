@@ -1,6 +1,7 @@
 -main massive.munit.AllClasses
 -cp src
 -cp ../core/src
+-lib hamcrest
 -lib mlib
 -neko ../bin/munit_tool_all.n
 
@@ -25,6 +26,7 @@
 -main massive.munit.MunitCommandLineRunner
 -cp src
 -cp ../core/src
+-lib hamcrest
 -lib mlib
 -neko ../bin/munit.n
 
@@ -49,6 +51,7 @@
 -cp src
 -cp ../core/src
 -lib mlib
+-lib hamcrest
 -neko ../bin/index.n
 
 --next
@@ -56,5 +59,6 @@
 -main BrowserTestsCompleteReporter
 -cp src
 -cp ../core/src
+-lib hamcrest
 -lib mlib
 -js ../bin/tests-complete.js
