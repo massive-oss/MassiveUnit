@@ -2,9 +2,7 @@
     <user name="massive"/>
     <tag v="cross" />
     <description>MassiveUnit is a cross-platform haXe unit testing framework from Massive Interactive that utilises haxe metadata markup for test cases and includes tools for generating, compiling and running test cases from the command line.</description>
-    <version name="0.9.1.7">1) Added -debug flag to command line tool to run only tests marked with @TestDebug.
-2) Switched to using monospace font when printing results in browser.
-3) Now removes old test runner files not being executed in latest test run.</version>
+    <version name="0.9.1.8">Added hamcrest support.</version>
     <depends name="hamcrest"/>
     <depends name="mlib"/>
 </project>
