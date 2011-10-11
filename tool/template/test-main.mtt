@@ -8,46 +8,44 @@ import js.Lib;
 import js.Dom;
 #end
 
-
 /**
- * Auto generated Test Application.	
+ * Auto generated Test Application.
  * Refer to munit command line tool for more information (haxelib run munit)
  */
+class TestMain
+{
+    static function main(){	new TestMain(); }
 
-class TestMain 
-{		
-	static function main(){	new TestMain(); }
+    public function new()
+    {
+        var suites = new Array<Class<massive.munit.TestSuite>>();
+        suites.push(TestSuite);
 
-	public function new()
-	{
-		var suites = new Array<Class<massive.munit.TestSuite>>();
-		suites.push(TestSuite);
+        var runner:TestRunner = new TestRunner(new PrintClient(true));
+        //runner.addResultClient(new HTTPClient(new JUnitReportClient()));
+        runner.completionHandler = completionHandler;
+        runner.run(suites);
+    }
 
-		var runner:TestRunner = new TestRunner(new PrintClient(true));
-		runner.addResultClient(new HTTPClient(new JUnitReportClient()));	
-		runner.completionHandler = completionHandler;
-		runner.run(suites);
-	}
-	
-	/*
-		updates the background color and closes the current browser
-		for flash and html targets (useful for continous integration servers)
-	*/
-	private function completionHandler(successful:Bool):Void
-	{
-		try
-		{
-			#if flash
-				flash.external.ExternalInterface.call("testResult", successful);
-			#elseif js
-				js.Lib.eval("testResult(" + successful + ");");
-			#elseif neko
-				neko.Sys.exit(0);
-			#end
-		}
-		// if run from outside browser can get error which we can ignore
-		catch (e:Dynamic)
-		{
-		}
-	}
+    /*
+        updates the background color and closes the current browser
+        for flash and html targets (useful for continous integration servers)
+    */
+    function completionHandler(successful:Bool):Void
+    {
+        try
+        {
+            #if flash
+                flash.external.ExternalInterface.call("testResult", successful);
+            #elseif js
+                js.Lib.eval("testResult(" + successful + ");");
+            #elseif neko
+                neko.Sys.exit(0);
+            #end
+        }
+        // if run from outside browser can get error which we can ignore
+        catch (e:Dynamic)
+        {
+        }
+    }
 }
