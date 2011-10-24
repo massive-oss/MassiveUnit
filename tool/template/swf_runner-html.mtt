@@ -3,75 +3,14 @@
   <head>
 	<title>Massive Unit Test Runner</title>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-    <script ltype="text/JavaScript" language="JavaScript" src="swfobject.js"></script>
+    <link rel="stylesheet" type="text/css" href="htmlprintclient.css" />
+    
+    <script type="text/JavaScript" language="JavaScript" src="swfobject.js"></script>
+    <script type="text/JavaScript" language="JavaScript" src="htmlprintclient.js"></script>
     
     <script type="text/JavaScript" language="JavaScript" >
 		SWFObject.embedSWF("::runnerName::", "swfContainer", "100%", "100%", "10.1.0", {}, {}, {allowFullScreen:true, bgcolor:0, allowScriptAccess:"always", wmode:"transparent", scale:"noscale"});
    		
-   		var printOutput = "";
-   		var printTimeout;
-   		var printResult = false;
-		
-		function testHideSwf()
-		{	
-			var swf = document.getElementById("swfContainer");
-			swf.width = 0;
-			swf.height = 0;
-			return true;
-		}
-
-		function testPrint(value)
-		{
-			printOutput += value;
-			if(printTimeout ==  null) printTimeout = setTimeout("doActualPrint()", 1);
-			return true;
-		}
-
-		function testResult(success)
-		{ 
-			printResult = success;
-			setTimeout("doActualTestResult()", 1);
-			return true;
-		}
-	
-	
-		function doActualPrint()
-		{
-			printTimeout = null;
-			var textArea = document.getElementById("haxe:trace");
-			textArea.innerHTML += printOutput;
-			printOutput = "";
-			window.scrollTo(0,document.body.scrollHeight);
-		}
-
-	
-
-		function doActualTestResult()
-		{
-			window.scrollTo(0,document.body.scrollHeight);
-			setBackgroundResultColor(printResult ? 1 : 0);
-			parent.testComplete();
-		}
-		
-		function setBackgroundResultColor(result)
-		{ 
-			var color;
-			switch(result)
-			{
-				case -1: color = "white";
-					break;
-				case 0: color = "#d54242";// red
-					break;
-				case 1: color = "#6bae75";// green
-					break;
-				default: color = "#d5c942";// yellow
-					break;
-			}
-
-			document.body.style.background = color;
-		}
-
-	
 	</script>
 	<style type="text/css">
 		html, body, div { margin:0; padding:0; font-family: monaco, Andale Mono, Courier New, monospace; font-size:12px;}
@@ -84,7 +23,13 @@
   </head>
   <body>
 	<div id="swfContainer" ></div>
-	<div id="haxe:trace" class="output"></div>
-	
+	<div id="haxe:trace" ></div>
+	<div id="munit" class="munit" >
+<!--   		<div id="munit-header"  ></div>
+  		<div id="munit-tests"  ></div>
+  		<div id="munit-coverage"  ></div>
+  		<div id="munit-results"  ></div>
+  		<div id="munit-summary" ></div> -->
+  	</div>
   </body>
 </html>

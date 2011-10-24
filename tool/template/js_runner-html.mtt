@@ -3,35 +3,10 @@
   <head>
 	<title>Massive Unit Test Runner</title>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+      <link rel="stylesheet" type="text/css" href="htmlprintclient.css" />
+
+     <script ltype="text/JavaScript" language="JavaScript" src="htmlprintclient.js"></script>
     
-	<script language='JavaScript' type='text/JavaScript'> 
-		function testResult(success)
-		{ 
-			window.scrollTo(0,document.body.scrollHeight);
-			setBackgroundResultColor(success ? 1 : 0);
-			parent.testComplete();
-		}
-		
-		function setBackgroundResultColor(result)
-		{ 
-			var color;
-			switch(result)
-			{
-				case -1: color = "white";
-					break;
-				case 0: color = "#d54242";// red
-					break;
-				case 1: color = "#6bae75";// green
-					break;
-				default: color = "#d5c942";// yellow
-					break;
-			}
-
-			document.body.style.backgroundColor = color;
-
-		}
-	</script>
-
 	<style type="text/css">
 		html, body, div { margin:0; padding:0; font-family: monaco, Andale Mono, Courier New, monospace; font-size:12px;}
 		.output
@@ -41,7 +16,15 @@
 	</style>
   </head>
   <body>
-	<div id="haxe:trace" class="output"></div>
+	<div id="haxe:trace" ></div>
+	<div id="munit" class="munit" >
+<!-- 		
+  		<div id="munit-header"  ></div>
+  		<div id="munit-tests"  ></div>
+      <div id="munit-coverage"></div>
+  		<div id="munit-results"  ></div>
+  		<div id="munit-summary" ></div> -->
+  	</div>
     <script language='JavaScript' type='text/JavaScript' src="::runnerName::"></script>
   </body>
 </html>

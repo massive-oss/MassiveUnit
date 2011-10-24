@@ -1,0 +1,81 @@
+html, body, div { margin:0; padding:0; font-family: monaco, Andale Mono, Courier New, monospace; font-size:12px; }
+
+body
+{
+	background-color:#f1f0e1;
+}
+
+#swfContainer {position: absolute;}
+
+.munit
+{
+	padding:10px 5px 10px 5px;
+
+}
+.line
+{
+	
+}
+
+.trace
+{
+	color:#5a5a5a;
+	font-style:italic;
+}
+
+.test
+{
+
+	border: 1px solid #f1f0e1;
+}
+
+
+.test-summary
+{
+	padding: 1px 2px 1px 2px;
+	display: inline-block;
+}
+
+.test-contents > .trace
+{
+	margin:5px;
+	padding:10px;
+	background-color: #DEDEDE;
+	border: 1px dotted #CCCCCC;
+}
+
+.test-coverage-header
+{
+	font-size:14
+	padding: 10px 2px 1px 2px;
+}
+.test-coverage
+{
+	margin:5px;
+	padding:10px;
+	background-color: #FFFBB3;
+	border: 1px dotted #CCCCCC;
+}
+
+.test-exceptions
+{
+	margin:5px;
+	padding:10px;
+	background-color: #EEABAB;
+	border: 1px dotted #CCCCCC;
+}
+
+.result-ignored
+{
+	padding:20px;
+}
+
+.result-coverage
+{
+	padding:20px;
+}
+
+.munit-summary
+{
+	padding:20px;
+}
