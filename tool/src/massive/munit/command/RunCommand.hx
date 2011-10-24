@@ -1,16 +1,16 @@
 /**************************************** ****************************************
  * Copyright 2010 Massive Interactive. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
- * 
+ *
  *    1. Redistributions of source code must retain the above copyright notice, this list of
  *       conditions and the following disclaimer.
- * 
+ *
  *    2. Redistributions in binary form must reproduce the above copyright notice, this list
  *       of conditions and the following disclaimer in the documentation and/or other materials
  *       provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
@@ -20,7 +20,7 @@
  * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * The views and conclusions contained in the software and documentation are those of the
  * authors and should not be interpreted as representing official policies, either expressed
  * or implied, of Massive Interactive.
@@ -47,455 +47,455 @@ import massive.munit.ServerMain;
 import massive.munit.util.MathUtil;
 
 class RunCommand extends MUnitCommand
-{	
-	public static inline var DEFAULT_SERVER_TIMEOUT_SEC:Int = 30;
+{
+    public static inline var DEFAULT_SERVER_TIMEOUT_SEC:Int = 30;
 
-	private var files:Array<File>;
-	
-	private var browser:String;
+    private var files:Array<File>;
 
-	private var reportDir:File;
-	private var reportRunnerDir:File;
-	private var reportTestDir:File;
-	
-	private var tmpDir:File;
-	private var tmpRunnerDir:File;
-	private var binDir:File;
-	
-	private var targetTypes:Array<TargetType>;
-	
-	private var killBrowser:Bool;
-	private var indexPage:File;
-	private var nekoFile:File;
-	private var hasBrowserTests:Bool;
-	private var hasNekoTests:Bool;
-	private var serverTimeoutTimeSec:Int;
-	
-	public function new():Void
-	{
-		super();
-		killBrowser = false;
+    private var browser:String;
 
-		// TODO: Configure this through args to munit for CI. ms 4/8/11
-		serverTimeoutTimeSec = DEFAULT_SERVER_TIMEOUT_SEC;
-	}
-	
-	override public function initialise():Void
-	{
-		getTargetTypes();
-		locateBinDir();
-		gatherTestRunnerFiles();
-		locateReportDir();
-		checkForCustomBrowser();
-		checkForBrowserKeepAliveFlag();
-		resetOutputDirectories();
-		generateTestRunnerPages();
-	}
-	
-	function getTargetTypes()
-	{
-		targetTypes = new Array();
+    private var reportDir:File;
+    private var reportRunnerDir:File;
+    private var reportTestDir:File;
 
-		if (console.getOption("swf") == "true")
-		{
-			targetTypes.push(TargetType.swf9);
-			targetTypes.push(TargetType.swf);
-		}
-		else
-		{
-			if (console.getOption("as2") == "true")
-				targetTypes.push(TargetType.swf);
-			if (console.getOption("as3") == "true")
-				targetTypes.push(TargetType.swf9);
-		}
-		if (console.getOption("js") == "true")
-			targetTypes.push(TargetType.js);
-		if (console.getOption("neko") == "true")
-			targetTypes.push(TargetType.neko);
+    private var tmpDir:File;
+    private var tmpRunnerDir:File;
+    private var binDir:File;
 
-		if (targetTypes.length == 0)
-			targetTypes = config.targetTypes.concat([]);
-	}
-	
-	function locateBinDir()
-	{
-		var binPath:String = console.getNextArg();
-	
-		if (binPath == null)
-		{
-			binDir = config.bin;
-			
-			if (binDir == null)
-				error("Default bin directory is not set. Please run munit config.");
-			
-			if (!binDir.exists)
-				binDir.createDirectory();
-		}
-		else
-		{
-			binDir = File.create(binPath, console.dir);
+    private var targetTypes:Array<TargetType>;
 
-			if (!binDir.exists)
-				binDir.createDirectory();
-		}
-		
-		Log.debug("binPath: " + binDir);
-	}
-	
+    private var killBrowser:Bool;
+    private var indexPage:File;
+    private var nekoFile:File;
+    private var hasBrowserTests:Bool;
+    private var hasNekoTests:Bool;
+    private var serverTimeoutTimeSec:Int;
 
-	function gatherTestRunnerFiles()
-	{
-		if (!binDir.isDirectory)
-			return;
-			
-		var reg:EReg = ~/_test\.(n|swf|js)$/;
-		var tempFiles:Array<File> = binDir.getDirectoryListing(reg);
-		
-		files = [];
-		var length = 0;
+    public function new():Void
+    {
+        super();
+        killBrowser = false;
 
-		for (file in tempFiles)
-		{
-			for (type in targetTypes)
-			{
-				if (file.extension == "swf")
-				{
-					if (type == TargetType.swf9 && file.fileName.indexOf("as3_test.swf") != -1)
-						files.push(file);
-					else if (type == TargetType.swf && file.fileName.indexOf("as2_test.swf") != -1)
-						files.push(file);
-				}
-				else if (type == TargetType.js && file.extension == "js")
-					files.push(file);
-				else if (type == TargetType.neko && file.extension == "n")
-				{
-					files.push(file);
-					hasNekoTests = true;
-				}
-			}
-			
-			// remove old tests not being run
-			if (length == files.length)
-				file.deleteFile();
-			
-			length = files.length;
-		}
-		
-		Log.debug(files.length + " targets");
-		
-		for (file in files)
-			Log.debug("   " + file);
-	}
+        // TODO: Configure this through args to munit for CI. ms 4/8/11
+        serverTimeoutTimeSec = DEFAULT_SERVER_TIMEOUT_SEC;
+    }
 
-	function locateReportDir()
-	{
-		var reportPath:String = console.getNextArg();
-		
-		if (reportPath == null)
-		{
-			reportDir = config.report;
-			
-			if (reportDir == null)
-				error("Default report directory is not set. Please run munit config.");
-			if (!reportDir.exists)
-				reportDir.createDirectory();
-		}
-		else
-		{
-			reportDir = File.create(reportPath, console.dir);
-			
-			if(!reportDir.exists)
-				reportDir.createDirectory();
-		}
-		
-		Log.debug("report: " + reportDir);
-	}
+    override public function initialise():Void
+    {
+        getTargetTypes();
+        locateBinDir();
+        gatherTestRunnerFiles();
+        locateReportDir();
+        checkForCustomBrowser();
+        checkForBrowserKeepAliveFlag();
+        resetOutputDirectories();
+        generateTestRunnerPages();
+    }
 
-	function checkForCustomBrowser()
-	{
-		reportRunnerDir = reportDir.resolveDirectory("test-runner");
-		reportTestDir = reportDir.resolveDirectory("test");
-		
-		var b:String = console.getOption("browser");
-		if (b != null && b != "true")
-			browser = b;
-		
-		Log.debug("browser: " + browser);
-	}
-	
-	function checkForBrowserKeepAliveFlag()
-	{
-		if(console.getOption("kill-browser") != null)
-		{
-			killBrowser = true;
-			Log.debug("killBrowser? " + killBrowser);
-		}		
-	}
-	
-	function resetOutputDirectories():Void
-	{
-		if (!reportRunnerDir.exists) 
-			reportRunnerDir.createDirectory();
-		else 
-			reportRunnerDir.deleteDirectoryContents(RegExpUtil.SVN_REGEX, true);
+    function getTargetTypes()
+    {
+        targetTypes = new Array();
 
-		if (!reportTestDir.exists) 
-			reportTestDir.createDirectory();
-		else 
-			reportTestDir.deleteDirectoryContents(RegExpUtil.SVN_REGEX, true);			
-	}
-	
-	function generateTestRunnerPages()
-	{
-		var pageNames = [];
-		for (file in files)
-		{			
-			if (file.extension == 'js' || file.extension == 'swf')
-			{
-				var pageName = file.fileName.substr(0, -file.extension.length) + "html";
-				var pageContent = TemplateUtil.getTemplate(file.extension + "_runner-html", {runnerName:file.fileName});
-				var runnerPage = reportRunnerDir.resolvePath(pageName);
-				
-				runnerPage.writeString(pageContent);
-				pageNames.push(pageName);
-				hasBrowserTests = true;
-			}
-			else if (file.extension == 'n')
-			{
-				hasNekoTests = true;
-				nekoFile = file;
-			}
-		}
-		
-		var frameCols = "";
-		var frames = "";
-		var frameTitles = "";
-		var colCount = Math.round(100 / pageNames.length);
-		for (pageName in pageNames)
-		{
-			frameCols += "*,";
-			frameTitles += '<td width="' + colCount + '%">' + pageName.substr(0, pageName.indexOf('_')).toUpperCase() + '</td>';
-			frames += '<frame src="' + pageName + '" scrolling="yes" NORESIZE/>\n';
-		}
-		
-		frameCols = frameCols.substr(0, -1);			
-		
-		var headerContent = TemplateUtil.getTemplate("target-headers-html", { targetHeaderTitles:frameTitles } );
-		var headerPage = reportRunnerDir.resolvePath("target_headers.html");
-		headerPage.writeString(headerContent, true);
-		
-		var pageContent = TemplateUtil.getTemplate("runner-html", {killBrowser:killBrowser, testCount:pageNames.length, frames:frames, frameCols:frameCols});
-		indexPage = reportRunnerDir.resolvePath("index.html");
-		indexPage.writeString(pageContent, true);
-		
-		var resourceDir:File = console.originalDir.resolveDirectory("resource");
-		binDir.copyTo(reportRunnerDir);
-		resourceDir.copyTo(reportRunnerDir);
-	}
-	
-	override public function execute():Void
-	{
-		var errors:Array<String> = new Array();
-		
-		FileSys.setCwd(console.originalDir.nativePath);
-		var serverExitCode:Int = 0;
-		
-		tmpDir = File.current.resolveDirectory("tmp");
-		if (tmpDir.exists)
-			tmpDir.deleteDirectoryContents(RegExpUtil.SVN_REGEX, true);
-		
-		tmpRunnerDir = tmpDir.resolveDirectory("runner");
-		reportRunnerDir.copyTo(tmpRunnerDir);
+        if (console.getOption("swf") == "true")
+        {
+            targetTypes.push(TargetType.swf9);
+            targetTypes.push(TargetType.swf);
+        }
+        else
+        {
+            if (console.getOption("as2") == "true")
+                targetTypes.push(TargetType.swf);
+            if (console.getOption("as3") == "true")
+                targetTypes.push(TargetType.swf9);
+        }
+        if (console.getOption("js") == "true")
+            targetTypes.push(TargetType.js);
+        if (console.getOption("neko") == "true")
+            targetTypes.push(TargetType.neko);
 
-		var serverProcess = new Process("nekotools", ["server"]);
-		var resultMonitor = Thread.create(monitorResults);
-		
-		resultMonitor.sendMessage(Thread.current());
-		resultMonitor.sendMessage(serverProcess);
-		resultMonitor.sendMessage(serverTimeoutTimeSec);
-		
-		if (hasNekoTests)
-			launchNeko(nekoFile);
+        if (targetTypes.length == 0)
+            targetTypes = config.targetTypes.concat([]);
+    }
 
-		if (hasBrowserTests)
-			launchFile(indexPage);
-		else
-			resultMonitor.sendMessage("quit");
-		
-		var complete = Thread.readMessage(true);
+    function locateBinDir()
+    {
+        var binPath:String = console.getNextArg();
 
-		serverProcess.kill();
+        if (binPath == null)
+        {
+            binDir = config.bin;
 
-		if (reportTestDir.exists)
-			reportTestDir.deleteDirectoryContents();
+            if (binDir == null)
+                error("Default bin directory is not set. Please run munit config.");
 
-		tmpRunnerDir.deleteDirectory();
-		tmpDir.copyTo(reportTestDir);
-		tmpDir.deleteDirectory(true);
-		FileSys.setCwd(console.dir.nativePath);
-	}
-	
-	private function monitorResults():Void
-	{
-		var mainThread = Thread.readMessage(true);
-		var serverProcess = Thread.readMessage(true);
-		var serverTimeoutTimeSec = Thread.readMessage(true);
-		var testRunCount = 0;
-		var testPassCount = 0;
-		var testFailCount = 0;
-		var testErrorCount = 0;
-		
-		var startTime = Sys.time();
-		var lastResultTime = startTime;
-		var serverHung = false;
+            if (!binDir.exists)
+                binDir.createDirectory();
+        }
+        else
+        {
+            binDir = File.create(binPath, console.dir);
 
-		if (serverTimeoutTimeSec == null || serverTimeoutTimeSec < 10)
-			serverTimeoutTimeSec = DEFAULT_SERVER_TIMEOUT_SEC;
-		
-		// Note: Tried using FileSystem.stat mod date to see changes in results.txt but 
-		//       writes are too quick so using line count instead.
-		var fileName = tmpDir.nativePath + "results.txt";
-		var file = null;
-		var lineCount = 0;
-		var platformMap = new Hash<Bool>(); 
-		do
-		{
-			if ((Sys.time() - lastResultTime) > serverTimeoutTimeSec)
-			{
-				serverHung = true;
-				break;
-			}
-			if (Thread.readMessage(false) == "quit")
-				break;
-			
-			if (!FileSystem.exists(fileName))
-				continue;
-			
-			if (file == null)
-				file = tmpDir.resolvePath("results.txt");
-			
-			var contents = "";
-			try {
-				contents = file.readString();
-			}
-			catch (e:Dynamic) {
-				Sys.sleep(0.1);
-				continue;
-			}
-				
-			var lines = contents.split("\n");
-			lines.pop();
-			
-			if (lines.length > lineCount)
-			{
-				var i = lineCount;
-				lineCount = lines.length;
+            if (!binDir.exists)
+                binDir.createDirectory();
+        }
 
-				if ( i < lineCount)
-					lastResultTime = Sys.time();
-				
-				while (i < lineCount)
-				{
-					var line = lines[i++];
-
-					if (line != ServerMain.END)
-					{
-						if (checkIfTestPassed(line))
-							testPassCount++;
-						else if (checkIfTestFailed(line))
-							testFailCount++;
-						else
-							testErrorCount++;
-						
-						var parts = line.split("under ");
-						if (parts.length > 1)
-						{
-							var platform = parts[1].split(" ")[0];
-							platformMap.set(platform, true);
-
-							print(line);
-						}
-					}
-				}
-								
-				if (lines[lineCount - 1] == ServerMain.END)
-				{
-					lineCount--;
-					break;
-				}
-			}
-		}
-		while (true);
+        Log.debug("binPath: " + binDir);
+    }
 
 
-		var platformCount = Lambda.count(platformMap);
-		
-		print("------------------------------");
-		print("PLATFORMS TESTED: " + platformCount + ", PASSED: " + testPassCount + ", FAILED: " + testFailCount + ", ERRORS: " + testErrorCount + ", TIME: " + MathUtil.round(Sys.time() - startTime, 5));
+    function gatherTestRunnerFiles()
+    {
+        if (!binDir.isDirectory)
+            return;
 
-		if (serverHung)
-			print("ERROR: Local results server appeared to hang so test reporting was cancelled.");
+        var reg:EReg = ~/_test\.(n|swf|js)$/;
+        var tempFiles:Array<File> = binDir.getDirectoryListing(reg);
 
-		mainThread.sendMessage("done");
-	}
-	
-	private function getTargetName(result:String):String
-	{
-		return result.split("under ")[1].split(" using")[0];
-	}
-	
-	private function checkIfTestPassed(result:String):Bool
-	{
-		return result.indexOf(ServerMain.PASSED) != -1;
-	}
-	
-	private function checkIfTestFailed(result:String):Bool
-	{
-		return result.indexOf(ServerMain.FAILED) != -1;
-	}
-	
-	private function launchFile(file:File):Int
-	{
-		var targetLocation:String  = HTTPClient.DEFAULT_SERVER_URL + "/tmp/runner/" + file.fileName;		
-		var parameters:Array<String> = [];
+        files = [];
+        var length = 0;
 
-		if (FileSys.isWindows) 
-		{
-			parameters.push("start");
-			if (browser != null) 
-				parameters.push(browser);
-		}
-		else
-		{
-			parameters.push("open");
-			if (browser != null) 
-				parameters.push("-a " + browser);
-		}
-		
-		parameters.push(targetLocation);
+        for (file in tempFiles)
+        {
+            for (type in targetTypes)
+            {
+                if (file.extension == "swf")
+                {
+                    if (type == TargetType.swf9 && file.fileName.indexOf("as3_test.swf") != -1)
+                        files.push(file);
+                    else if (type == TargetType.swf && file.fileName.indexOf("as2_test.swf") != -1)
+                        files.push(file);
+                }
+                else if (type == TargetType.js && file.extension == "js")
+                    files.push(file);
+                else if (type == TargetType.neko && file.extension == "n")
+                {
+                    files.push(file);
+                    hasNekoTests = true;
+                }
+            }
 
-		var exitCode:Int = Sys.command(parameters.join(" "));
-		if (exitCode > 0)
-			Lib.println("Error running " + targetLocation);
-		
-		return exitCode;
-	}
-	
-	private function launchNeko(file:File):Int
-	{
-		var reportRunnerFile:File = reportRunnerDir.resolvePath(file.fileName);
-		file.copyTo(reportRunnerFile);
-		
-		var parameters:Array<String> = [];
-		parameters.push("neko");
-		parameters.push('"' + reportRunnerFile.nativePath + '"');
+            // remove old tests not being run
+            if (length == files.length)
+                file.deleteFile();
 
-		Lib.println(parameters.join(" "));
+            length = files.length;
+        }
 
-		var exitCode:Int = Sys.command(parameters.join(" "));
-		if (exitCode > 0)
-			Lib.println("Error running " + file);
-		
-		return exitCode;
-	}
+        Log.debug(files.length + " targets");
+
+        for (file in files)
+            Log.debug("   " + file);
+    }
+
+    function locateReportDir()
+    {
+        var reportPath:String = console.getNextArg();
+
+        if (reportPath == null)
+        {
+            reportDir = config.report;
+
+            if (reportDir == null)
+                error("Default report directory is not set. Please run munit config.");
+            if (!reportDir.exists)
+                reportDir.createDirectory();
+        }
+        else
+        {
+            reportDir = File.create(reportPath, console.dir);
+
+            if(!reportDir.exists)
+                reportDir.createDirectory();
+        }
+
+        Log.debug("report: " + reportDir);
+    }
+
+    function checkForCustomBrowser()
+    {
+        reportRunnerDir = reportDir.resolveDirectory("test-runner");
+        reportTestDir = reportDir.resolveDirectory("test");
+
+        var b:String = console.getOption("browser");
+        if (b != null && b != "true")
+            browser = b;
+
+        Log.debug("browser: " + browser);
+    }
+
+    function checkForBrowserKeepAliveFlag()
+    {
+        if(console.getOption("kill-browser") != null)
+        {
+            killBrowser = true;
+            Log.debug("killBrowser? " + killBrowser);
+        }
+    }
+
+    function resetOutputDirectories():Void
+    {
+        if (!reportRunnerDir.exists)
+            reportRunnerDir.createDirectory();
+        else
+            reportRunnerDir.deleteDirectoryContents(RegExpUtil.SVN_REGEX, true);
+
+        if (!reportTestDir.exists)
+            reportTestDir.createDirectory();
+        else
+            reportTestDir.deleteDirectoryContents(RegExpUtil.SVN_REGEX, true);
+    }
+
+    function generateTestRunnerPages()
+    {
+        var pageNames = [];
+        for (file in files)
+        {
+            if (file.extension == 'js' || file.extension == 'swf')
+            {
+                var pageName = file.fileName.substr(0, -file.extension.length) + "html";
+                var pageContent = TemplateUtil.getTemplate(file.extension + "_runner-html", {runnerName:file.fileName});
+                var runnerPage = reportRunnerDir.resolvePath(pageName);
+
+                runnerPage.writeString(pageContent);
+                pageNames.push(pageName);
+                hasBrowserTests = true;
+            }
+            else if (file.extension == 'n')
+            {
+                hasNekoTests = true;
+                nekoFile = file;
+            }
+        }
+
+        var frameCols = "";
+        var frames = "";
+        var frameTitles = "";
+        var colCount = Math.round(100 / pageNames.length);
+        for (pageName in pageNames)
+        {
+            frameCols += "*,";
+            frameTitles += '<td width="' + colCount + '%">' + pageName.substr(0, pageName.indexOf('_')).toUpperCase() + '</td>';
+            frames += '<frame src="' + pageName + '" scrolling="auto" NORESIZE/>\n';
+        }
+
+        frameCols = frameCols.substr(0, -1);
+
+        var headerContent = TemplateUtil.getTemplate("target-headers-html", { targetHeaderTitles:frameTitles } );
+        var headerPage = reportRunnerDir.resolvePath("target_headers.html");
+        headerPage.writeString(headerContent, true);
+
+        var pageContent = TemplateUtil.getTemplate("runner-html", {killBrowser:killBrowser, testCount:pageNames.length, frames:frames, frameCols:frameCols});
+        indexPage = reportRunnerDir.resolvePath("index.html");
+        indexPage.writeString(pageContent, true);
+
+        var resourceDir:File = console.originalDir.resolveDirectory("resource");
+        binDir.copyTo(reportRunnerDir);
+        resourceDir.copyTo(reportRunnerDir);
+    }
+
+    override public function execute():Void
+    {
+        var errors:Array<String> = new Array();
+
+        FileSys.setCwd(console.originalDir.nativePath);
+        var serverExitCode:Int = 0;
+
+        tmpDir = File.current.resolveDirectory("tmp");
+        if (tmpDir.exists)
+            tmpDir.deleteDirectoryContents(RegExpUtil.SVN_REGEX, true);
+
+        tmpRunnerDir = tmpDir.resolveDirectory("runner");
+        reportRunnerDir.copyTo(tmpRunnerDir);
+
+        var serverProcess = new Process("nekotools", ["server"]);
+        var resultMonitor = Thread.create(monitorResults);
+
+        resultMonitor.sendMessage(Thread.current());
+        resultMonitor.sendMessage(serverProcess);
+        resultMonitor.sendMessage(serverTimeoutTimeSec);
+
+        if (hasNekoTests)
+            launchNeko(nekoFile);
+
+        if (hasBrowserTests)
+            launchFile(indexPage);
+        else
+            resultMonitor.sendMessage("quit");
+
+        var complete = Thread.readMessage(true);
+
+        serverProcess.kill();
+
+        if (reportTestDir.exists)
+            reportTestDir.deleteDirectoryContents();
+
+        tmpRunnerDir.deleteDirectory();
+        tmpDir.copyTo(reportTestDir);
+        tmpDir.deleteDirectory(true);
+        FileSys.setCwd(console.dir.nativePath);
+    }
+
+    private function monitorResults():Void
+    {
+        var mainThread = Thread.readMessage(true);
+        var serverProcess = Thread.readMessage(true);
+        var serverTimeoutTimeSec = Thread.readMessage(true);
+        var testRunCount = 0;
+        var testPassCount = 0;
+        var testFailCount = 0;
+        var testErrorCount = 0;
+
+        var startTime = Sys.time();
+        var lastResultTime = startTime;
+        var serverHung = false;
+
+        if (serverTimeoutTimeSec == null || serverTimeoutTimeSec < 10)
+            serverTimeoutTimeSec = DEFAULT_SERVER_TIMEOUT_SEC;
+
+        // Note: Tried using FileSystem.stat mod date to see changes in results.txt but
+        //       writes are too quick so using line count instead.
+        var fileName = tmpDir.nativePath + "results.txt";
+        var file = null;
+        var lineCount = 0;
+        var platformMap = new Hash<Bool>();
+        do
+        {
+            if ((Sys.time() - lastResultTime) > serverTimeoutTimeSec)
+            {
+                serverHung = true;
+                break;
+            }
+            if (Thread.readMessage(false) == "quit")
+                break;
+
+            if (!FileSystem.exists(fileName))
+                continue;
+
+            if (file == null)
+                file = tmpDir.resolvePath("results.txt");
+
+            var contents = "";
+            try {
+                contents = file.readString();
+            }
+            catch (e:Dynamic) {
+                Sys.sleep(0.1);
+                continue;
+            }
+
+            var lines = contents.split("\n");
+            lines.pop();
+
+            if (lines.length > lineCount)
+            {
+                var i = lineCount;
+                lineCount = lines.length;
+
+                if ( i < lineCount)
+                    lastResultTime = Sys.time();
+
+                while (i < lineCount)
+                {
+                    var line = lines[i++];
+
+                    if (line != ServerMain.END)
+                    {
+                        if (checkIfTestPassed(line))
+                            testPassCount++;
+                        else if (checkIfTestFailed(line))
+                            testFailCount++;
+                        else
+                            testErrorCount++;
+
+                        var parts = line.split("under ");
+                        if (parts.length > 1)
+                        {
+                            var platform = parts[1].split(" ")[0];
+                            platformMap.set(platform, true);
+
+                            print(line);
+                        }
+                    }
+                }
+
+                if (lines[lineCount - 1] == ServerMain.END)
+                {
+                    lineCount--;
+                    break;
+                }
+            }
+        }
+        while (true);
+
+
+        var platformCount = Lambda.count(platformMap);
+
+        print("------------------------------");
+        print("PLATFORMS TESTED: " + platformCount + ", PASSED: " + testPassCount + ", FAILED: " + testFailCount + ", ERRORS: " + testErrorCount + ", TIME: " + MathUtil.round(Sys.time() - startTime, 5));
+
+        if (serverHung)
+            print("ERROR: Local results server appeared to hang so test reporting was cancelled.");
+
+        mainThread.sendMessage("done");
+    }
+
+    private function getTargetName(result:String):String
+    {
+        return result.split("under ")[1].split(" using")[0];
+    }
+
+    private function checkIfTestPassed(result:String):Bool
+    {
+        return result.indexOf(ServerMain.PASSED) != -1;
+    }
+
+    private function checkIfTestFailed(result:String):Bool
+    {
+        return result.indexOf(ServerMain.FAILED) != -1;
+    }
+
+    private function launchFile(file:File):Int
+    {
+        var targetLocation:String  = HTTPClient.DEFAULT_SERVER_URL + "/tmp/runner/" + file.fileName;
+        var parameters:Array<String> = [];
+
+        if (FileSys.isWindows)
+        {
+            parameters.push("start");
+            if (browser != null)
+                parameters.push(browser);
+        }
+        else
+        {
+            parameters.push("open");
+            if (browser != null)
+                parameters.push("-a " + browser);
+        }
+
+        parameters.push(targetLocation);
+
+        var exitCode:Int = Sys.command(parameters.join(" "));
+        if (exitCode > 0)
+            Lib.println("Error running " + targetLocation);
+
+        return exitCode;
+    }
+
+    private function launchNeko(file:File):Int
+    {
+        var reportRunnerFile:File = reportRunnerDir.resolvePath(file.fileName);
+        file.copyTo(reportRunnerFile);
+
+        var parameters:Array<String> = [];
+        parameters.push("neko");
+        parameters.push('"' + reportRunnerFile.nativePath + '"');
+
+        Lib.println(parameters.join(" "));
+
+        var exitCode:Int = Sys.command(parameters.join(" "));
+        if (exitCode > 0)
+            Lib.println("Error running " + file);
+
+        return exitCode;
+    }
 }

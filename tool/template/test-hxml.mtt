@@ -1,10 +1,9 @@
 # Flash 9+
 -main TestMain
+-lib munit
+-lib hamcrest
 -cp src
 -cp ::src::
-#-D testDebug
--lib munit
--lib mlib
 -swf-version 9
 -swf ::bin::/as3_test.swf
 
@@ -12,10 +11,10 @@
 
 #Flash 8
 -main TestMain
+-lib munit
+-lib hamcrest
 -cp src
 -cp ::src::
--lib munit
--lib mlib
 -swf-version 8
 -swf ::bin::/as2_test.swf
 
@@ -23,18 +22,18 @@
 
 # JavaScript
 -main TestMain
+-lib munit
+-lib hamcrest
 -cp src
 -cp ::src::
--lib munit
--lib mlib
 -js ::bin::/js_test.js
 
 --next
 
 # Neko
 -main TestMain
+-lib munit
+-lib hamcrest
 -cp src
 -cp ::src::
--lib munit
--lib mlib
 -neko ::bin::/neko_test.n
