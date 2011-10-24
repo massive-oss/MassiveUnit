@@ -34,136 +34,108 @@ import massive.munit.util.MathUtil;
 import massive.haxe.util.ReflectUtil;
 import massive.munit.util.Timer;
 
+import massive.munit.client.PrintClientHelper;
+
 /**
- * Generates basic text formatted test result output.
- * 
- * <p>
- * Example output:
- * </p>
- * <pre>
- * MUnit Results
- * ------------------------------
- * 
- * Class: SampleTest ...
- * Class: sub.ItemTest ..
- * 
- * PASSED
- * Tests: 5  Passed: 5  Failed: 0 Errors: 0 Ignored: 0 Time: 0.202
- * ==============================
- * </pre>
- * 
- * @author Mike Stead
+ * Generates rich html output for JS/Flash.
+ * For other targets it prints out basic string output (neko, php, etc)
  */
 class PrintClient implements ITestResultClient
 {
 	/**
 	 * Default id of this client.
 	 */
-	public static inline var DEFAULT_ID:String = "print";
+	public static inline var DEFAULT_ID:String = "PrintClient";
+
+
 
 	/**
 	 * The unique identifier for the client.
 	 */
 	public var id(default, null):String;
+
 	
 	/**
 	 * Handler which if present, is called when the client has completed generating its results.
 	 */
 	public var completionHandler(get_completeHandler, set_completeHandler):ITestResultClient -> Void;
-	private function get_completeHandler():ITestResultClient -> Void 
+	function get_completeHandler():ITestResultClient -> Void 
 	{
 		return completionHandler;
 	}
-	private function set_completeHandler(value:ITestResultClient -> Void):ITestResultClient -> Void
+	function set_completeHandler(value:ITestResultClient -> Void):ITestResultClient -> Void
 	{
 		return completionHandler = value;
 	}
+
+	public var output(get_output, null):String;
+	function get_output():String
+	{
+		if(useHTML) return helper.htmlOutput;
+		else return helper.stringOutput;
+	}
+
+	var useHTML:Bool;
+
+
+	var failures:Array<Dynamic>;
+	var errors:Array<Dynamic>;
+	var ignored:Array<Dynamic>;
+	var traces:Array<Dynamic>;
 	
-	/**
-	 * Newline delimiter. Defaults to '\n' for all platforms except 'js' where it defaults to '<br/>'.
-	 * 
-	 * <p>
-	 * Should be set before the client is passed to a test runner.
-	 * </p>
-	 */
-	public var newline:String;
-	
-	private var failures:String;
-	private var errors:String;
-	private var ignored:String;
-	private var output(default, null):String;
-	private var currentTestClass:String;
-	private var originalTrace:Dynamic;
-	private var includeIgnoredReport:Bool;
+	var currentTestClass:String;	
+	var currentTestResult:TestResultState;
 
+	var originalTrace:Dynamic;
+	var includeIgnoredReport:Bool;
+
+
+	var helper:PrintClientHelper;	
+
+
+	var divider:String;
+	var divider2:String;
 
 	
-	#if flash9
-		private var textField:flash.text.TextField;
-	#elseif flash
-		private var textField:flash.TextField;
-	#elseif js
-		private var textArea:Dynamic;
-	#end
 
-	#if flash
-		var hasExternalInterface:Bool;
-		var externalInterfaceBuffer:String;
-		var externalInterfaceTimer:Timer;
-	#end
 
-	public function new(?includeIgnoredReport:Bool = false)
+	public function new(?includeIgnoredReport:Bool = true)
 	{
 		id = DEFAULT_ID;
+		#if (js || flash)
+			useHTML = true;
+		#else
+			useHTML = false;
+		#end
+		
 		this.includeIgnoredReport = includeIgnoredReport;
 		init();
-		print("MUnit Results" + newline);
-		print("------------------------------" + newline);
+
+		if(!useHTML)
+		{
+			printLine("MUnit Results");
+			printLine(divider);
+		}
+		
 	}
-	
-	private function init():Void
+
+	function init():Void
 	{
 		originalTrace = haxe.Log.trace;
 		haxe.Log.trace = customTrace;
-		output = "";
-		failures = "";
-		errors = "";
-		ignored = "";
-		currentTestClass = "";
-		newline = "\n";
 
-		#if flash9
-			textField = new flash.text.TextField();
-			textField.selectable = true;
-			textField.width = flash.Lib.current.stage.stageWidth;
-			textField.height = flash.Lib.current.stage.stageHeight;
-			flash.Lib.current.addChild(textField);
-		#elseif flash
-			textField = flash.Lib.current.createTextField("__munitOutput", 20000, 0, 0, flash.Stage.width, flash.Stage.height);
-			textField.wordWrap = true;
-			textField.selectable = true;
+		failures = [];
+		errors = [];
+		ignored = [];
+		traces = [];
 
-		#elseif js
-			textArea = js.Lib.document.getElementById("haxe:trace");
-			if (textArea == null) 
-			{
-				var positionInfo = ReflectUtil.here();
-				var error:String = "MissingElementException: 'haxe:trace' element not found at " + positionInfo.className + "#" + positionInfo.methodName + "(" + positionInfo.lineNumber + ")";
-				js.Lib.alert(error);
-			}
-		#end
+		currentTestClass = null;
+	
+		helper = new PrintClientHelper();
 
-		#if flash
-			hasExternalInterface = flash.external.ExternalInterface.available;
-			if(hasExternalInterface)
-			{
-				flash.external.ExternalInterface.call("testHideSwf");	
-				externalInterfaceBuffer = "";
-				externalInterfaceTimer = null;
-			}
-		#end
+		divider = "------------------------------";
+		divider2 = "==============================\n";
 	}
-
 
 	/**
 	 * Called when a test passes.
@@ -173,7 +145,14 @@ class PrintClient implements ITestResultClient
 	public function addPass(result:TestResult):Void
 	{
 		checkForNewTestClass(result);
-		print(".");
+		if(useHTML)
+		{
+			helper.addTest(result);
+		}
+		else
+		{
+			print(".");
+		}
 	}
 	
 	/**
@@ -184,7 +163,17 @@ class PrintClient implements ITestResultClient
 	public function addFail(result:TestResult):Void
 	{
 		checkForNewTestClass(result);
-		failures += newline + result.failure;		
+		
+		failures.push(result.failure);
+
+		if(useHTML)
+		{
+			helper.addTest(result);
+		}
+		else
+		{
+			print("!");
+		}
 	}
 	
 	/**
@@ -195,7 +184,18 @@ class PrintClient implements ITestResultClient
 	public function addError(result:TestResult):Void
 	{
 		checkForNewTestClass(result);
-		errors += newline + result.error;
+		helper.addTest(result);
+
+		errors.push(result.error);
+
+		if(useHTML)
+		{
+			helper.addTest(result);
+		}
+		else
+		{
+			print("!");
+		}
 	}
 	
 	/**
@@ -206,9 +206,24 @@ class PrintClient implements ITestResultClient
 	public function addIgnore(result:TestResult):Void
 	{
 		checkForNewTestClass(result);
-		print(",");
+		
 		if (includeIgnoredReport)
-			ignored += newline + result.location + " - " + result.description;
+		{
+			var str = result.location;
+			if(result.description != null) str == " - " + result.description;
+
+			ignored.push(str);
+	
+
+			if(useHTML)
+			{
+				helper.addTest(result);
+			}
+			else
+			{
+				print(",");
+			}
+		}		
 	}
 	
 	/**
@@ -224,139 +239,183 @@ class PrintClient implements ITestResultClient
 	 */
 	public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
 	{
-		printExceptions();
-		print(newline + newline);
-		if (includeIgnoredReport && ignored != "")
+		updateLastTestResult();
+	
+		printFinalReports();
+		
+
+		var result = passCount == testCount;
+
+		var str = result ? "PASSED" : "FAILED";
+		str += "\n" + "Tests: " + testCount + "  Passed: " + passCount + "  Failed: " + failCount + " Errors: " + errorCount + " Ignored: " + ignoreCount + " Time: " + MathUtil.round(time, 5);
+
+		if(useHTML)
 		{
-			print("Ignored:" + newline);
-			print("------------------------------");
-			print(ignored);
-			print(newline + newline);
+			helper.printSummary(str);
+			helper.setResult(result);
 		}
-		print((passCount == testCount) ? "PASSED" : "FAILED");
-		print(newline + "Tests: " + testCount + "  Passed: " + passCount + "  Failed: " + failCount + " Errors: " + errorCount + " Ignored: " + ignoreCount + " Time: " + MathUtil.round(time, 5) + newline);
-		print("==============================" + newline);
+		else
+		{
+			printLine(divider2);
+			printLine(str);
+			printLine("");
+			printLine("");
+			
+		}
+		
 		haxe.Log.trace = originalTrace;
 		if (completionHandler != null) completionHandler(this); 
-		return output;
+		
+		return null;
+		
 	}
-	
-	private function checkForNewTestClass(result:TestResult):Void
+
+	/**
+	* Stub method to add any additional reports prior to printing final result summary
+	*/
+	function printFinalReports()
+	{
+		if(!useHTML)
+		{
+			if(!includeIgnoredReport || ignored.length == 0) return;
+
+			printLine("");
+			printLine("Ignored " + ignored.length + " Tests:");
+			printLine(divider);
+			for(ign in ignored)
+			{
+				printLine(ign, 1);
+			}
+
+			ignored = [];
+		}
+	}
+
+	/**
+	* Update result for last test class and create new one
+	*/
+	function checkForNewTestClass(result:TestResult):Void
 	{
 		if (result.className != currentTestClass)
 		{
-			printExceptions();
-			currentTestClass = result.className;
-			print(newline + "Class: " + currentTestClass + " ");
+			if(currentTestClass != null)
+			{
+				updateLastTestResult();
+			}
+
+			createNewTestClass(result);
 		}
 	}
+
+	/**
+	* initialises client for new test class
+	*/
+	function createNewTestClass(result:TestResult)
+	{
+
+		errors = [];
+		failures = [];
+		traces = [];
+
+		if(useHTML)
+		{
+			ignored = [];
+		}
+
+		currentTestClass = result.className;
+
+		if(useHTML)
+		{
+			helper.createTestClass(currentTestClass);
+		}
+		else
+		{
+			printLine("Class: " + currentTestClass + " ");
+		}
+		
+	}
+
+
+	/**
+	* determines the result for the last test class that ran
+	*/
+	function updateLastTestResult()
+	{
+		currentTestResult = getLastTestResult();
+
+		if(useHTML)
+		{
+			helper.setTestClassResult(currentTestResult);
+		}
+		else
+		{
+			for(trc in traces)
+			{
+				printLine(Std.string(trc), 1);
+			}
+			for(error in errors)
+			{
+				printLine("ERROR: " + Std.string(errors), 1);
+			}
+
+			for(failure in failures)
+			{
+				printLine("FAIL: " + Std.string(failure), 1);
+			}
+			
+
+		}
+		
+	}
+
+
 	
 	// We print exceptions captured (failures or errors) after all tests 
 	// have completed for a test class.
-	private function printExceptions():Void
+	function getLastTestResult():TestResultState
 	{
-		if (errors != "") 
+		if(errors.length > 0)
 		{
-			print(errors + newline, ERROR);
-			errors = "";
+			return TestResultState.ERROR;
 		}
-		if (failures != "")
+		else if(failures.length > 0)
 		{
-			print(failures + newline, FAILURE);
-			failures = "";
+			return TestResultState.FAILED;
+		}
+		else
+		{
+			return TestResultState.PASSED; 
 		}
 	}
-	
-	private function print(value:Dynamic, ?level:PrintLevel=null):Void
+
+
+	function customTrace(value, ?info:haxe.PosInfos)
 	{
-		if(level == null) level = NONE;
-		var htmlValue = serialiseToHTML(value, level);
+		var str =  "TRACE: " + info.fileName + "|" + info.lineNumber + "| " + Std.string(value);
+		if(useHTML)
+		{
+			helper.trace(str);
+		}
+		else
+		{
+			traces.push(str);
+		}
 		
-		#if flash9
-			textField.appendText(value);
-			textField.scrollV = textField.maxScrollV;
-			printToExternalInterface(htmlValue);
-		#elseif flash
-			value = untyped flash.Boot.__string_rec(value, "");
-			textField.text += value;
-			textField.scroll = textField.maxscroll;
-			printToExternalInterface(htmlValue);
-		#elseif js
-		
-			if (textArea != null)
-			{
-				textArea.innerHTML += htmlValue;
-				js.Lib.window.scrollTo(0,js.Lib.document.body.scrollHeight);
-
-			}
-		#elseif neko
-			neko.Lib.print(value);
-		#elseif cpp
-			cpp.Lib.print(value);
-		#elseif php
-			php.Lib.print(value);
-		#end
-		output += value;
 	}
 
-	function serialiseToHTML(value:Dynamic, level:PrintLevel):String
+
+	function print(value)
 	{
-		#if js
-		value = untyped js.Boot.__string_rec(value, "");
-		#end
-
-		var v:String = StringTools.htmlEscape(value);
-		v = v.split(newline).join("<br/>");
-
-		switch(level)
-		{
-			case FAILURE: v = "<b>" + v + "</b>";
-			case ERROR: v = "<b>" + v + "</b>";
-			default: null;
-		}
-		return v;
+		helper.print(value);
 	}
 
-	#if flash
-	function printToExternalInterface(value:Dynamic)
+	function printLine(value, ?indent:Int = 0)
 	{
-		if(!hasExternalInterface) return;
-
-		externalInterfaceBuffer += value;
-		
-		if(externalInterfaceTimer == null)
+		if(indent > 0)
 		{
-			externalInterfaceTimer = Timer.delay(printExternalInterfaceBuffer, 200);
+			value = StringTools.lpad("", " ", indent*4) + value;
 		}
-	}
-
-	function printExternalInterfaceBuffer()
-	{
-		try
-		{
-			var s = externalInterfaceBuffer;
-		
-			externalInterfaceBuffer = "";
-			externalInterfaceTimer = null;
-			flash.external.ExternalInterface.call("testPrint", s);
-		}
-		catch(e:Dynamic)
-		{
-			customTrace(e);
-		}
-	}
-	#end
-
-	private function customTrace(value, ?info:haxe.PosInfos)
-	{
-		print(newline + "TRACE: " + info.fileName + "|" + info.lineNumber + "| " + Std.string(value));
+		helper.printLine(value);
 	}
 }
 
-enum PrintLevel
-{
-	NONE;
-	FAILURE;
-	ERROR;
-
-}

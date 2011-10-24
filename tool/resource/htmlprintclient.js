@@ -1,8 +1,17 @@
+if(typeof massive=='undefined') massive = {}
+if(!massive.munit) massive.munit = {}
+if(!massive.munit.js) massive.munit.js = {}
+
+
+
+
 var queue = [];
 var timer = null;
 
-var COLOR_FAILURE = "#F04242";
-var COLOR_SUCCESS = "#A9D1AC";
+
+var COLOR_PASSED = "#A9D1AC";
+var COLOR_FAILED = "#c82020";
+var COLOR_ERROR = "#c82020";
 var COLOR_WARNING = "#FFDE7A";
 var COLOR_DEFAULT = "white";
 
@@ -10,11 +19,17 @@ var COLOR_DEFAULT = "white";
 * Pushes a javascript call into a deferred queue in order
 * to prevent additional unit testing from blocking
 */
-function addToQueue(scope, arg)
+function addToQueue(scope, arg1, arg2, arg3, arg4)
 {
-	if(arg)
+	var args = [];
+	if(arg4) args.unshift(arg4);
+	if(arg3) args.unshift(arg3);
+	if(arg2) args.unshift(arg2);
+	if(arg1) args.unshift(arg1);
+	
+	if(args.length > 0)
 	{
-		var item  = scope + "(\"" + arg + "\")";
+		var item  = scope + "(\"" + args.join("\",\"") + "\")";
 	}
 	else
 	{
@@ -49,22 +64,22 @@ var currentLine = null;
 
 var currentClassDiv = null;
 var currentClassId = null;
+var currentCoverageId = null;
+var currentCoverageDiv = null;
 
 var MUNIT_HEADER = "munit-header";
 var MUNIT_TESTS = "munit-tests";
 var MUNIT_COVERAGE = "munit-coverage";
 var MUNIT_IGNORED = "munit-ignored";
+var MUNIT_SUMMARY = "munit-summary";
+
+
 
 function initialize()
 {
 	initialized = true;
 
 	munit = createDiv("munit", "munit");
-	var header = createDiv(MUNIT_HEADER, MUNIT_HEADER);
-	var tests = createDiv(MUNIT_TESTS, MUNIT_TESTS);
-
-	munit.appendChild(header);
-	munit.appendChild(tests);
 	document.body.appendChild(munit);
 
 	var swf = document.getElementById("swfContainer");
@@ -75,37 +90,93 @@ function initialize()
 	}
 }
 
-function setResult(result)
-{
-	window.scrollTo(0,document.body.scrollHeight);
-	parent.testComplete();
-}
-
-
-
-function printHeader(value)
+function munitPrintLine(value, clazz)
 {
 	if(!initialized) initialize();
 
-	var header = document.getElementById(MUNIT_HEADER);
-
-	var line = createDiv(null, "line");
-	line.innerHTML = value;
-
-	header.appendChild(line);
+	if(clazz == null) clazz = "line";
+	currentLine = createDiv(null, clazz);
+	currentLine.innerHTML = value;
+	munit.appendChild(currentLine);
 }
+
+function munitPrint(value)
+{
+	if(currentLine == null)
+	{
+		printLine(value);
+	}
+	else
+	{
+		currentLine.innerHTML += value;	
+	}
+	
+}
+
+function munitTrace(value)
+{
+	if(!initialized) initialize();
+
+	if(currentClassId != null)
+	{
+		addTestTrace(value);
+	}
+	else
+	{
+		printLine(value, "trace");
+		printLine("");
+	}
+
+}
+
+function setResult(result)
+{
+	var summary = document.getElementById(MUNIT_SUMMARY);
+
+	if(summary != null)
+	{
+		if(result.toString() == "true")
+		{
+			summary.style.backgroundColor = "#89de8c";
+		}
+		else
+		{
+			summary.style.backgroundColor = "#ff776d";
+		}
+	}
+
+	window.scrollTo(0,document.body.scrollHeight);
+
+	if(parent != null) parent.testComplete();
+	
+}
+
+
 
 ///// TEST APIS ///////
 
 //prints to the current test div
-function createTest(testClass)
+function createTestClass(testClass)
 {
+	if(!initialized) initialize();
+
+	if(currentClassId == null)
+	{
+		var tests = createDiv(MUNIT_TESTS, MUNIT_TESTS);
+		munit.appendChild(tests);
+	}
+	
 	currentClassId = testClass.split(".").join("_");
 	currentClassDiv = createTestDiv(currentClassId);
 
 	document.getElementById(MUNIT_TESTS).appendChild(currentClassDiv);
 
-	toggleVisibility(currentClassId + "_contents");
+	var headerParent = document.getElementById(currentClassId + "_header_parent");
+	
+	icon = document.getElementById(currentClassId + "_icon");
+	icon.setAttribute("class", "icon-busy" );
+	
+	createToggle(currentClassId);
 }
 
 function updateTestSummary(value)
@@ -114,145 +185,186 @@ function updateTestSummary(value)
 	line.innerHTML += value;
 }
 
-function updateTestTraces(value)
-{
+function addTestTrace(value)
+{	
 	var contents = document.getElementById(currentClassId + "_contents");
 
 	var line = createDiv(null, "trace");
 	line.innerHTML = value;
 	contents.appendChild(line);	
-
-	toggleVisibility(currentClassId + "_contents", true);
 }
 
-function updateTestErrors(value)
+function addTestPass(value)
 {
 	var contents = document.getElementById(currentClassId + "_contents");
+	var line = createDiv(null, "pass");
+	line.innerHTML = value;
+	contents.appendChild(line);	
+}
 
+
+function addTestFail(value)
+{
+	var contents = document.getElementById(currentClassId + "_contents");
+	var line = createDiv(null, "fail");
+	line.innerHTML = value;
+	contents.appendChild(line);	
+}
+
+function addTestError(value)
+{
+	var contents = document.getElementById(currentClassId + "_contents");
 	var line = createDiv(null, "error");
 	line.innerHTML = value;
 	contents.appendChild(line);	
-
-	toggleVisibility(currentClassId + "_contents", true);
 }
 
-function updateTestCoverage(value)
+function addTestIgnore(value)
 {
-	var contents = document.getElementById(currentClassId+ "_contents");
+	var contents = document.getElementById(currentClassId + "_contents");
+	var line = createDiv(null, "ignore");
+	line.innerHTML = value;
+	contents.appendChild(line);	
+}
 
+function addTestCoverageClass(coverageClass, percentage)
+{
+	var contents = document.getElementById(currentClassId + "_contents");
+
+	currentCoverageId = "coverage_" + coverageClass.split(".").join("_");
+	currentCoverageDiv = createSectionDiv(currentCoverageId, "test-coverage");
+	
+	contents.appendChild(currentCoverageDiv);
+
+	var line = document.getElementById(currentCoverageId + "_header");
+	line.innerHTML += "Coverage:" + coverageClass + "<b> [" + percentage + "%]</b>";
+
+	createToggle(currentCoverageId);
+
+}
+
+function addTestCoverageItem(value)
+{
+	var contents = document.getElementById(currentCoverageId + "_contents");
 	var line = createDiv(null, "coverage");
 	line.innerHTML = value;
 	contents.appendChild(line);	
 }
 
-function updateTestResult(level)
+function setTestClassResult(level)
 {
 	var color = null;
+	var icon = null;
 
 	switch(level)
 	{
 		case "0":
-			color = COLOR_FAILURE;// red fail
-			break;
+			//color =COLOR_PASSED;// green pas
+			icon = "passed";
+		 	break;
 		case "1":
-			color = COLOR_SUCCESS;// green pas
+			color = COLOR_FAILED// red fail
+			icon = "failed";
 			break;
 		case "2":
-			color = COLOR_WARNING;// yellow passed but not covered
+			color = COLOR_ERROR;// red error
+			icon = "error";
 			break;
-		default: COLOR_DEFAULT;
+		case "3":
+			//color = COLOR_WARNING;// yellow passed but not covered
+			icon = "passed";
+			break;
+		default: 
 			break;
 	}
 
-	var line = document.getElementById(currentClassId + "_header");
-	line.style.backgroundColor = color;
+	if(color != null)
+	{
+		var line = document.getElementById(currentClassId + "_header");
+		line.style.color = color;
+	}
+
+	if(icon != null)
+	{
+		var iconDiv = document.getElementById(currentClassId + "_icon");
+		iconDiv.setAttribute("class", "icon-" + icon);
+	}
+
+	var contents = document.getElementById(currentClassId + "_contents");
+	if(contents.childNodes.length == 0)
+	{
+		removeToggle(currentClassId);
+	}
 }
 
 /////////// FINAL REPORTS ///////////
 
-function createIgnoredReport(value)
+function createCoverageReport(value)
 {
-
-	var ignored = createSectionDiv(MUNIT_IGNORED, MUNIT_IGNORED);
-	
-	munit.appendChild(ignored);
+	var lineBreak = createLineBreak();
+	munit.appendChild(lineBreak);
 
 
-	var header = document.getElementById(MUNIT_IGNORED + "_header");
-	header.innerHTML = value;
-}
-
-function addIgnoredTest(value)
-{
-
-
-	var contents = document.getElementById(MUNIT_IGNORED + "_contents");
-	contents.innerHTML += value;
-
-	var line = createDiv(null, "ignored");
-	line.innerHTML += value;
-
-	contents.appendChild(line);
-}
-
-function createMissingCoverageReport(value)
-{
-	var coverage = createSectionDiv(MUNIT_COVERAGE, MUNIT_COVERAGE);
+	var coverage = createSectionDiv(MUNIT_COVERAGE, "munit-coverage");
 	munit.appendChild(coverage);
-	var header = document.getElementById(MUNIT_COVERAGE + "_header");
 
-	header.innerHTML = value;
-	
+	var header = document.getElementById(MUNIT_COVERAGE + "_header");
+	header.innerHTML = "<b>Code Coverage Result: " + value + "%</b>";
+
+
+	var content = document.getElementById(MUNIT_COVERAGE + "_contents");
+	var lineBreak = createLineBreak();
+	content.appendChild(lineBreak);
+
+	createToggle(MUNIT_COVERAGE);
+
 }
 
-function addMissingCoverageClass(coverageClass)
+function addMissingCoverageClass(coverageClass, percentage)
 {
 	var coverage = document.getElementById(MUNIT_COVERAGE + "_contents");
 
-	currentClassId = coverageClass.split(".").join("_");
-	currentClassDiv = createTestDiv(currentClassId);
+	currentCoverageId = "coverage_for_" + coverageClass.split(".").join("_");
+	currentCoverageDiv = createSectionDiv(currentCoverageId, "missing-coverage-item");
 
-	coverage.appendChild(currentClassDiv);
+	coverage.appendChild(currentCoverageDiv);
+	createToggle(currentCoverageId);
+
+	var line = document.getElementById(currentCoverageId + "_header");
+	line.innerHTML += "Coverage: " + coverageClass + "<b> [" + percentage + "%]</b>";
+
 }
 
-//////////
-
-function createCoverageReportSummary(value)
+function addCoverageSummary(value)
 {
-	var id = "munit-coverage-summary";
-	var coverage = createSectionDiv(id, "munit-coverage-summary");
-	munit.appendChild(coverage);
-	var header = document.getElementById(id + "_header");
+	var coverage = document.getElementById(MUNIT_COVERAGE + "_contents");
 
-	header.innerHTML = value;
+	var lineBreak = createLineBreak();
+	coverage.appendChild(lineBreak);
 
+	var line = createDiv(null, "coverage-summary");
+	line.innerHTML += value;
+
+	coverage.appendChild(line);
 	
 }
 
-function addCoverageReportSummaryItem(value)
-{
-	var id = "munit-coverage-summary";
 
-	var contents = document.getElementById(id + "_contents");
-	contents.innerHTML += value;
 
-	var line = createDiv(null, "summary");
-	line.innerHTML += value;
 
-	contents.appendChild(line);
-}
-
+//////////
 
 function printSummary(value)
 {
-	var id = "munit-summary";
-	var coverage = createDiv(id, "munit-summary");
+	var lineBreak = createLineBreak();
+	munit.appendChild(lineBreak);
+
+	
+	var coverage = createDiv(MUNIT_SUMMARY, "munit-summary");
 
 	coverage.innerHTML = value;
-
 	munit.appendChild(coverage);
 }
-
 
 
 ////////////////////// INTERNAL //////////////////
@@ -278,11 +390,16 @@ function createSectionDiv(id, clazz)
 
 	var item = createDiv(id, clazz);
 
-	item.setAttribute("onclick", "toggleVisibility('" + id + "_contents')");
-
+	var headerParent = createDiv(id + "_header_parent", clazz + "-header-parent");
+	
+	var icon = createDiv(id + "_icon", "icon");
+	headerParent.appendChild(icon);
+		
 	var header = createDiv(id + "_header", clazz + "-header");
+	headerParent.appendChild(header);
+
 	var contents = createDiv(id + "_contents", clazz + "-contents");
-	item.appendChild(header);
+	item.appendChild(headerParent);
 	item.appendChild(contents);
 
 	return item;
@@ -299,25 +416,60 @@ function createDiv(id, clazz)
 	}
 
 	var div = document.createElement("div");
-	
 	if(id != null) div.setAttribute("id", id);
 	if(clazz != null) div.setAttribute("class", clazz);
 
 	return div;
+}
 
+function createLineBreak()
+{ 
+	var lb = document.createElement("hr");
+	//var lb = createDiv(null, "lineBreak");
+	//lb.innerHTML = "-----------------------------";
+	return lb;
+}
+
+function createToggle(id)
+{
+	var arrow = document.getElementById(id + "_header_arrow");
+	if(arrow != null) return;
+
+	var headerParent = document.getElementById(id + "_header_parent");
+	headerParent.setAttribute("onclick", "toggleVisibility('" + id + "')");
+	arrow = createDiv(id + "_header_arrow",  "arrow-closed");
+	headerParent.insertBefore(arrow, headerParent.firstChild.nextSibling);
+
+	var testContents = document.getElementById(id + "_contents");
+	testContents.style.display = "none";	
+}
+
+function removeToggle(id)
+{
+	var arrow = document.getElementById(id + "_header_arrow");
+
+	if(arrow == null) return;
+
+	var headerParent = document.getElementById(id + "_header_parent");
+	headerParent.setAttribute("onclick", "");
+
+	var arrow = document.getElementById(id + "_header_arrow");
+	arrow.setAttribute("class", "arrow-none");
+
+	var testContents = document.getElementById(id + "_contents");
+	testContents.style.display = "none";	
 }
 
 function toggleVisibility(id, forceOpen)
 {
-	var testContents = document.getElementById(id);
-
-	if(forceOpen == true)
-	{
-		testContents.style.display = "block";
-	}
-	else
-	{
-		testContents.style.display = testContents.style.display == "none" ? "block" : "none";	
-	}
+	var testContents = document.getElementById(id + "_contents");
+	if(forceOpen != true) forceOpen = testContents.style.display == "none";
 	
+	testContents.style.display = forceOpen ? "block" : "none";	
+
+	var arrow = document.getElementById(id + "_header_arrow");
+	arrow.setAttribute("class", forceOpen ? "arrow-open" : "arrow-closed");
 }
+
+
+
