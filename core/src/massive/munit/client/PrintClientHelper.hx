@@ -309,6 +309,7 @@ class PrintClientHelper
 
 		var v:String = StringTools.htmlEscape(value);
 		v = v.split("\n").join("<br/>");
+		v = v.split(" ").join("&nbsp;");
 
 		return v;
 	}

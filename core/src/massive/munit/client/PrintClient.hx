@@ -40,7 +40,7 @@ import massive.munit.client.PrintClientHelper;
  * Generates rich html output for JS/Flash.
  * For other targets it prints out basic string output (neko, php, etc)
  */
-class PrintClient implements ITestResultClient
+class PrintClient implements IAdvancedTestResultClient
 {
 	/**
 	 * Default id of this client.
@@ -137,6 +137,43 @@ class PrintClient implements ITestResultClient
 		divider2 = "==============================\n";
 	}
 
+
+	/**
+	* Classed when test class changes
+	*
+	* @param className		qualified name of current test class
+	*/
+	public function setCurrentTestClass(className:String):Void
+	{
+		if(currentTestClass == className) return;
+		
+		if(currentTestClass != null)
+		{
+			updateLastTestResult();
+		}
+		currentTestClass = className;
+
+		errors = [];
+		failures = [];
+		traces = [];
+
+		if(useHTML)
+		{
+			ignored = [];
+		}
+
+		
+
+		if(useHTML)
+		{
+			helper.createTestClass(currentTestClass);
+		}
+		else
+		{
+			printLine("Class: " + currentTestClass + " ");
+		}
+	}
+
 	/**
 	 * Called when a test passes.
 	 *  
@@ -144,7 +181,6 @@ class PrintClient implements ITestResultClient
 	 */
 	public function addPass(result:TestResult):Void
 	{
-		checkForNewTestClass(result);
 		if(useHTML)
 		{
 			helper.addTest(result);
@@ -162,8 +198,6 @@ class PrintClient implements ITestResultClient
 	 */
 	public function addFail(result:TestResult):Void
 	{
-		checkForNewTestClass(result);
-		
 		failures.push(result.failure);
 
 		if(useHTML)
@@ -183,7 +217,6 @@ class PrintClient implements ITestResultClient
 	 */
 	public function addError(result:TestResult):Void
 	{
-		checkForNewTestClass(result);
 		helper.addTest(result);
 
 		errors.push(result.error);
@@ -205,8 +238,6 @@ class PrintClient implements ITestResultClient
 	 */
 	public function addIgnore(result:TestResult):Void
 	{
-		checkForNewTestClass(result);
-		
 		if (includeIgnoredReport)
 		{
 			var str = result.location;
@@ -289,50 +320,6 @@ class PrintClient implements ITestResultClient
 
 			ignored = [];
 		}
-	}
-
-	/**
-	* Update result for last test class and create new one
-	*/
-	function checkForNewTestClass(result:TestResult):Void
-	{
-		if (result.className != currentTestClass)
-		{
-			if(currentTestClass != null)
-			{
-				updateLastTestResult();
-			}
-
-			createNewTestClass(result);
-		}
-	}
-
-	/**
-	* initialises client for new test class
-	*/
-	function createNewTestClass(result:TestResult)
-	{
-
-		errors = [];
-		failures = [];
-		traces = [];
-
-		if(useHTML)
-		{
-			ignored = [];
-		}
-
-		currentTestClass = result.className;
-
-		if(useHTML)
-		{
-			helper.createTestClass(currentTestClass);
-		}
-		else
-		{
-			printLine("Class: " + currentTestClass + " ");
-		}
-		
 	}
 
 

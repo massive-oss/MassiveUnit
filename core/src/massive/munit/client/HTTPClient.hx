@@ -38,7 +38,7 @@ import massive.munit.util.Timer;
  * 
  * @author Mike Stead
  */
-class HTTPClient implements ITestResultClient
+class HTTPClient implements IAdvancedTestResultClient
 {
 	public inline static var DEFAULT_SERVER_URL:String = "http://localhost:2000";
 	/**
@@ -97,6 +97,19 @@ class HTTPClient implements ITestResultClient
 		this.client = client;
 		this.url = url;
 		this.queueRequest = queueRequest;
+	}
+
+	/**
+	* Classed when test class changes
+	*
+	* @param className		qualified name of current test class
+	*/
+	public function setCurrentTestClass(className:String):Void
+	{
+		if(Std.is(client, IAdvancedTestResultClient))
+		{
+			cast(client, IAdvancedTestResultClient).setCurrentTestClass(className);
+		}
 	}
 
 	/**

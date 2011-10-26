@@ -56,15 +56,9 @@ hr
 
 .line
 {
-	
+	word-wrap: break-word;
 }
 
-.trace
-{
-	padding: 5px 0 5px 45px;
-	color:#5a5a5a;
-	font-style:italic;
-}
 
 .munit-test
 {
@@ -162,11 +156,15 @@ hr
 	padding: 5px;
 	margin: 0 0 0 18px;
 	border: 1px dotted #FFFFFF;
+	word-wrap: break-word;
 
 }
 
 .trace
 {
+	padding: 5px 0 5px 45px;
+	color:#5a5a5a;
+	font-style:italic;
 	background-color: #DEDEDE;
 }
 .pass

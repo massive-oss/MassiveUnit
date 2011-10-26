@@ -51,7 +51,7 @@ class TestMain
 		var suites = new Array<Class<massive.munit.TestSuite>>();
 		suites.push(TestSuite);
 
-		var runner:TestRunner = new TestRunner(new PrintClient(true));	
+		var runner:TestRunner = new TestRunner(new massive.mcover.munit.client.MCoverPrintClient(true));	
 		//runner.addResultClient(new HTTPClient(new JUnitReportClient()));	
 		runner.completionHandler = completionHandler;
 		runner.run(suites);

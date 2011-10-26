@@ -37,6 +37,7 @@ import massive.munit.async.AsyncTimeoutException;
 import massive.munit.async.IAsyncDelegateObserver;
 import massive.munit.async.MissingAsyncDelegateException;
 import massive.munit.util.Timer;
+import massive.munit.ITestResultClient;
 
 #if neko
 import neko.Sys;
@@ -255,6 +256,13 @@ class TestRunner implements IAsyncDelegateObserver
 
     private function executeTestCases():Void
     {
+        for(c in clients)
+        {
+            if(Std.is(c, IAdvancedTestResultClient))
+            {
+                cast(c, IAdvancedTestResultClient).setCurrentTestClass(activeHelper.className);
+            }
+        }
         for (testCaseData in activeHelper)
         {
             if (testCaseData.result.ignore)

@@ -123,8 +123,8 @@ function munitTrace(value)
 	}
 	else
 	{
-		printLine(value, "trace");
-		printLine("");
+		munitPrintLine(value, "trace");
+		munitPrintLine("");
 	}
 
 }

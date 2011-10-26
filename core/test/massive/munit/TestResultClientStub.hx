@@ -27,12 +27,14 @@
  */
 package massive.munit;
 
+import massive.munit.ITestResultClient;
+
 /**
  * ...
  * @author Mike Stead
  */
 
-class TestResultClientStub implements ITestResultClient
+class TestResultClientStub implements IAdvancedTestResultClient
 {
 	public static inline var DEFAULT_ID:String = "stub";
 
@@ -50,6 +52,9 @@ class TestResultClientStub implements ITestResultClient
 	public var finalFailCount:Int;
 	public var finalErrorCount:Int;
 	public var finalIgnoreCount:Int;
+
+	public var currentTestClass:String;
+	public var testClasses:Array<String>;
 
 	public var completionHandler(get_completeHandler, set_completeHandler):ITestResultClient -> Void;
 	private function get_completeHandler():ITestResultClient -> Void 
@@ -71,6 +76,15 @@ class TestResultClientStub implements ITestResultClient
 		errorCount = 0;
 		ignoreCount = 0;
 		time = 0.0;
+		testClasses = [];
+	}
+
+	public function setCurrentTestClass(className:String):Void
+	{
+		if(currentTestClass == className) return;
+		
+		testClasses.push(className);
+		currentTestClass = className;
 	}
 
 	public function addPass(result:TestResult):Void

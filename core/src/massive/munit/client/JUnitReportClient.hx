@@ -38,7 +38,7 @@ import massive.munit.util.Timer;
  * 
  * @author Mike Stead
  */
-class JUnitReportClient implements ITestResultClient
+class JUnitReportClient implements IAdvancedTestResultClient
 {
 	/**
 	 * Default id of this client.
@@ -93,6 +93,22 @@ class JUnitReportClient implements ITestResultClient
 		xml.add("<testsuites>" + newline);
 	}
 	
+
+	/**
+	* Classed when test class changes
+	*
+	* @param className		qualified name of current test class
+	*/
+	public function setCurrentTestClass(className:String):Void
+	{
+		if(currentTestClass == className) return;
+		if(currentTestClass != null) endTestSuite();
+	
+		currentTestClass = className;
+		startTestSuite();
+	}
+
+
 	/**
 	 * Called when a test passes.
 	 *  
@@ -100,8 +116,6 @@ class JUnitReportClient implements ITestResultClient
 	 */
 	public function addPass(result:TestResult):Void
 	{
-		checkForNewTestClass(result);
-		
 		suitePassCount++;
 		
 		testSuiteXML.add("<testcase classname=\"" + result.className + "\" name=\"" + result.name + "\" time=\"" + MathUtil.round(result.executionTime, 5) + "\" />" + newline);
@@ -114,8 +128,6 @@ class JUnitReportClient implements ITestResultClient
 	 */
 	public function addFail(result:TestResult):Void
 	{
-		checkForNewTestClass(result);
-
 		suiteFailCount++;
 		
 		testSuiteXML.add( "<testcase classname=\"" + result.className + "\" name=\"" + result.name + "\" time=\"" + MathUtil.round(result.executionTime, 5) + "\" >" + newline);
@@ -132,8 +144,6 @@ class JUnitReportClient implements ITestResultClient
 	 */
 	public function addError(result:TestResult):Void
 	{
-		checkForNewTestClass(result);
-
 		suiteErrorCount++;
 
 		testSuiteXML.add("<testcase classname=\"" + result.className + "\" name=\"" + result.name + "\" time=\"" + MathUtil.round(result.executionTime, 5) + "\" >" + newline);
@@ -174,16 +184,6 @@ class JUnitReportClient implements ITestResultClient
 		xml.add("</testsuites>");
 		if (completionHandler != null) completionHandler(this);
 		return xml.toString();
-	}
-	
-	private function checkForNewTestClass(result:TestResult):Void
-	{
-		if (result.className != currentTestClass)
-		{
-			endTestSuite();
-			currentTestClass = result.className;
-			startTestSuite();
-		}
 	}
 	
 	private function endTestSuite():Void

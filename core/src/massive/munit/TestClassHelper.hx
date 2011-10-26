@@ -135,7 +135,7 @@ class TestClassHelper
 	
 	private var tests:Array<TestCaseData>;
 	private var index:Int;
-	private var className:String;
+	public var className(default, null):String;
 	private var isDebug:Bool;
 
 	/**

@@ -95,6 +95,8 @@ class TestRunnerTest
         Assert.areEqual(1, client.finalFailCount);
         Assert.areEqual(0, client.errorCount);
         Assert.areEqual(0, client.finalErrorCount);
+        Assert.areEqual(1, client.testClasses.length);
+        Assert.areEqual("massive.munit.TestClassStub", client.currentTestClass);
     }
 
 
