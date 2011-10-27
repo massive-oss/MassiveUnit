@@ -52,6 +52,8 @@ class TestMain
 		suites.push(TestSuite);
 
 		var runner:TestRunner = new TestRunner(new massive.mcover.munit.client.MCoverPrintClient(true));	
+
+		// var runner:TestRunner = new TestRunner(new massive.munit.client.PrintClient(true));	
 		//runner.addResultClient(new HTTPClient(new JUnitReportClient()));	
 		runner.completionHandler = completionHandler;
 		runner.run(suites);
