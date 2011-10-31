@@ -1,0 +1,9 @@
+package ::packageName::;
+
+class ::className:: 
+{
+	public function new() 
+	{
+		
+	}
+}

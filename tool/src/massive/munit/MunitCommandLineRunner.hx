@@ -35,6 +35,7 @@ import massive.munit.command.GenerateCommand;
 import massive.munit.command.RunCommand;
 import massive.munit.command.TestCommand;
 import massive.munit.command.ConfigCommand;
+import massive.munit.command.CreateTestCommand;
 import massive.munit.command.MUnitCommand;
 
 class MunitCommandLineRunner extends CommandLineRunner
@@ -51,6 +52,7 @@ class MunitCommandLineRunner extends CommandLineRunner
 		mapCommand(GenerateCommand, "gen", ["g"], "Generate a test runner based on classes in a test src directory", Resource.getString("help_gen"));
 		mapCommand(RunCommand, "run", ["r"], "Runs a single unit test target and generates results", Resource.getString("help_run"));
 		mapCommand(TestCommand, "test", ["t"], "Updates, compiles and runs all targets from an hxml file", Resource.getString("help_test"));
+		mapCommand(CreateTestCommand, "create", ["ct"], "Create test class", Resource.getString("help_create"));
 		mapCommand(ConfigCommand, "config", ["c"], "Modify default project specific settings for munit", Resource.getString("help_config"));
 		
 		version = getVersion();

@@ -156,7 +156,7 @@ class TestCommand extends MUnitCommand
 	{
 		if(includeCoverage && (config.classPaths == null || config.classPaths.length == 0))
 		{
-			error("Code coverage requires an update to your munit project settings. Please re-run 'munit config' to set target class paths (i.e. 'src')");
+			error("This command requires an update to your munit project settings. Please re-run 'munit config' to set target class paths (i.e. 'src')");
 			return true;
 		}
 		return false;

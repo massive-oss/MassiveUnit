@@ -1,0 +1,15 @@
+usage: create [testName] 
+
+    Creates a stub test class if one doesn't already exist.
+
+Optional Arguments:
+	
+    testName:    Qualified test class name (e.g. com.example.FooTest)
+	
+Optional Parameters
+
+    -for [name]    : Create test for existing qualified class (e.g. com.example.Foo)
+                   
+
+ NOTE: Both test and 'for' class will only be generated if they do not already exist
+
