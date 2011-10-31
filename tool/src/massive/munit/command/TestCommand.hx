@@ -38,10 +38,11 @@ import neko.Lib;
 class TestCommand extends MUnitCommand
 {
 
-	private var hxml:File;
-	private var targets:Array<Target>;
-	private var targetTypes:Array<TargetType>;
-	private var testsAborted:Bool;
+	var hxml:File;
+	var targets:Array<Target>;
+	var targetTypes:Array<TargetType>;
+	var testsAborted:Bool;
+	var includeCoverage:Bool; 
 
 	public function new():Void
 	{
@@ -119,6 +120,17 @@ class TestCommand extends MUnitCommand
 		{
 			addPostRequisite(RunCommand);
 		}
+
+		//append code coverage
+		var coverage:String  = console.getOption("-coverage");
+		
+		includeCoverage = coverage == "true";
+
+		if (missingClassPaths())
+		{
+			testsAborted = true;
+			return;
+		}
 	}
 
 	// In v0.9.0.3 we made a significant change to the required format of test.hxml. 
@@ -139,6 +151,17 @@ class TestCommand extends MUnitCommand
 		return invalid;
 	}
 
+	//In v0.9.5.0 we added classpaths to .munit file to support mcover code coverage
+	function missingClassPaths():Bool
+	{
+		if(includeCoverage && (config.classPaths == null || config.classPaths.length == 0))
+		{
+			error("Code coverage requires an update to your munit project settings. Please re-run 'munit config' to set target class paths (i.e. 'src')");
+			return true;
+		}
+		return false;
+	}
+
 	override public function execute():Void
 	{
 		if (testsAborted)
@@ -152,19 +175,30 @@ class TestCommand extends MUnitCommand
 		
 		for(line in lines)
 		{
-
 			if(line.indexOf("--next") == 0)
 			{
 				targets.push(target);
 				target = new Target();
 				continue;
 			}
-						
+			
+			var mainReg:EReg = ~/^-main (.*)/;	
+			if(mainReg.match(line))
+			{
+				target.main = config.src.resolveFile(mainReg.matched(1) + ".hx");
+			}
+
+			var flagReg:EReg = ~/^-D (.*)/;
+			if(flagReg.match(line))
+			{
+				var flag = flagReg.matched(1).split(" ");
+				target.flags.set(flag.shift(), flag.join(" "));
+			}
+
 			target.hxml += line + "\n";
 			
 			if(target.type == null)
 			{
-			
 				for(type in targetTypes)
 				{
 					var s:String = Std.string(type);
@@ -190,6 +224,34 @@ class TestCommand extends MUnitCommand
 		{
 			if(target.type == null && targetTypes.length < config.targetTypes.length ) 
 				continue;
+
+			if(includeCoverage && target.main != null)
+			{
+
+				var clsPaths:Array<String> = [];
+				for(path in config.classPaths)
+				{
+					if(target.flags.exists("MCOVER_DEBUG"))
+					{
+						clsPaths.push(path.toString());
+					}
+					else
+					{
+						clsPaths.push(config.dir.getRelativePath(path));
+					}
+				}
+
+				warnIfMissingMCoverConditionalFlagInTestMain(target);
+				
+				//ingore lib if testing MCOVER (causes compiler errors from dup src path)
+				if(!target.flags.exists("MCOVER_DEBUG"))
+				{
+					target.hxml += "-lib mcover\n";	
+				}
+				
+				target.hxml += "-D MCOVER\n";
+				target.hxml += "--macro massive.mcover.MCover.include('',['" + clsPaths.join("','") + "'])\n";	
+			}
 			
 			if(target.type == TargetType.swf || target.type == TargetType.swf9)
 			{
@@ -229,5 +291,18 @@ class TestCommand extends MUnitCommand
 			result += "\n" + line;
 		}
 		return result;
+	}
+
+	function warnIfMissingMCoverConditionalFlagInTestMain(target:Target)
+	{
+		var reg:EReg = ~/#if (!?)MCOVER/;
+		var str = target.main.readString();
+
+		if(!reg.match(str))
+		{
+			Lib.println("Warning: Compiling " + target.type + " for MCover may not execute coverage");
+
+			Lib.println("   " + target.main.name + ".hx does not contain MCOVER conditional flag expected for code coverage.\n   Either delete " + target.main.name + " and re-run 'munit gen' or 'munit test' to regenerate class, or refer to online docs");
+		}
 	}
 }

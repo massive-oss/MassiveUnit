@@ -1,5 +1,6 @@
-version=0.2.0.132
+version=0.9.1.8
 src=test
 bin=../bin/test/core
 report=../report/core
 hxml=test.hxml
+classPaths=src

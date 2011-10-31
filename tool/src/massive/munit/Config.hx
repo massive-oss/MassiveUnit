@@ -41,6 +41,8 @@ class Config
 	public var report(default, null):File;
 	public var src(default, null):File;
 	public var hxml(default, null):File;
+
+	public var classPaths:Array<File>;
 	
 	public var targets:Array<Target>;
 	
@@ -92,7 +94,15 @@ class Config
 				case "bin": bin = File.create(value, dir, true);
 				case "report": report = File.create(value, dir, true);
 				case "hxml": hxml = File.create(value, dir);
-				
+				case "classPaths" :
+				{
+					var paths = value.split(",");
+					classPaths = [];
+					for(path in paths)
+					{
+						classPaths.push(File.create(path, dir, true));
+					}
+				}
 			}
 		}
 	}
@@ -107,17 +117,18 @@ class Config
 		report = null;
 		hxml = null;
 		configVersion = null;
+		classPaths = [];
 		
 	}
 	
-	public function createDefault(?src:File=null, ?bin:File=null, ?report:File=null, ?hxml:File=null):Void
+	public function createDefault(?src:File=null, ?bin:File=null, ?report:File=null, ?hxml:File=null, ?classPaths:Array<File>=null):Void
 	{
 		this.src = src != null ? src : dir.resolveDirectory("test", true);
 		this.bin = bin != null ? bin : dir.resolveDirectory("bin", true);
 		this.report = report != null ? report : dir.resolveDirectory("report", true);
 		this.hxml = hxml != null ? hxml : dir.resolveFile("test.hxml");
+		this.classPaths = classPaths != null ? classPaths : [dir.resolveDirectory("src", true)];
 		this.configVersion = currentVersion;
-		
 		
 		save();
 	}
@@ -155,6 +166,19 @@ class Config
 		save();
 	}
 
+	public function updateClassPaths(classPaths:Array<File>):Void
+	{
+		for(file in classPaths)
+		{
+			if(!file.exists) throw "Class path does not exist " + file;
+			if(!file.isDirectory) throw "Class path is not a directory " + file;
+
+		}
+		this.classPaths = classPaths;
+		save();
+	}
+
+
 	
 	public function toString():String
 	{
@@ -178,7 +202,18 @@ class Config
 		}
 		if(hxml != null)
 		{
-			str += "hxml=" + dir.getRelativePath(hxml);	
+			str += "hxml=" + dir.getRelativePath(hxml) + "\n";	
+		}
+		if(classPaths != null)
+		{
+			var value = "";
+			for(path in classPaths)
+			{
+				if(value != "") value += ",";
+				value += dir.getRelativePath(path);
+				
+			}
+			str += "classPaths=" + value;
 		}
 		
 		return str;
@@ -196,6 +231,7 @@ class Config
 	src=::src::
 	bin=::bin::
 	hxml=::hxml::
+	classPaths=::classPaths::
 	*/
 }
 
@@ -204,6 +240,7 @@ class Target
 	public var type:TargetType;
 	public var hxml:String;
 	public var file:File;
+	public var main:File;
 	
 	public function new():Void
 	{
@@ -213,6 +250,19 @@ class Target
 	public function toString():String
 	{
 		return "Target " + [type, file];
+	}
+
+	public function toHxmlString():String
+	{
+		var output = "haxe";
+		var lines = hxml.split("\n");
+		for(line in lines)
+		{
+			line = StringTools.trim(line);
+			if(line == "" || line.indexOf("#") == 0) continue;
+			output += " " + line;
+		}
+		return output;
 	}
 }
 

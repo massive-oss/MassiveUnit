@@ -256,7 +256,8 @@ class PrintClientHelper
 	{
 
 		#if (!js && !flash)
-			throw new MUnitException("Cannot call from non JS/Flash targets");
+			//throw new MUnitException("Cannot call from non JS/Flash targets");
+			return false;
 		#end
 
 

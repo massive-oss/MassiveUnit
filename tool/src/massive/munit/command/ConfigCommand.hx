@@ -33,19 +33,17 @@ import massive.haxe.util.TemplateUtil;
 
 class ConfigCommand extends MUnitCommand
 {
-	
-	private var src:File;
-	private var bin:File;
-	
-	private var report:File;
-	private var hxml:File;
+	var src:File;
+	var bin:File;
+	var report:File;
+	var hxml:File;
+	var classPaths:Array<File>;
+
 	public function new():Void
 	{
 		super();
-		
 		addPostRequisite(GenerateCommand);
 	}
-	
 
 	override public function initialise():Void
 	{
@@ -57,10 +55,9 @@ class ConfigCommand extends MUnitCommand
 			exit(0);
 		}
 		
-	
-		var reset:String = console.getOption("reset");
+		var reset:Bool = console.getOption("reset") != null;
 		
-		if(reset != null)
+		if(reset)
 		{
 			config.remove();
 		}
@@ -69,14 +66,54 @@ class ConfigCommand extends MUnitCommand
 			print("Current munit settings\n--------------------");
 			print(config.toString());
 			print("--------------------");
-			print("Please use '-reset' to overwrite existing values");
-			exit(0);
+			print("Please use '-reset' to overwrite all existing values\n");
 		}
 		
-		
-		
+		if(reset || config.src == null)
+		{
+			configureTestSrcDirectory();
+		}
+
+		if(reset || config.bin == null)
+		{
+			configureBuildDirectory();
+		}
+
+		if(reset || config.report == null)
+		{
+			configureReportDirectory();
+		}
+
+		if(reset || config.classPaths == null)
+		{
+			configureClassPaths();
+		}
+
+		if(reset || config.hxml == null)
+		{
+			configureHxml();
+		}
+	}
+
+	override public function execute():Void
+	{
+		if(!config.exists)
+		{
+			config.createDefault(src, bin, report, hxml,classPaths);
+		}
+		else
+		{
+			if(src != null) config.updateSrc(src);
+			if(bin != null) config.updateBin(bin);
+			if(report != null) config.updateReport(report);
+			if(hxml != null) config.updateHxml(hxml);
+			if(classPaths != null) config.updateClassPaths(classPaths);	
+		}
+	}
+
+	function configureTestSrcDirectory()
+	{
 		var arg = console.getNextArg("test src dir (defaults to 'test')");
-		
 		
 		if(arg == null) arg = "test";
 		
@@ -85,8 +122,11 @@ class ConfigCommand extends MUnitCommand
 		if(src == null) throw "invaid src path" + arg;
 		if(!src.exists) src.createDirectory();
 		if(!src.isDirectory) throw "src path is not a valid directory " + arg;
-		
-		arg = console.getNextArg("output dir (defaults to 'build')");
+	}
+
+	function configureBuildDirectory()
+	{
+		var arg = console.getNextArg("output build dir (defaults to 'build')");
 		
 		if(arg == null) arg = "build";
 		
@@ -95,9 +135,11 @@ class ConfigCommand extends MUnitCommand
 		if(bin == null) throw "invaid output path " + arg;
 		if(!bin.exists) bin.createDirectory();
 		if(!bin.isDirectory) throw "output path is not a valid directory " + arg;
-		
-		
-		arg = console.getNextArg("report dir (defaults to 'report')");
+	}
+
+	function configureReportDirectory()
+	{
+		var arg = console.getNextArg("report dir (defaults to 'report')");
 		
 		if(arg == null) arg = "report";
 		
@@ -106,9 +148,32 @@ class ConfigCommand extends MUnitCommand
 		if(report == null) throw "invaid report path " + arg;
 		if(!report.exists) report.createDirectory();
 		if(!report.isDirectory) throw "report path is not a valid directory " + arg;
+	}
+
+	function configureClassPaths()
+	{
+		var arg = console.getNextArg("target class paths (comma delimitered, defaults to 'src')");
 		
+		if(arg == null) arg = "src";
 		
-		arg = console.getNextArg("hxml file (defaults to test.hxml)");
+		var paths = arg.split(",");
+
+		if(paths == null) throw "invaid target class paths" + paths;
+
+		classPaths = [];
+		for(path in paths)
+		{
+			var file = File.create(path, config.dir);
+			if(!file.exists) file.createDirectory();
+			if(!file.isDirectory) throw "class path is not a valid directory " + path;
+
+			classPaths.push(file);
+		}
+	}
+
+	function configureHxml()
+	{
+		var arg = console.getNextArg("hxml file (defaults to test.hxml)");
 		
 		if (arg == null) arg = "test.hxml";
 		
@@ -122,20 +187,16 @@ class ConfigCommand extends MUnitCommand
 			var src:String = src != null ? config.dir.getRelativePath(src) + "" : "";
 			var bin:String = bin != null ? config.dir.getRelativePath(bin) + "": "";
 
-			var content = TemplateUtil.getTemplate("test-hxml", {src:src, bin:bin});
+			var clsPaths:Array<String> = [];
+			for(path in classPaths)
+			{
+				clsPaths.push(config.dir.getRelativePath(path));
+			}
+
+			var content = TemplateUtil.getTemplate("test-hxml", {src:src, bin:bin, classPaths:clsPaths});
 			hxml.writeString(content, true);
 		}
-
 	}
 
-	override public function execute():Void
-	{
-		if(!config.exists)
-		{
-			config.createDefault(src, bin, report, hxml);
-		}
 
-	}
-
-	
 }

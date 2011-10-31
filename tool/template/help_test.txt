@@ -40,4 +40,6 @@ Optional Parameters
    -debug         : Runs tests in debug mode, targeting only tests marked with '@TestDebug'
                     Also adds the 'debug' compiler flag to the build.
 
+   -coverage      : Compiles and runs tests with MCover code coverage enabled 
+
 

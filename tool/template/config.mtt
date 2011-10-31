@@ -3,3 +3,4 @@ src=::src::
 bin=::bin::
 report=::report::
 hxml=::hxml::
+classPaths=::classPaths::

@@ -5,4 +5,5 @@
     <version name="0.9.1.8">Added Hamcrest support.</version>
     <depends name="hamcrest"/>
     <depends name="mlib"/>
+    <depends name="mcover"/>
 </project>
