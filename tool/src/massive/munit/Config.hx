@@ -241,10 +241,12 @@ class Target
 	public var hxml:String;
 	public var file:File;
 	public var main:File;
+	public var flags:Hash<String>;
 	
 	public function new():Void
 	{
 		hxml = "";
+		flags = new Hash();
 	}
 	
 	public function toString():String
