@@ -6,8 +6,6 @@
 -lib hamcrest
 -swf ../bin/test/core/as3_test.swf
 -swf-version 9
--lib mcover
---macro massive.mcover.MCover.include('massive.munit', ['src'])
 --next
 
 #Flash 8
@@ -18,8 +16,6 @@
 -lib hamcrest
 -swf-version 8
 -swf ../bin/test/core/as2_test.swf
--lib mcover
---macro massive.mcover.MCover.include('massive.munit', ['src'])
 --next
 
 # JavaScript
@@ -29,8 +25,6 @@
 -lib mlib
 -lib hamcrest
 -js ../bin/test/core/js_test.js
--lib mcover
---macro massive.mcover.MCover.include('massive.munit', ['src'])
 --next
 
 # Neko
@@ -40,5 +34,3 @@
 -lib mlib
 -lib hamcrest
 -neko ../bin/test/core/neko_test.n
--lib mcover
---macro massive.mcover.MCover.include('massive.munit', ['src'])

@@ -74,6 +74,39 @@ var MUNIT_IGNORED = "munit-ignored";
 var MUNIT_SUMMARY = "munit-summary";
 
 
+function setResult(result)
+{
+	var summary = document.getElementById(MUNIT_SUMMARY);
+
+	if(summary != null)
+	{
+		if(result.toString() == "true")
+		{
+			summary.style.backgroundColor = "#89de8c";
+		}
+		else
+		{
+			summary.style.backgroundColor = "#ff776d";
+		}
+	}
+
+	window.scrollTo(0,document.body.scrollHeight);
+
+	if(parent != null) parent.testComplete();
+	
+}
+
+function setResultBackground(result)
+{
+	if(result.toString() == "true")
+	{
+		document.body.style.backgroundColor = "#89de8c";
+	}
+	else
+	{
+		document.body.style.backgroundColor = "#ff776d";
+	}
+}
 
 function initialize()
 {
@@ -104,13 +137,12 @@ function munitPrint(value)
 {
 	if(currentLine == null)
 	{
-		printLine(value);
+		munitPrintLine(value);
 	}
 	else
 	{
 		currentLine.innerHTML += value;	
 	}
-	
 }
 
 function munitTrace(value)
@@ -129,27 +161,6 @@ function munitTrace(value)
 
 }
 
-function setResult(result)
-{
-	var summary = document.getElementById(MUNIT_SUMMARY);
-
-	if(summary != null)
-	{
-		if(result.toString() == "true")
-		{
-			summary.style.backgroundColor = "#89de8c";
-		}
-		else
-		{
-			summary.style.backgroundColor = "#ff776d";
-		}
-	}
-
-	window.scrollTo(0,document.body.scrollHeight);
-
-	if(parent != null) parent.testComplete();
-	
-}
 
 
 
