@@ -96,8 +96,6 @@ class PrintClient implements IAdvancedTestResultClient
 	private var originalTrace:Dynamic;
 	private var includeIgnoredReport:Bool;
 
-
-	
 	#if flash9
 		private var textField:flash.text.TextField;
 	#elseif flash

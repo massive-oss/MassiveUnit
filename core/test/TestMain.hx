@@ -25,7 +25,9 @@
  * authors and should not be interpreted as representing official policies, either expressed
  * or implied, of Massive Interactive.
  */
+
 import massive.munit.client.PrintClient;
+import massive.munit.client.RichPrintClient;
 import massive.munit.client.HTTPClient;
 import massive.munit.client.JUnitReportClient;
 import massive.munit.TestRunner;
@@ -52,12 +54,13 @@ class TestMain
 		suites.push(TestSuite);
 
 		#if MCOVER
-			var printClient = new massive.mcover.munit.client.MCoverPrintClient(true);
+			var printClient = new RichPrintClient(true);
+			var client = new massive.mcover.munit.client.MCoverPrintClient(printClient);
 		#else
-			var printClient = new PrintClient(true);
+			var client = new RichPrintClient(true);
 		#end
 
-		var runner:TestRunner = new TestRunner(printClient);	
+		var runner:TestRunner = new TestRunner(client);	
 		//runner.addResultClient(new HTTPClient(new JUnitReportClient()));	
 		runner.completionHandler = completionHandler;
 		runner.run(suites);

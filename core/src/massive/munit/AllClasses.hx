@@ -40,6 +40,7 @@ import massive.munit.client.JUnitReportClient;
 import massive.munit.client.PrintClient;
 import massive.munit.client.PrintClientHelper;
 import massive.munit.client.RichPrintClient;
+import massive.munit.client.RichPrintClientHelper;
 import massive.munit.ITestResultClient;
 import massive.munit.MUnitException;
 import massive.munit.TestClassHelper;
