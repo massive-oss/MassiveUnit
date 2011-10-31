@@ -294,3 +294,136 @@ enum PrintLevel
 	ERROR;
 
 }
+
+class PrintClientHelper
+{
+
+	public var stringOutput(default, null):String;
+	public var htmlOutput(default, null):String;
+
+
+	public function new()
+	{
+		stringOutput = "";
+		htmlOutput = "";
+		#if js
+
+			var div = js.Lib.document.getElementById("haxe:trace");
+			
+			if (div == null) 
+			{
+				var positionInfo = ReflectUtil.here();
+				var error:String = "MissingElementException: 'haxe:trace' element not found at " + positionInfo.className + "#" + positionInfo.methodName + "(" + positionInfo.lineNumber + ")";
+				js.Lib.alert(error);
+			}
+		#elseif flash
+
+			if(!flash.external.ExternalInterface.available)
+			{
+				throw new MUnitException("ExternalInterface not available");
+			}
+		#end
+	}
+
+////////////////////// BASIC PRINT API ////////////////
+	
+	public function print(value:String)
+	{
+		#if (js || flash)
+			addToQueue("munitPrint", [value]);
+			return;
+		#elseif neko
+			neko.Lib.print(value);
+		#elseif cpp
+			cpp.Lib.print(value);
+		#elseif php
+			php.Lib.print(value);
+		#end
+
+		stringOutput += value;
+	}
+
+	public function printLine(value:String)
+	{
+		#if (js || flash)
+			addToQueue("munitPrintLine", [value]);
+		#else
+			print("\n" + value);
+		#end
+		
+	}
+
+//////////// HTML PRINT API /////////////
+
+	public function trace(value:String)
+	{
+		addToQueue("munitTrace", [value]);
+	}
+
+	public function setResult(value:Bool)
+	{
+		addToQueue("setResult",[value]);
+		addToQueue("setResultBackground",[value]);
+	}
+
+	//////////// INTERNAL METHODS /////////////
+
+	function addToQueue(method:String, ?args:Array<Dynamic>):Bool
+	{
+
+		#if (!js && !flash)
+			//throw new MUnitException("Cannot call from non JS/Flash targets");
+			return false;
+		#end
+
+		var htmlArgs:Array<String> = [];
+
+		for(arg in args)
+		{
+			stringOutput += args;
+
+			var html = serialiseToHTML(Std.string(arg));
+			htmlArgs.push(html);
+			
+			htmlOutput += html;
+		}
+		var jsCode:String;
+
+		if(htmlArgs == null || htmlArgs.length == 0)
+		{
+			jsCode = "addToQueue(\"" + method + "\")";
+		}
+		else
+		{
+			jsCode = "addToQueue(\"" + method + "\"";
+
+			for(arg in htmlArgs)
+			{
+				jsCode += ",\"" + arg + "\"";
+			}
+			jsCode += ")";
+		}
+
+		#if js	
+			
+			return js.Lib.eval(jsCode);
+		#elseif flash
+			return flash.external.ExternalInterface.call(jsCode);
+		#end
+
+		return false;
+	}
+
+	function serialiseToHTML(value:Dynamic):String
+	{
+		#if js
+		value = untyped js.Boot.__string_rec(value, "");
+		#end
+
+		var v:String = StringTools.htmlEscape(value);
+		v = v.split("\n").join("<br/>");
+		v = v.split(" ").join("&nbsp;");
+
+		return v;
+	}
+}

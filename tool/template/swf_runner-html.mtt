@@ -22,14 +22,9 @@
 	</style>
   </head>
   <body>
-	<div id="swfContainer" ></div>
-	<div id="haxe:trace" ></div>
-	<div id="munit" class="munit" >
-<!--   		<div id="munit-header"  ></div>
-  		<div id="munit-tests"  ></div>
-  		<div id="munit-coverage"  ></div>
-  		<div id="munit-results"  ></div>
-  		<div id="munit-summary" ></div> -->
+  	<div id="swfContainer" ></div>
+  	<div id="haxe:trace" ></div>
+  	<div id="munit" class="munit" >
   	</div>
   </body>
 </html>

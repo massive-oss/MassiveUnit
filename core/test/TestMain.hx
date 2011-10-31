@@ -47,15 +47,13 @@ class TestMain
 {		
 	static function main(){	new TestMain();}
 
-
 	public function new()
 	{		
 		var suites = new Array<Class<massive.munit.TestSuite>>();
 		suites.push(TestSuite);
 
 		#if MCOVER
-			var printClient = new RichPrintClient(true);
-			var client = new massive.mcover.munit.client.MCoverPrintClient(printClient);
+			var client = new massive.mcover.munit.client.MCoverPrintClient();
 		#else
 			var client = new RichPrintClient(true);
 		#end
