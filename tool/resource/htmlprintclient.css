@@ -56,7 +56,7 @@ hr
 
 .line
 {
-	word-wrap: break-word;
+	white-space: nowrap;
 }
 
 
@@ -64,6 +64,7 @@ hr
 {
 	margin: 2px;
 	padding: 2px 0 2px 0;
+	white-space: nowrap;
 }
 
 .munit-test-header, .test-coverage-header, .munit-coverage-header
@@ -72,10 +73,21 @@ hr
 	display: inline-block;
 }
 
+.munit-test-header-parent, .test-coverage-header-parent, .munit-coverage-header-parent
+{
+	white-space: nowrap;
+}
+
 .munit-test-contents, .test-coverage-contents, .munit-coverage-contents
 {
 	padding: 2px 2px 5px 10px;
 	margin: 2px 0 0px 18px;
+}
+
+.munit-coverage-contents
+{
+	padding-left:0;
+	margin-left:0;
 }
 
 .icon, .icon-busy, .icon-failed, .icon-error, .icon-passed, .icon-coverage
@@ -156,7 +168,7 @@ hr
 	padding: 5px;
 	margin: 0 0 0 18px;
 	border: 1px dotted #FFFFFF;
-	word-wrap: break-word;
+	white-space: nowrap;
 
 }
 
@@ -215,9 +227,19 @@ hr
 	display: inline-block;
 }
 
+.missing-coverage-item-header-parent
+{
+	white-space: nowrap;
+}
+
 .missing-coverage-item-contents
 {
 	padding: 2px 2px 5px 10px;
 	margin: 2px 0 0px 10px;
 }
 
+
+.coverage-summary
+{
+	white-space: nowrap;
+}
