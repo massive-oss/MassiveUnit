@@ -40,138 +40,54 @@ import massive.munit.client.PrintClient;
  * Generates rich html output for JS/Flash.
  * For other targets it prints out basic string output (neko, php, etc)
  */
-class RichPrintClient implements IAdvancedTestResultClient
+class RichPrintClient extends PrintClient
 {
 	/**
 	 * Default id of this client.
 	 */
 	public static inline var DEFAULT_ID:String = "PrintClient";
-
-
-
-	/**
-	 * The unique identifier for the client.
-	 */
-	public var id(default, null):String;
-
 	
-	/**
-	 * Handler which if present, is called when the client has completed generating its results.
-	 */
-	public var completionHandler(get_completeHandler, set_completeHandler):ITestResultClient -> Void;
-	function get_completeHandler():ITestResultClient -> Void 
+	override function get_output():String
 	{
-		return completionHandler;
-	}
-	function set_completeHandler(value:ITestResultClient -> Void):ITestResultClient -> Void
-	{
-		return completionHandler = value;
+		if(isRichClient) return helperRich.htmlOutput;
+		else return helperRich.stringOutput;
 	}
 
-	public var output(get_output, null):String;
-	function get_output():String
-	{
-		if(useHTML) return helper.htmlOutput;
-		else return helper.stringOutput;
-	}
+	var isRichClient:Bool;
 
-	var useHTML:Bool;
-
-
-	var failures:Array<Dynamic>;
-	var errors:Array<Dynamic>;
-	var ignored:Array<Dynamic>;
-	var traces:Array<Dynamic>;
-	
-	var currentTestClass:String;	
 	var currentTestResult:TestResultState;
 
-	var originalTrace:Dynamic;
-	var includeIgnoredReport:Bool;
-
-
-	var helper:RichPrintClientHelper;	
-
-
-	var divider:String;
-	var divider2:String;
-
-	
-
+	var helperRich:RichPrintClientHelper;
 
 	public function new(?includeIgnoredReport:Bool = true)
 	{
+		super(includeIgnoredReport);
 		id = DEFAULT_ID;
+	}
+
+	override function init():Void
+	{
 		#if (js || flash)
-			useHTML = true;
+			isRichClient = true;
 		#else
-			useHTML = false;
+			isRichClient = false;
 		#end
-		
-		this.includeIgnoredReport = includeIgnoredReport;
-		init();
 
-		if(!useHTML)
-		{
-			printLine("MUnit Results");
-			printLine(divider);
-		}
-		
+		super.init();
+		helperRich = cast(helper, RichPrintClientHelper);
 	}
 
-	function init():Void
+	override function createHelper():PrintClientHelper
 	{
-		originalTrace = haxe.Log.trace;
-		haxe.Log.trace = customTrace;
-
-		failures = [];
-		errors = [];
-		ignored = [];
-		traces = [];
-
-		currentTestClass = null;
-	
-		helper = new RichPrintClientHelper();
-
-		divider = "------------------------------";
-		divider2 = "==============================\n";
+		return new RichPrintClientHelper();
 	}
 
-
-	/**
-	* Classed when test class changes
-	*
-	* @param className		qualified name of current test class
-	*/
-	public function setCurrentTestClass(className:String):Void
+	override function printNewTest()
 	{
-		if(currentTestClass == className) return;
-		
-		if(currentTestClass != null)
-		{
-			updateLastTestResult();
-		}
-		currentTestClass = className;
+		super.printNewTest();
 
-		errors = [];
-		failures = [];
-		traces = [];
-
-		if(useHTML)
-		{
-			ignored = [];
-		}
-
-		
-
-		if(useHTML)
-		{
-			helper.createTestClass(currentTestClass);
-		}
-		else
-		{
-			printLine("Class: " + currentTestClass + " ");
-		}
+		if(isRichClient)
+			helperRich.createTestClass(currentTestClass);	
 	}
 
 	/**
@@ -179,16 +95,12 @@ class RichPrintClient implements IAdvancedTestResultClient
 	 *  
 	 * @param	result			a passed test result
 	 */
-	public function addPass(result:TestResult):Void
+	override public function addPass(result:TestResult):Void
 	{
-		if(useHTML)
-		{
-			helper.addTest(result);
-		}
-		else
-		{
-			print(".");
-		}
+		super.addPass(result);
+
+		if(isRichClient)
+			helperRich.addTest(result);
 	}
 	
 	/**
@@ -196,18 +108,12 @@ class RichPrintClient implements IAdvancedTestResultClient
 	 *  
 	 * @param	result			a failed test result
 	 */
-	public function addFail(result:TestResult):Void
+	override public function addFail(result:TestResult):Void
 	{
-		failures.push(result.failure);
+		super.addFail(result);
 
-		if(useHTML)
-		{
-			helper.addTest(result);
-		}
-		else
-		{
-			print("!");
-		}
+		if(isRichClient)
+			helperRich.addTest(result);
 	}
 	
 	/**
@@ -215,20 +121,12 @@ class RichPrintClient implements IAdvancedTestResultClient
 	 *  
 	 * @param	result			an erroneous test result
 	 */
-	public function addError(result:TestResult):Void
+	override public function addError(result:TestResult):Void
 	{
-		helper.addTest(result);
-
-		errors.push(result.error);
-
-		if(useHTML)
-		{
-			helper.addTest(result);
-		}
-		else
-		{
-			print("!");
-		}
+		super.addFail(result);
+		
+		if(isRichClient)
+			helperRich.addTest(result);
 	}
 	
 	/**
@@ -236,127 +134,42 @@ class RichPrintClient implements IAdvancedTestResultClient
 	 *
 	 * @param	result			an ignored test
 	 */
-	public function addIgnore(result:TestResult):Void
+	override public function addIgnore(result:TestResult):Void
 	{
-		if (includeIgnoredReport)
-		{
-			var str = result.location;
-			if(result.description != null) str == " - " + result.description;
-
-			ignored.push(str);
-	
-
-			if(useHTML)
-			{
-				helper.addTest(result);
-			}
-			else
-			{
-				print(",");
-			}
-		}		
-	}
-	
-	/**
-	 * Called when all tests are complete.
-	 *  
-	 * @param	testCount		total number of tests run
-	 * @param	passCount		total number of tests which passed
-	 * @param	failCount		total number of tests which failed
-	 * @param	errorCount		total number of tests which were erroneous
-	 * @param	ignoreCount		total number of ignored tests
-	 * @param	time			number of milliseconds taken for all tests to be executed
-	 * @return	collated test result data
-	 */
-	public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
-	{
-		updateLastTestResult();
-	
-		printFinalReports();
+		super.addFail(result);
 		
-
-		var result = passCount == testCount;
-
-		var str = result ? "PASSED" : "FAILED";
-		str += "\n" + "Tests: " + testCount + "  Passed: " + passCount + "  Failed: " + failCount + " Errors: " + errorCount + " Ignored: " + ignoreCount + " Time: " + MathUtil.round(time, 5);
-
-		if(useHTML)
-		{
-			helper.printSummary(str);
-			helper.setResult(result);
-		}
-		else
-		{
-			printLine(divider2);
-			printLine(str);
-			printLine("");
-			printLine("");
-			
-		}
-		
-		haxe.Log.trace = originalTrace;
-		if (completionHandler != null) completionHandler(this); 
-		
-		return null;
-		
+		if(isRichClient)
+			helperRich.addTest(result);
 	}
 
-	/**
-	* Stub method to add any additional reports prior to printing final result summary
-	*/
-	function printFinalReports()
+	override function printFinalResult(resultString:String)
 	{
-		if(!useHTML)
-		{
-			if(!includeIgnoredReport || ignored.length == 0) return;
+		super.printFinalResult(resultString);
 
-			printLine("");
-			printLine("Ignored " + ignored.length + " Tests:");
-			printLine(divider);
-			for(ign in ignored)
-			{
-				printLine(ign, 1);
-			}
-
-			ignored = [];
-		}
+		if(isRichClient)
+			helperRich.printSummary(resultString);
 	}
-
-
+	
 	/**
 	* summarises result for currently executing test class
 	*/
-	function updateLastTestResult()
+	override function updateLastTestResult()
 	{
+		super.updateLastTestResult();
+
 		currentTestResult = getLastTestResult();
-
-		if(useHTML)
-		{
-			helper.setTestClassResult(currentTestResult);
-		}
-		else
-		{
-			for(trc in traces)
-			{
-				printLine(Std.string(trc), 1);
-			}
-			for(error in errors)
-			{
-				printLine("ERROR: " + Std.string(errors), 1);
-			}
-
-			for(failure in failures)
-			{
-				printLine("FAIL: " + Std.string(failure), 1);
-			}
-			
-
-		}
-		
+		helperRich.setTestClassResult(currentTestResult);
 	}
 
 
 	
+	override function printFinalReports()
+	{
+		if(!isRichClient)
+			super.printFinalReports();
+	}
+
+
 	// We print exceptions captured (failures or errors) after all tests 
 	// have completed for a test class.
 	function getLastTestResult():TestResultState
@@ -376,33 +189,28 @@ class RichPrintClient implements IAdvancedTestResultClient
 	}
 
 
-	function customTrace(value, ?info:haxe.PosInfos)
+	override function customTrace(value, ?info:haxe.PosInfos)
 	{
-		var str =  "TRACE: " + info.fileName + "|" + info.lineNumber + "| " + Std.string(value);
-		if(useHTML)
+		super.customTrace(value, info);
+
+		if(isRichClient)
 		{
-			helper.trace(str);
-		}
-		else
-		{
-			traces.push(str);
+			helperRich.trace(traces[traces.length-1]);
 		}
 		
 	}
 
 
-	function print(value)
+	override function print(value)
 	{
-		helper.print(value);
+		if(!isRichClient)
+			super.print(value);
 	}
 
-	function printLine(value, ?indent:Int = 0)
+	override function printLine(value, ?indent:Int = 0)
 	{
-		if(indent > 0)
-		{
-			value = StringTools.lpad("", " ", indent*4) + value;
-		}
-		helper.printLine(value);
+		if(!isRichClient)
+			super.printLine(value, indent);
 	}
 }
 

@@ -78,56 +78,68 @@ class PrintClient implements IAdvancedTestResultClient
 	{
 		return completionHandler = value;
 	}
+
+	public var output(get_output, null):String;
+	function get_output():String
+	{
+		return output;
+	}
+
+	var failures:Array<String>;
+	var errors:Array<String>;
+	var ignored:Array<String>;
+	var traces:Array<String>;
+
+	var totalIgnored:Array<String>;
 	
-	/**
-	 * Newline delimiter. Defaults to '\n' for all platforms except 'js' where it defaults to '<br/>'.
-	 * 
-	 * <p>
-	 * Should be set before the client is passed to a test runner.
-	 * </p>
-	 */
-	public var newline:String;
+	var currentTestClass:String;	
+
+	var originalTrace:Dynamic;
 	
-	private var failures:String;
-	private var errors:String;
-	private var ignored:String;
-	private var output(default, null):String;
-	private var currentTestClass:String;
-	private var originalTrace:Dynamic;
-	private var includeIgnoredReport:Bool;
+	var includeIgnoredReport:Bool;
 
 	#if flash9
-		private var textField:flash.text.TextField;
+		var textField:flash.text.TextField;
 	#elseif flash
-		private var textField:flash.TextField;
+		var textField:flash.TextField;
 	#elseif js
-		private var textArea:Dynamic;
+		var textArea:Dynamic;
 	#end
 
 
-	var helper:PrintClientHelper;	
+	var helper:PrintClientHelper;
+	
+	var newLline:String;
+	var divider:String;
+	var divider2:String;
 
 	public function new(?includeIgnoredReport:Bool = true)
 	{
 		id = DEFAULT_ID;
 		this.includeIgnoredReport = includeIgnoredReport;
 		init();
-		print("MUnit Results" + newline);
-		print("------------------------------" + newline);
+		printHeader();
 	}
-	
-	private function init():Void
+
+	function init():Void
 	{
 		originalTrace = haxe.Log.trace;
 		haxe.Log.trace = customTrace;
-		output = "";
-		failures = "";
-		errors = "";
-		ignored = "";
-		currentTestClass = null;
-		newline = "\n";
 
-		helper = new PrintClientHelper();
+		
+		divider = "------------------------------";
+		divider2 = "==============================";
+
+		currentTestClass = null;
+
+		failures = [];
+		errors = [];
+		ignored = [];
+		traces = [];
+
+		totalIgnored = [];
+
+		helper = createHelper();
 
 		#if flash9
 			textField = new flash.text.TextField();
@@ -141,6 +153,18 @@ class PrintClient implements IAdvancedTestResultClient
 			textField.selectable = true;
 		#end
 	}
+
+	function createHelper():PrintClientHelper
+	{
+		return new PrintClientHelper();
+	}
+
+	function printHeader()
+	{
+		printLine("MUnit Results");
+		printLine(divider);
+	}
+	
 	/**
 	* Classed when test class changes
 	*
@@ -148,13 +172,25 @@ class PrintClient implements IAdvancedTestResultClient
 	*/
 	public function setCurrentTestClass(className:String):Void
 	{
-		if (className != currentTestClass)
+		if(currentTestClass == className) return;
+
+		if(currentTestClass != null)
 		{
-			if(currentTestClass != null)
-				updateLastTestResult();
-			currentTestClass = className;
-			print(newline + "Class: " + currentTestClass + " ");
+			totalIgnored = totalIgnored.concat(ignored);
+			updateLastTestResult();
 		}
+			
+		currentTestClass = className;
+		failures = [];
+		errors = [];
+		ignored = [];
+		traces = [];
+		printNewTest();
+	}
+
+	function printNewTest()
+	{
+		printLine("Class: " + currentTestClass + " ");
 	}
 
 	/**
@@ -174,8 +210,8 @@ class PrintClient implements IAdvancedTestResultClient
 	 */
 	public function addFail(result:TestResult):Void
 	{
+		failures.push(Std.string(result.failure));	
 		print("!");
-		failures += newline + result.failure;		
 	}
 	
 	/**
@@ -185,8 +221,8 @@ class PrintClient implements IAdvancedTestResultClient
 	 */
 	public function addError(result:TestResult):Void
 	{
+		errors.push(Std.string(result.error));
 		print("!");
-		errors += newline + result.error;
 	}
 	
 	/**
@@ -196,9 +232,11 @@ class PrintClient implements IAdvancedTestResultClient
 	 */
 	public function addIgnore(result:TestResult):Void
 	{
+		var ingoredString = result.location;
+		if(result.description != null) ingoredString += " - " + result.description;
+
+		ignored.push(ingoredString);
 		print(",");
-		if (includeIgnoredReport)
-			ignored += newline + result.location + " - " + result.description;
 	}
 	
 	/**
@@ -216,18 +254,27 @@ class PrintClient implements IAdvancedTestResultClient
 	{
 		updateLastTestResult();
 		printFinalReports();
+
+		var result = passCount == testCount;
 		
-		print((passCount == testCount) ? "PASSED" : "FAILED");
-		print(newline + "Tests: " + testCount + "  Passed: " + passCount + "  Failed: " + failCount + " Errors: " + errorCount + " Ignored: " + ignoreCount + " Time: " + MathUtil.round(time, 5) + newline);
-		print("==============================" + newline);
-		
-		helper.setResult(passCount == testCount);
+		var resultString = result ? "PASSED" : "FAILED";
+		resultString += "\n" + "Tests: " + testCount + "  Passed: " + passCount + "  Failed: " + failCount + " Errors: " + errorCount + " Ignored: " + ignoreCount + " Time: " + MathUtil.round(time, 5);
+
+		printFinalResult(resultString);
+		helper.setResult(result);
 
 		haxe.Log.trace = originalTrace;
 		if (completionHandler != null) completionHandler(this); 
 		return output;
 	}
 	
+	function printFinalResult(resultString:String)
+	{
+		printLine(divider2);
+		printLine(resultString);
+		printLine("");
+		printLine("");
+	}
 
 	/**
 	* summarises result for currently executing test class
@@ -241,32 +288,47 @@ class PrintClient implements IAdvancedTestResultClient
 	// have completed for a test class.
 	function printExceptions():Void
 	{
-		if (errors != "") 
+		for(item in traces)
 		{
-			print(errors + newline, ERROR);
-			errors = "";
+			printLine("TRACE: " + item, 1);
 		}
-		if (failures != "")
+		for(item in errors)
 		{
-			print(failures + newline, FAILURE);
-			failures = "";
+			printLine("ERROR: " + item, 1);
+		}
+
+		for(item in failures)
+		{
+			printLine("FAIL: " + item, 1);
 		}
 	}
 
 
 	function printFinalReports()
 	{
-		print(newline + newline);
-		if (includeIgnoredReport && ignored != "")
+		printLine("");
+
+		if (includeIgnoredReport && totalIgnored.length > 0)
 		{
-			print("Ignored:" + newline);
-			print("------------------------------");
-			print(ignored);
-			print(newline + newline);
+			printLine("Ignored:");
+			printLine(divider);
+			for(item in totalIgnored)
+			{
+				printLine(item);	
+			}
+			printLine("");
 		}
 	}
 
-	function print(value:Dynamic, ?level:PrintLevel=null):Void
+	
+	function customTrace(value, ?info:haxe.PosInfos)
+	{
+		var traceString = info.fileName + "|" + info.lineNumber + "| " + Std.string(value);
+
+		traces.push(traceString);
+	}
+
+	function print(value)
 	{
 		helper.print(value);
 
@@ -281,9 +343,13 @@ class PrintClient implements IAdvancedTestResultClient
 		output += value;
 	}
 
-	function customTrace(value, ?info:haxe.PosInfos)
+	function printLine(value, ?indent:Int = 0)
 	{
-		print(newline + "TRACE: " + info.fileName + "|" + info.lineNumber + "| " + Std.string(value));
+		if(indent > 0)
+		{
+			value = StringTools.lpad("", " ", indent*4) + value;
+		}
+		print("\n" + value);
 	}
 }
 
