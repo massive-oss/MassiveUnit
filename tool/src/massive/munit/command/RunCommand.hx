@@ -274,9 +274,11 @@ class RunCommand extends MUnitCommand
         for (pageName in pageNames)
         {
             frameCols += "*,";
-            frameTitles += '<td width="' + colCount + '%">' + pageName.substr(0, pageName.indexOf('_')).toUpperCase() + '</td>';
-            frames += '<frame src="' + pageName + '" scrolling="auto" />\n';
+            frameTitles += '<td width="' + colCount + '%" title="Double click to maximise"><div>' + pageName.substr(0, pageName.indexOf('_')).toUpperCase() + '<a href="#" title="Click to maximise">expand toggle</a></div></td>';
+            frames += '<frame src="' + pageName + '" scrolling="auto" noresize="noresize"/>\n';
         }
+
+
 
         frameCols = frameCols.substr(0, -1);
 

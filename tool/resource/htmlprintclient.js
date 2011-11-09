@@ -118,8 +118,8 @@ function initialize()
 	var swf = document.getElementById("swfContainer");
 	if(swf != null && swf != undefined)
 	{
-		swf.width = 0;
-		swf.height = 0;
+		swf.setAttribute("width",0);
+		swf.setAttribute("height",0);
 	}
 }
 
