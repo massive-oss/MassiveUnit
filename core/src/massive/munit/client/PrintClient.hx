@@ -349,7 +349,7 @@ class PrintClient implements IAdvancedTestResultClient
 		{
 			value = StringTools.lpad("", " ", indent*4) + value;
 		}
-		print("\n" + value);
+		helper.printLine(value);
 	}
 }
 
@@ -411,6 +411,7 @@ class PrintClientHelper
 
 	public function printLine(value:String)
 	{
+		if(value == "") value = " ";
 		#if (js || flash)
 			addToQueue("munitPrintLine", [value]);
 		#else
@@ -482,6 +483,8 @@ class PrintClientHelper
 
 	function serialiseToHTML(value:Dynamic):String
 	{
+		
+
 		#if js
 		value = untyped js.Boot.__string_rec(value, "");
 		#end
