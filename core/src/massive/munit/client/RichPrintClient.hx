@@ -54,9 +54,7 @@ class RichPrintClient extends PrintClient
 	}
 
 	var isRichClient:Bool;
-
 	var currentTestResult:TestResultState;
-
 	var helperRich:RichPrintClientHelper;
 
 	public function new(?includeIgnoredReport:Bool = true)
@@ -123,7 +121,7 @@ class RichPrintClient extends PrintClient
 	 */
 	override public function addError(result:TestResult):Void
 	{
-		super.addFail(result);
+		super.addError(result);
 		
 		if(isRichClient)
 			helperRich.addTest(result);
@@ -160,15 +158,12 @@ class RichPrintClient extends PrintClient
 		currentTestResult = getLastTestResult();
 		helperRich.setTestClassResult(currentTestResult);
 	}
-
-
 	
 	override function printFinalReports()
 	{
 		if(!isRichClient)
 			super.printFinalReports();
 	}
-
 
 	// We print exceptions captured (failures or errors) after all tests 
 	// have completed for a test class.
@@ -188,7 +183,6 @@ class RichPrintClient extends PrintClient
 		}
 	}
 
-
 	override function customTrace(value, ?info:haxe.PosInfos)
 	{
 		super.customTrace(value, info);
@@ -197,9 +191,7 @@ class RichPrintClient extends PrintClient
 		{
 			helperRich.trace(traces[traces.length-1]);
 		}
-		
 	}
-
 
 	override function print(value)
 	{

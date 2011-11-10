@@ -105,7 +105,8 @@ class JUnitReportClient implements IAdvancedTestResultClient
 		if(currentTestClass != null) endTestSuite();
 	
 		currentTestClass = className;
-		startTestSuite();
+
+		if(currentTestClass != null) startTestSuite();
 	}
 
 
@@ -180,7 +181,7 @@ class JUnitReportClient implements IAdvancedTestResultClient
 	 */
 	public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
 	{
-		endTestSuite();
+
 		xml.add("</testsuites>");
 		if (completionHandler != null) completionHandler(this);
 		return xml.toString();

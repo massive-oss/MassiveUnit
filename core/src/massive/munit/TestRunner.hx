@@ -250,7 +250,13 @@ class TestRunner implements IAsyncDelegateObserver
         {
             var time:Float = Timer.stamp() - startTime;
             for (client in clients)
+            {
+                if(Std.is(client, IAdvancedTestResultClient))
+                {
+                    cast(client, IAdvancedTestResultClient).setCurrentTestClass(null);
+                }
                 client.reportFinalStatistics(testCount, passCount, failCount, errorCount, ignoreCount, time);
+            } 
         }
     }
 

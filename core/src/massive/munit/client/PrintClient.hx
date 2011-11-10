@@ -185,7 +185,8 @@ class PrintClient implements IAdvancedTestResultClient
 		errors = [];
 		ignored = [];
 		traces = [];
-		printNewTest();
+
+		if(currentTestClass != null) printNewTest();
 	}
 
 	function printNewTest()
@@ -222,7 +223,7 @@ class PrintClient implements IAdvancedTestResultClient
 	public function addError(result:TestResult):Void
 	{
 		errors.push(Std.string(result.error));
-		print("!");
+		print("x");
 	}
 	
 	/**
@@ -252,7 +253,6 @@ class PrintClient implements IAdvancedTestResultClient
 	 */
 	public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
 	{
-		updateLastTestResult();
 		printFinalReports();
 
 		var result = passCount == testCount;
@@ -437,12 +437,25 @@ class PrintClientHelper
 
 	function addToQueue(method:String, ?args:Array<Dynamic>):Bool
 	{
-
 		#if (!js && !flash)
 			//throw new MUnitException("Cannot call from non JS/Flash targets");
 			return false;
 		#end
 
+		var jsCode = convertToJavaScript(method, args);
+
+		#if js	
+			
+			return js.Lib.eval(jsCode);
+		#elseif flash
+			return flash.external.ExternalInterface.call(jsCode);
+		#end
+
+		return false;
+	}
+
+	function convertToJavaScript(method:String, ?args:Array<Dynamic>):String
+	{
 		var htmlArgs:Array<String> = [];
 
 		for(arg in args)
@@ -471,14 +484,8 @@ class PrintClientHelper
 			jsCode += ")";
 		}
 
-		#if js	
-			
-			return js.Lib.eval(jsCode);
-		#elseif flash
-			return flash.external.ExternalInterface.call(jsCode);
-		#end
+		return jsCode;
 
-		return false;
 	}
 
 	function serialiseToHTML(value:Dynamic):String
