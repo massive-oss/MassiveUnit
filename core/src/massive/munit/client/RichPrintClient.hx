@@ -134,7 +134,7 @@ class RichPrintClient extends PrintClient
 	 */
 	override public function addIgnore(result:TestResult):Void
 	{
-		super.addFail(result);
+		super.addIgnore(result);
 		
 		if(isRichClient)
 			helperRich.addTest(result);
@@ -176,6 +176,10 @@ class RichPrintClient extends PrintClient
 		else if(failures.length > 0)
 		{
 			return TestResultState.FAILED;
+		}
+		else if (ignored.length > 0)
+		{
+			return TestResultState.WARNING; 
 		}
 		else
 		{
