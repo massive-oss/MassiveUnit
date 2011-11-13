@@ -96,9 +96,10 @@ class TestRunnerTest
         Assert.areEqual(0, client.errorCount);
         Assert.areEqual(0, client.finalErrorCount);
         Assert.areEqual(1, client.testClasses.length);
-        Assert.areEqual("massive.munit.TestClassStub", client.currentTestClass);
-    }
+        Assert.isNull(client.currentTestClass);
 
+        Assert.areEqual("massive.munit.TestClassStub", client.testClasses[client.testClasses.length-1]);
+    }
 
     @AsyncTest
     public function testDebug(factory:AsyncFactory):Void

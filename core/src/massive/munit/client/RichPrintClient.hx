@@ -54,8 +54,8 @@ class RichPrintClient extends PrintClient
 	}
 
 	var isRichClient:Bool;
-	var currentTestResult:TestResultState;
-	var helperRich:RichPrintClientHelper;
+	var currentTestResult:TestClassResultStatus;
+	var helperRich:IRichPrintClientHelper;
 
 	public function new(?includeIgnoredReport:Bool = true)
 	{
@@ -98,7 +98,7 @@ class RichPrintClient extends PrintClient
 		super.addPass(result);
 
 		if(isRichClient)
-			helperRich.addTest(result);
+			helperRich.printTestResult(result);
 	}
 	
 	/**
@@ -111,7 +111,7 @@ class RichPrintClient extends PrintClient
 		super.addFail(result);
 
 		if(isRichClient)
-			helperRich.addTest(result);
+			helperRich.printTestResult(result);
 	}
 	
 	/**
@@ -124,7 +124,7 @@ class RichPrintClient extends PrintClient
 		super.addError(result);
 		
 		if(isRichClient)
-			helperRich.addTest(result);
+			helperRich.printTestResult(result);
 	}
 	
 	/**
@@ -137,7 +137,7 @@ class RichPrintClient extends PrintClient
 		super.addIgnore(result);
 		
 		if(isRichClient)
-			helperRich.addTest(result);
+			helperRich.printTestResult(result);
 	}
 
 	override function printFinalResult(resultString:String)
@@ -156,7 +156,7 @@ class RichPrintClient extends PrintClient
 		super.updateLastTestResult();
 
 		currentTestResult = getLastTestResult();
-		helperRich.setTestClassResult(currentTestResult);
+		helperRich.updateTestClassStatus(currentTestResult);
 	}
 	
 	override function printFinalReports()
@@ -167,23 +167,23 @@ class RichPrintClient extends PrintClient
 
 	// We print exceptions captured (failures or errors) after all tests 
 	// have completed for a test class.
-	function getLastTestResult():TestResultState
+	function getLastTestResult():TestClassResultStatus
 	{
 		if(errors.length > 0)
 		{
-			return TestResultState.ERROR;
+			return TestClassResultStatus.ERROR;
 		}
 		else if(failures.length > 0)
 		{
-			return TestResultState.FAILED;
+			return TestClassResultStatus.FAILED;
 		}
 		else if (ignored.length > 0)
 		{
-			return TestResultState.WARNING; 
+			return TestClassResultStatus.WARNING; 
 		}
 		else
 		{
-			return TestResultState.PASSED; 
+			return TestClassResultStatus.PASSED; 
 		}
 	}
 
@@ -210,7 +210,7 @@ class RichPrintClient extends PrintClient
 	}
 }
 
-enum TestResultState
+enum TestClassResultStatus
 {
 	NONE;
 	PASSED;
@@ -219,14 +219,31 @@ enum TestResultState
 	WARNING;
 }
 
-class RichPrintClientHelper extends PrintClientHelper
+interface IRichPrintClientHelper implements IPrintClientHelper
+{
+	function createTestClass(testClassName:String):Void;
+	function printTestResult(result:TestResult):Void;
+	function printToTestSummary(value:String):Void;
+	function updateTestClassStatus(value:TestClassResultStatus):Void;
+	
+	function addTestCoverageClass(value:String, percent:Float):Void;
+	function addTestCoverageItem(value:String):Void;
+
+	function createCoverageReport(value:Float):Void;
+	function addMissingCoverageClass(coverageClass:String, percent:Float):Void;
+	function addCoverageSummary(value:String):Void;
+
+	function printSummary(value:String):Void;	
+}
+
+class RichPrintClientHelper extends PrintClientHelper, implements IRichPrintClientHelper
 {
 	public function new()
 	{
 		super();
 	}
 
-	override public function setResult(value:Bool)
+	override public function printFinalResult(value:Bool)
 	{
 		addToQueue("setResult",[value]);
 	}
@@ -236,31 +253,31 @@ class RichPrintClientHelper extends PrintClientHelper
 	public function createTestClass(currentTestClass:String)
 	{
 		addToQueue("createTestClass",[currentTestClass]);	
-		updateTestSummary("Class: " + currentTestClass + " ");
+		printToTestSummary("Class: " + currentTestClass + " ");
 	}
 
-	public function addTest(result:TestResult)
+	public function printTestResult(result:TestResult)
 	{
 		var value = serializeTestResult(result);
 
 		if(result.error != null)
 		{
-			updateTestSummary("!");
+			printToTestSummary("!");
 			addToQueue("addTestError", [value]);
 		}
 		else if(result.failure != null)
 		{
-			updateTestSummary("!");
+			printToTestSummary("!");
 			addToQueue("addTestFail", [value]);
 		}
 		else if(result.ignore)
 		{
-			updateTestSummary(",");
+			printToTestSummary(",");
 			addToQueue("addTestIgnore", [value]);
 		}
 		else if(result.passed)
 		{
-			updateTestSummary(".");
+			printToTestSummary(".");
 			//addToQueue("addTestPass", value);
 		}
 	}
@@ -297,7 +314,7 @@ class RichPrintClientHelper extends PrintClientHelper
 		return str;
 	}
 
-	public function updateTestSummary(value:String)
+	public function printToTestSummary(value:String)
 	{
 		addToQueue("updateTestSummary", [value]);
 	}
@@ -312,7 +329,7 @@ class RichPrintClientHelper extends PrintClientHelper
 		addToQueue("addTestCoverageItem", [value]);
 	}
 
-	public function setTestClassResult(value:TestResultState)
+	public function updateTestClassStatus(value:TestClassResultStatus)
 	{
 		if(value == null) value = NONE;
 		

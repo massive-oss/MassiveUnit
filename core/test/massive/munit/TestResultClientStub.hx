@@ -83,7 +83,7 @@ class TestResultClientStub implements IAdvancedTestResultClient
 	{
 		if(currentTestClass == className) return;
 		
-		testClasses.push(className);
+		if(className != null) testClasses.push(className);
 		currentTestClass = className;
 	}
 

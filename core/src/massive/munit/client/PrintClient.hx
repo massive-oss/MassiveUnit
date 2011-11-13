@@ -107,7 +107,7 @@ class PrintClient implements IAdvancedTestResultClient
 	#end
 
 
-	var helper:PrintClientHelper;
+	var helper:IPrintClientHelper;
 	
 	var newLline:String;
 	var divider:String;
@@ -261,7 +261,7 @@ class PrintClient implements IAdvancedTestResultClient
 		resultString += "\n" + "Tests: " + testCount + "  Passed: " + passCount + "  Failed: " + failCount + " Errors: " + errorCount + " Ignored: " + ignoreCount + " Time: " + MathUtil.round(time, 5);
 
 		printFinalResult(resultString);
-		helper.setResult(result);
+		helper.printFinalResult(result);
 
 		haxe.Log.trace = originalTrace;
 		if (completionHandler != null) completionHandler(this); 
@@ -361,7 +361,19 @@ enum PrintLevel
 
 }
 
-class PrintClientHelper
+interface IPrintClientHelper
+{
+	var stringOutput(default, null):String;
+	var htmlOutput(default, null):String;
+
+	function print(value:String):Void;
+	function printLine(value:String):Void;
+	function trace(value:String):Void;
+
+	function printFinalResult(value:Bool):Void;
+}
+
+class PrintClientHelper implements IPrintClientHelper
 {
 
 	public var stringOutput(default, null):String;
@@ -427,7 +439,7 @@ class PrintClientHelper
 		addToQueue("munitTrace", [value]);
 	}
 
-	public function setResult(value:Bool)
+	public function printFinalResult(value:Bool)
 	{
 		addToQueue("setResult",[value]);
 		addToQueue("setResultBackground",[value]);
