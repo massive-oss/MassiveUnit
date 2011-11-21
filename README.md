@@ -11,19 +11,19 @@ For more information see the **[wiki](https://github.com/massiveinteractive/Mass
 New in 0.9.2.0
 ---------------------
 
-*	Rich HTML output for JavaScript and Flash targets (see RichPrintClient)
+Rich HTML output for JavaScript and Flash targets (see RichPrintClient)
 
 	var client = new RichPrintClient();
 
-*	Seamless support for MCover code coverage
+Seamless support for MCover code coverage
 
 	haxelib run munit test -coverage
 
-*	Commands for generating stub test classes on demand
+Commands for generating stub test classes on demand
 
 	haxelib run munit create package.FooTest -for package.Foo  
 
-*	Abilty to set project .munit config via an existing file (ideal for CI environments)
+Abilty to set project .munit config via an existing file (ideal for CI environments)
 
 	haxelib run munit config -file path/to/my/custom/config.txt
 
