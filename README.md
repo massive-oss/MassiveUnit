@@ -45,7 +45,8 @@ MassiveUnit is way more than just a unit test framework. It includes a command l
 *	Compile and run multiple targets from an hxml build file
 *	Launch and run test applications in the browser or command line (neko)
 *	Save out junit style test reports to the file system for reporting and ci
-
+*	Auto generate stub test classes (and/or target classes)
+*	Integrated code coverage compilation with MCover
 
 
 
