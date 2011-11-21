@@ -65,11 +65,12 @@ class Config
 		}
 	}
 		
-	private function load():Void
+	public function load(?file:File):Void
 	{
-		parseConfig(configFile.readString());
+		if(file == null) file = configFile;
+		parseConfig(file.readString());
 	}
-	
+
 	private function parseConfig(string:String)
 	{
 		var lines:Array<String>  = string.split("\n");
@@ -219,7 +220,7 @@ class Config
 		return str;
 	}
 	
-	private function save():Void
+	public function save():Void
 	{
 		configFile.writeString(toString());	
 		

@@ -1,8 +1,25 @@
 usage: config
 
-    Updates project specific settings for munit. Saves them to a .munit file.
+    Updates project specific settings for munit.
+    Saves them to a .munit file in the current project.
 
 Options:
 
-   -reset    : Allows user to override previous settings 
-   -delete   : Removes the existing configuration settings 
+   -reset        : Allows user to override previous settings via
+                   the commandline
+   -delete       : Removes the existing configuration settings 
+   -file [path]  : Overwrite all settings from an existing file
+
+Format for -file [path]
+
+    File should be a simple text file with the following format:
+
+        #this is a comment
+        version=0.9.2.0
+        src=test
+        bin=bin
+        report=bin
+        hxml=test.hxml
+        classPaths=src
+
+    Note: 'version' will always be overwritten with current munit version

@@ -33,6 +33,8 @@ import massive.haxe.util.TemplateUtil;
 
 class ConfigCommand extends MUnitCommand
 {
+	var file:File;//external file
+
 	var src:File;
 	var bin:File;
 	var report:File;
@@ -54,7 +56,15 @@ class ConfigCommand extends MUnitCommand
 			config.remove();
 			exit(0);
 		}
-		
+
+		var filePath:String = console.getOption("file");
+	
+		if(filePath != null)
+		{
+			overwriteFromFile(filePath);
+			return;
+		}
+
 		var reset:Bool = console.getOption("reset") != null;
 		
 		if(reset)
@@ -68,7 +78,7 @@ class ConfigCommand extends MUnitCommand
 			print("--------------------");
 			print("Please use '-reset' to overwrite all existing values\n");
 		}
-		
+
 		if(reset || config.src == null)
 		{
 			configureTestSrcDirectory();
@@ -97,7 +107,12 @@ class ConfigCommand extends MUnitCommand
 
 	override public function execute():Void
 	{
-		if(!config.exists)
+		if(file != null && file.exists)
+		{
+			config.load(file);
+			config.save();
+		}
+		else if(!config.exists)
 		{
 			config.createDefault(src, bin, report, hxml,classPaths);
 		}
@@ -111,6 +126,23 @@ class ConfigCommand extends MUnitCommand
 		}
 	}
 
+
+	function overwriteFromFile(filePath:String)
+	{
+		if(filePath == "true" || filePath == "")
+		{
+			error("Invalid argument. '-file' must be followed by a valid file path");
+		}	
+		
+		file = File.create(filePath, config.dir);	
+		validateFile(file, filePath, "file");
+
+		if(!file.exists)
+		{
+			error("invaid file path " + filePath);
+		}
+	}
+
 	function configureTestSrcDirectory()
 	{
 		var arg = console.getNextArg("test src dir (defaults to 'test')");
@@ -118,11 +150,9 @@ class ConfigCommand extends MUnitCommand
 		if(arg == null) arg = "test";
 		
 		src = File.create(arg, config.dir);
-		
-		if(src == null) throw "invaid src path" + arg;
-		if(!src.exists) src.createDirectory();
-		if(!src.isDirectory) throw "src path is not a valid directory " + arg;
+		validateDirectory(src, arg, "src");
 	}
+
 
 	function configureBuildDirectory()
 	{
@@ -131,10 +161,7 @@ class ConfigCommand extends MUnitCommand
 		if(arg == null) arg = "build";
 		
 		bin = File.create(arg, config.dir);
-		
-		if(bin == null) throw "invaid output path " + arg;
-		if(!bin.exists) bin.createDirectory();
-		if(!bin.isDirectory) throw "output path is not a valid directory " + arg;
+		validateDirectory(bin, arg, "output");
 	}
 
 	function configureReportDirectory()
@@ -144,10 +171,7 @@ class ConfigCommand extends MUnitCommand
 		if(arg == null) arg = "report";
 		
 		report = File.create(arg, config.dir);
-		
-		if(report == null) throw "invaid report path " + arg;
-		if(!report.exists) report.createDirectory();
-		if(!report.isDirectory) throw "report path is not a valid directory " + arg;
+		validateDirectory(report, arg, "report");
 	}
 
 	function configureClassPaths()
@@ -157,16 +181,13 @@ class ConfigCommand extends MUnitCommand
 		if(arg == null) arg = "src";
 		
 		var paths = arg.split(",");
-
-		if(paths == null) throw "invaid target class paths" + paths;
+		if(paths == null) error("invaid target class paths" + paths);
 
 		classPaths = [];
 		for(path in paths)
 		{
 			var file = File.create(path, config.dir);
-			if(!file.exists) file.createDirectory();
-			if(!file.isDirectory) throw "class path is not a valid directory " + path;
-
+			validateDirectory(file, arg, "class");
 			classPaths.push(file);
 		}
 	}
@@ -179,9 +200,8 @@ class ConfigCommand extends MUnitCommand
 		
 		hxml = File.create(arg, config.dir);
 		
-		if(hxml == null) throw "invaid hxml path" + arg;
-		if(hxml.isDirectory) throw "hxml path is a directory " + arg;
-
+		validateFile(hxml, arg, "hxml");
+		
 		if(!hxml.exists)
 		{
 			var src:String = src != null ? config.dir.getRelativePath(src) + "" : "";
@@ -198,5 +218,18 @@ class ConfigCommand extends MUnitCommand
 		}
 	}
 
+	///// utilities
 
+	function validateDirectory(file:File, path:String, name:String)
+	{
+		if(file == null) error("invaid " + name + " path: " + path);
+		if(!file.exists) file.createDirectory();
+		if(!file.isDirectory) error(name + "path is not a valid directory: " + path);
+	}
+
+	function validateFile(file:File, path:String, name:String)
+	{
+		if(file == null) error("invaid " + name + " path: " + path);
+		if(file.isDirectory) error(name + "path should not be a directory: " + path);
+	}
 }

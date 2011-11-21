@@ -33,8 +33,6 @@ import massive.neko.cmd.Command;
 class MUnitCommand extends Command
 {
 	public var config:Config;
-
-	
 	public function new():Void
 	{
 		super();
@@ -48,14 +46,10 @@ class MUnitCommand extends Command
 	override public function initialise():Void
 	{
 		super.initialise();
-		
-
 	}
 
 	override public function execute():Void
 	{
 		super.execute();
-	
 	}
-
 }
