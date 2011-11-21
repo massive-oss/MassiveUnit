@@ -1,3 +1,13 @@
+v0.9.2.0 - 22.11.2011
+- Added RichPrintClient outputs rich html for js/flash targets
+- Added integrated support for mcover code coverage ('munit test -coverage').
+- Added support for creating stub tests (and stub classes if they dont already exist)
+	- 'munit create com.FooTest'
+	- 'munit create -for com.Foo'
+	- 'munit create FooBarTest -for com.Foo'
+- Added support for setting .munit project configuration from an existing file ('munit config -file [path]')
+- Added new classPath(s) property to .munit config file to facilitate coverage and stub class creation
+
 v0.9.1.8 - 11.10.2011
 - Added hamcrest support.
 

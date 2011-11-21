@@ -8,6 +8,8 @@ It includes tools for creating, updating, compiling and running unit test cases 
 For more information see the **[wiki](https://github.com/massiveinteractive/MassiveUnit/wiki)**
 
 
+For list of recent changes see the **[change log](https://github.com/massiveinteractive/MassiveUnit/CHANGES.txt)**
+
 Features
 ---------------------
 
@@ -45,9 +47,8 @@ MassiveUnit is way more than just a unit test framework. It includes a command l
 *	Compile and run multiple targets from an hxml build file
 *	Launch and run test applications in the browser or command line (neko)
 *	Save out junit style test reports to the file system for reporting and ci
-*	Auto generate stub test classes (and/or target classes)
-*	Integrated code coverage compilation with MCover
-
+*	Auto generate stub test classes (and/or target classes) (new in 0.9.2.0)
+*	Integrated code coverage compilation with MCover (new in 0.9.2.0)
 
 
 Installation
