@@ -82,7 +82,7 @@
 		}
 
 		td div a {
-			background: url(./img/expand_icon-maximise.png) no-repeat;
+			background: url(./img/expand_icon.png) no-repeat 0px 0px;
 			position:absolute;
 			right:5px;
 			width:16px;
@@ -91,7 +91,7 @@
 		}
 
 		td div a.expanded {
-			background: url(./img/expand_icon-minimise.png) no-repeat;
+			background-position:-16px 0px; 
 		}
 
 	</style>

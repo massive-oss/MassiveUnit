@@ -86,8 +86,25 @@ hr
 
 .munit-coverage-contents
 {
-	padding-left:0;
+	padding-left:20px;
 	margin-left:0;
+}
+
+.munit-coverage-breakdown-header
+{
+	padding: 4px 4px 4px 8px;
+	display: inline-block;
+}
+.munit-coverage-breakdown-header-parent
+{
+	white-space: nowrap;
+}
+.munit-coverage-breakdown-contents
+{
+	padding: 8px;
+	margin: 0;
+	background-color: #CDCDCD;
+	white-space: nowrap;
 }
 
 .icon, .icon-busy, .icon-failed, .icon-error, .icon-passed, .icon-coverage
@@ -103,7 +120,6 @@ hr
 {
 	/*background-image: url("img/spinner.gif");*/
 }
-
 
 .icon-busy
 {
@@ -150,30 +166,33 @@ hr
 	width: 16px;
 	height: 16px;
 	display: inline-block;
+	background: url(img/arrow.gif) no-repeat 0 0;
 }
 .arrow-open
 {
-	background-image: url("img/arrow_down.gif");
+	background-position:-16px 0px; 
 }
 
 .arrow-closed
 {
-	background-image: url("img/arrow_side.gif");
+	
 }
 
-
+.arrow-none
+{
+	background: url("");
+}
 
 .trace, .pass, .fail, .error, .ignore, .coverage, .test-coverage
 {
 	padding: 5px;
 	margin: 0 0 0 18px;
 	border: 1px dotted #FFFFFF;
-
 }
 
 .trace
 {
-	padding: 5px 0 5px 45px;
+	padding: 5px 0 5px 5px;
 	color:#5a5a5a;
 	font-style:italic;
 	background-color: #DEDEDE;

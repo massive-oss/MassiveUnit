@@ -67,11 +67,14 @@ var currentClassId = null;
 var currentCoverageId = null;
 var currentCoverageDiv = null;
 
+var missingCoverageDiv = null;
+
 var MUNIT_HEADER = "munit-header";
 var MUNIT_TESTS = "munit-tests";
 var MUNIT_COVERAGE = "munit-coverage";
 var MUNIT_IGNORED = "munit-ignored";
 var MUNIT_SUMMARY = "munit-summary";
+var MUNIT_COVERAGE_BREAKDOWN = "munit-coverage-breakdown";
 
 
 function setResult(result)
@@ -177,7 +180,7 @@ function createTestClass(testClass)
 		munit.appendChild(tests);
 	}
 	
-	currentClassId = testClass.split(".").join("_");
+	currentClassId = convertStringToId(testClass);
 	currentClassDiv = createTestDiv(currentClassId);
 
 	document.getElementById(MUNIT_TESTS).appendChild(currentClassDiv);
@@ -242,7 +245,7 @@ function addTestCoverageClass(coverageClass, percentage)
 {
 	var contents = document.getElementById(currentClassId + "_contents");
 
-	currentCoverageId = "coverage_" + coverageClass.split(".").join("_");
+	currentCoverageId = convertStringToId("coverage_" + coverageClass);
 	currentCoverageDiv = createSectionDiv(currentCoverageId, "test-coverage");
 	
 	contents.appendChild(currentCoverageDiv);
@@ -324,26 +327,59 @@ function createCoverageReport(value)
 
 
 	var content = document.getElementById(MUNIT_COVERAGE + "_contents");
-	var lineBreak = createLineBreak();
-	content.appendChild(lineBreak);
+	
 
 	createToggle(MUNIT_COVERAGE);
-
 }
+
+var currentCoverageReportID = null;
 
 function addMissingCoverageClass(coverageClass, percentage)
 {
-	var coverage = document.getElementById(MUNIT_COVERAGE + "_contents");
+	if(missingCoverageDiv == null)
+	{
+		addCoverageReportSection("Mising Code Coverage");
+		missingCoverageDiv = document.getElementById(currentCoverageReportID + "_contents");
+	}
 
-	currentCoverageId = "coverage_for_" + coverageClass.split(".").join("_");
+
+	currentCoverageId = convertStringToId("coverage_for_" + coverageClass);
 	currentCoverageDiv = createSectionDiv(currentCoverageId, "missing-coverage-item");
 
-	coverage.appendChild(currentCoverageDiv);
+	missingCoverageDiv.appendChild(currentCoverageDiv);
+
 	createToggle(currentCoverageId);
 
 	var line = document.getElementById(currentCoverageId + "_header");
 	line.innerHTML += "Coverage: " + coverageClass + "<b> [" + percentage + "%]</b>";
+}
 
+
+
+function addCoverageReportSection(title, contents)
+{
+	var coverage = document.getElementById(MUNIT_COVERAGE + "_contents");
+
+	var lineBreak = createLineBreak();
+	coverage.appendChild(lineBreak);
+
+
+	var sectionID = convertStringToId(MUNIT_COVERAGE + "_contents" + "_" +title);
+	var section = createSectionDiv(sectionID, MUNIT_COVERAGE_BREAKDOWN);
+	
+	coverage.appendChild(section);
+	
+	var header = document.getElementById(sectionID + "_header");
+	header.innerHTML = title;
+
+	if(contents != null)
+	{
+		var content = document.getElementById(sectionID + "_contents");
+		content.innerHTML = contents;
+	}
+
+	createToggle(sectionID);
+	currentCoverageReportID = sectionID;
 }
 
 function addCoverageSummary(value)
@@ -364,7 +400,6 @@ function addCoverageSummary(value)
 
 
 //////////
-
 function printSummary(value)
 {
 	var lineBreak = createLineBreak();
@@ -480,6 +515,14 @@ function toggleVisibility(id, forceOpen)
 
 	var arrow = document.getElementById(id + "_header_arrow");
 	arrow.setAttribute("class", forceOpen ? "arrow-open" : "arrow-closed");
+}
+
+function convertStringToId(value)
+{
+	value = value.split(" ").join("_");
+	value = value.split(".").join("_");
+	value = value.split("&nbsp;").join("_");
+	return value;
 }
 
 

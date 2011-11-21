@@ -34,251 +34,66 @@ import massive.munit.util.MathUtil;
 import massive.haxe.util.ReflectUtil;
 import massive.munit.util.Timer;
 
-import massive.munit.client.PrintClient;
+import massive.munit.client.PrintClientBase;
 
-/**
- * Generates rich html output for JS/Flash.
- * For other targets it prints out basic string output (neko, php, etc)
- */
-class RichPrintClient extends PrintClient
+class RichPrintClient extends PrintClientBase
 {
 	/**
 	 * Default id of this client.
 	 */
-	public static inline var DEFAULT_ID:String = "PrintClient";
+	public static inline var DEFAULT_ID:String = "RichPrintClient";
+
+	var testClassResultType:TestResultType;
+	var external:ExternalPrintClient;
 	
-	override function get_output():String
+	public function new()
 	{
-		if(isRichClient) return helperRich.htmlOutput;
-		else return helperRich.stringOutput;
-	}
-
-	var isRichClient:Bool;
-	var currentTestResult:TestClassResultStatus;
-	var helperRich:IRichPrintClientHelper;
-
-	public function new(?includeIgnoredReport:Bool = true)
-	{
-		super(includeIgnoredReport);
+		super();
 		id = DEFAULT_ID;
 	}
 
 	override function init():Void
 	{
-		#if (js || flash)
-			isRichClient = true;
-		#else
-			isRichClient = false;
-		#end
-
 		super.init();
-		helperRich = cast(helper, RichPrintClientHelper);
+		external = new ExternalPrintClientJS();
 	}
 
-	override function createHelper():PrintClientHelper
+	////// TEST CLASS LIFECYCLE //////
+	override function initializeTestClass()
 	{
-		return new RichPrintClientHelper();
+		super.initializeTestClass();
+		external.createTestClass(currentTestClass);
+		external.printToTestClassSummary("Class: " + currentTestClass + " ");
 	}
 
-	override function printNewTest()
+	override function updateTestClass(result:TestResult)
 	{
-		super.printNewTest();
+		super.updateTestClass(result);
 
-		if(isRichClient)
-			helperRich.createTestClass(currentTestClass);	
-	}
-
-	/**
-	 * Called when a test passes.
-	 *  
-	 * @param	result			a passed test result
-	 */
-	override public function addPass(result:TestResult):Void
-	{
-		super.addPass(result);
-
-		if(isRichClient)
-			helperRich.printTestResult(result);
-	}
-	
-	/**
-	 * Called when a test fails.
-	 *  
-	 * @param	result			a failed test result
-	 */
-	override public function addFail(result:TestResult):Void
-	{
-		super.addFail(result);
-
-		if(isRichClient)
-			helperRich.printTestResult(result);
-	}
-	
-	/**
-	 * Called when a test triggers an unexpected exception.
-	 *  
-	 * @param	result			an erroneous test result
-	 */
-	override public function addError(result:TestResult):Void
-	{
-		super.addError(result);
-		
-		if(isRichClient)
-			helperRich.printTestResult(result);
-	}
-	
-	/**
-	 * Called when a test has been ignored.
-	 *
-	 * @param	result			an ignored test
-	 */
-	override public function addIgnore(result:TestResult):Void
-	{
-		super.addIgnore(result);
-		
-		if(isRichClient)
-			helperRich.printTestResult(result);
-	}
-
-	override function printFinalResult(resultString:String)
-	{
-		super.printFinalResult(resultString);
-
-		if(isRichClient)
-			helperRich.printSummary(resultString);
-	}
-	
-	/**
-	* summarises result for currently executing test class
-	*/
-	override function updateLastTestResult()
-	{
-		super.updateLastTestResult();
-
-		currentTestResult = getLastTestResult();
-		helperRich.updateTestClassStatus(currentTestResult);
-	}
-	
-	override function printFinalReports()
-	{
-		if(!isRichClient)
-			super.printFinalReports();
-	}
-
-	// We print exceptions captured (failures or errors) after all tests 
-	// have completed for a test class.
-	function getLastTestResult():TestClassResultStatus
-	{
-		if(errors.length > 0)
-		{
-			return TestClassResultStatus.ERROR;
-		}
-		else if(failures.length > 0)
-		{
-			return TestClassResultStatus.FAILED;
-		}
-		else if (ignored.length > 0)
-		{
-			return TestClassResultStatus.WARNING; 
-		}
-		else
-		{
-			return TestClassResultStatus.PASSED; 
-		}
-	}
-
-	override function customTrace(value, ?info:haxe.PosInfos)
-	{
-		super.customTrace(value, info);
-
-		if(isRichClient)
-		{
-			helperRich.trace(traces[traces.length-1]);
-		}
-	}
-
-	override function print(value)
-	{
-		if(!isRichClient)
-			super.print(value);
-	}
-
-	override function printLine(value, ?indent:Int = 0)
-	{
-		if(!isRichClient)
-			super.printLine(value, indent);
-	}
-}
-
-enum TestClassResultStatus
-{
-	NONE;
-	PASSED;
-	FAILED;
-	ERROR;
-	WARNING;
-}
-
-interface IRichPrintClientHelper implements IPrintClientHelper
-{
-	function createTestClass(testClassName:String):Void;
-	function printTestResult(result:TestResult):Void;
-	function printToTestSummary(value:String):Void;
-	function updateTestClassStatus(value:TestClassResultStatus):Void;
-	
-	function addTestCoverageClass(value:String, percent:Float):Void;
-	function addTestCoverageItem(value:String):Void;
-
-	function createCoverageReport(value:Float):Void;
-	function addMissingCoverageClass(coverageClass:String, percent:Float):Void;
-	function addCoverageSummary(value:String):Void;
-
-	function printSummary(value:String):Void;	
-}
-
-class RichPrintClientHelper extends PrintClientHelper, implements IRichPrintClientHelper
-{
-	public function new()
-	{
-		super();
-	}
-
-	override public function printFinalResult(value:Bool)
-	{
-		addToQueue("setResult",[value]);
-	}
-
-	///////// TEST APIS /////////
-
-	public function createTestClass(currentTestClass:String)
-	{
-		addToQueue("createTestClass",[currentTestClass]);	
-		printToTestSummary("Class: " + currentTestClass + " ");
-	}
-
-	public function printTestResult(result:TestResult)
-	{
 		var value = serializeTestResult(result);
-
-		if(result.error != null)
+		switch(result.type)
 		{
-			printToTestSummary("!");
-			addToQueue("addTestError", [value]);
-		}
-		else if(result.failure != null)
-		{
-			printToTestSummary("!");
-			addToQueue("addTestFail", [value]);
-		}
-		else if(result.ignore)
-		{
-			printToTestSummary(",");
-			addToQueue("addTestIgnore", [value]);
-		}
-		else if(result.passed)
-		{
-			printToTestSummary(".");
-			//addToQueue("addTestPass", value);
+			case PASS:
+			{
+				external.printToTestClassSummary(".");
+				external.addTestPass(value);
+			}
+			case FAIL:
+			{
+				external.printToTestClassSummary("!");
+				external.addTestFail(value);
+			}
+			case ERROR:
+			{
+				external.printToTestClassSummary("x");
+				external.addTestError(value);
+			}
+			case IGNORE:
+			{
+				external.printToTestClassSummary(",");
+				external.addTestIgnore(value);
+			}
+			case UNKNOWN: null;
 		}
 	}
 
@@ -293,7 +108,7 @@ class RichPrintClientHelper extends PrintClientHelper, implements IRichPrintClie
 
 		summary += " (" + MathUtil.round(result.executionTime, 4) + "s)";
 
-		var str = "";
+		var str = null;
 		if(result.error != null)
 		{
 			str = "Error: " + summary + "\n" + Std.string(result.error);
@@ -314,65 +129,171 @@ class RichPrintClientHelper extends PrintClientHelper, implements IRichPrintClie
 		return str;
 	}
 
-	public function printToTestSummary(value:String)
+	/**
+	* summarises result for currently executing test class
+	* and update visual state of test class
+	*/
+	override function finalizeTestClass()
 	{
-		addToQueue("updateTestSummary", [value]);
-	}
+		super.finalizeTestClass();
+		testClassResultType = getTestClassResultType();
 
-	public function addTestCoverageClass(value:String, percent:Float)
-	{
-		addToQueue("addTestCoverageClass", [value, percent]);
-	}
-
-	public function addTestCoverageItem(value:String)
-	{
-		addToQueue("addTestCoverageItem", [value]);
-	}
-
-	public function updateTestClassStatus(value:TestClassResultStatus)
-	{
-		if(value == null) value = NONE;
-		
 		var code:Int =
 		
-		switch(value)
+		switch(testClassResultType)
 		{
-			case PASSED: 0;
-			case FAILED: 1;
+			case PASS: 0;
+			case FAIL: 1;
 			case ERROR: 2;
-			case WARNING: 3;
+			case IGNORE: 3;
 			default: -1;
-			
+		}
+		if(code == -1) return;
+		external.setTestClassResult(code);
+	}
+
+	// We print exceptions captured (failures or errors) after all tests 
+	// have completed for a test class.
+	function getTestClassResultType():TestResultType
+	{
+		if(errorCount > 0) return TestResultType.ERROR;
+		else if(failCount > 0) return TestResultType.FAIL;
+		else if (ignoreCount > 0) return TestResultType.IGNORE; 
+		else return TestResultType.PASS; 
+	}
+
+
+	override public function setCurrentTestClassCoverage(result:CoverageResult):Void
+	{
+		super.setCurrentTestClassCoverage(result);
+
+		external.printToTestClassSummary(" [" + result.percent + "%]");
+
+		if(result.percent == 100) return;
+
+		external.addTestClassCoverage(result.className, result.percent);
+		for(item in result.blocks)
+		{
+			external.addTestClassCoverageItem(item);
+		}
+	}
+	
+	////// FINAL REPORTS //////
+	override public function reportFinalCoverage(percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
+		?classBreakdown:String=null,
+		?packageBreakdown:String=null,
+		?executionFrequency:String=null
+		):Void
+	{
+		super.reportFinalCoverage(percent, missingCoverageResults, summary,classBreakdown,packageBreakdown,executionFrequency);
+
+		external.createCoverageReport(percent);
+		printMissingCoverage(missingCoverageResults);
+
+		if(executionFrequency != null)
+		{
+			external.addCoverageReportSection("Code Execution Frequency", trim(executionFrequency));
+		}		
+
+		if(classBreakdown != null)
+		{
+			external.addCoverageReportSection("Class Breakdown", trim(classBreakdown));
+		}		
+
+		if(packageBreakdown != null)
+		{
+			external.addCoverageReportSection("Package Breakdown", trim(packageBreakdown));
+		}		
+
+		if(packageBreakdown != null)
+		{
+			external.addCoverageReportSection("Summary", trim(summary));
+		}		
+	}
+
+	function trim(output:String):String
+	{
+		while(output.indexOf("\n") == 0)
+		{
+			output = output.substr(1);
+		}
+		
+		while(output.lastIndexOf("\n") == output.length-2)
+		{
+			output = output.substr(0, output.length-2);
 		}
 
-		if(code == -1) return;
-
-		addToQueue("setTestClassResult", [code]);
+		return output;
+		
 	}
 
-	///////// REPORTS //////////
+	function printMissingCoverage(missingCoverageResults:Array<CoverageResult>)
+	{
+		if(missingCoverageResults == null || missingCoverageResults.length == 0) return;
+
+		for(result in missingCoverageResults)
+		{
+			external.addMissingCoverageClass(result.className, result.percent);
+			for(item in result.blocks)
+			{
+				external.addTestClassCoverageItem(item);
+			}
+		}
+	}
+
+	override function printReports()
+	{
+		super.printReports();
+	}
+
+	override function printFinalStatistics(result:Bool, testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float)
+	{
+		super.printFinalStatistics(result, testCount, passCount, failCount, errorCount, ignoreCount, time);
+
+		var resultString = result ? "PASSED" : "FAILED";
+		resultString += "\n" + "Tests: " + testCount
+			+ "  Passed: " + passCount
+			+ "  Failed: " + failCount
+			+ " Errors: " + errorCount
+			+ " Ignored: " + ignoreCount
+			+ " Time: " + MathUtil.round(time, 5);
+
+		external.printSummary(resultString);
+	}
+
+	override function printOverallResult(result:Bool)
+	{
+		super.printOverallResult(result);
+		external.setResult(result);
+	}
+
+	override function customTrace(value, ?info:haxe.PosInfos)
+	{
+		super.customTrace(value, info);
+		var t = traces[traces.length-1];
+		external.trace(t);
+	}
 	
-	public function createCoverageReport(value:Float)
+	////// PRINT APIS //////
+
+	override public function print(value:Dynamic)
 	{
-		addToQueue("createCoverageReport", [value]);
+		super.print(value);
+
+		#if (js || flash)
+			//external.queue(ExternalPrintClientJS.PRINT, value);
+			return;
+		#elseif neko
+			neko.Lib.print(value);
+		#elseif cpp
+			cpp.Lib.print(value);
+		#elseif php
+			php.Lib.print(value);
+		#end
 	}
 
-	public function addMissingCoverageClass(coverageClass:String, percent:Float)
+	override public function printLine(value:Dynamic, ?indent:Int = 0)
 	{
-		addToQueue("addMissingCoverageClass", [coverageClass, percent]);
+		super.printLine(value, indent);
 	}
-
-	public function addCoverageSummary(value:String)
-	{
-		addToQueue("addCoverageSummary", [value]);
-	}
-
-	//////////// FINAL RESULTS ////////////
-
-	public function printSummary(value:String)
-	{
-		addToQueue("printSummary", [value]);
-	}
-
 }
-
