@@ -7,8 +7,7 @@ It includes tools for creating, updating, compiling and running unit test cases 
 
 For more information see the **[wiki](https://github.com/massiveinteractive/MassiveUnit/wiki)**
 
-
-For list of recent changes see the **[change log](https://github.com/massiveinteractive/MassiveUnit/CHANGES.txt)**
+For list of recent changes see the **[change log](https://github.com/massiveinteractive/MassiveUnit/blob/master/CHANGES.txt)**
 
 Features
 ---------------------
