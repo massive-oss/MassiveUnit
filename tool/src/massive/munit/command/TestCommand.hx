@@ -55,14 +55,14 @@ class TestCommand extends MUnitCommand
 		
 		if(console.getOption("swf") == "true")
 		{
-			targetTypes.push(TargetType.swf);
-			targetTypes.push(TargetType.swf9);
+			targetTypes.push(TargetType.as2);
+			targetTypes.push(TargetType.as3);
 		}
 
 		if(console.getOption("as2") == "true")
-			targetTypes.push(TargetType.swf);
+			targetTypes.push(TargetType.as2);
 		if(console.getOption("as3") == "true") 
-			targetTypes.push(TargetType.swf9);
+			targetTypes.push(TargetType.as3);
 		if(console.getOption("js") == "true") 
 			targetTypes.push(TargetType.js);
 		if(console.getOption("neko") == "true") 
@@ -171,13 +171,13 @@ class TestCommand extends MUnitCommand
 		var lines:Array<String> = contents.split("\n");
 		var target:Target = new Target();
 		
-		targets = [];
+		var tempTargets:Array<Target> = [];
 		
 		for(line in lines)
 		{
 			if(line.indexOf("--next") == 0)
 			{
-				targets.push(target);
+				tempTargets.push(target);
 				target = new Target();
 				continue;
 			}
@@ -197,33 +197,68 @@ class TestCommand extends MUnitCommand
 
 			target.hxml += line + "\n";
 			
+			if(target.file == null)
+			{
+				for(type in targetTypes)
+				{
+					var s:String = null;
+					switch(type)
+					{
+						case TargetType.as2: s = "swf";
+						case TargetType.as3: s = "swf";
+						default: s = Std.string(type);
+					}
+					var targetMatcher = new EReg("^-" + s + "\\s+", "");
+					if(targetMatcher.match(line))
+					{
+						target.file = File.create(line.substr(s.length + 2), File.current);
+						break;
+					}
+				}
+			}
+
 			if(target.type == null)
 			{
 				for(type in targetTypes)
 				{
-					var s:String = Std.string(type);
-					if (s == "swf9")
+					var s:String = null;
+					switch(type)
 					{
-						//swf9 is deprecated use -swf-version 9 instead
-						s = "swf";
-					}
-				
-					var targetMatcher = new EReg("^-" + s + "\\s+", "");
-					if(targetMatcher.match(line) && target.type == null)
+						case TargetType.as2: s = "swf-version 8";
+						case TargetType.as3: s = "swf-version [^8]";
+						default: s = Std.string(type);
+					}	
+					var targetMatcher = new EReg("^-" + s, "");
+					if(targetMatcher.match(line))
 					{
 						target.type = type;
-						target.file = File.create(line.substr(s.length + 2), File.current);
+						break;
 					}
 				}
 			}
 		}
 
-		targets.push(target);
+		tempTargets.push(target);
+
+		targets = [];
+		for(target in tempTargets)
+		{
+			for(type in targetTypes)
+			{
+				if(target.type == type)
+				{
+					targets.push(target);
+					break;
+				}
+			}
+		}
 		
 		for(target in targets)
 		{
 			if(target.type == null && targetTypes.length < config.targetTypes.length ) 
 				continue;
+
+			
 
 			if(includeCoverage && target.main != null)
 			{
@@ -253,7 +288,7 @@ class TestCommand extends MUnitCommand
 				target.hxml += "--macro massive.mcover.MCover.include('',['" + clsPaths.join("','") + "'])\n";	
 			}
 			
-			if(target.type == TargetType.swf || target.type == TargetType.swf9)
+			if(target.type == TargetType.as2 || target.type == TargetType.as3)
 			{
 				target.hxml = updateSwfHeader(target.hxml);
 			}

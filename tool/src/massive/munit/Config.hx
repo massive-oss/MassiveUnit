@@ -53,7 +53,7 @@ class Config
 		this.dir = dir;
 		this.currentVersion = currentVersion;
 		
-		targetTypes = [TargetType.swf, TargetType.swf9, TargetType.js, TargetType.neko];
+		targetTypes = [TargetType.as2, TargetType.as3, TargetType.js, TargetType.neko];
 		
 		configFile = dir.resolveFile(".munit");
 		
@@ -271,8 +271,8 @@ class Target
 
 enum TargetType
 {
-	swf;
-	swf9;
+	as2;
+	as3;
 	js;
 	neko;
 }

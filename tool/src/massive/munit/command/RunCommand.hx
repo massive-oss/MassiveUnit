@@ -98,15 +98,15 @@ class RunCommand extends MUnitCommand
 
         if (console.getOption("swf") == "true")
         {
-            targetTypes.push(TargetType.swf9);
-            targetTypes.push(TargetType.swf);
+            targetTypes.push(TargetType.as3);
+            targetTypes.push(TargetType.as2);
         }
         else
         {
             if (console.getOption("as2") == "true")
-                targetTypes.push(TargetType.swf);
+                targetTypes.push(TargetType.as2);
             if (console.getOption("as3") == "true")
-                targetTypes.push(TargetType.swf9);
+                targetTypes.push(TargetType.as3);
         }
         if (console.getOption("js") == "true")
             targetTypes.push(TargetType.js);
@@ -160,9 +160,9 @@ class RunCommand extends MUnitCommand
             {
                 if (file.extension == "swf")
                 {
-                    if (type == TargetType.swf9 && file.fileName.indexOf("as3_test.swf") != -1)
+                    if (type == TargetType.as3 && file.fileName.indexOf("as3_test.swf") != -1)
                         files.push(file);
-                    else if (type == TargetType.swf && file.fileName.indexOf("as2_test.swf") != -1)
+                    else if (type == TargetType.as2 && file.fileName.indexOf("as2_test.swf") != -1)
                         files.push(file);
                 }
                 else if (type == TargetType.js && file.extension == "js")
