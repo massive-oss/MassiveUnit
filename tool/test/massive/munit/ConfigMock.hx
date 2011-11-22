@@ -26,7 +26,9 @@ class ConfigMock
 		str += "\nsrc=src";
 		str += "\nbin=bin";
 		str += "\nreport=report";
+		str += "\nclassPaths=src";
 		str += "\nhxml=test.hxml";
+
 
 		file.writeString(str);
 	}

@@ -1,4 +1,4 @@
-import massive.munit.client.PrintClient;
+import massive.munit.client.RichPrintClient;
 import massive.munit.client.HTTPClient;
 import massive.munit.client.JUnitReportClient;
 import massive.munit.TestRunner;
@@ -23,8 +23,15 @@ class TestMain
 		var suites = new Array<Class<massive.munit.TestSuite>>();
 		suites.push(TestSuite);
 
-		var runner:TestRunner = new TestRunner(new HTTPClient(new JUnitReportClient(), "http://localhost:2000"));	
-		runner.addResultClient(new PrintClient());
+		#if MCOVER
+			var client = new massive.mcover.munit.client.MCoverPrintClient();
+		#else
+			var client = new RichPrintClient();
+		#end
+
+		var runner:TestRunner = new TestRunner(client);	
+
+		//runner.addResultClient(new TestRunner(new HTTPClient(new JUnitReportClient(), "http://localhost:2000")));
 		runner.completionHandler = completionHandler;
 		runner.run(suites);
 	}
