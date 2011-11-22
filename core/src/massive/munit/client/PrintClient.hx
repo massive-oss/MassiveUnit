@@ -144,14 +144,7 @@ class PrintClient extends PrintClientBase
 
 	override public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
 	{
-		#if neko
-		neko.Lib.print("!!");
-		#end
 		super.reportFinalStatistics(testCount, passCount, failCount, errorCount, ignoreCount, time);
-
-		#if neko
-		neko.Lib.print("!!!");
-		#end
 	}
 
 	override public function print(value:Dynamic)
