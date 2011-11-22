@@ -79,9 +79,12 @@ Commands for generating stub test classes on demand
 
 	haxelib run munit create package.FooTest -for package.Foo  
 
-Abilty to set project .munit config via an existing file (ideal for CI environments)
+CI friendly options for munit config command
 
+	haxelib run munit config -default
+	haxelib run munit config -src path/to/src -hxml path/to/test.hxml
 	haxelib run munit config -file path/to/my/custom/config.txt
+
 
 For full list of recent changes see the **[change log](https://github.com/massiveinteractive/MassiveUnit/blob/master/CHANGES.txt)**
 

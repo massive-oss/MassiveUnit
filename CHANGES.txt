@@ -6,6 +6,8 @@ v0.9.2.0 - 22.11.2011
 	- 'munit create -for com.Foo'
 	- 'munit create FooBarTest -for com.Foo'
 - Added support for setting .munit project configuration from an existing file ('munit config -file [path]')
+- Added support for setting default .munit project properties (munit config -default)
+- Added support for setting .munit properties inline (e.g. 'munit config -src path/to/test')
 - Added new classPath(s) property to .munit config file to facilitate coverage and stub class creation
 
 v0.9.1.8 - 11.10.2011
