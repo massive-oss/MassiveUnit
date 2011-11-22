@@ -1,25 +1,38 @@
 usage: config
 
-    Updates project specific settings for munit.
+    Create, print and modify current project specific settings for munit.
     Saves them to a .munit file in the current project.
 
-Options:
+    Notes:
+    *  Directories will be generated if they do not already exist.
+    *  Hxml file will be generated if it doesn't exist.
 
+Basic Usage:
+  
+   -default      : Uses default values (no console input required)
    -reset        : Allows user to override previous settings via
                    the commandline
    -delete       : Removes the existing configuration settings 
-   -file [path]  : Overwrite all settings from an existing file
 
-Format for -file [path]
+Inline Usage:
 
-    File should be a simple text file with the following format:
+  Using the following options overrides any existing values and
+  replaces missing arguments with default values.
 
-        #this is a comment
-        version=0.9.2.0
-        src=test
-        bin=bin
-        report=bin
-        hxml=test.hxml
-        classPaths=src
+   -src [path]         : main test src directory (default 'test')
+   -bin [path]         : build directory (defaults to 'build')
+   -report [path]      : report directory (defaults to 'report')
+   -classPaths [paths] : comma delimetered list of src paths (defaults to 'src')
+   -hxml [path]        : path to hxml file (defaults to 'test.hxml')
 
-    Note: 'version' will always be overwritten with current munit version
+  Values can also be set via an existing munit project file
+
+   -file [path]        : use values from an existing munit file
+
+  File should be a simple text file with the following format:
+
+    src=test
+    bin=bin
+    report=bin
+    hxml=test.hxml
+    classPaths=src

@@ -33,7 +33,18 @@ import massive.haxe.util.TemplateUtil;
 
 class ConfigCommand extends MUnitCommand
 {
+	static inline var DEFAULT_SRC:String = "test";
+	static inline var DEFAULT_BIN:String = "build";
+	static inline var DEFAULT_REPORT:String = "report";
+	static inline var DEFAULT_CLASSPATHS:String = "src";
+	static inline var DEFAULT_HXML:String = "test.hxml";
+		
+
 	var file:File;//external file
+
+
+	var useDefaultsIfMissing:Bool;
+	var useConsoleInput:Bool;
 
 	var src:File;
 	var bin:File;
@@ -44,75 +55,55 @@ class ConfigCommand extends MUnitCommand
 	public function new():Void
 	{
 		super();
+		useDefaultsIfMissing = false;
+		useConsoleInput = false;
 		addPostRequisite(GenerateCommand);
 	}
 
 	override public function initialise():Void
 	{
-		var del:String = console.getOption("delete");
-		
-		if(del != null)
+
+		if(hasDeleteArg())
 		{
 			config.remove();
 			exit(0);
 		}
-
-		var filePath:String = console.getOption("file");
-	
-		if(filePath != null)
+		else if(hasDefaultArg())
 		{
-			overwriteFromFile(filePath);
-			return;
+			useDefaultsIfMissing = true;
 		}
-
-		var reset:Bool = console.getOption("reset") != null;
-		
-		if(reset)
+		else if(hasFileArg())
+		{
+			useDefaultsIfMissing = true;
+			var filePath:String = console.getOption("file");
+			parseFromFile(filePath);
+		}
+		else if(hasInlineArgs())
+		{
+			useDefaultsIfMissing = true;
+			parseInlineArgs();
+		}
+		else if(hasResetArg())
 		{
 			config.remove();
+			parseFromConsole();
 		}
-		else if(config.exists)
+		else
 		{
-			print("Current munit settings\n--------------------");
-			print(config.toString());
-			print("--------------------");
-			print("Please use '-reset' to overwrite all existing values\n");
-		}
-
-		if(reset || config.src == null)
-		{
-			configureTestSrcDirectory();
-		}
-
-		if(reset || config.bin == null)
-		{
-			configureBuildDirectory();
-		}
-
-		if(reset || config.report == null)
-		{
-			configureReportDirectory();
-		}
-
-		if(reset || config.classPaths == null)
-		{
-			configureClassPaths();
-		}
-
-		if(reset || config.hxml == null)
-		{
-			configureHxml();
+			parseFromConsole();
 		}
 	}
 
 	override public function execute():Void
 	{
-		if(file != null && file.exists)
+		if(useDefaultsIfMissing)
 		{
-			config.load(file);
-			config.save();
+			setDefaultValuesForMissingProperties();
 		}
-		else if(!config.exists)
+
+		writeHxmlToFile(hxml);
+
+		if(!config.exists)
 		{
 			config.createDefault(src, bin, report, hxml,classPaths);
 		}
@@ -121,13 +112,125 @@ class ConfigCommand extends MUnitCommand
 			if(src != null) config.updateSrc(src);
 			if(bin != null) config.updateBin(bin);
 			if(report != null) config.updateReport(report);
-			if(hxml != null) config.updateHxml(hxml);
 			if(classPaths != null) config.updateClassPaths(classPaths);	
+			if(hxml != null) config.updateHxml(hxml);
 		}
 	}
 
+	function hasDeleteArg():Bool
+	{
+		if(console.getOption("delete") != null) return true;
+		return false;
+	}
 
-	function overwriteFromFile(filePath:String)
+	function hasFileArg():Bool
+	{
+		if(console.getOption("file") != null) return true;
+		return false;
+	}
+
+	function hasResetArg():Bool
+	{
+		if(console.getOption("reset") != null) return true;
+		return false;
+	}
+
+	function hasDefaultArg():Bool
+	{
+		if(console.getOption("default") != null) return true;
+		return false;
+	}
+
+	function hasInlineArgs():Bool
+	{
+		if(console.getOption("src") != null) return true;
+		if(console.getOption("bin") != null) return true;
+		if(console.getOption("report") != null) return true;
+		if(console.getOption("hxml") != null) return true;
+		if(console.getOption("classPaths") != null) return true;
+		return false;
+	}
+	
+	function parseInlineArgs()
+	{
+		var srcArg = console.getOption("src");
+		var binArg = console.getOption("bin");
+		var reportArg = console.getOption("report");
+		var classPathsArg = console.getOption("classPaths");
+		var hxmlArg = console.getOption("hxml");
+		
+		src = convertToDirectory(srcArg, DEFAULT_SRC, "src");
+		bin = convertToDirectory(binArg, DEFAULT_BIN, "build");
+		report = convertToDirectory(reportArg, DEFAULT_REPORT, "report");
+		classPaths = convertToDirectoryList(classPathsArg, DEFAULT_CLASSPATHS, "class");
+		hxml = convertToFile(hxmlArg, DEFAULT_HXML, "hxml");
+	}
+
+
+	function parseFromConsole()
+	{
+		if(config.exists)
+		{
+			print("Current munit settings\n--------------------");
+			print(config.toString());
+			print("--------------------");
+			print("Please use '-reset' to overwrite all existing values\n");
+		}
+		else
+		{
+			print("Configure munit project settings\n--------------------");
+		}
+
+		if(config.src == null)
+		{
+			var arg = console.getNextArg("test src dir (defaults to '" + DEFAULT_SRC + "')");
+			src = convertToDirectory(arg, DEFAULT_SRC, "src");
+		}
+
+		if(config.bin == null)
+		{
+			var arg = console.getNextArg("output build dir (defaults to '" + DEFAULT_BIN + "')");	
+			bin = convertToDirectory(arg, DEFAULT_BIN, "build");
+		}
+
+		if(config.report == null)
+		{
+			var arg = console.getNextArg("report dir (defaults to '" + DEFAULT_REPORT + "')");
+			report = convertToDirectory(arg, DEFAULT_REPORT, "report");
+		}
+
+		if(config.classPaths == null || config.classPaths.length == 0)
+		{
+			var arg = console.getNextArg("target class paths (comma delimitered, defaults to '" + DEFAULT_CLASSPATHS + "')");
+			classPaths = convertToDirectoryList(arg, DEFAULT_CLASSPATHS, "class");
+		}
+
+		if(config.hxml == null)
+		{
+			var arg = console.getNextArg("hxml file (defaults to '" + DEFAULT_HXML + "')");
+			hxml = convertToFile(arg, DEFAULT_HXML, "hxml");
+		}
+	}
+
+	function setDefaultValuesForMissingProperties()
+	{
+		var srcArg = DEFAULT_SRC;
+		var binArg = DEFAULT_BIN;
+		var reportArg = DEFAULT_REPORT;
+		var classPathsArg = DEFAULT_CLASSPATHS;
+		var hxmlArg = DEFAULT_HXML;
+		
+		if(src == null) src = convertToDirectory(srcArg, DEFAULT_SRC, "src");
+		if(bin == null) bin = convertToDirectory(binArg, DEFAULT_BIN, "build");
+		if(report == null) report = convertToDirectory(reportArg, DEFAULT_REPORT, "report");
+		if(classPaths == null) classPaths = convertToDirectoryList(classPathsArg, DEFAULT_CLASSPATHS, "class");
+		if(hxml == null) hxml = convertToFile(hxmlArg, DEFAULT_HXML, "hxml");
+	}
+
+	///////////
+
+
+	function parseFromFile(filePath:String)
 	{
 		if(filePath == "true" || filePath == "")
 		{
@@ -135,101 +238,93 @@ class ConfigCommand extends MUnitCommand
 		}	
 		
 		file = File.create(filePath, config.dir);	
-		validateFile(file, filePath, "file");
-
+		
+		var label = "file";
+		if(file == null) error("invaid " + label + " path: " + filePath);
+		if(file.isDirectory) error(label + "path should not be a directory: " + filePath);
 		if(!file.exists)
 		{
 			error("invaid file path " + filePath);
 		}
+
+		var tempConfig = new Config(config.dir, config.currentVersion);
+		tempConfig.load(file);
+
+		src = tempConfig.src;
+		bin = tempConfig.bin;
+		report = tempConfig.report;
+		hxml = tempConfig.hxml;
+		classPaths = tempConfig.classPaths.concat([]);
 	}
 
-	function configureTestSrcDirectory()
+
+	
+
+	
+	function writeHxmlToFile(file:File, ?overwrite:Bool=false):Bool
 	{
-		var arg = console.getNextArg("test src dir (defaults to 'test')");
-		
-		if(arg == null) arg = "test";
-		
-		src = File.create(arg, config.dir);
-		validateDirectory(src, arg, "src");
-	}
+		if(file == null) return false;
+		if(file.exists && !overwrite) return false;
 
+		var src:String = src != null ? config.dir.getRelativePath(src) + "" : "";
+		var bin:String = bin != null ? config.dir.getRelativePath(bin) + "": "";
 
-	function configureBuildDirectory()
-	{
-		var arg = console.getNextArg("output build dir (defaults to 'build')");
-		
-		if(arg == null) arg = "build";
-		
-		bin = File.create(arg, config.dir);
-		validateDirectory(bin, arg, "output");
-	}
+		var clsPaths:Array<String> = [];
 
-	function configureReportDirectory()
-	{
-		var arg = console.getNextArg("report dir (defaults to 'report')");
-		
-		if(arg == null) arg = "report";
-		
-		report = File.create(arg, config.dir);
-		validateDirectory(report, arg, "report");
-	}
-
-	function configureClassPaths()
-	{
-		var arg = console.getNextArg("target class paths (comma delimitered, defaults to 'src')");
-		
-		if(arg == null) arg = "src";
-		
-		var paths = arg.split(",");
-		if(paths == null) error("invaid target class paths" + paths);
-
-		classPaths = [];
-		for(path in paths)
+		for(path in classPaths)
 		{
-			var file = File.create(path, config.dir);
-			validateDirectory(file, arg, "class");
-			classPaths.push(file);
+			clsPaths.push(config.dir.getRelativePath(path));
 		}
-	}
 
-	function configureHxml()
-	{
-		var arg = console.getNextArg("hxml file (defaults to test.hxml)");
+		var content = TemplateUtil.getTemplate("test-hxml", {src:src, bin:bin, classPaths:clsPaths});
+		file.writeString(content, true);
+		return true;
 		
-		if (arg == null) arg = "test.hxml";
-		
-		hxml = File.create(arg, config.dir);
-		
-		validateFile(hxml, arg, "hxml");
-		
-		if(!hxml.exists)
-		{
-			var src:String = src != null ? config.dir.getRelativePath(src) + "" : "";
-			var bin:String = bin != null ? config.dir.getRelativePath(bin) + "": "";
-
-			var clsPaths:Array<String> = [];
-			for(path in classPaths)
-			{
-				clsPaths.push(config.dir.getRelativePath(path));
-			}
-
-			var content = TemplateUtil.getTemplate("test-hxml", {src:src, bin:bin, classPaths:clsPaths});
-			hxml.writeString(content, true);
-		}
 	}
 
 	///// utilities
 
-	function validateDirectory(file:File, path:String, name:String)
+
+	function convertToDirectory(arg:String, defaultValue:String, label:String):File
 	{
-		if(file == null) error("invaid " + name + " path: " + path);
+		if(arg == null) arg = defaultValue;
+		var file = File.create(arg, config.dir);
+
+		if(file == null) error("invaid " + label + " path: " + arg);
 		if(!file.exists) file.createDirectory();
-		if(!file.isDirectory) error(name + "path is not a valid directory: " + path);
+		if(!file.isDirectory) error(label + "path is not a valid directory: " + arg);
+
+		return file;
 	}
 
-	function validateFile(file:File, path:String, name:String)
+	function convertToFile(arg:String, defaultValue:String, label:String):File
 	{
-		if(file == null) error("invaid " + name + " path: " + path);
-		if(file.isDirectory) error(name + "path should not be a directory: " + path);
+		if(arg == null) arg = defaultValue;
+		var file = File.create(arg, config.dir);
+		if(file == null) error("invaid " + label + " path: " + arg);
+		if(file.isDirectory) error(label + "path should not be a directory: " + arg);
+
+		return file;
+	}
+
+	function convertToDirectoryList(arg:String, defaultValue:String, label:String):Array<File>
+	{
+		if(arg == null) arg = defaultValue;
+		
+		var paths = arg.split(",");
+		
+		if(paths == null) error("invaid target class paths: " + paths);
+
+		var files:Array<File> = [];
+		for(path in paths)
+		{
+			var file = File.create(path, config.dir);
+			if(file == null) error("invaid " + label + " path: " + path);
+			if(!file.exists) file.createDirectory();
+			if(!file.isDirectory) error(label + "path is not a valid directory: " + path);
+			files.push(file);
+		}
+
+		return files;
 	}
 }
