@@ -28,6 +28,7 @@
 package massive.munit.command;
 
 import massive.munit.Config;
+import massive.munit.Target;
 import haxe.Http;
 import haxe.io.Eof;
 import massive.neko.io.File;

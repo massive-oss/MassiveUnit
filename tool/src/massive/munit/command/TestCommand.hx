@@ -33,6 +33,7 @@ import massive.neko.io.File;
 import massive.neko.io.FileSys;
 import massive.neko.util.PathUtil;
 import massive.munit.Config;
+import massive.munit.Target;
 import neko.Lib;
 
 class TestCommand extends MUnitCommand
