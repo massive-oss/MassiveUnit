@@ -197,7 +197,7 @@ class HTTPClient implements IAdvancedTestResultClient
 		#elseif js return "js";
 		#elseif neko return "neko";
 		#elseif cpp return "cpp";
-		#elseif php return "php"
+		#elseif php return "php";
 		#end
 		return "unknown";
 	}
