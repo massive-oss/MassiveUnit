@@ -495,6 +495,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 		var v:String = StringTools.htmlEscape(value);
 		v = v.split("\n").join("<br/>");
 		v = v.split(" ").join("&nbsp;");
+		v = v.split("\"").join("\\\'");
 
 		return v;
 	}
