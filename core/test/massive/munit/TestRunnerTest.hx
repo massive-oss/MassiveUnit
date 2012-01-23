@@ -28,6 +28,7 @@
 package massive.munit;
 import massive.munit.client.JUnitReportClient;
 import massive.munit.async.AsyncFactory;
+import massive.munit.async.AsyncTestSuiteStub;
 
 /**
  * ...
@@ -109,5 +110,33 @@ class TestRunnerTest
         suites.push(TestSuiteStub);
         runner.completionHandler = factory.createHandler(this, completionHandler, 5000);
         runner.debug(suites);
+    }
+
+    @AsyncTest
+    public function testAsyncAssertionTests(factory:AsyncFactory):Void
+    {
+        var suites = new Array<Class<massive.munit.TestSuite>>();
+
+        suites.push(AsyncTestSuiteStub);
+        runner.completionHandler = factory.createHandler(this, asyncCompletionHandler, 5000);
+        runner.run(suites);
+    }
+
+    private function asyncCompletionHandler(isSuccessful:Bool):Void
+    {
+        Assert.isFalse(isSuccessful);
+        Assert.areEqual(8, client.testCount);
+        Assert.areEqual(8, client.finalTestCount);
+        Assert.areEqual(3, client.passCount);
+        Assert.areEqual(3, client.finalPassCount);
+        Assert.areEqual(3, client.failCount);
+        Assert.areEqual(3, client.finalFailCount);
+        Assert.areEqual(2, client.errorCount);
+        Assert.areEqual(2, client.finalErrorCount);
+        Assert.areEqual(2, client.testClasses.length);
+        Assert.isNull(client.currentTestClass);
+
+        Assert.areEqual("massive.munit.async.AsyncTestClassStub2", client.testClasses[client.testClasses.length-1]);
+        Assert.areEqual("massive.munit.async.AsyncTestClassStub", client.testClasses[client.testClasses.length-2]);
     }
 }

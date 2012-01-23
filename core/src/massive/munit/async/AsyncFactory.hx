@@ -91,9 +91,11 @@ class AsyncFactory
 	 */
 	public function createHandler(testCase:Dynamic, handler:Dynamic, ?timeout:Int, ?info:PosInfos):Dynamic
 	{
-		var dispatcher:AsyncDelegate = new AsyncDelegate(testCase, handler, timeout, info);
-		dispatcher.observer = observer;
+		var delegate:AsyncDelegate = new AsyncDelegate(testCase, handler, timeout, info);
+		delegate.observer = observer;
 		asyncDelegateCount++;
-		return dispatcher.delegateHandler;
+
+		observer.asyncDelegateCreatedHandler(delegate);
+		return delegate.delegateHandler;
 	}
 }

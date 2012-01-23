@@ -109,6 +109,7 @@ class TestRunner implements IAsyncDelegateObserver
     private var testSuites:Array<TestSuite>;
 
     private var asyncPending:Bool;
+    private var asyncDelegate:AsyncDelegate;
     private var suiteIndex:Int;
 
     public var asyncFactory(default, set_asyncFactory):AsyncFactory;
@@ -183,6 +184,7 @@ class TestRunner implements IAsyncDelegateObserver
 
         running = true;
         asyncPending = false;
+        asyncDelegate = null;
         testCount = 0;
         failCount = 0;
         errorCount = 0;
@@ -300,23 +302,13 @@ class TestRunner implements IAsyncDelegateObserver
             var assertionCount:Int = Assert.assertionCount;
             if (async)
             {
-                var delegateCount:Int = asyncFactory.asyncDelegateCount;
-
                 Reflect.callMethod(testCaseData.scope, testCaseData.test, [asyncFactory]);
 
-                if (asyncFactory.asyncDelegateCount == delegateCount)
+                if(asyncDelegate == null)
                 {
                     throw new MissingAsyncDelegateException("No AsyncDelegate was created in async test at " + result.location, null);
                 }
 
-                // FIXME: Lift this restriction on asserting in async test host.
-                //        Issues around asserts being caught and cancelling async test.
-                //        ms 3/12/10
-
-                if (Assert.assertionCount > assertionCount)
-                {
-                    throw new AssertionException("Assertion(s) were made before async test returned at " + result.location, null);
-                }
                 asyncPending = true;
             }
             else
@@ -332,6 +324,11 @@ class TestRunner implements IAsyncDelegateObserver
         }
         catch(e:Dynamic)
         {
+            if(async && asyncDelegate != null)
+            {
+                asyncDelegate.cancelTest();
+                asyncDelegate = null;
+            }
             if (Std.is(e, org.hamcrest.AssertionException))
                 e = new AssertionException(e.message, e.info);
 
@@ -385,6 +382,7 @@ class TestRunner implements IAsyncDelegateObserver
         testCaseData.scope = delegate;
 
         asyncPending = false;
+        asyncDelegate = null;
         executeTestCase(testCaseData, false);
         Reflect.callMethod(activeHelper.test, activeHelper.after, emptyParams);
         execute();
@@ -404,10 +402,16 @@ class TestRunner implements IAsyncDelegateObserver
         result.error = new AsyncTimeoutException("", delegate.info);
 
         asyncPending = false;
+        asyncDelegate = null;
         errorCount++;
         for (c in clients) c.addError(result);
         Reflect.callMethod(activeHelper.test, activeHelper.after, emptyParams);
         execute();
+    }
+
+    public function asyncDelegateCreatedHandler(delegate:AsyncDelegate):Void
+    {
+        asyncDelegate = delegate;
     }
 
     private function createAsyncFactory():AsyncFactory

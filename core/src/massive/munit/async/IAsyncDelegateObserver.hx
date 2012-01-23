@@ -49,4 +49,13 @@ interface IAsyncDelegateObserver
 	 * @param	delegate		delegate whose asynchronous callback timed out
 	 */
 	function asyncTimeoutHandler(delegate:AsyncDelegate):Void;
+
+	/**
+	 * Called when AsyncDelegate is generated through the AsyncFactory.
+	 * Enables an observer to cancel any pending async handlers.
+	 *
+	 * @param	delegate		delegate which received the successful callback
+	 */
+
+	 function asyncDelegateCreatedHandler(delegate:AsyncDelegate):Void;
 }

@@ -71,6 +71,7 @@ class AsyncDelegate
 	private var handler:Dynamic;
 	private var timer:Timer;
 
+	public var canceled(default, null):Bool;
 
 	private var deferredTimer:Timer;
 
@@ -96,6 +97,7 @@ class AsyncDelegate
 		this.info = info;
 		params = [];
 		timedOut = false;
+		canceled = false;
 		
 		if (timeout == null || timeout <= 0) timeout = DEFAULT_TIMEOUT;
 		timeoutDelay = timeout;
@@ -110,10 +112,20 @@ class AsyncDelegate
 	{
 		Reflect.callMethod(testCase, handler, params);
 	}
+
+	/**
+	 * Cancels pending async timeout.
+	 */
+	public function cancelTest():Void
+	{
+		canceled = true;
+		timer.stop();
+	}
 	
 	private function responseHandler(?params:Array<Dynamic>):Void
 	{		
-		if (timedOut) return;
+		if (timedOut || canceled) return;
+
 		timer.stop();
 		if(deferredTimer!=null) deferredTimer.stop();
 		

@@ -39,15 +39,27 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 	private var delegate:AsyncDelegate;
 	private var handler:Dynamic;
 	private var handlerCalled:Bool;
+	private var timeoutCalled:Bool;
+
 	public function new() 
 	{}
-	
+
+	@Before
+	public function setup():Void
+	{
+		handler = null;
+		delegate = null;
+		handlerCalled = false;
+		timeoutCalled = false;
+	}
+		
 	@After
 	public function tearDown():Void
 	{
 		handler = null;
 		delegate = null;
 		handlerCalled = false;
+		timeoutCalled = false;
 	}
 	
 	@Test
@@ -78,6 +90,7 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 		
 	public function asyncTimeoutHandler(delegate:AsyncDelegate):Void
 	{
+		timeoutCalled = true;
 		Assert.isTrue(delegate.timedOut);
 		Assert.areEqual(this.delegate, delegate);
 		handler(); // should trigger onTestTimeout
@@ -85,9 +98,44 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 	
 	private function onTestTimeout():Void
 	{
+
 		Assert.isTrue(true); // need to assert in handler or we'll get an exception
 	}
+
+
+	//---------------
+
+	@AsyncTest
+	public function testCancel(factory:AsyncFactory):Void
+	{
+		delegate = new AsyncDelegate(this, onCancelTestDelegateHandler, 10);
+		delegate.observer = this;
+		delegate.cancelTest();
+
+		Assert.isTrue(delegate.canceled);
+
+		handler = factory.createHandler(this, onTestCancelHandler);
+		Timer.delay(handler, 100);
+
+	}
+	public function asyncDelegateCreatedHandler(delegate:AsyncDelegate):Void
+    {
+        //just implementing part of IAsyncDelegateObserver
+    }
+
+    private function onCancelTestDelegateHandler()
+    {
+		Assert.isTrue(true); // need to assert in async handler or we'll get an exception
+    }
+
+    public function onTestCancelHandler()
+    {
+    	Assert.isTrue(delegate.canceled);
+    	Assert.isFalse(timeoutCalled);
+    	Assert.isFalse(handlerCalled);
+    }
 	
+
 	//-----------------------------
 	
 	@AsyncTest
@@ -97,10 +145,10 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 		
 		delegate = new AsyncDelegate(this, asyncTestHandler);
 		delegate.observer = this;		
-		Timer.delay(asyncDelegateTestHanlder, 10);
+		Timer.delay(asyncDelegateTestHandler, 10);
 	}
 
-	private function asyncDelegateTestHanlder():Void
+	private function asyncDelegateTestHandler():Void
 	{
 		var param = true;
 		delegate.delegateHandler(param); // should trigger asyncResponseHandler
@@ -125,5 +173,7 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 	private function onTestHandler():Void
 	{
 		Assert.isTrue(true); // need to assert in async handler or we'll get an exception
-	}	
+	}
+
+	
 }

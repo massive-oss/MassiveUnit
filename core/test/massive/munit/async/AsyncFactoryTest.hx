@@ -38,9 +38,20 @@ class AsyncFactoryTest implements IAsyncDelegateObserver
 {
 	private var handlerCalled:Bool;
 	private var execHandlerCalled:Bool;
+	private var delegate:AsyncDelegate;
 	
 	public function new() 
 	{}
+
+	@After
+	public function tearDown():Void
+	{
+		if(delegate != null)
+		{
+			delegate.cancelTest();
+			delegate = null;
+		}
+	}
 	
 	@Test
 	public function testConstructor():Void
@@ -56,7 +67,11 @@ class AsyncFactoryTest implements IAsyncDelegateObserver
 		var factory:AsyncFactory = new AsyncFactory(this);
 		var handler:Dynamic = factory.createHandler(this, onTestCreateBasicHandler, 333);
 
+		
+		Assert.isNotNull(delegate);
+
 		Assert.isNotNull(handler);
+		Assert.areEqual(handler, delegate.delegateHandler);
 		
 		execHandlerCalled = false;
 		handlerCalled = false;
@@ -66,11 +81,16 @@ class AsyncFactoryTest implements IAsyncDelegateObserver
 		Assert.isTrue(handlerCalled);
 		Assert.isTrue(execHandlerCalled);
 	}
-	
+
 	private function onTestCreateBasicHandler():Void
 	{
 		handlerCalled = true;
 	}
+
+	public function asyncDelegateCreatedHandler(delegate:AsyncDelegate):Void
+    {
+        this.delegate = delegate;
+    }
 	
 	public function asyncResponseHandler(delegate:AsyncDelegate):Void
 	{
@@ -82,4 +102,6 @@ class AsyncFactoryTest implements IAsyncDelegateObserver
 	{
 		Assert.fail("Async timeout occured when it shouldn't have");
 	}
+
+	
 }
