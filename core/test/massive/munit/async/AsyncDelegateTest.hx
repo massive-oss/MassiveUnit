@@ -72,13 +72,22 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 		Assert.isNotNull(delegate.info);
 		Assert.isFalse(delegate.timedOut);
 	}
-	
+
+
 	@Test
 	public function testConstructorFourParamas():Void
 	{
 		var delegate:AsyncDelegate = new AsyncDelegate(this, asyncTestHandler, 200);
 		Assert.areEqual(200, delegate.timeoutDelay);
 	}
+
+	@Test
+	public function testConstructorWithNegativeTimeout():Void
+	{
+		var delegate:AsyncDelegate = new AsyncDelegate(this, asyncTestHandler, -1);
+		Assert.areEqual(AsyncDelegate.DEFAULT_TIMEOUT, delegate.timeoutDelay);
+	}
+	
 	
 	@AsyncTest
 	public function testTimeout(factory:AsyncFactory):Void
@@ -92,7 +101,6 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 	{
 		timeoutCalled = true;
 		Assert.isTrue(delegate.timedOut);
-		Assert.areEqual(this.delegate, delegate);
 		handler(); // should trigger onTestTimeout
 	}
 	
@@ -134,7 +142,7 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
     	Assert.isFalse(timeoutCalled);
     	Assert.isFalse(handlerCalled);
     }
-	
+
 
 	//-----------------------------
 	
@@ -174,6 +182,4 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 	{
 		Assert.isTrue(true); // need to assert in async handler or we'll get an exception
 	}
-
-	
 }

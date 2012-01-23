@@ -45,8 +45,8 @@ class AsyncTestClassStub
 	@AsyncTest
 	public function shouldAsyncTimeout(factory:AsyncFactory):Void
 	{
-		var handler:Dynamic = factory.createHandler(this, asyncHandler, 50);
-		Timer.delay(handler, 100);
+		var handler:Dynamic = factory.createHandler(this, asyncHandler, 100);
+		//Timer.delay(handler, 500); not necessary, however is bug where this handler called first on flash targets
 	}
 
 	@AsyncTest
@@ -113,8 +113,8 @@ class AsyncTestClassStub2
 	@AsyncTest
 	public function shouldAssertAsync(factory:AsyncFactory):Void
 	{
-		var handler:Dynamic = factory.createHandler(this, asyncHandler, 2500);
-		Timer.delay(handler, 2000);
+		var handler:Dynamic = factory.createHandler(this, asyncHandler, 1500);
+		Timer.delay(handler, 1200);
 	}
 
 	private function asyncHandler():Void

@@ -127,6 +127,7 @@ class AsyncDelegate
 		if (timedOut || canceled) return;
 
 		timer.stop();
+	
 		if(deferredTimer!=null) deferredTimer.stop();
 		
 		if (params == null) params = [];
@@ -135,7 +136,6 @@ class AsyncDelegate
 		if (observer != null) observer.asyncResponseHandler(this);
 	}
 	
-
 	private function timeoutHandler():Void
 	{
 		#if flash
