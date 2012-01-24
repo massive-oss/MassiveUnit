@@ -39,14 +39,14 @@ class AsyncTestClassStub
 	public function shouldAssertAsync(factory:AsyncFactory):Void
 	{
 		var handler:Dynamic = factory.createHandler(this, asyncHandler, 100);
-		Timer.delay(handler, 50);
+		Timer.delay(handler, 1);
 	}
 
 	@AsyncTest
 	public function shouldAsyncTimeout(factory:AsyncFactory):Void
 	{
 		var handler:Dynamic = factory.createHandler(this, asyncHandler, 100);
-		//Timer.delay(handler, 500); not necessary, however is bug where this handler called first on flash targets
+		//Timer.delay(handler, 500); //not necessary, however is bug where this handler called first on flash targets
 	}
 
 	@AsyncTest
@@ -54,14 +54,14 @@ class AsyncTestClassStub
 	{
 		var handler:Dynamic = factory.createHandler(this, asyncHandler, 100);
 		Assert.isTrue(true);
-		Timer.delay(handler, 50);
+		Timer.delay(handler, 1);
 	}
 
 	@AsyncTest
 	public function shouldCancelAsyncIfExceptionThrown(factory:AsyncFactory):Void
 	{
 		var handler:Dynamic = factory.createHandler(this, asyncHandler, 100);
-		Timer.delay(handler, 50);
+		Timer.delay(handler, 1);
 		throw "exception in async test";
 	}
 
@@ -70,14 +70,14 @@ class AsyncTestClassStub
 	{
 		var handler:Dynamic = factory.createHandler(this, asyncHandler, 100);
 		Assert.fail("failed assert in async test");
-		Timer.delay(handler, 50);
+		Timer.delay(handler, 1);
 	}
 
 	@AsyncTest
 	public function shouldCancelAsyncIfSyncAssertFailsAfterTimerCreated(factory:AsyncFactory):Void
 	{
 		var handler:Dynamic = factory.createHandler(this, asyncHandler, 100);
-		Timer.delay(handler, 50);
+		Timer.delay(handler, 1);
 		Assert.fail("failed assert in async test");
 	}
 
@@ -86,7 +86,7 @@ class AsyncTestClassStub
 	{
 		Assert.fail("failed assert in async test");
 		var handler:Dynamic = factory.createHandler(this, asyncHandler, 100);
-		Timer.delay(handler, 50);
+		Timer.delay(handler, 1);
 		
 	}
 
@@ -109,12 +109,17 @@ class AsyncTestClassStub2
 	{
 		
 	}
+	// @Test
+	// public function test()
+	// {
+	// 	Assert.isTrue(true);
+	// }
 
 	@AsyncTest
 	public function shouldAssertAsync(factory:AsyncFactory):Void
 	{
-		var handler:Dynamic = factory.createHandler(this, asyncHandler, 1500);
-		Timer.delay(handler, 1200);
+		var handler:Dynamic = factory.createHandler(this, asyncHandler, 5000);
+		Timer.delay(handler, 10);
 	}
 
 	private function asyncHandler():Void

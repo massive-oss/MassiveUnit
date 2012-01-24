@@ -6,6 +6,7 @@
 -lib hamcrest
 -swf ../bin/test/core/as3_test.swf
 -swf-version 9
+-swf-header 800:600:60:FFFFFF
 --next
 
 #Flash 8
@@ -16,6 +17,7 @@
 -lib hamcrest
 -swf-version 8
 -swf ../bin/test/core/as2_test.swf
+-swf-header 800:600:60:FFFFFF
 --next
 
 # JavaScript

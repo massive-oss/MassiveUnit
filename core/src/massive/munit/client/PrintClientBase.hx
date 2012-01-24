@@ -305,11 +305,27 @@ class ExternalPrintClientJS implements ExternalPrintClient
 {
 	public function new()
 	{
+
 		#if flash
 			if(!flash.external.ExternalInterface.available)
 			{
 				throw new MUnitException("ExternalInterface not available");
 			}
+
+			#if flash
+			{
+				if(flashInitialised != true)
+				{
+					flashInitialised = true;
+					#if flash8
+						flash.Lib.current.onEnterFrame = enterFrameHandler;
+					#else
+						flash.Lib.current.stage.addEventListener(flash.events.Event.ENTER_FRAME, enterFrameHandler);
+					#end
+				}
+			}
+			#end
+			
 		#elseif js
 			var div = js.Lib.document.getElementById("haxe:trace");
 				
@@ -323,6 +339,30 @@ class ExternalPrintClientJS implements ExternalPrintClient
 
 		#end
 	}
+
+	#if flash
+		static var externalInterfaceQueue:Array<String> = [];
+		static var flashInitialised:Bool = false;
+		static var externalInterfaceCounter:Int = 0;
+		static var EXTERNAL_INTERFACE_FRAME_DELAY:Int = 20;
+
+		static function enterFrameHandler(#if !flash8 event:Dynamic#end)
+		{
+			if(externalInterfaceQueue.length == 0) return;
+			if(externalInterfaceCounter ++ < EXTERNAL_INTERFACE_FRAME_DELAY) return;
+
+			externalInterfaceCounter = 0;
+			
+			var tempArray = externalInterfaceQueue.concat([]);
+			externalInterfaceQueue = [];
+
+			for(jsCode in tempArray)
+			{
+				flash.external.ExternalInterface.call(jsCode);
+			}
+		}
+	#end
+
 
 	// SIMPLE CLIENT APIS
 	public function print(value:String)
@@ -452,11 +492,13 @@ class ExternalPrintClientJS implements ExternalPrintClient
 		#if js		
 			return js.Lib.eval(jsCode);
 		#elseif flash
-			return flash.external.ExternalInterface.call(jsCode);
+			externalInterfaceQueue.push(jsCode);
 		#end
-
 		return false;
 	}
+
+	
+
 
 	public function convertToJavaScript(method:String, ?args:Array<Dynamic>):String
 	{

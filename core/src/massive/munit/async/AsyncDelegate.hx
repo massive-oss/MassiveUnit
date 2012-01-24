@@ -120,6 +120,7 @@ class AsyncDelegate
 	{
 		canceled = true;
 		timer.stop();
+		if(deferredTimer!=null) deferredTimer.stop();
 	}
 	
 	private function responseHandler(?params:Array<Dynamic>):Void
@@ -140,7 +141,7 @@ class AsyncDelegate
 	{
 		#if flash
 			//pushing timeout onto next frame to prevent raxe condition bug when flash framerate drops too low and timeout timer executes prior to response on same frame
-			deferredTimer = Timer.delay(actualTimeoutHandler, 10);
+			deferredTimer = Timer.delay(actualTimeoutHandler, 1);
 		#else
 			actualTimeoutHandler();
 		#end
