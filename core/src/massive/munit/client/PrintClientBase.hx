@@ -42,6 +42,8 @@ class PrintClientBase extends AbstractTestResultClient
 	 */
 	public static inline var DEFAULT_ID:String = "simple";
 
+	public var verbose:Bool;
+
 	var includeIgnoredReport:Bool;
 	var divider:String;
 	var divider2:String;
@@ -50,6 +52,7 @@ class PrintClientBase extends AbstractTestResultClient
 	{
 		super();
 		id = DEFAULT_ID;
+		verbose = false;
 		this.includeIgnoredReport = includeIgnoredReport;
 
 		printLine("MUnit Results");
@@ -74,13 +77,17 @@ class PrintClientBase extends AbstractTestResultClient
 	override function updateTestClass(result:TestResult)
 	{
 		super.updateTestClass(result);
-		switch(result.type)
+		if(verbose) printLine(" " + result.name + ": " + result.type +" ");
+		else
 		{
-			case PASS: print(".");
-			case FAIL: print("!");
-			case ERROR: print ("x");
-			case IGNORE: print(",");
-			case UNKNOWN: null;
+			switch(result.type)
+			{
+				case PASS: print(".");
+				case FAIL: print("!");
+				case ERROR: print ("x");
+				case IGNORE: print(",");
+				case UNKNOWN: null;
+			}
 		}
 	}
 

@@ -52,11 +52,15 @@ hr
 	
 }
 
-
-
 .line
 {
 	white-space: nowrap;
+}
+
+
+.debug
+{
+	font-family: monospace
 }
 
 
@@ -198,7 +202,7 @@ hr
 	background-color: #DEDEDE;
 }
 .pass
-{i
+{
 	background-color: #058c3e;
 }
 .fail

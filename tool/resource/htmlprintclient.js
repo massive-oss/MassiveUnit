@@ -55,6 +55,7 @@ function emptyQueue()
 	timer = null;
 }
 
+
 //////////
 
 var initialized = false;
@@ -95,6 +96,8 @@ function setResult(result)
 
 	window.scrollTo(0,document.body.scrollHeight);
 
+	currentClassId = null;
+
 	if(parent != null) parent.testComplete();
 	
 }
@@ -109,6 +112,14 @@ function setResultBackground(result)
 	{
 		document.body.style.backgroundColor = "#ff776d";
 	}
+}
+
+
+function debug(value)
+{
+	 var div = createDiv("debug", "debug");
+	 munit.appendChild(div);
+	 div.innerHTML = value;
 }
 
 function initialize()

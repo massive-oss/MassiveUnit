@@ -489,6 +489,8 @@ class RunCommand extends MUnitCommand
         var reportRunnerFile:File = reportRunnerDir.resolvePath(file.fileName);
         file.copyTo(reportRunnerFile);
 
+        FileSys.setCwd(config.dir.nativePath);
+
         var parameters:Array<String> = [];
         parameters.push("neko");
         parameters.push('"' + reportRunnerFile.nativePath + '"');
@@ -498,7 +500,8 @@ class RunCommand extends MUnitCommand
         var exitCode:Int = Sys.command(parameters.join(" "));
         if (exitCode > 0)
             Lib.println("Error running " + file);
-
+        
+        FileSys.setCwd(console.originalDir.nativePath);
         return exitCode;
     }
 }
