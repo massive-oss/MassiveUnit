@@ -286,7 +286,7 @@ class TestCommand extends MUnitCommand
 				}
 				
 				target.hxml += "-D MCOVER\n";
-				target.hxml += "--macro massive.mcover.MCover.include('',['" + clsPaths.join("','") + "'])\n";	
+				target.hxml += "--macro m.cover.MCover.coverage([''],['" + clsPaths.join("','") + "'])\n";	
 			}
 			
 			if(target.type == TargetType.as2 || target.type == TargetType.as3)
