@@ -29,3 +29,6 @@ bin/
 report/
 
 .svn
+example/.mcover-debug
+tool/.mcover-debug
+core/.mcover-debug
