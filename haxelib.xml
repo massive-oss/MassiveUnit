@@ -1,6 +1,7 @@
 <project name="munit" url="https://github.com/massiveinteractive/MassiveUnit" license="BSD">
     <user name="massive"/>
     <tag v="cross" />
+    <tag v="utility" />
     <description>MassiveUnit is a cross-platform haXe unit testing framework from Massive Interactive that utilises haxe metadata markup for test cases and includes tools for generating, compiling and running test cases from the command line.</description>
     <version name="0.9.2.2">Added support for synchronous assertions inside async tests. Fixed related bug with exceptions inside async tests not removing async timeout. Fixed bug with neko tests not running from project directory. Updated coverage support to MCover 1.2.x</version>
     <depends name="hamcrest"/>
