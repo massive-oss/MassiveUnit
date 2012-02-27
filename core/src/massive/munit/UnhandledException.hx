@@ -77,7 +77,7 @@ class UnhandledException extends MUnitException
 				switch(stack.shift()) 
 				{
 	         		case FilePos(item, file, line): s += "\tat " + file + " (" + line + ")\n";
-	         		case Module(m):
+	         		case Module(module):
 	         		case Method(classname, method): s += "\tat " + classname + "#" + method + "\n";
 	         		case Lambda(v):
 	         		case CFunction:

@@ -1,3 +1,16 @@
+v0.9.2.2 - 28.02.12
+- Added support for synchronous assertions inside async tests.
+- Fixed related bug with exceptions inside async tests not removing async timeout.
+- Fixed bug with neko tests not running from local project directory.
+- Updated coverage support to MCover 1.2.x
+
+v0.9.2.1 - 22.11.11
+- Added rich html print client
+- added support for MCover
+- added command line apis for creating stub test classes,
+- minor additions to .munit project config file.
+- Fixed bug with as2/as3 targets being compiled when not targets
+
 v0.9.2.0 - 22.11.2011
 - Added RichPrintClient outputs rich html for js/flash targets
 - Added integrated support for mcover code coverage ('munit test -coverage').

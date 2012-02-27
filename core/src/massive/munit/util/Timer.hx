@@ -125,7 +125,9 @@ class Timer
 				run();
 			}
 			catch( ex:Dynamic )
-			{}
+			{
+				trace(ex);
+			}
 
 			var msg = neko.vm.Thread.readMessage(false);
 			if (msg == "stop") shouldStop = true;
