@@ -24,6 +24,10 @@ Inline Usage:
    -report [path]      : report directory (defaults to 'report')
    -classPaths [paths] : comma delimetered list of src paths (defaults to 'src')
    -hxml [path]        : path to hxml file (defaults to 'test.hxml')
+   -resources [path]   : path to external runtime resources (defaults to null)
+                         See examples/02_customTemplates for example usage
+   -templates [path]   : path to custom html templates (defaults to null).
+                         See examples/02_customTemplates for example usage
 
   Values can also be set via an existing munit project file
 
@@ -36,3 +40,5 @@ Inline Usage:
     report=bin
     hxml=test.hxml
     classPaths=src
+    resources=null;
+    templates=null;

@@ -43,7 +43,6 @@ import neko.Lib;
 import neko.Sys;
 import neko.io.Path;
 import massive.haxe.log.Log;
-import massive.haxe.util.TemplateUtil;
 import massive.munit.ServerMain;
 import massive.munit.util.MathUtil;
 
@@ -254,7 +253,10 @@ class RunCommand extends MUnitCommand
             if (file.extension == 'js' || file.extension == 'swf')
             {
                 var pageName = file.fileName.substr(0, -file.extension.length) + "html";
-                var pageContent = TemplateUtil.getTemplate(file.extension + "_runner-html", {runnerName:file.fileName});
+
+                var templateName = file.extension + "_runner-html";
+                var pageContent = getTemplateContent(templateName, {runnerName:file.fileName});
+                
                 var runnerPage = reportRunnerDir.resolvePath(pageName);
 
                 runnerPage.writeString(pageContent);
@@ -279,21 +281,47 @@ class RunCommand extends MUnitCommand
             frames += '<frame src="' + pageName + '" scrolling="auto" noresize="noresize"/>\n';
         }
 
-
-
         frameCols = frameCols.substr(0, -1);
 
-        var headerContent = TemplateUtil.getTemplate("target-headers-html", { targetHeaderTitles:frameTitles } );
+        var headerContent = getTemplateContent("target-headers-html", {targetHeaderTitles:frameTitles});
         var headerPage = reportRunnerDir.resolvePath("target_headers.html");
         headerPage.writeString(headerContent, true);
 
-        var pageContent = TemplateUtil.getTemplate("runner-html", {killBrowser:killBrowser, testCount:pageNames.length, frames:frames, frameCols:frameCols});
+        var pageContent = getTemplateContent("runner-html", {killBrowser:killBrowser, testCount:pageNames.length, frames:frames, frameCols:frameCols});
+
         indexPage = reportRunnerDir.resolvePath("index.html");
         indexPage.writeString(pageContent, true);
 
-        var resourceDir:File = console.originalDir.resolveDirectory("resource");
+        var commonResourceDir:File = console.originalDir.resolveDirectory("resource");
+        commonResourceDir.copyTo(reportRunnerDir);
+
+        if(config.resources != null)
+        {
+            config.resources.copyTo(reportRunnerDir);
+        }
+
         binDir.copyTo(reportRunnerDir);
-        resourceDir.copyTo(reportRunnerDir);
+    }
+
+    /**
+    Returns content from a html template.
+    Checks for local template before using default template
+    */
+    function getTemplateContent(templateName:String, properties:Dynamic)
+    {
+        var content:String = null;
+        var resource:String;
+        if(config.templates != null && config.templates.resolveFile(templateName + ".mtt").exists)
+        {
+            resource = config.templates.resolveFile(templateName + ".mtt").readString();
+        }
+        else
+        {
+            resource = haxe.Resource.getString(templateName);
+        }
+
+        var template = new haxe.Template(resource);
+        return template.execute(properties);
     }
 
     override public function execute():Void

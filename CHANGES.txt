@@ -1,3 +1,8 @@
+v0.9.2.3 - 31.03.12
+- Added configuration for project specific html templates
+- Added configuration for project specific runner resources
+- Added new example: examples/02_customTemplates 
+
 v0.9.2.2 - 28.02.12
 - Added support for synchronous assertions inside async tests.
 - Fixed related bug with exceptions inside async tests not removing async timeout.

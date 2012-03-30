@@ -63,8 +63,7 @@ To check that it is all installed and to view the help run:
 	haxelib run munit
 
 
-
-New in 0.9.2.0
+New since 0.9.2.x
 ---------------------
 
 Rich HTML output for JavaScript and Flash targets (see RichPrintClient)
@@ -84,6 +83,18 @@ CI friendly options for munit config command
 	haxelib run munit config -default
 	haxelib run munit config -src path/to/src -hxml path/to/test.hxml
 	haxelib run munit config -file path/to/my/custom/config.txt
+
+Support for assertions inside async tests
+
+	public function someAsyncTest(factory:AsyncFactory)
+	{
+		Assert.isTrue(false);
+	}
+
+Support for custom runner html templates and resources
+
+```Run 'munit config' to set template and resources directories```
+
 
 
 For full list of recent changes see the **[change log](https://github.com/massiveinteractive/MassiveUnit/blob/master/CHANGES.txt)**

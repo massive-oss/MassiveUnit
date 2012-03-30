@@ -275,7 +275,7 @@ class ConfigTest
 		var str = "";
 		for(line in lines)
 		{
-			if(line.indexOf("#") == 0 || line == "") continue;
+			if(line.indexOf("#") == 0) continue;
 			if(str != "") str += "\n";
 			str += line;
 		}
@@ -286,14 +286,13 @@ class ConfigTest
 	function createMockConfigString():String
 	{
 		var str:String = "";
-		str += "version=1.0";
-		str += "\n#this is a comment";
-		str += "\nsrc=src";
-		str += "\nbin=bin";
-		str += "\nreport=report";
-		str += "\nhxml=test.hxml";
-		str += "\nclassPaths=src";
-
+		str += "version=1.0\n";
+		str += "#this is a comment\n";
+		str += "src=src\n";
+		str += "bin=bin\n";
+		str += "report=report\n";
+		str += "hxml=test.hxml\n";
+		str += "classPaths=src\n";
 		return str;
 	}
 	

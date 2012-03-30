@@ -4,3 +4,5 @@ bin=::bin::
 report=::report::
 hxml=::hxml::
 classPaths=::classPaths::
+resources=::resources::
+templates=::templates::

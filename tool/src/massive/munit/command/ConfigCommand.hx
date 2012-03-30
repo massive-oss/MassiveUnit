@@ -31,6 +31,10 @@ import massive.neko.io.File;
 import massive.neko.io.FileSys;
 import massive.haxe.util.TemplateUtil;
 
+/**
+The ConfigCommand provides a number of ways to create and modify the configuration file (.munit) for a project.
+Either from command line args, manual input into the console, or from an external file.
+*/
 class ConfigCommand extends MUnitCommand
 {
 	static inline var DEFAULT_SRC:String = "test";
@@ -51,6 +55,9 @@ class ConfigCommand extends MUnitCommand
 	var report:File;
 	var hxml:File;
 	var classPaths:Array<File>;
+
+	var resources:File;
+	var templates:File;
 
 	public function new():Void
 	{
@@ -105,7 +112,7 @@ class ConfigCommand extends MUnitCommand
 
 		if(!config.exists)
 		{
-			config.createDefault(src, bin, report, hxml,classPaths);
+			config.createDefault(src, bin, report, hxml,classPaths,resources,templates);
 		}
 		else
 		{
@@ -114,6 +121,8 @@ class ConfigCommand extends MUnitCommand
 			if(report != null) config.updateReport(report);
 			if(classPaths != null) config.updateClassPaths(classPaths);	
 			if(hxml != null) config.updateHxml(hxml);
+			if(resources != null) config.updateResources(resources);
+			if(templates != null) config.updateTemplates(templates);
 		}
 	}
 
@@ -148,6 +157,8 @@ class ConfigCommand extends MUnitCommand
 		if(console.getOption("report") != null) return true;
 		if(console.getOption("hxml") != null) return true;
 		if(console.getOption("classPaths") != null) return true;
+		if(console.getOption("resources") != null) return true;
+		if(console.getOption("templates") != null) return true;
 		return false;
 	}
 	
@@ -158,12 +169,19 @@ class ConfigCommand extends MUnitCommand
 		var reportArg = console.getOption("report");
 		var classPathsArg = console.getOption("classPaths");
 		var hxmlArg = console.getOption("hxml");
+
+		var resourcesArg = console.getOption("resources");
+		var templatesArg = console.getOption("templates");
 		
 		src = convertToDirectory(srcArg, DEFAULT_SRC, "src");
 		bin = convertToDirectory(binArg, DEFAULT_BIN, "build");
 		report = convertToDirectory(reportArg, DEFAULT_REPORT, "report");
 		classPaths = convertToDirectoryList(classPathsArg, DEFAULT_CLASSPATHS, "class");
 		hxml = convertToFile(hxmlArg, DEFAULT_HXML, "hxml");
+
+		resources = convertToDirectory(resourcesArg, null, "resources");
+		templates = convertToDirectory(templatesArg, null, "templates");
+
 	}
 
 
@@ -210,6 +228,19 @@ class ConfigCommand extends MUnitCommand
 			var arg = console.getNextArg("hxml file (defaults to '" + DEFAULT_HXML + "')");
 			hxml = convertToFile(arg, DEFAULT_HXML, "hxml");
 		}
+
+		if(config.resources == null)
+		{
+			var arg = console.getNextArg("resources dir (optional, defaults to '" + null + "')");
+			resources = convertToDirectory(arg, null, "resources");
+		}
+
+		if(config.templates == null)
+		{
+			var arg = console.getNextArg("templates dir (optional, defaults to '" + null + "')");
+			templates = convertToDirectory(arg, null, "templates");
+		}
+
 	}
 
 	function setDefaultValuesForMissingProperties()
@@ -255,10 +286,10 @@ class ConfigCommand extends MUnitCommand
 		report = tempConfig.report;
 		hxml = tempConfig.hxml;
 		classPaths = tempConfig.classPaths.concat([]);
+		resources = tempConfig.resources;
+		templates = tempConfig.templates;
 	}
 
-
-	
 
 	
 	function writeHxmlToFile(file:File, ?overwrite:Bool=false):Bool
@@ -288,6 +319,8 @@ class ConfigCommand extends MUnitCommand
 	function convertToDirectory(arg:String, defaultValue:String, label:String):File
 	{
 		if(arg == null) arg = defaultValue;
+		if(arg == null) return null;
+
 		var file = File.create(arg, config.dir);
 
 		if(file == null) error("invaid " + label + " path: " + arg);

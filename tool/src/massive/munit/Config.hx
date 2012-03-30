@@ -43,6 +43,9 @@ class Config
 	public var src(default, null):File;
 	public var hxml(default, null):File;
 
+	public var resources(default, null):File;
+	public var templates(default, null):File;
+
 	public var classPaths:Array<File>;
 	
 	public var targets:Array<Target>;
@@ -96,6 +99,8 @@ class Config
 				case "bin": bin = File.create(value, dir, true);
 				case "report": report = File.create(value, dir, true);
 				case "hxml": hxml = File.create(value, dir);
+				case "resources": resources = value != "null" ? File.create(value, dir) : null;
+				case "templates": templates = value != "null" ? File.create(value, dir) : null;
 				case "classPaths" :
 				{
 					var paths = value.split(",");
@@ -120,16 +125,21 @@ class Config
 		hxml = null;
 		configVersion = null;
 		classPaths = [];
+
+		resources = null;
+		templates = null;
 		
 	}
 	
-	public function createDefault(?src:File=null, ?bin:File=null, ?report:File=null, ?hxml:File=null, ?classPaths:Array<File>=null):Void
+	public function createDefault(?src:File=null, ?bin:File=null, ?report:File=null, ?hxml:File=null, ?classPaths:Array<File>=null, ?resources:File=null, ?templates:File=null):Void
 	{
 		this.src = src != null ? src : dir.resolveDirectory("test", true);
 		this.bin = bin != null ? bin : dir.resolveDirectory("bin", true);
 		this.report = report != null ? report : dir.resolveDirectory("report", true);
 		this.hxml = hxml != null ? hxml : dir.resolveFile("test.hxml");
 		this.classPaths = classPaths != null ? classPaths : [dir.resolveDirectory("src", true)];
+		this.resources = resources != null ? resources : null;
+		this.templates = templates != null ? templates : null;
 		this.configVersion = currentVersion;
 		
 		save();
@@ -165,6 +175,22 @@ class Config
 	{
 		if(file.isDirectory) throw "File is a directory " + file;
 		hxml = file;
+		save();
+	}
+
+	public function updateResources(file:File):Void
+	{
+		if(!file.exists) throw "Directory does not exist " + file;
+		if(!file.isDirectory) throw "File is not a directory " + file;
+		resources = file;
+		save();
+	}
+
+	public function updateTemplates(file:File):Void
+	{
+		if(!file.exists) throw "Directory does not exist " + file;
+		if(!file.isDirectory) throw "File is not a directory " + file;
+		templates = file;
 		save();
 	}
 
@@ -215,7 +241,15 @@ class Config
 				value += dir.getRelativePath(path);
 				
 			}
-			str += "classPaths=" + value;
+			str += "classPaths=" + value + "\n";
+		}
+		if(resources != null)
+		{
+			str += "resources=" + dir.getRelativePath(resources) + "\n";	
+		}
+		if(templates != null)
+		{
+			str += "templates=" + dir.getRelativePath(templates) + "\n";	
 		}
 		
 		return str;
@@ -234,6 +268,8 @@ class Config
 	bin=::bin::
 	hxml=::hxml::
 	classPaths=::classPaths::
+	resources=::resources::
+	templates=::templates::
 	*/
 }
 
