@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Massive Unit Test Runner</title>
-		<script tlanguage='JavaScript' type='text/JavaScript' src="tests-complete.js"></script>
+		<script language='JavaScript' type='text/JavaScript' src="tests-complete.js"></script>
 		
 		<script language='JavaScript' type='text/JavaScript'>
 			var MAX_TESTS = ::testCount::;
