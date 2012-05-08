@@ -328,7 +328,7 @@ class RunCommand extends MUnitCommand
     {
         var errors:Array<String> = new Array();
 
-        FileSys.setCwd(console.originalDir.nativePath);
+        FileSys.setCwd(console.dir.nativePath);
         var serverExitCode:Int = 0;
 
         tmpDir = File.current.resolveDirectory("tmp");
@@ -490,17 +490,25 @@ class RunCommand extends MUnitCommand
         var targetLocation:String  = HTTPClient.DEFAULT_SERVER_URL + "/tmp/runner/" + file.fileName;
         var parameters:Array<String> = [];
 
+        // See http://www.dwheeler.com/essays/open-files-urls.html
         if (FileSys.isWindows)
         {
             parameters.push("start");
             if (browser != null)
                 parameters.push(browser);
         }
-        else
+        else if (FileSys.isMac)
         {
             parameters.push("open");
             if (browser != null)
                 parameters.push("-a " + browser);
+        }
+        else if (FileSys.isLinux)
+        {
+            if (browser != null)
+                parameters.push(browser);
+            else 
+                parameters.push("xdg-open");
         }
 
         parameters.push(targetLocation);
