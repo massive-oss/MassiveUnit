@@ -242,6 +242,10 @@ class TestCommand extends MUnitCommand
 		tempTargets.push(target);
 
 		targets = [];
+
+
+		var tempTargetTypes = [];
+
 		for(target in tempTargets)
 		{
 			for(type in targetTypes)
@@ -249,10 +253,15 @@ class TestCommand extends MUnitCommand
 				if(target.type == type)
 				{
 					targets.push(target);
+					tempTargetTypes.push(type);
 					break;
 				}
 			}
 		}
+
+
+		targetTypes = config.targetTypes = tempTargetTypes;
+
 		
 		for(target in targets)
 		{

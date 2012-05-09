@@ -1,3 +1,8 @@
+v0.9.2.4 - 09.05.12
+- Fixed tooling issues on Linux due to location of tmp nekotools server files
+- Fixed https://github.com/massiveinteractive/MassiveUnit/issues/8 (test runner not respecting targets in hxml file)
+- moved tmp runner directory (and nekotools server file) on osx and linux targets to local bin directory. Windows remained as is
+
 v0.9.2.3 - 31.03.12
 - Added configuration for project specific html templates
 - Added configuration for project specific runner resources

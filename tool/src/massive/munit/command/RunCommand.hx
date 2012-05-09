@@ -326,12 +326,28 @@ class RunCommand extends MUnitCommand
 
     override public function execute():Void
     {
+        if (FileSys.isWindows)
+        {
+            //Windows has issue releasing port registries reliably.
+            //To prevent possibility of nekotools server failing, on
+            //windows the tmp directory is always located inside the munit install
+            FileSys.setCwd(console.originalDir.nativePath);
+        }
+        else
+        {
+            //for mac and linux we create a tmp directory locally within the bin
+            FileSys.setCwd(binDir.nativePath);
+        }
+
+        var serverFile:File = createServerAlias();
+
         var errors:Array<String> = new Array();
 
-        FileSys.setCwd(console.dir.nativePath);
+        
         var serverExitCode:Int = 0;
 
         tmpDir = File.current.resolveDirectory("tmp");
+
         if (tmpDir.exists)
             tmpDir.deleteDirectoryContents(RegExpUtil.SVN_REGEX, true);
 
@@ -359,12 +375,53 @@ class RunCommand extends MUnitCommand
 
         if (reportTestDir.exists)
             reportTestDir.deleteDirectoryContents();
+        
+        if(!FileSys.isWindows)
+        {
+            serverFile.deleteFile();
+        }
 
         tmpRunnerDir.deleteDirectory();
         tmpDir.copyTo(reportTestDir);
         tmpDir.deleteDirectory(true);
         FileSys.setCwd(console.dir.nativePath);
     }
+
+    /**
+    Generates an alias to the nekotools server file on osx/linux
+    */
+    function createServerAlias():File
+    {
+        var serverFile = console.originalDir.resolveFile("index.n");
+
+        if(FileSys.isWindows) return serverFile;
+
+        var process:Process = null;
+
+        var args:Array<String> = ["-s","-v","-f",serverFile.nativePath,"index.n"];
+      
+        try
+        {
+            process = new Process("ln", args);
+        
+            while (true)
+            {
+                Sys.sleep(0.01);
+                var output = process.stdout.readLine();
+            }
+        }
+        catch (e:haxe.io.Eof) {}
+
+        var exitCode = process.exitCode();
+        if (exitCode > 0)
+        {
+            var err = process.stderr.readAll().toString();
+            error("Unable to create alias to server (" + serverFile.nativePath + ")\n" + err);
+        }
+
+        return File.current.resolveFile("index.n");
+    }
+
 
     private function monitorResults():Void
     {
@@ -458,14 +515,20 @@ class RunCommand extends MUnitCommand
         }
         while (true);
 
-
         var platformCount = Lambda.count(platformMap);
 
-        print("------------------------------");
-        print("PLATFORMS TESTED: " + platformCount + ", PASSED: " + testPassCount + ", FAILED: " + testFailCount + ", ERRORS: " + testErrorCount + ", TIME: " + MathUtil.round(Sys.time() - startTime, 5));
+        if(platformCount > 0)
+        {
+            print("------------------------------");
+            print("PLATFORMS TESTED: " + platformCount + ", PASSED: " + testPassCount + ", FAILED: " + testFailCount + ", ERRORS: " + testErrorCount + ", TIME: " + MathUtil.round(Sys.time() - startTime, 5));
+        }
 
         if (serverHung)
+        {
+            print("------------------------------");
             print("ERROR: Local results server appeared to hang so test reporting was cancelled.");
+        }
+            
 
         mainThread.sendMessage("done");
     }
