@@ -395,31 +395,11 @@ class RunCommand extends MUnitCommand
         var serverFile = console.originalDir.resolveFile("index.n");
 
         if(FileSys.isWindows) return serverFile;
-
-        var process:Process = null;
-
-        var args:Array<String> = ["-s","-v","-f",serverFile.nativePath,"index.n"];
-      
-        try
-        {
-            process = new Process("ln", args);
         
-            while (true)
-            {
-                Sys.sleep(0.01);
-                var output = process.stdout.readLine();
-            }
-        }
-        catch (e:haxe.io.Eof) {}
+        var copy = File.current.resolveFile("index.n");
 
-        var exitCode = process.exitCode();
-        if (exitCode > 0)
-        {
-            var err = process.stderr.readAll().toString();
-            error("Unable to create alias to server (" + serverFile.nativePath + ")\n" + err);
-        }
-
-        return File.current.resolveFile("index.n");
+        serverFile.copyTo(copy);
+        return copy;
     }
 
 
