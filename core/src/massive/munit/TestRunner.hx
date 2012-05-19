@@ -157,7 +157,7 @@ class TestRunner implements IAsyncDelegateObserver
     {
         for (client in clients) if (client == resultClient) return;
 
-        resultClient.completionHandler = clientCompletionHandler;
+        resultClient.setCompletionHandler(clientCompletionHandler);
         clients.push(resultClient);
     }
 
