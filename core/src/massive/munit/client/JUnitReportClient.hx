@@ -53,14 +53,14 @@ class JUnitReportClient implements IAdvancedTestResultClient
 	/**
 	 * Handler which if present, is called when the client has completed generating its results.
 	 */
-	public var completionHandler(get_completeHandler, set_completeHandler):ITestResultClient -> Void;
-	private function get_completeHandler():ITestResultClient -> Void 
+	private var completionHandler:ITestResultClient -> Void;
+	public function getCompletionHandler():ITestResultClient -> Void 
 	{
 		return completionHandler;
 	}
-	private function set_completeHandler(value:ITestResultClient -> Void):ITestResultClient -> Void
+	public function setCompletionHandler(value:ITestResultClient -> Void): Void
 	{
-		return completionHandler = value;
+		completionHandler = value;
 	}
 
 	/**

@@ -43,7 +43,8 @@ interface ITestResultClient
 	/**
 	 * Handler which if present, should be called when the client has completed its processing of the results.
 	 */
-	var completionHandler(get_completeHandler, set_completeHandler):ITestResultClient -> Void;
+	function getCompletionHandler():ITestResultClient -> Void ;
+	function setCompletionHandler(value:ITestResultClient -> Void): Void;
 	
 	/**
 	 * The unique identifier for the client.
