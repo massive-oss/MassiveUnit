@@ -1,4 +1,4 @@
-v0.9.2.6
+v0.9.2.6 - 23.05.12
 - added example for junit report functionality
 - enabled permature exitcode (1) if either the neko test app or the browser returns exit code > 0
 
