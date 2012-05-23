@@ -363,7 +363,7 @@ class RunCommand extends MUnitCommand
 
         if (hasNekoTests)
             launchNeko(nekoFile);
-
+           
         if (hasBrowserTests)
             launchFile(indexPage);
         else
@@ -557,8 +557,10 @@ class RunCommand extends MUnitCommand
         parameters.push(targetLocation);
 
         var exitCode:Int = Sys.command(parameters.join(" "));
+        
         if (exitCode > 0)
-            Lib.println("Error running " + targetLocation);
+            error("Error running " + targetLocation, exitCode);
+  
 
         return exitCode;
     }
@@ -577,10 +579,13 @@ class RunCommand extends MUnitCommand
         Lib.println(parameters.join(" "));
 
         var exitCode:Int = Sys.command(parameters.join(" "));
-        if (exitCode > 0)
-            Lib.println("Error running " + file);
-        
+
         FileSys.setCwd(console.originalDir.nativePath);
+        
+        if (exitCode > 0)
+            error("Error running " + file, exitCode);
+        
+        
         return exitCode;
     }
 }

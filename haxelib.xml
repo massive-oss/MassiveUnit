@@ -3,7 +3,7 @@
     <tag v="cross" />
     <tag v="utility" />
     <description>MassiveUnit is a cross-platform haXe unit testing framework from Massive Interactive that utilises haxe metadata markup for test cases and includes tools for generating, compiling and running test cases from the command line.</description>
-    <version name="0.9.2.5">Hotfix for Linux server hanging</version>
+    <version name="0.9.2.6">Added example for junit report client, Enabled forced exit from test/run command if either the neko test app or the browser returns an exit code greater than 0</version>
     <depends name="hamcrest"/>
     <depends name="mlib"/>
     <depends name="mcover"/>

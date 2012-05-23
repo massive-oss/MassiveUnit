@@ -1,3 +1,10 @@
+v0.9.2.6
+- added example for junit report functionality
+- enabled permature exitcode (1) if either the neko test app or the browser returns exit code > 0
+
+v0.9.2.5
+- Minor hotfix for linux
+
 v0.9.2.4 - 09.05.12
 - Fixed tooling issues on Linux due to location of tmp nekotools server files
 - Fixed https://github.com/massiveinteractive/MassiveUnit/issues/8 (test runner not respecting targets in hxml file)
