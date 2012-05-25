@@ -26,38 +26,86 @@
 * or implied, of Massive Interactive.
 ****/
 
-package massive.munit;
+package massive.munit.client;
 
-import massive.munit.Assert;
-import massive.munit.AssertionException;
-import massive.munit.async.AsyncDelegate;
-import massive.munit.async.AsyncFactory;
-import massive.munit.async.AsyncTimeoutException;
-import massive.munit.async.IAsyncDelegateObserver;
-import massive.munit.async.MissingAsyncDelegateException;
-import massive.munit.client.AbstractTestResultClient;
-import massive.munit.client.HTTPClient;
-import massive.munit.client.JUnitReportClient;
-import massive.munit.client.PrintClient;
-import massive.munit.client.PrintClientBase;
-import massive.munit.client.RichPrintClient;
-import massive.munit.client.SummaryReportClient;
-import massive.munit.ITestResultClient;
-import massive.munit.MUnitException;
-import massive.munit.TestClassHelper;
-import massive.munit.TestResult;
-import massive.munit.TestRunner;
-import massive.munit.TestSuite;
-import massive.munit.UnhandledException;
-import massive.munit.util.MathUtil;
-import massive.munit.util.Timer;
+/**
+Provides a high level summary report in text format
 
-@IgnoreCover
-class AllClasses
+e.g.
+
+result:true
+count:49
+count:7
+pass:5
+fail:2
+error:0
+ignore:2
+time:1234.3
+
+# className#method
+# className#method
+# className#method
+# className#method
+# className#method
+# className#method
+# className#method
+# className#method
+# className#method
+# ... plus 5 more
+
+*/
+class SummaryReportClient extends AbstractTestResultClient
 {
-@IgnoreCover
-	public static function main():AllClasses {return new AllClasses();}
-@IgnoreCover
-	public function new(){trace('This is a generated main class');}
-}
+	public static var DEFAULT_ID:String = "summary";
 
+	public function new()
+	{
+		super();
+		id = DEFAULT_ID;
+	}
+
+	override function printFinalStatistics(result:Bool, testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float)
+	{
+		output = "";
+		output += "result:" + result;
+		output += "\ncount:" + testCount;
+		output += "\npass:" + passCount;
+		output += "\nfail:" + failCount;
+		output += "\nerror:" + errorCount;
+		output += "\nignore:" + ignoreCount;
+		output += "\ntime:" + time;
+		output += "\n";
+
+		var resultCount = 0;
+
+		while(totalResults.length > 0 && resultCount < 10)
+		{
+			var result = totalResults.shift();
+			if(!result.passed)
+			{
+				output += "\n# " + result.location;
+				resultCount ++;
+			}
+		}
+
+		var remainder = (failCount + errorCount) - resultCount;
+
+		if(remainder > 0)
+		{
+			output += "# ... plus " + remainder  + " more";
+		}
+
+	}
+
+	override function printOverallResult(result:Bool)
+	{
+		//handled by printFinalStatistics		
+	}
+
+
+	override function printReports()
+	{
+		//not implemented 
+	}
+
+}

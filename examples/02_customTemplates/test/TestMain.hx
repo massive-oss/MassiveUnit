@@ -1,6 +1,6 @@
 import massive.munit.client.RichPrintClient;
 import massive.munit.client.HTTPClient;
-import massive.munit.client.JUnitReportClient;
+import massive.munit.client.SummaryReportClient;
 import massive.munit.TestRunner;
 
 #if js
@@ -30,6 +30,7 @@ class TestMain
         #end
 
         var runner:TestRunner = new TestRunner(client); 
+        runner.addResultClient(new HTTPClient(new SummaryReportClient()));
         runner.completionHandler = completionHandler;
         runner.run(suites);
     }

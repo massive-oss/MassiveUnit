@@ -50,26 +50,28 @@ class RunCommand extends MUnitCommand
 {
     public static inline var DEFAULT_SERVER_TIMEOUT_SEC:Int = 30;
 
-    private var files:Array<File>;
+    var files:Array<File>;
 
-    private var browser:String;
+    var browser:String;
 
-    private var reportDir:File;
-    private var reportRunnerDir:File;
-    private var reportTestDir:File;
+    var reportDir:File;
+    var reportRunnerDir:File;
+    var reportTestDir:File;
 
-    private var tmpDir:File;
-    private var tmpRunnerDir:File;
-    private var binDir:File;
+    var tmpDir:File;
+    var tmpRunnerDir:File;
+    var binDir:File;
 
-    private var targetTypes:Array<TargetType>;
+    var targetTypes:Array<TargetType>;
 
-    private var killBrowser:Bool;
-    private var indexPage:File;
-    private var nekoFile:File;
-    private var hasBrowserTests:Bool;
-    private var hasNekoTests:Bool;
-    private var serverTimeoutTimeSec:Int;
+    var killBrowser:Bool;
+    var indexPage:File;
+    var nekoFile:File;
+    var hasBrowserTests:Bool;
+    var hasNekoTests:Bool;
+    var serverTimeoutTimeSec:Int;
+
+    var exitOnFail:Bool;
 
     public function new():Void
     {
@@ -90,6 +92,7 @@ class RunCommand extends MUnitCommand
         checkForBrowserKeepAliveFlag();
         resetOutputDirectories();
         generateTestRunnerPages();
+        checkForExitOnFail();
     }
 
     function getTargetTypes()
@@ -232,6 +235,17 @@ class RunCommand extends MUnitCommand
         }
     }
 
+    function checkForExitOnFail()
+    {
+        if(console.getOption("exit-on-fail") != null)
+        {
+            exitOnFail = true;
+            Log.debug("exitOnFail? " + exitOnFail);
+        }
+    }
+
+    
+
     function resetOutputDirectories():Void
     {
         if (!reportRunnerDir.exists)
@@ -369,7 +383,7 @@ class RunCommand extends MUnitCommand
         else
             resultMonitor.sendMessage("quit");
 
-        var complete = Thread.readMessage(true);
+        var platformResults = Thread.readMessage(true);
 
         serverProcess.kill();
 
@@ -385,6 +399,11 @@ class RunCommand extends MUnitCommand
         tmpDir.copyTo(reportTestDir);
         tmpDir.deleteDirectory(true);
         FileSys.setCwd(console.dir.nativePath);
+
+        if(platformResults == false && exitOnFail)
+        {
+            exit(1);
+        }
     }
 
     /**
@@ -497,6 +516,7 @@ class RunCommand extends MUnitCommand
 
         var platformCount = Lambda.count(platformMap);
 
+
         if(platformCount > 0)
         {
             print("------------------------------");
@@ -508,9 +528,10 @@ class RunCommand extends MUnitCommand
             print("------------------------------");
             print("ERROR: Local results server appeared to hang so test reporting was cancelled.");
         }
-            
+        
+        var platformResult = platformCount > 0 && testFailCount == 0 && testErrorCount == 0 && !serverHung;
 
-        mainThread.sendMessage("done");
+        mainThread.sendMessage(platformResult);
     }
 
     private function getTargetName(result:String):String

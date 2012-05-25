@@ -34,6 +34,12 @@ class CalculatorTest extends MatchersBase
     {
     }
 
+    // @Test
+    // public function shouldFail()
+    // {
+    //    Assert.isTrue(false);
+    // }
+
     @Test
     public function shouldAddXToY()
     {
