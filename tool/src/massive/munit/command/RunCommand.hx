@@ -27,12 +27,9 @@
  */
 package massive.munit.command;
 
-import massive.munit.Config;
-import massive.munit.Target;
+
 import haxe.Http;
 import haxe.io.Eof;
-import massive.neko.io.File;
-import massive.neko.io.FileSys;
 import massive.haxe.util.RegExpUtil;
 import massive.munit.client.HTTPClient;
 import neko.io.Process;
@@ -42,9 +39,25 @@ import neko.vm.Mutex;
 import neko.Lib;
 import neko.Sys;
 import neko.io.Path;
+
+import massive.neko.io.File;
+import massive.neko.io.FileSys;
+
+import neko.io.File;
+
+
+/**
+Don't ask - stupid compiler always thinks it is massive.munit.TargetType enum 'neko'
+*/
+typedef NekoFile = neko.io.File;
+typedef NekoSys = neko.Sys;
+
 import massive.haxe.log.Log;
 import massive.munit.ServerMain;
 import massive.munit.util.MathUtil;
+import massive.munit.Config;
+import massive.munit.Target;
+
 
 class RunCommand extends MUnitCommand
 {
@@ -71,7 +84,7 @@ class RunCommand extends MUnitCommand
     var hasNekoTests:Bool;
     var serverTimeoutTimeSec:Int;
 
-    var exitOnFail:Bool;
+    var resultExitCode:Bool;
 
     public function new():Void
     {
@@ -237,10 +250,10 @@ class RunCommand extends MUnitCommand
 
     function checkForExitOnFail()
     {
-        if(console.getOption("exit-on-fail") != null)
+        if(console.getOption("result-exit-code") != null)
         {
-            exitOnFail = true;
-            Log.debug("exitOnFail? " + exitOnFail);
+            resultExitCode = true;
+            Log.debug("resultExitCode? " + resultExitCode);
         }
     }
 
@@ -383,7 +396,7 @@ class RunCommand extends MUnitCommand
         else
             resultMonitor.sendMessage("quit");
 
-        var platformResults = Thread.readMessage(true);
+        var platformResults:Bool = Thread.readMessage(true);
 
         serverProcess.kill();
 
@@ -400,9 +413,19 @@ class RunCommand extends MUnitCommand
         tmpDir.deleteDirectory(true);
         FileSys.setCwd(console.dir.nativePath);
 
-        if(platformResults == false && exitOnFail)
+        if(platformResults == false && resultExitCode)
         {
-            exit(1);
+            //print("TESTS FAILED");
+
+            #if haxe_209
+            Sys.stderr().writeString("TESTS FAILED\n");
+            Sys.stderr().flush();
+            #else
+
+            NekoFile.stderr().writeString("TESTS FAILED\n");
+            NekoFile.stderr().flush();
+            #end
+            exit(1)
         }
     }
 
@@ -529,7 +552,7 @@ class RunCommand extends MUnitCommand
             print("ERROR: Local results server appeared to hang so test reporting was cancelled.");
         }
         
-        var platformResult = platformCount > 0 && testFailCount == 0 && testErrorCount == 0 && !serverHung;
+        var platformResult:Bool = platformCount > 0 && testFailCount == 0 && testErrorCount == 0 && !serverHung;
 
         mainThread.sendMessage(platformResult);
     }

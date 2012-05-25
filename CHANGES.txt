@@ -1,6 +1,6 @@
 v0.9.3.0 - 25.05.12
 - Improved CI support
-- Added -exit-on-fail option for exiting if tests on one or more platforms fail.
+- Added -result-exit-code option for exiting if tests on one or more platforms fail.
 - Added simple SummaryReportClient to enable results back to command line without incurring HTTP POST bugs in nekotools server.
 - Re-enabled http result clients for examples
 

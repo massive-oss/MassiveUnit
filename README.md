@@ -71,7 +71,7 @@ New since 0.9.3.x
 
 Get error exit code when tests on one or more platforms fail
 
-	haxelib run munit test -exit-on-fail
+	haxelib run munit test -result-exit-code
 
 Workaround for issues with nekotools server HTTP POST via a simple SummaryReportClient
 
