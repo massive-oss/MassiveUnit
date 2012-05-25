@@ -43,7 +43,7 @@ MassiveUnit is way more than just a unit test framework. It includes a command l
 *	Auto generate test suites based on test classes in a src directory
 *	Compile and run multiple targets from an hxml build file
 *	Launch and run test applications in the browser or command line (neko)
-*	Save out junit style test reports to the file system for reporting and ci
+*	Save out text and junit style test reports to the file system for reporting and ci
 *	Auto generate stub test classes (and/or target classes) (new in 0.9.2.0)
 *	Integrated code coverage compilation with MCover (new in 0.9.2.0)
 
@@ -61,6 +61,21 @@ Then just use haxelib to download the latest version
 To check that it is all installed and to view the help run:
 
 	haxelib run munit
+
+
+
+New since 0.9.3.x
+--------------------
+
+### Better CI support
+
+Get error exit code when tests on one or more platforms fail
+
+	haxelib run munit test -exit-on-fail
+
+Workaround for issues with nekotools server HTTP POST via a simple SummaryReportClient
+
+	runner.addResultClient(new HTTPClient(new SummaryReportClient()));
 
 
 New since 0.9.2.x
@@ -94,6 +109,8 @@ Support for assertions inside async tests
 Support for custom runner html templates and resources
 
 ```Run 'munit config' to set template and resources directories```
+
+
 
 
 
