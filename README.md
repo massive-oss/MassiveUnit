@@ -73,9 +73,14 @@ Get error exit code when tests on one or more platforms fail
 
 	haxelib run munit test -result-exit-code
 
+> Note: haxelib currently doesnt return exit codes > 0 on OSX (see [issue](http://code.google.com/p/haxe/issues/detail?id=879))
+
 Workaround for issues with nekotools server HTTP POST via a simple SummaryReportClient
 
 	runner.addResultClient(new HTTPClient(new SummaryReportClient()));
+
+
+
 
 
 New since 0.9.2.x
