@@ -1,4 +1,4 @@
--cmd haxe build.hxml
+-cmd bash build.sh
 #-cmd haxe test.hxml
 #-cmd haxelib run mlib incrementVersion
 
