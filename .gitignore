@@ -32,3 +32,5 @@ report/
 example/.mcover-debug
 tool/.mcover-debug
 core/.mcover-debug
+core/.mcover/
+tool/.mcover/

@@ -25,12 +25,14 @@ class TestMain
 
         #if MCOVER
             var client = new m.cover.coverage.munit.client.MCoverPrintClient();
+            var httpClient = new HTTPClient(new m.cover.coverage.munit.client.MCoverSummaryReportClient());
         #else
             var client = new RichPrintClient();
+            var httpClient = new HTTPClient(new SummaryReportClient());
         #end
 
         var runner:TestRunner = new TestRunner(client); 
-        runner.addResultClient(new HTTPClient(new SummaryReportClient()));
+        runner.addResultClient(httpClient);
         runner.completionHandler = completionHandler;
         runner.run(suites);
     }
