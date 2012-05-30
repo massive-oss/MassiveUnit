@@ -39,13 +39,12 @@ import neko.vm.Mutex;
 import neko.Lib;
 import neko.Sys;
 import neko.io.Path;
-
 import massive.neko.io.File;
 import massive.neko.io.FileSys;
-
 import neko.io.File;
 
-
+ 
+ 
 /**
 Don't ask - stupid compiler always thinks it is massive.munit.TargetType enum 'neko'
 */
@@ -381,9 +380,20 @@ class RunCommand extends MUnitCommand
         tmpRunnerDir = tmpDir.resolveDirectory("runner");
         reportRunnerDir.copyTo(tmpRunnerDir);
 
-        var serverProcess = new Process("nekotools", ["server"]);
-        var resultMonitor = Thread.create(monitorResults);
 
+        var serverProcess:Process = null;
+
+        try
+        {
+            serverProcess = new Process("nekotools", ["server"]);
+        }
+        catch(e:Dynamic)
+        {
+            error("Unable to launch nekotools server. Please kill existing process and try again.", 1);
+        }
+        
+        
+        var resultMonitor = Thread.create(monitorResults);
         resultMonitor.sendMessage(Thread.current());
         resultMonitor.sendMessage(serverProcess);
         resultMonitor.sendMessage(serverTimeoutTimeSec);
@@ -425,7 +435,8 @@ class RunCommand extends MUnitCommand
             NekoFile.stderr().writeString("TESTS FAILED\n");
             NekoFile.stderr().flush();
             #end
-            exit(1)
+            
+            exit(1);
         }
     }
 
@@ -615,21 +626,39 @@ class RunCommand extends MUnitCommand
         file.copyTo(reportRunnerFile);
 
         FileSys.setCwd(config.dir.nativePath);
-
-        var parameters:Array<String> = [];
-        parameters.push("neko");
-        parameters.push('"' + reportRunnerFile.nativePath + '"');
-
-        Lib.println(parameters.join(" "));
-
-        var exitCode:Int = Sys.command(parameters.join(" "));
+  
+        var exitCode = runCommand("neko", [reportRunnerFile.nativePath]);
 
         FileSys.setCwd(console.originalDir.nativePath);
         
         if (exitCode > 0)
-            error("Error running " + file, exitCode);
+            error("Error (" + exitCode + ") running " + file, exitCode);
         
         
         return exitCode;
     }
+
+
+    function runCommand(command:String, args:Array<String>):Int
+    {
+        Lib.println(command + " " + args.join(" "));
+        var process = new Process(command, args);
+
+        try
+        {
+            while (true)
+            {
+                Sys.sleep(0.01);
+                var output = process.stdout.readLine();
+                Lib.println(output);
+            }
+        }
+        catch (e:haxe.io.Eof) {}
+
+        var exitCode:Int = process.exitCode();
+
+        return exitCode;
+    }
+
+
 }
