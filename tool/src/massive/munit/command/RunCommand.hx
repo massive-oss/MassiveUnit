@@ -425,7 +425,7 @@ class RunCommand extends MUnitCommand
             NekoFile.stderr().writeString("TESTS FAILED\n");
             NekoFile.stderr().flush();
             #end
-            exit(1)
+            exit(1);
         }
     }
 

@@ -48,9 +48,7 @@ class UnhandledExceptionTest
 			var exception = new UnhandledException(source, location);
 			Assert.isNull(exception.info);
 			Assert.isTrue(exception.message.indexOf(source) == 0);
-			trace(exception.message);
 			Assert.isTrue(exception.message.indexOf(" at " + location) > 0);
-
 		}
 	}
 	
