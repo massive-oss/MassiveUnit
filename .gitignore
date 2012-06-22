@@ -33,3 +33,5 @@ example/.mcover-debug
 tool/.mcover-debug
 core/.mcover-debug
 munit.sublime-workspace
+core/.mcover/
+tool/.mcover/

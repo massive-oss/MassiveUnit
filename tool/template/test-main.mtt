@@ -24,14 +24,15 @@ class TestMain
         suites.push(TestSuite);
 
         #if MCOVER
-            var client = new m.cover.coverage.munit.client.MCoverPrintClient();
+            var client = new massive.mcover.munit.client.MCoverPrintClient();
+            var httpClient = new HTTPClient(new massive.mcover.munit.client.MCoverSummaryReportClient());
         #else
             var client = new RichPrintClient();
+            var httpClient = new HTTPClient(new SummaryReportClient());
         #end
 
-        var runner:TestRunner = new TestRunner(client);
-
-        runner.addResultClient(new HTTPClient(new SummaryReportClient()));
+        var runner:TestRunner = new TestRunner(client); 
+        runner.addResultClient(httpClient);
         //runner.addResultClient(new HTTPClient(new JUnitReportClient()));
         
         runner.completionHandler = completionHandler;

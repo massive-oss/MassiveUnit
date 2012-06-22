@@ -76,11 +76,9 @@ Get error exit code when tests on one or more platforms fail
 > Note: haxelib currently doesnt return exit codes > 0 on OSX (see [issue](http://code.google.com/p/haxe/issues/detail?id=879))
 
 Workaround for issues with nekotools server HTTP POST via a simple SummaryReportClient
-
-	runner.addResultClient(new HTTPClient(new SummaryReportClient()));
-
-
-
+	
+	var httpClient = new HTTPClient(new SummaryReportClient())
+	runner.addResultClient(httpClient);
 
 
 New since 0.9.2.x
