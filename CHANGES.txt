@@ -1,7 +1,10 @@
+v0.9.3.1 - 22.06.12
+- Bug fix: AsyncTest with successful sync asserts causing runner to execute out of order.
+
 v0.9.3.0 - 25.05.12
 - Improved CI support
 - Added -result-exit-code option for exiting if tests on one or more platforms fail.
-- Added simple SummaryReportClient to enable results back to command line without incurring HTTP POST bugs in nekotools server.
+- Added simple SummaryReportClient to en in the testable results back to command line without incurring HTTP POST bugs in nekotools server.
 - Re-enabled http result clients for examples
 
 v0.9.2.6 - 23.05.12

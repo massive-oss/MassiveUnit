@@ -88,7 +88,6 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 		Assert.areEqual(AsyncDelegate.DEFAULT_TIMEOUT, delegate.timeoutDelay);
 	}
 	
-	
 	@AsyncTest
 	public function testTimeout(factory:AsyncFactory):Void
 	{
@@ -149,8 +148,7 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 	@AsyncTest
 	public function testHandler(factory:AsyncFactory):Void
 	{
-		handler = factory.createHandler(this, onTestHandler);
-		
+		handler = factory.createHandler(this, onTestHandler, 1000);
 		delegate = new AsyncDelegate(this, asyncTestHandler);
 		delegate.observer = this;		
 		Timer.delay(asyncDelegateTestHandler, 10);

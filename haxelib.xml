@@ -3,7 +3,7 @@
     <tag v="cross" />
     <tag v="utility" />
     <description>MassiveUnit is a cross-platform haXe unit testing framework from Massive Interactive that utilises haxe metadata markup for test cases and includes tools for generating, compiling and running test cases from the command line.</description>
-    <version name="0.9.3.0">Improved CI support. Added -result-exit-code option for exiting if tests on one or more platforms fail (windows only due to bug in 'haxelib run'). Added simple SummaryReportClient to safely reenable results back to command line without incurring nasty HTTP POST bugs in nekotools server.</version>
+    <version name="0.9.3.1">Bug fix: AsyncTest with successful sync asserts causing runner to execute out of order.</version>
     <depends name="hamcrest"/>
     <depends name="mlib"/>
     <depends name="mcover"/>

@@ -122,9 +122,9 @@ class AsyncDelegate
 		timer.stop();
 		if(deferredTimer!=null) deferredTimer.stop();
 	}
-	
+
 	private function responseHandler(?params:Array<Dynamic>):Void
-	{		
+	{	
 		if (timedOut || canceled) return;
 
 		timer.stop();
@@ -134,9 +134,16 @@ class AsyncDelegate
 		if (params == null) params = [];
 		this.params = params;
 		
-		if (observer != null) observer.asyncResponseHandler(this);
+		// defer callback to force async runner
+		if (observer != null) Timer.delay(delayActualResponseHandler, 1);
 	}
-	
+
+	private function delayActualResponseHandler()
+	{
+		observer.asyncResponseHandler(this);
+		observer = null; 
+	}
+
 	private function timeoutHandler():Void
 	{
 		#if flash
@@ -153,6 +160,10 @@ class AsyncDelegate
 		handler = null;
 		delegateHandler = null;
 		timedOut = true;
-		if (observer != null) observer.asyncTimeoutHandler(this);
+		if (observer != null)
+		{
+			observer.asyncTimeoutHandler(this);
+			observer = null; 
+		}
 	}
 }

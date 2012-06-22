@@ -28,7 +28,8 @@
 package massive.munit.async;
 
 import massive.munit.Assert;
-
+import massive.munit.async.AsyncFactory;
+import massive.munit.util.Timer;
 /**
  * ...
  * @author Mike Stead
@@ -61,30 +62,35 @@ class AsyncFactoryTest implements IAsyncDelegateObserver
 		Assert.areEqual(0, factory.asyncDelegateCount);
 	}
 	
-	@Test
-	public function testCreateBasicHandler():Void
+	@AsyncTest
+	public function testCreateBasicHandler(factory:AsyncFactory):Void
 	{
-		var factory:AsyncFactory = new AsyncFactory(this);
-		var handler:Dynamic = factory.createHandler(this, onTestCreateBasicHandler, 333);
+		var tempFactory:AsyncFactory = new AsyncFactory(this);
+		var tempHandler:Dynamic = tempFactory.createHandler(this, onTestCreateBasicHandler, 333);
 
-		
 		Assert.isNotNull(delegate);
 
-		Assert.isNotNull(handler);
-		Assert.areEqual(handler, delegate.delegateHandler);
+		Assert.isNotNull(tempHandler);
+		Assert.areEqual(tempHandler, delegate.delegateHandler);
 		
 		execHandlerCalled = false;
 		handlerCalled = false;
 		
-		handler();
+		tempHandler();
 
-		Assert.isTrue(handlerCalled);
-		Assert.isTrue(execHandlerCalled);
+		var actualHandler:Dynamic = factory.createHandler(this, assertOnTestCreateBasicHandlerCalled, 333);
+		Timer.delay(actualHandler, 10);
 	}
 
 	private function onTestCreateBasicHandler():Void
 	{
 		handlerCalled = true;
+	}
+
+	private function assertOnTestCreateBasicHandlerCalled():Void
+	{
+		Assert.isTrue(handlerCalled);
+		Assert.isTrue(execHandlerCalled);
 	}
 
 	public function asyncDelegateCreatedHandler(delegate:AsyncDelegate):Void
