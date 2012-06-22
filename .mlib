@@ -3,7 +3,6 @@
 		<resource type="src" path="core/src" />
 		<resource type="run" path="bin/munit.n" />
 		<resource type="license" path="resource/license.mtt" />
-		<resource path="examples" dest="examples" />
 		<resource path="tool/resource" dest="resource/" />
 		<resource path="bin/tests-complete.js" dest="resource/" />
 		<resource path="bin/index.n" dest="" />

@@ -1,5 +1,8 @@
-v0.9.3.1 - 22.06.12
+v0.9.3.2 - 22.06.12
 - Bug fix: AsyncTest with successful sync asserts causing runner to execute out of order.
+
+v0.9.3.1
+- hotfix for 9.3.0
 
 v0.9.3.0 - 25.05.12
 - Improved CI support
