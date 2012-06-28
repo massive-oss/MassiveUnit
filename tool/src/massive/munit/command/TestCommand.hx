@@ -343,7 +343,7 @@ class TestCommand extends MUnitCommand
 		var reg:EReg = ~/#if (!?)MCOVER/;
 		var str = target.main.readString();
 
-		if(!reg.match(str))
+		if(str == null || !reg.match(str))
 		{
 			Lib.println("Warning: Compiling " + target.type + " for MCover may not execute coverage");
 
