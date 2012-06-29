@@ -27,6 +27,7 @@
  */
 package massive.munit.command;
 
+
 import massive.haxe.log.Log;
 import massive.neko.haxe.HaxeWrapper;
 import massive.neko.io.File;
@@ -174,9 +175,13 @@ class TestCommand extends MUnitCommand
 		
 		var tempTargets:Array<Target> = [];
 		
-		for(line in lines)
+		for (line in lines)
 		{
-			if(line.indexOf("--next") == 0)
+			line = StringTools.trim(line);
+
+			if (line == "" || line.indexOf("#") == 0) continue;
+			
+			if (line.indexOf("--next") == 0)
 			{
 				tempTargets.push(target);
 				target = new Target();
@@ -184,13 +189,13 @@ class TestCommand extends MUnitCommand
 			}
 			
 			var mainReg:EReg = ~/^-main (.*)/;	
-			if(mainReg.match(line))
+			if (mainReg.match(line))
 			{
 				target.main = config.src.resolveFile(mainReg.matched(1) + ".hx");
 			}
 
 			var flagReg:EReg = ~/^-D (.*)/;
-			if(flagReg.match(line))
+			if (flagReg.match(line))
 			{
 				var flag = flagReg.matched(1).split(" ");
 				target.flags.set(flag.shift(), flag.join(" "));
@@ -198,19 +203,19 @@ class TestCommand extends MUnitCommand
 
 			target.hxml += line + "\n";
 			
-			if(target.file == null)
+			if (target.file == null)
 			{
-				for(type in targetTypes)
+				for (type in targetTypes)
 				{
 					var s:String = null;
-					switch(type)
+					switch (type)
 					{
 						case TargetType.as2: s = "swf";
 						case TargetType.as3: s = "swf";
 						default: s = Std.string(type);
 					}
 					var targetMatcher = new EReg("^-" + s + "\\s+", "");
-					if(targetMatcher.match(line))
+					if (targetMatcher.match(line))
 					{
 						target.file = File.create(line.substr(s.length + 2), File.current);
 						break;
@@ -218,7 +223,7 @@ class TestCommand extends MUnitCommand
 				}
 			}
 
-			if(target.type == null)
+			if (target.type == null)
 			{
 				for(type in targetTypes)
 				{
@@ -259,24 +264,21 @@ class TestCommand extends MUnitCommand
 			}
 		}
 
-
 		targetTypes = config.targetTypes = tempTargetTypes;
 
-		
+
 		for(target in targets)
 		{
 			if(target.type == null && targetTypes.length < config.targetTypes.length ) 
 				continue;
 
-			
-
 			if(includeCoverage && target.main != null)
 			{
-
 				var clsPaths:Array<String> = [];
+
 				for(path in config.classPaths)
 				{
-					if(target.flags.exists("MCOVER_DEBUG"))
+					if(target.flags.exists("MCOVER_DEBUG") && Sys.systemName() != "Windows")
 					{
 						clsPaths.push(path.toString());
 					}
@@ -285,7 +287,6 @@ class TestCommand extends MUnitCommand
 						clsPaths.push(config.dir.getRelativePath(path));
 					}
 				}
-
 				warnIfMissingMCoverConditionalFlagInTestMain(target);
 				
 				//ingore lib if testing MCOVER (causes compiler errors from dup src path)
@@ -295,6 +296,7 @@ class TestCommand extends MUnitCommand
 				}
 				
 				target.hxml += "-D MCOVER\n";
+
 				target.hxml += "--macro m.cover.MCover.coverage([''],['" + clsPaths.join("','") + "'])\n";	
 			}
 			
