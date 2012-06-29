@@ -1,3 +1,8 @@
+v0.9.3.3 - 29.06.12
+- fixed '-debug' option not being detected correctly
+- fixed occassional issue on Windows with line return encoding in hxml file.
+- changed icon for code coverage
+
 v0.9.3.2 - 22.06.12
 - Bug fix: AsyncTest with successful sync asserts causing runner to execute out of order.
 
