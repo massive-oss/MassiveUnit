@@ -1,3 +1,7 @@
+v0.9.4.0 - 02.07.12
+- added report command
+- added ReportFormatter and TeamCityReportFormatter
+
 v0.9.3.3 - 29.06.12
 - fixed '-debug' option not being detected correctly
 - fixed occassional issue on Windows with line return encoding in hxml file.

@@ -28,6 +28,7 @@
 package massive.munit;
 import massive.neko.io.File;
 import massive.munit.Target;
+
 class Config
 {
 	public var currentVersion(default, null):String;
@@ -51,6 +52,7 @@ class Config
 	public var targets:Array<Target>;
 	
 	public var targetTypes:Array<TargetType>;
+
 	
 	public function new(dir:File, currentVersion:String):Void
 	{
@@ -141,7 +143,7 @@ class Config
 		this.resources = resources != null ? resources : null;
 		this.templates = templates != null ? templates : null;
 		this.configVersion = currentVersion;
-		
+
 		save();
 	}
 	
