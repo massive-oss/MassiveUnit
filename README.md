@@ -63,6 +63,24 @@ To check that it is all installed and to view the help run:
 	haxelib run munit
 
 
+New since 0.9.4.x
+--------------------
+
+### Report Command
+
+Convert munit summary reports into different format(s). As of 0.9.4.0 there is only one supported format (TeamCity)
+
+	haxelib run munit report [format] [dest] [-coverage percent]
+
+Example:
+
+The following example generates a teamcity-info.xml report in the project directory (.)
+
+	haxelib run munit report teamcity . -coverage 85
+
+> Note: You must run and generated summary reports prior to executing the report command. 
+
+
 
 New since 0.9.3.x
 --------------------
