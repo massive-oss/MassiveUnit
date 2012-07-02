@@ -12,6 +12,7 @@
 -resource template/help_run.txt@help_run
 -resource template/help_test.txt@help_test
 -resource template/help_create.txt@help_create
+-resource template/help_report.txt@help_report
 -resource template/test-example.mtt@test-example
 -resource template/test-stub-class.mtt@test-stub-class
 -resource template/test-stub-test.mtt@test-stub-test
@@ -40,6 +41,7 @@
 -resource template/help_run.txt@help_run
 -resource template/help_test.txt@help_test
 -resource template/help_create.txt@help_create
+-resource template/help_report.txt@help_report
 -resource template/test-example.mtt@test-example
 -resource template/test-stub-class.mtt@test-stub-class
 -resource template/test-stub-test.mtt@test-stub-test
