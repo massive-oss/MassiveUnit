@@ -26,8 +26,8 @@ Thumbs.db
 # Directories #
 ###############
 bin/
-report/
-
+/report/
+/examples/**/report/
 .svn
 example/.mcover-debug
 tool/.mcover-debug

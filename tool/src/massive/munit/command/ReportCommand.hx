@@ -39,7 +39,6 @@ class ReportCommand extends MUnitCommand
 		getReportFormatType();
 		getDestinationDir();
 		getMinCoverage();
-
 	}
 
 	function getTargetTypes()
@@ -107,21 +106,19 @@ class ReportCommand extends MUnitCommand
 		if (format == null)
 		{
 			error("Please specify one of the following report types: " + Std.string(Type.allEnums(ReportType)));
-
 		}
 		else
 		{
 			try
 			{
-				reportType = Type.createEnum(ReportType, format);
+				format = StringTools.trim(format);
+				reportType = Type.createEnum(ReportType, format.toLowerCase());
 			}
 			catch(e:Dynamic)
 			{
 				print("Error: invalid report type: " + format);
 				error("Please specify one of the following report types: " + Std.string(Type.allEnums(ReportType)));
 			}
-			
-
 		}
 
 		Log.debug("reportType: " + reportType);
@@ -144,7 +141,6 @@ class ReportCommand extends MUnitCommand
 		Log.debug("destDir: " + destDir);
 	}
 
-
 	function getMinCoverage()
 	{
 		var coverage:String = console.getOption("coverage");
@@ -156,22 +152,14 @@ class ReportCommand extends MUnitCommand
 		}
 	}
 
-
-
 	////// EXECUTION PHASE ////////
-
 
 	override public function execute():Void
 	{
-
 		var files = getSummaryFiles();
-
 		var formatter = getReportFormatterForType(reportType);
-
 		formatter.format(files, destDir, minCoverage);
-
 	}
-
 
 	function getSummaryFiles():Array<File>
 	{
@@ -201,8 +189,4 @@ class ReportCommand extends MUnitCommand
 			default: return null;
 		}
 	}
-
-
-
-
 }

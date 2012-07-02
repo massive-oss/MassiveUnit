@@ -12,7 +12,7 @@ Optional Arguments:
 Optional Parameters:
 	
     -[platform]       : One or more specific target platforms to compile (defaults to
-                        to contents of results.txt file in report directory)
+                        contents of results.txt file in report directory)
     
    -coverage [value]  : Customise the minimum coverage (defaults to 0);
 
