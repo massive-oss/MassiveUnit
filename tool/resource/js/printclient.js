@@ -98,7 +98,7 @@ function setResult(result)
 
 	currentClassId = null;
 
-	if(parent != null) parent.testComplete();
+	if(parent != null && parent != this) parent.testComplete();
 	
 }
 
