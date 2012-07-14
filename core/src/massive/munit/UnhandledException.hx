@@ -63,12 +63,15 @@ class UnhandledException extends MUnitException
 	function getStackTrace(source:Dynamic):String
 	{
 		var s = "";
-		#if flash9
+		#if (flash && !flash8)
 			if (Std.is(source, flash.errors.Error))
 			{
-				var lines = source.getStackTrace().split("\n");
-				lines.shift(); // remove repeated error name
-				s = lines.join("\n");
+				if(flash.system.Capabilities.isDebugger)
+				{
+					var lines = source.getStackTrace().split("\n");
+					lines.shift(); // remove repeated error name
+					s = lines.join("\n");
+				}
 			}
 		#end
 		if (s == "")

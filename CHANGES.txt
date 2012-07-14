@@ -1,3 +1,9 @@
+v0.9.4.1 - 14.07.12
+- flash, js : moved html print client icons into single spritesheet
+- flash, js : cleaned up js and css on html print client (and html templates)
+- flash : detect debug flash player for as3 targets and print warning if not available
+- flash : UnhandledException only generates native flash stack trace if Capabilities.isDebugger is true
+
 v0.9.4.0 - 02.07.12
 - added report command
 - added ReportFormatter and TeamCityReportFormatter

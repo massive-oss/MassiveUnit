@@ -61,6 +61,15 @@ hr
 	
 }
 
+/* Top level warnings or errors */
+.munit div.line
+{
+	padding:10px;
+	background-color: #f9d5ab;
+	font-weight: bold;
+	color: #212121;
+}
+
 .line
 {
 	white-space: nowrap;

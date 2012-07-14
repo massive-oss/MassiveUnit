@@ -6,7 +6,7 @@
 	<tag v="testing" />
     <tag v="massive" />
     <description>MassiveUnit is a cross-platform Haxe unit testing framework from Massive Interactive that utilises haxe metadata markup for test cases and includes tools for generating, compiling and running test cases from the command line.</description>
-    <version name="0.9.4.0">Added 'report' command for converting report data into different formats for CI environments (only teamcity for now). </version>
+    <version name="0.9.4.1">Minor bug fixes. Addressed issue 32 (Icons occassionally not appearing in result client) and 29 (Detect debug flash player)</version>
     <depends name="hamcrest"/>
     <depends name="mlib"/>
     <depends name="mcover"/>

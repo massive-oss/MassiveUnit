@@ -65,10 +65,10 @@ class PrintClient extends PrintClientBase
 
 	#if (js||flash)
 		var external:ExternalPrintClient;
-		#if flash9
-			var textField:flash.text.TextField;
-		#elseif flash
+		#if flash8
 			var textField:flash.TextField;
+		#elseif flash
+			var textField:flash.text.TextField;
 		#elseif js
 			var textArea:Dynamic;
 		#end
@@ -102,17 +102,26 @@ class PrintClient extends PrintClientBase
 			throw new MUnitException("ExternalInterface not available");
 		}
 		
-		#if flash9
+		#if flash8
+			textField = flash.Lib.current.createTextField("__munitOutput", 20000, 0, 0, flash.Stage.width, flash.Stage.height);
+			textField.wordWrap = true;
+			textField.selectable = true;
+		#else
 			textField = new flash.text.TextField();
 			textField.selectable = true;
 			textField.width = flash.Lib.current.stage.stageWidth;
 			textField.height = flash.Lib.current.stage.stageHeight;
 			flash.Lib.current.addChild(textField);
-		#elseif flash
-			textField = flash.Lib.current.createTextField("__munitOutput", 20000, 0, 0, flash.Stage.width, flash.Stage.height);
-			textField.wordWrap = true;
-			textField.selectable = true;
+
+			if(!flash.system.Capabilities.isDebugger)
+			{
+				printLine("WARNING: Flash Debug Player not installed. May cause unexpected behaviour in MUnit when handling thrown exceptions.");
+			}
 		#end
+
+
+
+
 	}
 	#elseif js
 	function initJS()
@@ -151,13 +160,13 @@ class PrintClient extends PrintClientBase
 	{
 		super.print(value);
 
-		#if flash9
-			textField.appendText(value);
-			textField.scrollV = textField.maxScrollV;
-		#elseif flash
+		#if flash8
 			value = untyped flash.Boot.__string_rec(value, "");
 			textField.text += value;
 			textField.scroll = textField.maxscroll;
+		#elseif flash
+			textField.appendText(value);
+			textField.scrollV = textField.maxScrollV;
 		#end
 
 		#if (js || flash)
@@ -171,7 +180,7 @@ class PrintClient extends PrintClientBase
 		#end
 	}
 
-	override public function printLine(value, ?indent:Int = 0)
+	override public function printLine(value:Dynamic, ?indent:Int = 0)
 	{
 		super.printLine(value, indent);
 	}

@@ -69,6 +69,8 @@ function mockCoverageClass(name)
 	addTestCoverageItem("coverage is bad");
 }
 
+munitPrintLine("WARNING: Bad thing may happened.");
+
 mockTest("com.example.Item1Test", false, false, false, false, "0")
 mockTest("com.example.Item2Test", true, false, false,true,  "0");
 mockTest("com.example.Item99Test", true, true, true, true, "1");
