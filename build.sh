@@ -3,15 +3,16 @@
 #update allClasses imports
 haxelib run mlib allClasses
 
-#compile core library
-cd core
-haxe build.hxml
 
 #compile tool
-cd ../tool
+cd tool
 haxe build.hxml
 cd ../
 
+#compile core library
+cd core
+haxe build.hxml
+cd ../
 
 #test core and tool
 

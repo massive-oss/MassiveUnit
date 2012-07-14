@@ -1,10 +1,10 @@
 haxelib run mlib allClasses
 
-cd core
+cd tool
 haxe build.hxml
 cd ../
 
-cd tool
+cd core
 haxe build.hxml
 cd ../
 
