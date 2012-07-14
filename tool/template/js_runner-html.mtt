@@ -4,7 +4,7 @@
 	<title>Massive Unit Test Runner</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 		<link rel="stylesheet" type="text/css" href="css/printclient.css" />
-		<script ltype="text/JavaScript" language="JavaScript" src="js.printclient.js"></script>
+		<script ltype="text/JavaScript" language="JavaScript" src="js/printclient.js"></script>
 		<style type="text/css">
 			html, body, div { margin:0; padding:0; font-family: monaco, Andale Mono, Courier New, monospace; font-size:12px;}
 			.output
