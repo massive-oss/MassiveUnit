@@ -1,8 +1,11 @@
 v0.9.4.1 - 14.07.12
+- flash: Fixed issue #32 - icons don't always appear in result client for AS3 
 - flash, js : moved html print client icons into single spritesheet
 - flash, js : cleaned up js and css on html print client (and html templates)
-- flash : detect debug flash player for as3 targets and print warning if not available
+- flash : Fixed issue #29 detect debug flash player for as3 targets and print warning if not available
 - flash : UnhandledException only generates native flash stack trace if Capabilities.isDebugger is true
+- flash : Fixed issue #27 - Use name of swf file in hxml
+- all : changed how target files are located in RunCommand (TestCommadn generates temp files containing target file locations )
 
 v0.9.4.0 - 02.07.12
 - added report command

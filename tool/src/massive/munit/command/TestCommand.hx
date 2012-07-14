@@ -317,6 +317,9 @@ class TestCommand extends MUnitCommand
 			{
 				error("Error compiling hxml for " + target.type + "\n" + target);
 			}	
+
+			var tmp = config.bin.resolveFile(".temp/" + target.type + ".txt");
+			tmp.writeString(target.file, false);
 		}
 		
 		Log.debug("All targets compiled successfully");

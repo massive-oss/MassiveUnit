@@ -46,7 +46,7 @@ import neko.io.File;
  
  
 /**
-Don't ask - stupid compiler always thinks it is massive.munit.TargetType enum 'neko'
+Don't ask - compiler always thinks it is massive.munit.TargetType enum 'neko'
 */
 typedef NekoFile = neko.io.File;
 typedef NekoSys = neko.Sys;
@@ -62,7 +62,7 @@ class RunCommand extends MUnitCommand
 {
 	public static inline var DEFAULT_SERVER_TIMEOUT_SEC:Int = 30;
 
-	var files:Array<File>;
+	var targets:Array<Target>;
 
 	var browser:String;
 
@@ -160,46 +160,49 @@ class RunCommand extends MUnitCommand
 
 	function gatherTestRunnerFiles()
 	{
+		targets = [];
+
 		if (!binDir.isDirectory)
 			return;
 
-		var reg:EReg = ~/_test\.(n|swf|js)$/;
-		var tempFiles:Array<File> = binDir.getDirectoryListing(reg);
+		if (!binDir.resolveDirectory(".temp").exists)
+			return;
 
-		files = [];
-		var length = 0;
-
-		for (file in tempFiles)
+		for (type in targetTypes)
 		{
-			for (type in targetTypes)
+			var tmp = binDir.resolveFile(".temp/" + type + ".txt");
+
+			if(!tmp.exists)
 			{
-				if (file.extension == "swf")
-				{
-					if (type == TargetType.as3 && file.fileName.indexOf("as3_test.swf") != -1)
-						files.push(file);
-					else if (type == TargetType.as2 && file.fileName.indexOf("as2_test.swf") != -1)
-						files.push(file);
-				}
-				else if (type == TargetType.js && file.extension == "js")
-					files.push(file);
-				else if (type == TargetType.neko && file.extension == "n")
-				{
-					files.push(file);
-					hasNekoTests = true;
-				}
+				print("WARNING: Target type '" + type + "' not found in bin directory.");
+				continue;
 			}
 
-			// remove old tests not being run
-			if (length == files.length)
-				file.deleteFile();
+			var target = new Target();
+			target.type = type;
 
-			length = files.length;
+
+			target.file = File.create(tmp.readString());
+			
+			if(!target.file.exists)
+			{
+				print("WARNING: File for target type '" + target.type + "' not found: " + target.toString());
+			}
+			else
+			{
+				targets.push(target);
+				if (type == TargetType.neko)
+				{
+					hasNekoTests = true;
+				}	
+			}
+			
 		}
 
-		Log.debug(files.length + " targets");
+		Log.debug(targets.length + " targets");
 
-		for (file in files)
-			Log.debug("   " + file);
+		for (target in targets)
+			Log.debug("   " + target.file);
 	}
 
 	function locateReportDir()
@@ -219,7 +222,7 @@ class RunCommand extends MUnitCommand
 		{
 			reportDir = File.create(reportPath, console.dir);
 
-			if(!reportDir.exists)
+			if (!reportDir.exists)
 				reportDir.createDirectory();
 		}
 
@@ -240,7 +243,7 @@ class RunCommand extends MUnitCommand
 
 	function checkForBrowserKeepAliveFlag()
 	{
-		if(console.getOption("kill-browser") != null)
+		if (console.getOption("kill-browser") != null)
 		{
 			killBrowser = true;
 			Log.debug("killBrowser? " + killBrowser);
@@ -249,14 +252,12 @@ class RunCommand extends MUnitCommand
 
 	function checkForExitOnFail()
 	{
-		if(console.getOption("result-exit-code") != null)
+		if (console.getOption("result-exit-code") != null)
 		{
 			resultExitCode = true;
 			Log.debug("resultExitCode? " + resultExitCode);
 		}
 	}
-
-	
 
 	function resetOutputDirectories():Void
 	{
@@ -274,22 +275,24 @@ class RunCommand extends MUnitCommand
 	function generateTestRunnerPages()
 	{
 		var pageNames = [];
-		for (file in files)
+		for (target in targets)
 		{
-			if (file.extension == 'js' || file.extension == 'swf')
-			{
-				var pageName = file.fileName.substr(0, -file.extension.length) + "html";
 
+			var file = target.file;
+
+			if (target.type != TargetType.neko)
+			{
+				var pageName = Std.string(target.type);
 				var templateName = file.extension + "_runner-html";
 				var pageContent = getTemplateContent(templateName, {runnerName:file.fileName});
 				
-				var runnerPage = reportRunnerDir.resolvePath(pageName);
+				var runnerPage = reportRunnerDir.resolvePath(pageName + ".html");
 
 				runnerPage.writeString(pageContent);
 				pageNames.push(pageName);
 				hasBrowserTests = true;
 			}
-			else if (file.extension == 'n')
+			else
 			{
 				hasNekoTests = true;
 				nekoFile = file;
@@ -303,8 +306,8 @@ class RunCommand extends MUnitCommand
 		for (pageName in pageNames)
 		{
 			frameCols += "*,";
-			frameTitles += '<td width="' + colCount + '%" title="Double click to maximise"><div>' + pageName.substr(0, pageName.indexOf('_')).toUpperCase() + '<a href="#" title="Click to maximise">expand toggle</a></div></td>';
-			frames += '<frame src="' + pageName + '" scrolling="auto" noresize="noresize"/>\n';
+			frameTitles += '<td width="' + colCount + '%" title="Double click to maximise"><div>' + pageName.toUpperCase() + '<a href="#" title="Click to maximise">expand toggle</a></div></td>';
+			frames += '<frame src="' + pageName + ".html" + '" scrolling="auto" noresize="noresize"/>\n';
 		}
 
 		frameCols = frameCols.substr(0, -1);
@@ -321,7 +324,7 @@ class RunCommand extends MUnitCommand
 		var commonResourceDir:File = console.originalDir.resolveDirectory("resource");
 		commonResourceDir.copyTo(reportRunnerDir);
 
-		if(config.resources != null)
+		if (config.resources != null)
 		{
 			config.resources.copyTo(reportRunnerDir);
 		}
@@ -337,7 +340,7 @@ class RunCommand extends MUnitCommand
 	{
 		var content:String = null;
 		var resource:String;
-		if(config.templates != null && config.templates.resolveFile(templateName + ".mtt").exists)
+		if (config.templates != null && config.templates.resolveFile(templateName + ".mtt").exists)
 		{
 			resource = config.templates.resolveFile(templateName + ".mtt").readString();
 		}
@@ -413,7 +416,7 @@ class RunCommand extends MUnitCommand
 		if (reportTestDir.exists)
 			reportTestDir.deleteDirectoryContents();
 		
-		if(!FileSys.isWindows)
+		if (!FileSys.isWindows)
 		{
 			serverFile.deleteFile();
 		}
@@ -423,7 +426,7 @@ class RunCommand extends MUnitCommand
 		tmpDir.deleteDirectory(true);
 		FileSys.setCwd(console.dir.nativePath);
 
-		if(platformResults == false && resultExitCode)
+		if (platformResults == false && resultExitCode)
 		{
 			//print("TESTS FAILED");
 
@@ -447,7 +450,7 @@ class RunCommand extends MUnitCommand
 	{
 		var serverFile = console.originalDir.resolveFile("index.n");
 
-		if(FileSys.isWindows) return serverFile;
+		if (FileSys.isWindows) return serverFile;
 		
 		var copy = File.current.resolveFile("index.n");
 
@@ -551,7 +554,7 @@ class RunCommand extends MUnitCommand
 		var platformCount = Lambda.count(platformMap);
 
 
-		if(platformCount > 0)
+		if (platformCount > 0)
 		{
 			print("------------------------------");
 			print("PLATFORMS TESTED: " + platformCount + ", PASSED: " + testPassCount + ", FAILED: " + testFailCount + ", ERRORS: " + testErrorCount + ", TIME: " + MathUtil.round(Sys.time() - startTime, 5));
