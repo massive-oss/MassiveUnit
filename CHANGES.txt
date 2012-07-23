@@ -1,3 +1,6 @@
+v0.4.2 - 23.07.12
+- all: Fixed Issue #35 - TestMain template uses incorrect coverage package
+
 v0.9.4.1 - 14.07.12
 - flash: Fixed issue #32 - icons don't always appear in result client for AS3 
 - flash, js : moved html print client icons into single spritesheet
