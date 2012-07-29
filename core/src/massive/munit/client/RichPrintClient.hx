@@ -189,10 +189,10 @@ class RichPrintClient extends PrintClientBase
 	}
 	
 	////// FINAL REPORTS //////
-	override public function reportFinalCoverage(percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
-		?classBreakdown:String=null,
-		?packageBreakdown:String=null,
-		?executionFrequency:String=null
+	override public function reportFinalCoverage(percent:Float, missingCoverageResults:Array<CoverageResult>, summary:String,
+		classBreakdown:String,
+		packageBreakdown:String,
+		executionFrequency:String
 		):Void
 	{
 		super.reportFinalCoverage(percent, missingCoverageResults, summary,classBreakdown,packageBreakdown,executionFrequency);

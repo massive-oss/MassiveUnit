@@ -6,7 +6,7 @@
 	<tag v="testing" />
     <tag v="massive" />
     <description>MassiveUnit is a cross-platform Haxe unit testing framework from Massive Interactive that utilises haxe metadata markup for test cases and includes tools for generating, compiling and running test cases from the command line.</description>
-    <version name="0.9.4.2">Fixed issue #35 - TestMain template uses incorrect coverage package</version>
+    <version name="0.9.5.0">Added cpp support (beta - hxcpp 2.09 only). See CHANGES.txt for full change list</version>
     <depends name="hamcrest"/>
     <depends name="mlib"/>
     <depends name="mcover"/>

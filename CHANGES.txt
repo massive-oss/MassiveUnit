@@ -1,4 +1,12 @@
-v0.4.2 - 23.07.12
+v0.9.5.0 - 30.07.12
+- new : added cpp support (beta - hxcpp 2.09 only)
+- all : updated internals of test/run/report commands
+- all : removed optional params from ICoverageTestResultClient due to incompatibility with hxcpp209
+- all : updated examples to include cpp target
+- neko : updated references to use Sys rather than neko.Sys
+- all : run command only copies compiled target files from bin directory to test-runner (ignores other directories and files)
+
+v0.9.4.2 - 23.07.12
 - all: Fixed Issue #35 - TestMain template uses incorrect coverage package
 
 v0.9.4.1 - 14.07.12

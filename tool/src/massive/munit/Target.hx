@@ -9,10 +9,12 @@ class Target
 	public var file:File;
 	public var main:File;
 	public var flags:Hash<String>;
-	
+	public var debug:Bool;
+
 	public function new():Void
 	{
 		hxml = "";
+		debug = false;
 		flags = new Hash();
 	}
 	
@@ -41,4 +43,5 @@ enum TargetType
 	as3;
 	js;
 	neko;
+	cpp;
 }

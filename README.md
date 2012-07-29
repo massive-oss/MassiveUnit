@@ -13,7 +13,9 @@ Features
 ### Cross Platform
 
 MassiveUnit has been designed for cross platform haXe development.
-It currently supports swf8, swf9, js and neko, and the tool chain works on PC and OSX
+It currently supports js, swf8, swf9, neko and cpp (beta - see note below), and the tool chain works on PC and OSX
+
+> Note: Initial cpp support has limited support for hxcpp 2.09, not tested against NME.
 
 ### Test Metadata
 
@@ -61,6 +63,16 @@ Then just use haxelib to download the latest version
 To check that it is all installed and to view the help run:
 
 	haxelib run munit
+
+
+New since 0.9.5.x
+--------------------
+
+### CPP Target
+
+MUnit now compiles/runs cpp targets
+
+	haxelib run munit test -cpp
 
 
 New since 0.9.4.x

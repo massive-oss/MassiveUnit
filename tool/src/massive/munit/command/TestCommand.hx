@@ -35,14 +35,11 @@ import massive.neko.io.FileSys;
 import massive.neko.util.PathUtil;
 import massive.munit.Config;
 import massive.munit.Target;
+
 import neko.Lib;
 
-class TestCommand extends MUnitCommand
+class TestCommand extends MUnitTargetCommandBase
 {
-
-	var hxml:File;
-	var targets:Array<Target>;
-	var targetTypes:Array<TargetType>;
 	var testsAborted:Bool;
 	var includeCoverage:Bool; 
 
@@ -53,64 +50,18 @@ class TestCommand extends MUnitCommand
 
 	override public function initialise():Void
 	{
-		targetTypes = new Array();
-		
-		if(console.getOption("swf") == "true")
-		{
-			targetTypes.push(TargetType.as2);
-			targetTypes.push(TargetType.as3);
-		}
-
-		if(console.getOption("as2") == "true")
-			targetTypes.push(TargetType.as2);
-		if(console.getOption("as3") == "true") 
-			targetTypes.push(TargetType.as3);
-		if(console.getOption("js") == "true") 
-			targetTypes.push(TargetType.js);
-		if(console.getOption("neko") == "true") 
-			targetTypes.push(TargetType.neko);
-		
-		if(targetTypes.length == 0)
-		{
-			targetTypes = config.targetTypes.concat([]);
-		}
-
-		//hxml
-		var hxmlPath =  console.getNextArg();
-
-		if(hxmlPath == null)
-		{
-			hxml = config.hxml;
-			
-			if(hxml == null)
-			{
-				error("Default hxml file path is not set. Please run munit config.");
-			}
-			if(!hxml.exists)
-			{
-				error("Default hxml file path does not exist. Please run munit config.");
-			}
-		}
-		else
-		{
-			hxml = File.create(hxmlPath, console.dir);
-
-			if(!hxml.exists)
-			{
-				error("Cannot locate hxml file: " + hxmlPath);
-			}
-		}
+		initialiseTargets(true);
 
 		if (invalidHxmlFormat())
 		{
 			testsAborted = true;
 			return;
 		}
-		
+
 		//prevent generation from occuring
 		var noGen:String  = console.getOption("-nogen");
 		
-		if(noGen != "true")
+		if (noGen != "true")
 		{
 			addPreRequisite(GenerateCommand);
 		}
@@ -118,7 +69,7 @@ class TestCommand extends MUnitCommand
 		//prevent generation from occuring
 		var noRun:String  = console.getOption("-norun");
 		
-		if(noRun != "true")
+		if (noRun != "true")
 		{
 			addPostRequisite(RunCommand);
 		}
@@ -139,14 +90,14 @@ class TestCommand extends MUnitCommand
 	// This ensures everything is in place
 	function invalidHxmlFormat():Bool
 	{
-		var contents:String = hxml.readString();		
+		var contents:String = config.hxml.readString();		
 		var lines:Array<String> = contents.split("\n");
 		var invalid = false;
 		for (line in lines)
 		{
 			if (line.indexOf("main_test.") != -1)
 			{
-				Lib.println("Error: The naming convention main_test.<type> is deprecated. Please update your test.hxml file to generate the file(s) 'as2_test.swf', 'as3_test.swf', 'js_test.js', 'neko_test.n' respectively. [Cause: " + line + "]");
+				Lib.println("Error: The naming convention main_test.<type> is deprecated. Please update your test.hxml file to generate the file(s) 'as2_test.swf', 'as3_test.swf', 'js_test.js', 'neko_test.n', 'neko_cpp' respectively. [Cause: " + line + "]");
 				invalid = true;
 			}
 		}
@@ -156,7 +107,7 @@ class TestCommand extends MUnitCommand
 	//In v0.9.5.0 we added classpaths to .munit file to support mcover code coverage
 	function missingClassPaths():Bool
 	{
-		if(includeCoverage && (config.classPaths == null || config.classPaths.length == 0))
+		if (includeCoverage && (config.classPaths == null || config.classPaths.length == 0))
 		{
 			error("This command requires an update to your munit project settings. Please re-run 'munit config' to set target class paths (i.e. 'src')");
 			return true;
@@ -168,117 +119,21 @@ class TestCommand extends MUnitCommand
 	{
 		if (testsAborted)
 			return;
-		
-		var contents:String = hxml.readString();		
-		var lines:Array<String> = contents.split("\n");
-		var target:Target = new Target();
-		
-		var tempTargets:Array<Target> = [];
-		
-		for (line in lines)
-		{
-			line = StringTools.trim(line);
 
-			if (line == "" || line.indexOf("#") == 0) continue;
-			
-			if (line.indexOf("--next") == 0)
-			{
-				tempTargets.push(target);
-				target = new Target();
-				continue;
-			}
-			
-			var mainReg:EReg = ~/^-main (.*)/;	
-			if (mainReg.match(line))
-			{
-				target.main = config.src.resolveFile(mainReg.matched(1) + ".hx");
-			}
-
-			var flagReg:EReg = ~/^-D (.*)/;
-			if (flagReg.match(line))
-			{
-				var flag = flagReg.matched(1).split(" ");
-				target.flags.set(flag.shift(), flag.join(" "));
-			}
-
-			target.hxml += line + "\n";
-			
-			if (target.file == null)
-			{
-				for (type in targetTypes)
-				{
-					var s:String = null;
-					switch (type)
-					{
-						case TargetType.as2: s = "swf";
-						case TargetType.as3: s = "swf";
-						default: s = Std.string(type);
-					}
-					var targetMatcher = new EReg("^-" + s + "\\s+", "");
-					if (targetMatcher.match(line))
-					{
-						target.file = File.create(line.substr(s.length + 2), File.current);
-						break;
-					}
-				}
-			}
-
-			if (target.type == null)
-			{
-				for(type in targetTypes)
-				{
-					var s:String = null;
-					switch(type)
-					{
-						case TargetType.as2: s = "swf-version 8";
-						case TargetType.as3: s = "swf-version [^8]";
-						default: s = Std.string(type);
-					}	
-					var targetMatcher = new EReg("^-" + s, "");
-					if(targetMatcher.match(line))
-					{
-						target.type = type;
-						break;
-					}
-				}
-			}
-		}
-
-		tempTargets.push(target);
-
-		targets = [];
-
-
-		var tempTargetTypes = [];
-
-		for(target in tempTargets)
-		{
-			for(type in targetTypes)
-			{
-				if(target.type == type)
-				{
-					targets.push(target);
-					tempTargetTypes.push(type);
-					break;
-				}
-			}
-		}
-
-		targetTypes = config.targetTypes = tempTargetTypes;
-
+		var targets = config.targets;
 
 		for(target in targets)
 		{
-			if(target.type == null && targetTypes.length < config.targetTypes.length ) 
+			if (target.type == null && targetTypes.length < config.targetTypes.length ) 
 				continue;
 
-			if(includeCoverage && target.main != null)
+			if (includeCoverage && target.main != null)
 			{
 				var clsPaths:Array<String> = [];
 
 				for(path in config.classPaths)
 				{
-					if(target.flags.exists("MCOVER_DEBUG") && Sys.systemName() != "Windows")
+					if (target.flags.exists("MCOVER_DEBUG") && Sys.systemName() != "Windows")
 					{
 						clsPaths.push(path.toString());
 					}
@@ -290,7 +145,7 @@ class TestCommand extends MUnitCommand
 				warnIfMissingMCoverConditionalFlagInTestMain(target);
 				
 				//ingore lib if testing MCOVER (causes compiler errors from dup src path)
-				if(!target.flags.exists("MCOVER_DEBUG"))
+				if (!target.flags.exists("MCOVER_DEBUG"))
 				{
 					target.hxml += "-lib mcover\n";	
 				}
@@ -300,12 +155,12 @@ class TestCommand extends MUnitCommand
 				target.hxml += "--macro m.cover.MCover.coverage([''],['" + clsPaths.join("','") + "'])\n";	
 			}
 			
-			if(target.type == TargetType.as2 || target.type == TargetType.as3)
+			if (target.type == TargetType.as2 || target.type == TargetType.as3)
 			{
 				target.hxml = updateSwfHeader(target.hxml);
 			}
 			
-			if(console.getOption("debug") == "true")
+			if (console.getOption("debug") == "true")
 			{
 				target.hxml += "-D testDebug\n";
 				target.hxml += "-D debug\n";				
@@ -313,13 +168,21 @@ class TestCommand extends MUnitCommand
 
 			Log.debug("Compile " + target.type + " -- " + target);
 
-			if(HaxeWrapper.compile(target.hxml) > 0)
+			if (HaxeWrapper.compile(target.hxml) > 0)
 			{
 				error("Error compiling hxml for " + target.type + "\n" + target);
 			}	
 
 			var tmp = config.bin.resolveFile(".temp/" + target.type + ".txt");
-			tmp.writeString(target.file, false);
+			if (target.type == cpp)
+			{
+				var executableFile = target.main.name + (target.debug ? "-debug" : "");
+				tmp.writeString(target.file.resolveFile(executableFile), false);
+			}
+			else
+			{
+				tmp.writeString(target.file, false);
+			}
 		}
 		
 		Log.debug("All targets compiled successfully");
@@ -333,7 +196,7 @@ class TestCommand extends MUnitCommand
 		{
 			var headerMatcher = new EReg("^-swf-header", "");
 			//200:300:40:FF0000
-			if(headerMatcher.match(line))
+			if (headerMatcher.match(line))
 			{
 				line = "-swf-header 800:600:60:FFFFFF";
 			}
@@ -348,10 +211,9 @@ class TestCommand extends MUnitCommand
 		var reg:EReg = ~/#if (!?)MCOVER/;
 		var str = target.main.readString();
 
-		if(str == null || !reg.match(str))
+		if (str == null || !reg.match(str))
 		{
 			Lib.println("Warning: Compiling " + target.type + " for MCover may not execute coverage");
-
 			Lib.println("   " + target.main.name + ".hx does not contain MCOVER conditional flag expected for code coverage.\n   Either delete " + target.main.name + " and re-run 'munit gen' or 'munit test' to regenerate class, or refer to online docs");
 		}
 	}

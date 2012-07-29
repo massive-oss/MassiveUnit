@@ -185,10 +185,10 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 	}
 
 	////// FINAL REPORTS //////
-	public function reportFinalCoverage(percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
-		?classBreakdown:String=null,
-		?packageBreakdown:String=null,
-		?executionFrequency:String=null
+	public function reportFinalCoverage(percent:Float, missingCoverageResults:Array<CoverageResult>, summary:String,
+		classBreakdown:String,
+		packageBreakdown:String,
+		executionFrequency:String
 	):Void
 	{
 		totalCoveragePercent = percent;
