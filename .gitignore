@@ -37,3 +37,4 @@ core/.mcover/
 tool/.mcover/
 
 examples/01_simple/.mcover/
+teamcity-info.xml
