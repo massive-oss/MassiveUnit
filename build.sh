@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 #update allClasses imports
 haxelib run mlib allClasses
