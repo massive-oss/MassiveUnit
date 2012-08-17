@@ -92,6 +92,9 @@ class PrintClient extends PrintClientBase
 				initJS();
 			#end
 		#end
+
+		originalTrace = haxe.Log.trace;
+		haxe.Log.trace = customTrace;
 	}
 
 	#if flash
@@ -147,6 +150,13 @@ class PrintClient extends PrintClientBase
 			external.setResult(result);
 			external.setResultBackground(result);
 		#end
+	}
+
+
+
+	function customTrace(value, ?info:haxe.PosInfos)
+	{
+		addTrace(value, info);
 	}
 	
 	////// PRINT APIS //////
