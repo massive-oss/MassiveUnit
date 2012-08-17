@@ -1,4 +1,9 @@
-v0.4.2 - 23.07.12
+v0.9.4.3 - 17.08.12
+- all: Fixed issue #36 - trace statements no longer appear in print client output
+- removed haxe.trace redirect from AbstractTestResultClient, now only in concrete instances
+- traces now logged to static array to prevent dropped traces when print clients compose other print clients
+
+v0.9.4.2 - 23.07.12
 - all: Fixed Issue #35 - TestMain template uses incorrect coverage package
 
 v0.9.4.1 - 14.07.12
