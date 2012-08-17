@@ -95,7 +95,7 @@ class PrintClientBase extends AbstractTestResultClient
 	{
 		super.finalizeTestClass();
 
-		for(item in traces)
+		for(item in getTraces())
 		{
 			printLine("TRACE: " + item, 1);
 		}
