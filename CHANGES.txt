@@ -5,6 +5,7 @@ v0.9.5.0 - 30.07.12
 - all : updated examples to include cpp target
 - neko : updated references to use Sys rather than neko.Sys
 - all : run command only copies compiled target files from bin directory to test-runner (ignores other directories and files)
+- cpp: compile coverage and non-coverage versions of cpp target to different directories (appends '-coverage' to cpp output dir) to prevent full recompile when switching between the two
 
 v0.9.4.4
 - all: merged pull request #38 from tynril - adding custom coverage include/ignored packages to munit config 
