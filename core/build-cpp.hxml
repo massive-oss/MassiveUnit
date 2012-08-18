@@ -1,0 +1,7 @@
+# CPP
+-main massive.munit.AllClasses
+-cp src
+-lib hamcrest
+-lib mlib
+-D HXCPP_M64
+-cpp ../bin/munit_all_cpp
