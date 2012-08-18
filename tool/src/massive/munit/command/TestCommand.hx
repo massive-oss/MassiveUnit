@@ -41,7 +41,7 @@ import neko.Lib;
 class TestCommand extends MUnitTargetCommandBase
 {
 	var testsAborted:Bool;
-	var includeCoverage:Bool; 
+	
 
 	public function new():Void
 	{
@@ -50,6 +50,8 @@ class TestCommand extends MUnitTargetCommandBase
 
 	override public function initialise():Void
 	{
+		super.initialise();
+
 		initialiseTargets(true);
 
 		if (invalidHxmlFormat())
@@ -75,9 +77,6 @@ class TestCommand extends MUnitTargetCommandBase
 		}
 
 		//append code coverage
-		var coverage:String  = console.getOption("-coverage");
-		
-		includeCoverage = coverage == "true";
 
 		if (missingClassPaths())
 		{

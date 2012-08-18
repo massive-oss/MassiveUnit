@@ -11,6 +11,8 @@ class MUnitTargetCommandBase extends MUnitCommand
 	var targets:Array<Target>;
 	var targetTypes:Array<TargetType>;
 
+	var includeCoverage:Bool; 
+
 	public function new()
 	{
 		super();
@@ -19,6 +21,10 @@ class MUnitTargetCommandBase extends MUnitCommand
 	override public function initialise():Void
 	{
 		super.initialise();
+
+			//append code coverage
+		var coverage:String  = console.getOption("-coverage");
+		includeCoverage = coverage == "true";
 	}
 
 
@@ -198,27 +204,33 @@ class MUnitTargetCommandBase extends MUnitCommand
 				target.debug = true;
 			}
 
-			target.hxml += line + "\n";
-			
-			if (target.file == null)
+			if(target.file == null)
 			{
-				for (type in config.targetTypes)
+				var fileStr:String = getOutputFileFromLine(line);
+
+				if(fileStr != null)
 				{
-					var s:String = null;
-					switch (type)
+					target.file = File.create(fileStr, File.current);
+
+					if(StringTools.endsWith(fileStr, "-coverage"))
 					{
-						case TargetType.as2: s = "swf";
-						case TargetType.as3: s = "swf";
-						default: s = Std.string(type);
-					}
-					var targetMatcher = new EReg("^-" + s + "\\s+", "");
-					if (targetMatcher.match(line))
+						target.hxml += line + "-coverage\n";
+					} 
+					else
 					{
-						target.file = File.create(line.substr(s.length + 2), File.current);
-						break;
+						target.hxml += line + "\n";
 					}
 				}
+				else
+				{
+					target.hxml += line + "\n";
+				}
 			}
+			else
+			{
+				target.hxml += line + "\n";
+			}
+
 
 			if (target.type == null)
 			{
@@ -245,4 +257,31 @@ class MUnitTargetCommandBase extends MUnitCommand
 
 		return targets;
 	}
+
+	function getOutputFileFromLine(line:String):String
+	{
+		for (type in config.targetTypes)
+		{
+			var s:String = null;
+			switch (type)
+			{
+				case TargetType.as2: s = "swf";
+				case TargetType.as3: s = "swf";
+				default: s = Std.string(type);
+			}
+			var targetMatcher = new EReg("^-" + s + "\\s+", "");
+			if (targetMatcher.match(line))
+			{
+				var fileStr = line.substr(s.length + 2);
+
+				if(includeCoverage && s == "cpp")
+				{
+					fileStr += "-coverage";
+				}
+				return fileStr;
+			}
+		}
+		return null;
+	}
+
 }
