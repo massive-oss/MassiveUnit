@@ -192,8 +192,8 @@ class ConfigCommand extends MUnitCommand
 		resources = convertToDirectory(resourcesArg, null, "resources");
 		templates = convertToDirectory(templatesArg, null, "templates");
 
-		coveragePackages = convertToStringList(coveragePackagesArg, null, "coveragePackages");
-		coverageIgnoredClasses = convertToStringList(coverageIgnoredClassesArg, null, "coverageIgnoredClasses");
+		coveragePackages = coveragePackagesArg != null ?  coveragePackagesArg.split(",") : null;
+		coverageIgnoredClasses = coverageIgnoredClassesArg != null ?  coverageIgnoredClassesArg.split(",") : null;
 	}
 
 
@@ -256,13 +256,13 @@ class ConfigCommand extends MUnitCommand
 		if(config.coveragePackages == null)
 		{
 			var arg = console.getNextArg("coverage packages (optional, defaults to '" + null + "')");
-			coveragePackages = convertToStringList(arg, null, "coveragePackages");
+			coveragePackages = arg != null ?  arg.split(",") : null;
 		}
 
 		if(config.coverageIgnoredClasses == null)
 		{
 			var arg = console.getNextArg("coverage ignored classes (optional, defaults to '" + null + "')");
-			coverageIgnoredClasses = convertToStringList(arg, null, "coverageIgnoredClasses");
+			coverageIgnoredClasses = arg != null ?  arg.split(",") : null;
 		}
 	}
 
@@ -384,16 +384,5 @@ class ConfigCommand extends MUnitCommand
 		}
 
 		return files;
-	}
-
-	function convertToStringList(arg:String, defaultValue:String, label:String):Array<String>
-	{
-		if(arg == null) arg = defaultValue;
-		
-		var strings = arg != null ? arg.split(",") : [];
-		
-		if(strings == null) error("invalid strings list: " + strings);
-		
-		return strings;
 	}
 }

@@ -1,3 +1,6 @@
+v0.9.4.4
+- all: merged pull request #38 from tynril - adding custom coverage include/ignored packages to munit config 
+
 v0.9.4.3 - 17.08.12
 - all: Fixed issue #36 - trace statements no longer appear in print client output
 - removed haxe.trace redirect from AbstractTestResultClient, now only in concrete instances

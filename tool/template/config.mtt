@@ -6,3 +6,5 @@ hxml=::hxml::
 classPaths=::classPaths::
 resources=::resources::
 templates=::templates::
+coveragePackages=::coveragePackages::
+coverageIgnoredClasses=::coverageIgnoredClasses::
