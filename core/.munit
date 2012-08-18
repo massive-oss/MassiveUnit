@@ -1,4 +1,4 @@
-version=0.9.2.0
+version=0.9.4.3
 src=test
 bin=../bin/test/core
 report=../report/core

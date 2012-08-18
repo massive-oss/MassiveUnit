@@ -29,13 +29,11 @@ bin/
 /report/
 /examples/**/report/
 .svn
-example/.mcover-debug
-tool/.mcover-debug
-core/.mcover-debug
 munit.sublime-workspace
-core/.mcover/
-tool/.mcover/
 
-examples/01_simple/.mcover/
 teamcity-info.xml
+.mcover/*
+/.DS_Store
+
+
 .mcover

@@ -59,6 +59,9 @@ class ConfigCommand extends MUnitCommand
 	var resources:File;
 	var templates:File;
 
+	var coveragePackages:Array<String>;
+	var coverageIgnoredClasses:Array<String>;
+
 	public function new():Void
 	{
 		super();
@@ -112,7 +115,7 @@ class ConfigCommand extends MUnitCommand
 
 		if(!config.exists)
 		{
-			config.createDefault(src, bin, report, hxml,classPaths,resources,templates);
+			config.createDefault(src, bin, report, hxml,classPaths,resources,templates,coveragePackages,coverageIgnoredClasses);
 		}
 		else
 		{
@@ -123,6 +126,8 @@ class ConfigCommand extends MUnitCommand
 			if(hxml != null) config.updateHxml(hxml);
 			if(resources != null) config.updateResources(resources);
 			if(templates != null) config.updateTemplates(templates);
+			if(coveragePackages != null) config.updateCoveragePackages(coveragePackages);
+			if(coverageIgnoredClasses != null) config.updateCoverageIgnoredClasses(coverageIgnoredClasses);
 		}
 	}
 
@@ -159,6 +164,8 @@ class ConfigCommand extends MUnitCommand
 		if(console.getOption("classPaths") != null) return true;
 		if(console.getOption("resources") != null) return true;
 		if(console.getOption("templates") != null) return true;
+		if(console.getOption("coveragePackages") != null) return true;
+		if(console.getOption("coverageIgnoredClasses") != null) return true;
 		return false;
 	}
 	
@@ -172,7 +179,10 @@ class ConfigCommand extends MUnitCommand
 
 		var resourcesArg = console.getOption("resources");
 		var templatesArg = console.getOption("templates");
-		
+
+		var coveragePackagesArg = console.getOption("coveragePackages");
+		var coverageIgnoredClassesArg = console.getOption("coverageIgnoredClasses");
+
 		src = convertToDirectory(srcArg, DEFAULT_SRC, "src");
 		bin = convertToDirectory(binArg, DEFAULT_BIN, "build");
 		report = convertToDirectory(reportArg, DEFAULT_REPORT, "report");
@@ -182,6 +192,8 @@ class ConfigCommand extends MUnitCommand
 		resources = convertToDirectory(resourcesArg, null, "resources");
 		templates = convertToDirectory(templatesArg, null, "templates");
 
+		coveragePackages = coveragePackagesArg != null ?  coveragePackagesArg.split(",") : null;
+		coverageIgnoredClasses = coverageIgnoredClassesArg != null ?  coverageIgnoredClassesArg.split(",") : null;
 	}
 
 
@@ -241,6 +253,17 @@ class ConfigCommand extends MUnitCommand
 			templates = convertToDirectory(arg, null, "templates");
 		}
 
+		if(config.coveragePackages == null)
+		{
+			var arg = console.getNextArg("coverage packages (optional, defaults to '" + null + "')");
+			coveragePackages = arg != null ?  arg.split(",") : null;
+		}
+
+		if(config.coverageIgnoredClasses == null)
+		{
+			var arg = console.getNextArg("coverage ignored classes (optional, defaults to '" + null + "')");
+			coverageIgnoredClasses = arg != null ?  arg.split(",") : null;
+		}
 	}
 
 	function setDefaultValuesForMissingProperties()
@@ -288,6 +311,8 @@ class ConfigCommand extends MUnitCommand
 		classPaths = tempConfig.classPaths.concat([]);
 		resources = tempConfig.resources;
 		templates = tempConfig.templates;
+		coveragePackages = tempConfig.coveragePackages;
+		coverageIgnoredClasses = tempConfig.coverageIgnoredClasses;
 	}
 
 

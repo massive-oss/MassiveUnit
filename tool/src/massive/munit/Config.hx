@@ -55,6 +55,8 @@ class Config
 
 	public var defaultTargetTypes:Array<TargetType>;
 
+	public var coveragePackages:Array<String>;
+	public var coverageIgnoredClasses:Array<String>;
 	
 	public function new(dir:File, currentVersion:String):Void
 	{
@@ -116,6 +118,8 @@ class Config
 						classPaths.push(File.create(path, dir, true));
 					}
 				}
+				case "coveragePackages": coveragePackages = value != "null" ? value.split(",") : null;
+				case "coverageIgnoredClasses": coverageIgnoredClasses = value != "null" ? value.split(",") : null;
 			}
 		}
 	}
@@ -134,10 +138,12 @@ class Config
 
 		resources = null;
 		templates = null;
-		
+
+		coveragePackages = null;
+		coverageIgnoredClasses = null;
 	}
 	
-	public function createDefault(?src:File=null, ?bin:File=null, ?report:File=null, ?hxml:File=null, ?classPaths:Array<File>=null, ?resources:File=null, ?templates:File=null):Void
+	public function createDefault(?src:File=null, ?bin:File=null, ?report:File=null, ?hxml:File=null, ?classPaths:Array<File>=null, ?resources:File=null, ?templates:File=null, ?coveragePackages:Array<String>=null, ?coverageIgnoredClasses:Array<String>=null):Void
 	{
 		this.src = src != null ? src : dir.resolveDirectory("test", true);
 		this.bin = bin != null ? bin : dir.resolveDirectory("bin", true);
@@ -147,6 +153,8 @@ class Config
 		this.resources = resources != null ? resources : null;
 		this.templates = templates != null ? templates : null;
 		this.configVersion = currentVersion;
+		this.coveragePackages = coveragePackages != null ? coveragePackages : null;
+		this.coverageIgnoredClasses = coverageIgnoredClasses != null ? coverageIgnoredClasses : null;
 
 		save();
 	}
@@ -212,8 +220,18 @@ class Config
 		save();
 	}
 
+	public function updateCoveragePackages(coveragePackages:Array<String>):Void
+	{
+		this.coveragePackages = coveragePackages;
+		save();
+	}
 
-	
+	public function updateCoverageIgnoredClasses(coverageIgnoredClasses:Array<String>):Void
+	{
+		this.coverageIgnoredClasses = coverageIgnoredClasses;
+		save();
+	}
+
 	public function toString():String
 	{
 		var str:String = "";
@@ -257,6 +275,14 @@ class Config
 		{
 			str += "templates=" + dir.getRelativePath(templates) + "\n";	
 		}
+		if(coveragePackages != null)
+		{
+			str += "coveragePackages=" + coveragePackages.join(",") + "\n";
+		}
+		if(coverageIgnoredClasses != null)
+		{
+			str += "coverageIgnoredClasses=" + coverageIgnoredClasses.join(",") + "\n";
+		}
 		
 		return str;
 	}
@@ -276,6 +302,8 @@ class Config
 	classPaths=::classPaths::
 	resources=::resources::
 	templates=::templates::
+	coveragePackages=::coveragePackages::
+	coverageIgnoredClasses=::coverageIgnoredClasses::
 	*/
 }
 

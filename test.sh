@@ -1,3 +1,6 @@
+#!/bin/bash
+set -e
+
 #test core library
 cd core
 haxelib run munit test -neko -coverage

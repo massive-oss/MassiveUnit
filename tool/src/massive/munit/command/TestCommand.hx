@@ -152,7 +152,9 @@ class TestCommand extends MUnitTargetCommandBase
 				
 				target.hxml += "-D MCOVER\n";
 
-				target.hxml += "--macro m.cover.MCover.coverage([''],['" + clsPaths.join("','") + "'])\n";	
+				var coverPackages = config.coveragePackages != null ? config.coveragePackages.join("','") : "";
+				var coverIgnoredClasses = config.coverageIgnoredClasses != null ? config.coverageIgnoredClasses.join("','") : "";
+				target.hxml += "--macro m.cover.MCover.coverage(['" + coverPackages + "'],['" + clsPaths.join("','") + "'],['" + coverIgnoredClasses + "'])\n";	
 			}
 			
 			if (target.type == TargetType.as2 || target.type == TargetType.as3)

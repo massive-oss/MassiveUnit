@@ -65,6 +65,10 @@ class RichPrintClient extends PrintClientBase
 	override function init():Void
 	{
 		super.init();
+
+		originalTrace = haxe.Log.trace;
+		haxe.Log.trace = customTrace;
+
 		external = new ExternalPrintClientJS();
 	}
 
@@ -277,9 +281,11 @@ class RichPrintClient extends PrintClientBase
 		external.setResult(result);
 	}
 
-	override function customTrace(value, ?info:haxe.PosInfos)
+	function customTrace(value, ?info:haxe.PosInfos)
 	{
-		super.customTrace(value, info);
+		addTrace(value, info);
+
+		var traces = getTraces();
 		var t = traces[traces.length-1];
 		external.trace(t);
 	}
