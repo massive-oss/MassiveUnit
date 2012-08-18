@@ -96,7 +96,7 @@ class TestCommand extends MUnitTargetCommandBase
 		{
 			if (line.indexOf("main_test.") != -1)
 			{
-				Lib.println("Error: The naming convention main_test.<type> is deprecated. Please update your test.hxml file to generate the file(s) 'as2_test.swf', 'as3_test.swf', 'js_test.js', 'neko_test.n', 'neko_cpp' respectively. [Cause: " + line + "]");
+				Lib.println("Error: The naming convention main_test.<type> is deprecated. Please update your test.hxml file to generate the file(s) 'as2_test.swf', 'as3_test.swf', 'js_test.js', 'neko_test.n', 'cpp_test' respectively. [Cause: " + line + "]");
 				invalid = true;
 			}
 		}
@@ -178,6 +178,9 @@ class TestCommand extends MUnitTargetCommandBase
 			if (target.type == cpp)
 			{
 				var executableFile = target.main.name + (target.debug ? "-debug" : "");
+				if (FileSys.isWindows)
+					executableFile += ".exe";
+					
 				tmp.writeString(target.file.resolveFile(executableFile), false);
 			}
 			else
