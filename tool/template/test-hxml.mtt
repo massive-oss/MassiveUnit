@@ -1,4 +1,4 @@
-# Flash 9+
+## Flash 9+
 -main TestMain
 -lib munit
 -lib hamcrest
@@ -7,8 +7,10 @@
 -cp ::src::
 -swf-version 9
 -swf ::bin::/as3_test.swf
+
 --next
-#Flash 8
+
+## Flash 8
 -main TestMain
 -lib munit
 -lib hamcrest
@@ -17,8 +19,10 @@
 -cp ::src::
 -swf-version 8
 -swf ::bin::/as2_test.swf
+
 --next
-# JavaScript
+
+## JavaScript
 -main TestMain
 -lib munit
 -lib hamcrest
@@ -29,7 +33,7 @@
 
 --next
 
-# Neko
+## Neko
 -main TestMain
 -lib munit
 -lib hamcrest
@@ -37,3 +41,17 @@
 ::end::
 -cp ::src::
 -neko ::bin::/neko_test.n
+
+--next
+
+## CPP
+-main TestMain
+-lib munit
+-lib hamcrest
+::foreach classPaths::-cp ::__current__::
+::end::
+-cp ::src::
+#-D HXCPP_M64
+-cpp ::bin::/cpp_test
+
+
