@@ -42,7 +42,7 @@ class Config
 	public var bin(default, null):File;
 	public var report(default, null):File;
 	public var src(default, null):File;
-	public var hxml(default, null):File;
+	public var hxml:File;
 
 	public var resources(default, null):File;
 	public var templates(default, null):File;
@@ -53,6 +53,8 @@ class Config
 	
 	public var targetTypes:Array<TargetType>;
 
+	public var defaultTargetTypes:Array<TargetType>;
+
 	public var coveragePackages:Array<String>;
 	public var coverageIgnoredClasses:Array<String>;
 	
@@ -61,8 +63,10 @@ class Config
 		this.dir = dir;
 		this.currentVersion = currentVersion;
 		
-		targetTypes = [TargetType.as2, TargetType.as3, TargetType.js, TargetType.neko];
-		
+		defaultTargetTypes = [TargetType.as2, TargetType.as3, TargetType.js, TargetType.neko, TargetType.cpp];
+		targetTypes = defaultTargetTypes;
+		targets = [];
+
 		configFile = dir.resolveFile(".munit");
 		
 		exists = configFile.exists;

@@ -36,6 +36,16 @@ import massive.munit.util.Timer;
 
 import massive.munit.client.PrintClientBase;
 
+#if haxe208
+	#if neko
+	import neko.Lib;
+	#elseif cpp
+	import cpp.Lib;
+	#elseif php
+	import php.Lib;
+	#end
+#end
+
 class RichPrintClient extends PrintClientBase
 {
 	/**
@@ -183,7 +193,7 @@ class RichPrintClient extends PrintClientBase
 	}
 	
 	////// FINAL REPORTS //////
-	override public function reportFinalCoverage(percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
+	override public function reportFinalCoverage(?percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
 		?classBreakdown:String=null,
 		?packageBreakdown:String=null,
 		?executionFrequency:String=null
@@ -289,12 +299,12 @@ class RichPrintClient extends PrintClientBase
 		#if (js || flash)
 			//external.queue(ExternalPrintClientJS.PRINT, value);
 			return;
-		#elseif neko
-			neko.Lib.print(value);
-		#elseif cpp
-			cpp.Lib.print(value);
-		#elseif php
-			php.Lib.print(value);
+		#elseif (neko || cpp || php)
+			#if (haxe_208 && !haxe_209)
+			Lib.print(value);
+			#else
+			Sys.print(value);
+			#end
 		#end
 	}
 

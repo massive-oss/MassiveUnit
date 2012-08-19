@@ -39,9 +39,20 @@ import massive.munit.async.MissingAsyncDelegateException;
 import massive.munit.util.Timer;
 import massive.munit.ITestResultClient;
 
+#if (haxe_208 && !haxe_209)
+    #if neko
+        import neko.Sys;
+    #elseif cpp
+        import cpp.Sys;
+    #else if php
+        import php.Sys;
+    #end
+#end
+
 #if neko
-import neko.Sys;
 import neko.vm.Thread;
+#elseif cpp
+import cpp.vm.Thread;
 #end
 
 /**
@@ -202,7 +213,7 @@ class TestRunner implements IAsyncDelegateObserver
             testSuites.push(Type.createInstance(suiteType, new Array()));
         }
 
-        #if neko
+        #if (neko||cpp) 
             var self = this;
             var runThread:Thread = Thread.create(function()
             {

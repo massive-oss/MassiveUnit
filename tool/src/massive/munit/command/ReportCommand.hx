@@ -10,9 +10,8 @@ import massive.haxe.log.Log;
 /**
 The ReportCommand converts raw report data into a specific format for a 3rd party tool or CI platform
 */
-class ReportCommand extends MUnitCommand
+class ReportCommand extends MUnitTargetCommandBase
 {
-	var targetTypes:Array<TargetType>;
 	var reportType:ReportType;
 	var minCoverage:Int;
 
@@ -43,32 +42,15 @@ class ReportCommand extends MUnitCommand
 
 	function getTargetTypes()
 	{
-		targetTypes = new Array();
-
 		//first get from console
-		if (console.getOption("swf") == "true")
-		{
-			targetTypes.push(TargetType.as3);
-			targetTypes.push(TargetType.as2);
-		}
-		else
-		{
-			if (console.getOption("as2") == "true")
-				targetTypes.push(TargetType.as2);
-			if (console.getOption("as3") == "true")
-				targetTypes.push(TargetType.as3);
-		}
-		if (console.getOption("js") == "true")
-			targetTypes.push(TargetType.js);
-		if (console.getOption("neko") == "true")
-			targetTypes.push(TargetType.neko);
+		targetTypes = getTargetsFromConsole();
 
 		if (targetTypes.length == 0)
 		{
 			//look up generated results summary
 			var file =  reportDir.resolveFile("test/results.txt");
 
-			if(file.exists)
+			if (file.exists)
 			{
 				var contents = file.readString();
 				var lines = contents.split("\n");
@@ -77,7 +59,7 @@ class ReportCommand extends MUnitCommand
 				for(line in lines)
 				{ 
 					line = StringTools.trim(line);
-					if(reg.match(line))
+					if (reg.match(line))
 					{
 						switch(reg.matched(1))
 						{
@@ -85,6 +67,7 @@ class ReportCommand extends MUnitCommand
 							case "as2": targetTypes.push(TargetType.as2);
 							case "as3": targetTypes.push(TargetType.as3);
 							case "neko": targetTypes.push(TargetType.neko);
+							case "cpp": targetTypes.push(TargetType.cpp);
 						}
 					}
 				}
@@ -145,7 +128,7 @@ class ReportCommand extends MUnitCommand
 	{
 		var coverage:String = console.getOption("coverage");
 
-		if(coverage != null)
+		if (coverage != null)
 		{
 			minCoverage = Std.parseInt(coverage);
 			Log.debug("minCoverage " + coverage);
@@ -169,7 +152,7 @@ class ReportCommand extends MUnitCommand
 		{
 			var file = reportDir.resolveFile("test/summary/" + Std.string(target) + "/summary.txt");
 
-			if(!file.exists)
+			if (!file.exists)
 			{
 				print("Warning: Report summary file does not exist for target (" + Std.string(target) + "): " + file);
 			}
