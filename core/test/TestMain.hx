@@ -37,6 +37,16 @@ import js.Lib;
 import js.Dom;
 #end
 
+#if (haxe_208 && !haxe_209)
+	#if neko
+		import neko.Sys;
+	#elseif cpp
+		import cpp.Sys;
+	#elseif php
+		import php.Sys
+	#end
+#end
+
 
 /**
  * Auto generated Test Application.	
@@ -79,8 +89,8 @@ class TestMain
 				flash.external.ExternalInterface.call("testResult", successful);	
 			#elseif js
 				js.Lib.eval("testResult(" + successful + ");");
-			#elseif neko
-				neko.Sys.exit(0);
+			#elseif (neko || cpp || php)
+				Sys.exit(0);
 			#end
 		}
 		// if run from outside browser can get error which we can ignore

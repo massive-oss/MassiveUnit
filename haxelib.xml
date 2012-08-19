@@ -5,8 +5,8 @@
     <tag v="unittest" />
 	<tag v="testing" />
     <tag v="massive" />
-    <description>MassiveUnit is a cross-platform Haxe unit testing framework from Massive Interactive that utilises haxe metadata markup for test cases and includes tools for generating, compiling and running test cases from the command line.</description>
-    <version name="0.9.4.4">Added pull request #38 from tynril - adding custom coverage include/ignored packages to munit config</version>
+    <description>MassiveUnit is a cross-platform Haxe unit testing framework that utilises haxe metadata markup for test cases and includes tools for generating, compiling and running test cases from the command line. Supports js, swf8, swf9, neko and c++</description>
+    <version name="0.9.5.0">Added support for c++ targets (Haxe 2.09+), Compatible with Haxe 2.10. Added project configurable mcover settings. See CHANGES.txt for full change list.</version>
     <depends name="hamcrest"/>
     <depends name="mlib"/>
     <depends name="mcover"/>

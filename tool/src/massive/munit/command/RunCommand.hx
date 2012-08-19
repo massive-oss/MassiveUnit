@@ -58,11 +58,9 @@ import massive.munit.Config;
 import massive.munit.Target;
 
 
-class RunCommand extends MUnitCommand
+class RunCommand extends MUnitTargetCommandBase
 {
 	public static inline var DEFAULT_SERVER_TIMEOUT_SEC:Int = 30;
-
-	var targets:Array<Target>;
 
 	var browser:String;
 
@@ -74,13 +72,18 @@ class RunCommand extends MUnitCommand
 	var tmpRunnerDir:File;
 	var binDir:File;
 
-	var targetTypes:Array<TargetType>;
-
 	var killBrowser:Bool;
 	var indexPage:File;
-	var nekoFile:File;
+
 	var hasBrowserTests:Bool;
+	
 	var hasNekoTests:Bool;
+	var hasCPPTests:Bool;
+
+	var nekoFile:File;
+	var cppFile:File;
+	
+	
 	var serverTimeoutTimeSec:Int;
 
 	var resultExitCode:Bool;
@@ -96,7 +99,8 @@ class RunCommand extends MUnitCommand
 
 	override public function initialise():Void
 	{
-		getTargetTypes();
+		initialiseTargets(false);
+
 		locateBinDir();
 		gatherTestRunnerFiles();
 		locateReportDir();
@@ -105,31 +109,6 @@ class RunCommand extends MUnitCommand
 		resetOutputDirectories();
 		generateTestRunnerPages();
 		checkForExitOnFail();
-	}
-
-	function getTargetTypes()
-	{
-		targetTypes = new Array();
-
-		if (console.getOption("swf") == "true")
-		{
-			targetTypes.push(TargetType.as3);
-			targetTypes.push(TargetType.as2);
-		}
-		else
-		{
-			if (console.getOption("as2") == "true")
-				targetTypes.push(TargetType.as2);
-			if (console.getOption("as3") == "true")
-				targetTypes.push(TargetType.as3);
-		}
-		if (console.getOption("js") == "true")
-			targetTypes.push(TargetType.js);
-		if (console.getOption("neko") == "true")
-			targetTypes.push(TargetType.neko);
-
-		if (targetTypes.length == 0)
-			targetTypes = config.targetTypes.concat([]);
 	}
 
 	function locateBinDir()
@@ -160,7 +139,7 @@ class RunCommand extends MUnitCommand
 
 	function gatherTestRunnerFiles()
 	{
-		targets = [];
+		var tempTargets = [];
 
 		if (!binDir.isDirectory)
 			return;
@@ -168,36 +147,41 @@ class RunCommand extends MUnitCommand
 		if (!binDir.resolveDirectory(".temp").exists)
 			return;
 
-		for (type in targetTypes)
+		for(target in targets)
 		{
+			var type = target.type;
+
 			var tmp = binDir.resolveFile(".temp/" + type + ".txt");
 
-			if(!tmp.exists)
+			if (!tmp.exists)
 			{
 				print("WARNING: Target type '" + type + "' not found in bin directory.");
 				continue;
 			}
 
-			var target = new Target();
-			target.type = type;
-
-
-			target.file = File.create(tmp.readString());
+			//update as this will be the actual executable for cpp/php targets
+			target.file = File.current.resolveFile(tmp.readString());
 			
-			if(!target.file.exists)
+			if (!target.file.exists)
 			{
 				print("WARNING: File for target type '" + target.type + "' not found: " + target.toString());
 			}
 			else
 			{
-				targets.push(target);
+				tempTargets.push(target);
 				if (type == TargetType.neko)
 				{
 					hasNekoTests = true;
 				}	
+				if (type == TargetType.cpp)
+				{
+					hasCPPTests = true;
+				}	
 			}
 			
 		}
+
+		targets = config.targets = tempTargets;
 
 		Log.debug(targets.length + " targets");
 
@@ -277,25 +261,28 @@ class RunCommand extends MUnitCommand
 		var pageNames = [];
 		for (target in targets)
 		{
-
 			var file = target.file;
 
-			if (target.type != TargetType.neko)
+			switch(target.type)
 			{
-				var pageName = Std.string(target.type);
-				var templateName = file.extension + "_runner-html";
-				var pageContent = getTemplateContent(templateName, {runnerName:file.fileName});
-				
-				var runnerPage = reportRunnerDir.resolvePath(pageName + ".html");
+				case neko:
+					hasNekoTests = true;
+					nekoFile = file;
+				case cpp:
+					hasCPPTests = true;
+					cppFile = file;
+				default:
 
-				runnerPage.writeString(pageContent);
-				pageNames.push(pageName);
-				hasBrowserTests = true;
-			}
-			else
-			{
-				hasNekoTests = true;
-				nekoFile = file;
+					hasBrowserTests = true;
+
+					var pageName = Std.string(target.type);
+					var templateName = file.extension + "_runner-html";
+					var pageContent = getTemplateContent(templateName, {runnerName:file.fileName});
+					
+					var runnerPage = reportRunnerDir.resolvePath(pageName + ".html");
+
+					runnerPage.writeString(pageContent);
+					pageNames.push(pageName);
 			}
 		}
 
@@ -329,7 +316,11 @@ class RunCommand extends MUnitCommand
 			config.resources.copyTo(reportRunnerDir);
 		}
 
-		binDir.copyTo(reportRunnerDir);
+		for (target in targets)
+		{
+			var file = target.file;
+			file.copyTo(reportRunnerDir.resolveFile(file.fileName));
+		}
 	}
 
 	/**
@@ -403,7 +394,10 @@ class RunCommand extends MUnitCommand
 
 		if (hasNekoTests)
 			launchNeko(nekoFile);
-		   
+
+		if (hasCPPTests)
+			launchCPP(cppFile);
+
 		if (hasBrowserTests)
 			launchFile(indexPage);
 		else
@@ -619,7 +613,6 @@ class RunCommand extends MUnitCommand
 		if (exitCode > 0)
 			error("Error running " + targetLocation, exitCode);
   
-
 		return exitCode;
 	}
 
@@ -630,22 +623,41 @@ class RunCommand extends MUnitCommand
 
 		FileSys.setCwd(config.dir.nativePath);
   
-		var exitCode = runCommand("neko", [reportRunnerFile.nativePath]);
+		var exitCode = runCommand("neko " + reportRunnerFile.nativePath);
 
 		FileSys.setCwd(console.originalDir.nativePath);
 		
 		if (exitCode > 0)
 			error("Error (" + exitCode + ") running " + file, exitCode);
 		
+		return exitCode;
+	}
+
+	private function launchCPP(file:File):Int
+	{
+		var tmpFile = reportRunnerDir.resolveFile(file.fileName);
+
+		file.copyTo(tmpFile);
+
+		FileSys.setCwd(config.dir.nativePath);
+  
+		var exitCode = runCommand(file.nativePath);
+
+		FileSys.setCwd(console.originalDir.nativePath);
+		
+		if (exitCode > 0)
+			error("Error (" + exitCode + ") running " + file, exitCode);
 		
 		return exitCode;
 	}
 
-
-	function runCommand(command:String, args:Array<String>):Int
+	function runCommand(command:String):Int
 	{
-		Lib.println(command + " " + args.join(" "));
-		var process = new Process(command, args);
+		Lib.println(command);
+
+		var args = command.split(" ");
+		var name = args.shift();
+		var process = new Process(name, args);
 
 		try
 		{
@@ -658,10 +670,13 @@ class RunCommand extends MUnitCommand
 		}
 		catch (e:haxe.io.Eof) {}
 
-		var exitCode:Int = process.exitCode();
+		var exitCode = process.exitCode();
+		if (exitCode > 0)
+		{
+			var error = process.stderr.readAll().toString();
+			Lib.println(error);
+		}
 
 		return exitCode;
 	}
-
-
 }

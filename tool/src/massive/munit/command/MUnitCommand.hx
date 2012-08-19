@@ -30,9 +30,12 @@ package massive.munit.command;
 import massive.munit.Config;
 import massive.neko.cmd.Command;
 
+import neko.Lib;
+
 class MUnitCommand extends Command
 {
 	public var config:Config;
+
 	public function new():Void
 	{
 		super();

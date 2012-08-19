@@ -52,6 +52,22 @@
  */
 package massive.munit.util;
 
+#if neko
+import neko.vm.Thread;
+#elseif cpp
+import cpp.vm.Thread;
+#end
+
+#if (haxe_208 && !haxe_209)
+	#if neko
+		import neko.Sys;
+	#elseif cpp
+		import cpp.Sys;
+	#elseif php
+		import php.Sys
+	#end
+#end
+
 class Timer 
 {
 	#if (php)
@@ -62,8 +78,8 @@ class Timer
 	#if js
 	private static var arr = new Array<Timer>();
 	private var timerId:Int;
-	#elseif neko
-	private var runThread:neko.vm.Thread;
+	#elseif (neko||cpp)
+	private var runThread:Thread;
 	#end
 
 	public function new(time_ms:Int)
@@ -78,9 +94,9 @@ class Timer
 			id = arr.length;
 			arr[id] = this;
 			timerId = untyped window.setInterval("massive.munit.util.Timer.arr["+id+"].run();",time_ms);
-		#elseif neko
+		#elseif (neko||cpp)
 			var me = this;
-			runThread = neko.vm.Thread.create(function() { me.runLoop(time_ms); } );
+			runThread = Thread.create(function() { me.runLoop(time_ms); } );
 		#end
 	}
 
@@ -103,7 +119,7 @@ class Timer
 				while ( p >= 0 && arr[p] == null) p--;
 				arr = arr.slice(0, p + 1);
 			}
-		#elseif neko
+		#elseif (neko||cpp)
 			run = function() {};
 			runThread.sendMessage("stop");
 		#end
@@ -113,13 +129,13 @@ class Timer
 	public dynamic function run() 
 	{}
 
-	#if neko
+	#if (neko||cpp)
 	private function runLoop(time_ms)
 	{
 		var shouldStop = false;
 		while( !shouldStop )
 		{
-			neko.Sys.sleep(time_ms/1000);
+			Sys.sleep(time_ms/1000);
 			try
 			{
 				run();
@@ -129,7 +145,7 @@ class Timer
 				trace(ex);
 			}
 
-			var msg = neko.vm.Thread.readMessage(false);
+			var msg = Thread.readMessage(false);
 			if (msg == "stop") shouldStop = true;
 		}
 	}
@@ -154,10 +170,10 @@ class Timer
 	{
 		#if flash
 			return flash.Lib.getTimer() / 1000;
-		#elseif neko
-			return neko.Sys.time();
+		#elseif (neko || cpp)
+			return Sys.time();
 		#elseif php
-			return php.Sys.time();
+			return Sys.time();
 		#elseif js
 			return Date.now().getTime() / 1000;
 		#elseif cpp

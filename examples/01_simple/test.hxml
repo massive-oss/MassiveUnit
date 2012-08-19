@@ -1,6 +1,9 @@
 # Flash as3
 -main TestMain
 -lib munit
+# -lib mlib
+# -lib mcover
+# -cp ../../core/src
 -lib hamcrest
 -cp src
 -cp test
@@ -12,6 +15,9 @@
 # Flash as2
 -main TestMain
 -lib munit
+# -lib mlib
+# -lib mcover
+# -cp ../../core/src
 -lib hamcrest
 -cp src
 -cp test
@@ -23,6 +29,9 @@
 # JavaScript
 -main TestMain
 -lib munit
+# -lib mlib
+# -lib mcover
+# -cp ../../core/src
 -lib hamcrest
 -cp src
 -cp test
@@ -33,7 +42,25 @@
 # Neko
 -main TestMain
 -lib munit
+# -lib mlib
+# -lib mcover
+# -cp ../../core/src
 -lib hamcrest
 -cp src
 -cp test
 -neko bin/neko_test.n
+
+
+--next
+
+# CPP
+-main TestMain
+-lib munit
+# -lib mlib
+# -lib mcover
+# -cp ../../core/src
+-lib hamcrest
+-cp src
+-cp test
+-D HXCPP_M64
+-cpp bin/cpp_test

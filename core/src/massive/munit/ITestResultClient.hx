@@ -137,11 +137,12 @@ interface ICoverageTestResultClient implements IAdvancedTestResultClient
  	 * @param	packageBreakdown		results per package
 	 * @param	executionFrequency		statement/branch frequency	
 	 */
-	function reportFinalCoverage(percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
+	function reportFinalCoverage(?percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
 		?classBreakdown:String=null,
 		?packageBreakdown:String=null,
 		?executionFrequency:String=null
 	):Void;
+
 }
 
 
