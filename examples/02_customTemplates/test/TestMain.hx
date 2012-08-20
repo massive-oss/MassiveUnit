@@ -33,8 +33,8 @@ class TestMain
         suites.push(TestSuite);
 
         #if MCOVER
-            var client = new m.cover.coverage.munit.client.MCoverPrintClient();
-            var httpClient = new HTTPClient(new m.cover.coverage.munit.client.MCoverSummaryReportClient());
+            var client = new mcover.coverage.munit.client.MCoverPrintClient();
+            var httpClient = new HTTPClient(new mcover.coverage.munit.client.MCoverSummaryReportClient());
         #else
             var client = new RichPrintClient();
             var httpClient = new HTTPClient(new SummaryReportClient());

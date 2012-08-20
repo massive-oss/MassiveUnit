@@ -1,4 +1,0 @@
-
-m.cover.macro.FilteredClassCache:73                         | init
-m.cover.macro.FilteredClassCache:81                         | tempId = /ws/MassiveUnit/examples/03_junit_report/src,,
-m.cover.macro.FilteredClassCache:82                         | id = /ws/MassiveUnit/examples/03_junit_report/src,,

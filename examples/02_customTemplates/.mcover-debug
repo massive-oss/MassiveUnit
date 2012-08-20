@@ -1,6 +1,0 @@
-
-m.cover.MCover:137                                          | math.Calculator
-m.cover.macro.ClassParserImpl:122                           | math.Calculator
-m.cover.macro.ClassParserImpl:206                           |  	addAsync
-m.cover.macro.ClassParserImpl:206                           |  	add
-m.cover.macro.ClassParserImpl:206                           |  	new

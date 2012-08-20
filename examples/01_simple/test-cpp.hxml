@@ -12,5 +12,5 @@
 -debug
 -lib mcover
 -D MCOVER
---macro m.cover.MCover.coverage([''],['src'])
+--macro mcover.MCover.coverage([''],['src'])
 -cmd bin/cpp_test/TestMain-debug
