@@ -28,7 +28,7 @@ Features
 MUnit has been designed for cross platform Haxe development.
 It currently supports js, swf8, swf9, neko and c++ (beta, see note below), and the tool chain works on PC and OSX
 
-> Note: C++ target is only supported using hxcpp 2.10 or greater (Haxe 2.09/Haxe 2.10). All other targets supported in Haxe 2.08 +
+> Note: C++ target is currently in beta. Only supported using hxcpp 2.10 or greater (Haxe 2.09/Haxe 2.10). All other targets supported in Haxe 2.08 +
 
 
 ### Test Metadata
