@@ -5,6 +5,9 @@ import massive.neko.io.File;
 import massive.munit.Config;
 import massive.munit.Target;
 
+import massive.neko.io.FileSys;
+
+
 class MUnitTargetCommandBase extends MUnitCommand
 {
 	var hxml:File;
@@ -204,33 +207,17 @@ class MUnitTargetCommandBase extends MUnitCommand
 				target.debug = true;
 			}
 
-			if(target.file == null)
+			var fileStr:String = getOutputFileFromLine(line);
+
+			if(target.file == null && fileStr != null)
 			{
-				var fileStr:String = getOutputFileFromLine(line);
-
-				if(fileStr != null)
-				{
-					target.file = File.create(fileStr, File.current);
-
-					if(StringTools.endsWith(fileStr, "-coverage"))
-					{
-						target.hxml += line + "-coverage\n";
-					} 
-					else
-					{
-						target.hxml += line + "\n";
-					}
-				}
-				else
-				{
-					target.hxml += line + "\n";
-				}
+				//dont add to hxml just yet
+				target.file = File.create(fileStr, File.current);
 			}
 			else
 			{
 				target.hxml += line + "\n";
 			}
-
 
 			if (target.type == null)
 			{
@@ -251,11 +238,55 @@ class MUnitTargetCommandBase extends MUnitCommand
 					}
 				}
 			}
+
 		}
 
 		targets.push(target);
 
+		for(target in targets)
+		{
+			if(target.type != null)
+				updateHxmlOutput(target);
+		}
+
 		return targets;
+	}
+
+	function updateHxmlOutput(target:Target)
+	{
+		var output:String = null;
+
+		switch(target.type)
+		{
+			case TargetType.as2: output = "-swf";
+			case TargetType.as3: output = "-swf";
+			default: output = "-" + Std.string(target.type);
+		}
+
+		var file = config.dir.getRelativePath(target.file);
+
+		if(target.type == TargetType.cpp)
+		{
+			var executablePath = target.main.name;
+
+			if(target.debug)
+			{
+				executablePath += "-debug";
+			}
+
+			if (FileSys.isWindows)
+				executablePath += ".exe";
+
+			target.executableFile = target.file.resolveFile(executablePath);
+		}
+		else
+		{
+			target.executableFile = target.file;
+		}
+
+		output += " " + file;
+
+		target.hxml += output + "\n";
 	}
 
 	function getOutputFileFromLine(line:String):String
@@ -272,13 +303,15 @@ class MUnitTargetCommandBase extends MUnitCommand
 			var targetMatcher = new EReg("^-" + s + "\\s+", "");
 			if (targetMatcher.match(line))
 			{
-				var fileStr = line.substr(s.length + 2);
-
-				if(includeCoverage && s == "cpp")
+				if(type == cpp && includeCoverage)
 				{
-					fileStr += "-coverage";
+					return line.substr(s.length + 2) + "-coverage";
 				}
-				return fileStr;
+				else
+				{
+					return line.substr(s.length + 2);
+				}
+
 			}
 		}
 		return null;

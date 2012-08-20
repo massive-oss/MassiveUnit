@@ -11,6 +11,8 @@ class Target
 	public var flags:Hash<String>;
 	public var debug:Bool;
 
+	public var executableFile:File;
+
 	public function new():Void
 	{
 		hxml = "";

@@ -657,6 +657,7 @@ class RunCommand extends MUnitTargetCommandBase
 
 		var args = command.split(" ");
 		var name = args.shift();
+
 		var process = new Process(name, args);
 
 		try
@@ -670,11 +671,25 @@ class RunCommand extends MUnitTargetCommandBase
 		}
 		catch (e:haxe.io.Eof) {}
 
-		var exitCode = process.exitCode();
+
+		var exitCode:Int = 0;
+		var error:String = null;
+
+		try
+		{
+			exitCode = process.exitCode();
+		}
+		catch(e:Dynamic)
+		{
+			exitCode = 1;
+			error = Std.string(e).split("\n").join("\n\t");
+		}
+
 		if (exitCode > 0)
 		{
-			var error = process.stderr.readAll().toString();
-			Lib.println(error);
+			if(error != null) error += "\n\t";
+			error += process.stderr.readAll().toString().split("\n").join("\n\t");
+			Lib.println("Error running '" + command + "'\n\t" + error);
 		}
 
 		return exitCode;

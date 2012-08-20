@@ -1,4 +1,9 @@
-v0.9.5.0 - 30.07.12
+v0.9.5.1
+- neko/cpp: Added catch for when process throws exception before process.exitCode()
+- cpp: Remove executable before re-compiling
+- cpp: Added CLI support for cpp debug executables
+- cli: Added Target.executableFile for targets that output a directory
+v0.9.5.0 - 19.08.12
 - new : added cpp support (beta - hxcpp 2.09 only)
 - all : updated internals of test/run/report commands
 - all : removed optional params from ICoverageTestResultClient due to incompatibility with hxcpp209

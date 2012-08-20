@@ -167,6 +167,13 @@ class TestCommand extends MUnitTargetCommandBase
 				target.hxml += "-D debug\n";				
 			}
 
+			
+
+			if(target.type == TargetType.cpp)
+			{
+				target.executableFile.deleteFile();
+			}
+
 			Log.debug("Compile " + target.type + " -- " + target);
 
 			if (HaxeWrapper.compile(target.hxml) > 0)
@@ -177,11 +184,7 @@ class TestCommand extends MUnitTargetCommandBase
 			var tmp = config.bin.resolveFile(".temp/" + target.type + ".txt");
 			if (target.type == cpp)
 			{
-				var executableFile = target.main.name + (target.debug ? "-debug" : "");
-				if (FileSys.isWindows)
-					executableFile += ".exe";
-					
-				tmp.writeString(target.file.resolveFile(executableFile), false);
+				tmp.writeString(target.executableFile, false);
 			}
 			else
 			{
