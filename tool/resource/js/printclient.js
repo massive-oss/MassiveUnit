@@ -349,7 +349,7 @@ function addMissingCoverageClass(coverageClass, percentage)
 {
 	if(missingCoverageDiv == null)
 	{
-		addCoverageReportSection("Mising Code Coverage");
+		addCoverageReportSection("Missing Code Coverage");
 		missingCoverageDiv = document.getElementById(currentCoverageReportID + "_contents");
 	}
 
