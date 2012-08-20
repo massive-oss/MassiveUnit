@@ -1,7 +1,7 @@
 v0.9.5.1
 - neko/cpp: Added catch for when process throws exception before process.exitCode()
 - cpp: Remove executable before re-compiling
-- cpp: Added CLI support for cpp debug executables
+- cpp: Added CLI support for cpp TestMain-debug executables
 - cli: Added Target.executableFile for targets that output a directory
 - all: updated integration with mcover 1.4.0
 
