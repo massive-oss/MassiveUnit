@@ -1,4 +1,11 @@
-v0.9.5.1
+v0.9.5.2.1 - 21.08.12
+- reverted '#if mcover' to '#if MCOVER' in template
+v0.9.5.2 - 21.08.12
+- added forced update to testmain to use coverage
+- added clearer CLI warning if TestMain uses outdated mcover references
+- update TestMain template to use '#if mcover' rather than '#if MCOVER' (still checks for both for backwards compatibility)
+
+v0.9.5.1 - 20.08.12
 - neko/cpp: Added catch for when process throws exception before process.exitCode()
 - cpp: Remove executable before re-compiling
 - cpp: Added CLI support for cpp TestMain-debug executables

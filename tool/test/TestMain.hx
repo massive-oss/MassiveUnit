@@ -19,7 +19,6 @@ import js.Dom;
     #end
 #end
 
-
 /**
  * Auto generated Test Application.	
  * Refer to munit command line tool for more information (haxelib run munit)
@@ -34,7 +33,7 @@ class TestMain
 		var suites = new Array<Class<massive.munit.TestSuite>>();
 		suites.push(TestSuite);
 
-		#if MCOVER
+		#if mcover
 			var client = new mcover.coverage.munit.client.MCoverPrintClient();
 			var httpClient = new HTTPClient(new mcover.coverage.munit.client.MCoverSummaryReportClient());
 		#else

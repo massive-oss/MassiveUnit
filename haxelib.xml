@@ -6,7 +6,7 @@
 	<tag v="testing" />
     <tag v="massive" />
     <description>MassiveUnit is a cross-platform Haxe unit testing framework that utilises haxe metadata markup for test cases and includes tools for generating, compiling and running test cases from the command line. Supports js, swf8, swf9, neko and c++</description>
-    <version name="0.9.5.1">Minor bug fixes (CLI support for debug cpp builds, added catch for when process throws exception before process.exitCode(), updated CLI for MCover 1.4.0). See CHANGES.txt for full change list.</version>
+    <version name="0.9.5.2">Minor bug fixes, better CLI warnings for compatibility with MCover 1.4.0. See CHANGES.txt for full change list.</version>
     <depends name="hamcrest"/>
     <depends name="mlib"/>
     <depends name="mcover"/>

@@ -20,6 +20,9 @@ To check that it is all installed and to view the help run:
 	haxelib run munit
 
 
+**Please note:** After upgrading you may be required to update the TestMain.hx in existing project before being able to test with -coverage
+
+
 Features
 ---------------------
 
@@ -97,6 +100,10 @@ MUnit now compiles/runs c++ targets
 
 	haxelib run munit test -cpp
 
+Updates to TestMain to work with MCover 1.4.x
+
+	Note: You may be required to update the TestMain.hx in existing project
+	before being able to run `munit test -coverage`.
 
 ### Code Coverage customisation
 
