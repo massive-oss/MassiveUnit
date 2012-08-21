@@ -685,10 +685,11 @@ class RunCommand extends MUnitTargetCommandBase
 			error = Std.string(e).split("\n").join("\n\t");
 		}
 
-		if (exitCode > 0)
+		var stfErrString = process.stderr.readAll().toString().split("\n").join("\n\t");
+
+		if (exitCode > 0 || stfErrString.length > 0)
 		{
 			if(error != null) error += "\n\t";
-			error += process.stderr.readAll().toString().split("\n").join("\n\t");
 			Lib.println("Error running '" + command + "'\n\t" + error);
 		}
 
