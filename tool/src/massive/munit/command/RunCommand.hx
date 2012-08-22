@@ -671,7 +671,6 @@ class RunCommand extends MUnitTargetCommandBase
 		}
 		catch (e:haxe.io.Eof) {}
 
-
 		var exitCode:Int = 0;
 		var error:String = null;
 
@@ -686,6 +685,8 @@ class RunCommand extends MUnitTargetCommandBase
 		}
 
 		var stfErrString = process.stderr.readAll().toString().split("\n").join("\n\t");
+
+		if(stfErrString == null) stfErrString = "";
 
 		if (exitCode > 0 || stfErrString.length > 0)
 		{

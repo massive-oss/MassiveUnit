@@ -33,9 +33,12 @@ class Build extends mtask.core.BuildBase
 	@task function compile()
 	{
 		mkdir("bin");
+
+		trace("updating all classes");
+		msys.Process.run("haxelib", ["run", "mlib", "allClasses"]);
 		
 		msys.FS.cd("core", function(path){
-			trace("testing core...");
+			trace("building core...");
 			msys.Process.run("haxe", ["build.hxml"]);
 		});
 
@@ -79,13 +82,75 @@ class Build extends mtask.core.BuildBase
 
 	@task function test()
 	{
-		msys.Process.run("haxelib", ["run", "munit", "test", "-neko"]);
+		mkdir("bin/test");
+
+		msys.FS.cd("core", function(path){
+			trace("testing core...");
+			cmd("haxelib", ["run", "munit", "test", "-coverage"]);
+		});
+
+		msys.FS.cd("tool", function(path){
+			trace("testing tool...");
+			cmd("haxelib", ["run", "munit", "test", "-coverage"]);
+		});
+	}
+
+
+	@task function example()
+	{
+		var args = ["run", "munit", "test", "-coverage"];
+
+		msys.FS.cd("examples/01_simple", function(path){
+			trace("testing 01_simple...");
+			cmd("haxelib", args);
+		});
+
+		msys.FS.cd("examples/02_customTemplates", function(path){
+			trace("testing 02_customTemplates...");
+			cmd("haxelib", args);
+		});
+
+		msys.FS.cd("examples/03_junit_report", function(path){
+			trace("testing 03_junit_report...");
+			cmd("haxelib", args);
+		});
+	}
+
+	@task function verify()
+	{
+		mkdir("bin/foo");
+		msys.FS.cd("bin/foo", function(path)
+		{
+			trace("testing empty project...");
+
+			var args = ["run", "munit", "config",
+				"-src", "test",
+				"-bin", "bin/test",
+				"-report", "bin/test-report",
+				"-classPaths", "src",
+				"-hxml", "test.hxml",
+				"-resources",
+				"-templates"
+				];
+
+			trace(args.join(" "));
+			cmd("haxelib", args);
+			cmd("haxelib", ["run", "munit", "create", "-for", "example.Foo"]);
+			cmd("haxelib", ["run", "munit", "test", "-coverage"]);
+
+
+		});
+		rm("bin/foo");
 	}
 	
 	@task function release()
 	{
 		require("clean");
+		require("test");
 		require("compile");
 		require("build haxelib");
+		require("example");
+		require("verify");
+
 	}
 }
