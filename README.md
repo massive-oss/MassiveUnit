@@ -1,10 +1,7 @@
-MUnit
-====================
 
 MUnit is a metadata driven unit testing framework for cross-platform Haxe development.
 
 It includes tools for creating, updating, compiling and running unit test cases from the command line.
-
 
 Installation
 ---------------------
