@@ -50,15 +50,11 @@ class Build extends mtask.core.BuildBase
 
 	@target function haxelib(t:HaxeLib)
 	{
-		t.name = build.project.id;
-		
-		t.version = build.project.version;
-		t.versionDescription = "Added support for c++ targets (Haxe 2.09+), Compatible with Haxe 2.10. Added project configurable mcover settings. See CHANGES.txt for full change list.";
-
 		t.url = "http://github.com/massiveinteractive/MassiveUnit";
-		t.license.organization = "Massive Interactive";
 		t.username = "massive";
 		t.description = "A cross platform unit testing framework for Haxe with metadata test markup and tools for generating, compiling and running tests from the command line.";
+		t.versionDescription = "Added support for c++ targets (Haxe 2.09+), Compatible with Haxe 2.10. Added project configurable mcover settings. See CHANGES for full change list.";
+		t.license = BSD;
 		
 		t.addTag("cross");
 		t.addTag("utility");
@@ -151,6 +147,5 @@ class Build extends mtask.core.BuildBase
 		require("build haxelib");
 		require("example");
 		require("verify");
-
 	}
 }
