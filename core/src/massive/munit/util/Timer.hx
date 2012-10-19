@@ -68,6 +68,7 @@ import cpp.vm.Thread;
 	#end
 #end
 
+@:expose('massive.munit.util.Timer')
 class Timer 
 {
 	#if (php)
