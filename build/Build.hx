@@ -21,7 +21,6 @@ SOFTWARE.
 */
 
 import mtask.target.HaxeLib;
-import mtask.target.Neko;
 
 class Build extends mtask.core.BuildBase
 {
@@ -66,7 +65,7 @@ class Build extends mtask.core.BuildBase
 		t.addDependency("mlib");
 		t.addDependency("mcover");
 
-		t.afterCompile = function()
+		t.beforeCompile = function(path)
 		{
 			cp("src/*", t.path);
 			cp("bin/munit.n", t.path + "/run.n");
@@ -83,6 +82,7 @@ class Build extends mtask.core.BuildBase
 		msys.FS.cd("core", function(path){
 			trace("testing core...");
 			cmd("haxelib", ["run", "munit", "test", "-coverage"]);
+			cmd("haxelib", ["run", "munit", "report", "teamcity"]);
 		});
 
 		msys.FS.cd("tool", function(path){
@@ -139,10 +139,11 @@ class Build extends mtask.core.BuildBase
 		rm("bin/foo");
 	}
 	
-	@task function release()
+	@task function teamcity()
 	{
 		invoke("clean");
 		invoke("test");
+
 		invoke("compile");
 		invoke("build haxelib");
 		invoke("example");
