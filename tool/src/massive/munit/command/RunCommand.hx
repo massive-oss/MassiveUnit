@@ -33,23 +33,21 @@ import haxe.io.Eof;
 import massive.haxe.util.RegExpUtil;
 import massive.munit.client.HTTPClient;
 import neko.io.Process;
-import neko.FileSystem;
+import sys.FileSystem;
 import neko.vm.Thread;
 import neko.vm.Mutex;
 import neko.Lib;
-import neko.Sys;
+import Sys;
 import neko.io.Path;
 import massive.neko.io.File;
 import massive.neko.io.FileSys;
-import neko.io.File;
 
- 
+
  
 /**
 Don't ask - compiler always thinks it is massive.munit.TargetType enum 'neko'
 */
-typedef NekoFile = neko.io.File;
-typedef NekoSys = neko.Sys;
+typedef NekoFile = sys.io.File;
 
 import massive.haxe.log.Log;
 import massive.munit.ServerMain;
