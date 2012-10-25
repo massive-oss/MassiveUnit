@@ -21,7 +21,6 @@ SOFTWARE.
 */
 
 import mtask.target.HaxeLib;
-import mtask.target.Neko;
 
 class Build extends mtask.core.BuildBase
 {
@@ -50,15 +49,11 @@ class Build extends mtask.core.BuildBase
 
 	@target function haxelib(t:HaxeLib)
 	{
-		t.name = build.project.id;
-		
-		t.version = build.project.version;
-		t.versionDescription = "Added support for c++ targets (Haxe 2.09+), Compatible with Haxe 2.10. Added project configurable mcover settings. See CHANGES.txt for full change list.";
-
 		t.url = "http://github.com/massiveinteractive/MassiveUnit";
-		t.license.organization = "Massive Interactive";
 		t.username = "massive";
 		t.description = "A cross platform unit testing framework for Haxe with metadata test markup and tools for generating, compiling and running tests from the command line.";
+		t.versionDescription = "Added support for c++ targets (Haxe 2.09+), Compatible with Haxe 2.10. Added project configurable mcover settings. See CHANGES for full change list.";
+		t.license = BSD;
 		
 		t.addTag("cross");
 		t.addTag("utility");
@@ -70,7 +65,7 @@ class Build extends mtask.core.BuildBase
 		t.addDependency("mlib");
 		t.addDependency("mcover");
 
-		t.afterCompile = function()
+		t.beforeCompile = function(path)
 		{
 			cp("src/*", t.path);
 			cp("bin/munit.n", t.path + "/run.n");
@@ -87,6 +82,7 @@ class Build extends mtask.core.BuildBase
 		msys.FS.cd("core", function(path){
 			trace("testing core...");
 			cmd("haxelib", ["run", "munit", "test", "-coverage"]);
+			cmd("haxelib", ["run", "munit", "report", "teamcity"]);
 		});
 
 		msys.FS.cd("tool", function(path){
@@ -143,14 +139,14 @@ class Build extends mtask.core.BuildBase
 		rm("bin/foo");
 	}
 	
-	@task function release()
+	@task function teamcity()
 	{
-		require("clean");
-		require("test");
-		require("compile");
-		require("build haxelib");
-		require("example");
-		require("verify");
+		invoke("clean");
+		invoke("test");
 
+		invoke("compile");
+		invoke("build haxelib");
+		invoke("example");
+		invoke("verify");
 	}
 }

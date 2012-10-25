@@ -180,7 +180,7 @@ Support for custom runner html templates and resources
 ```Run 'munit config' to set template and resources directories```
 
 
-For full list of recent changes see the **[change log](https://github.com/massiveinteractive/MassiveUnit/blob/master/CHANGES.txt)**
+For full list of recent changes see the **[change log](https://github.com/massiveinteractive/MassiveUnit/blob/master/CHANGES)**
 
 
 
