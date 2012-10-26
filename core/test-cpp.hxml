@@ -1,8 +1,0 @@
-# CPP
--main TestMain
--cp test
--cp src
--lib mlib
--lib hamcrest
--D HXCPP_M64
--cpp ../bin/test/core/cpp_test

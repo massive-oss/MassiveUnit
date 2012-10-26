@@ -1,0 +1,4 @@
+--macro include("massive.munit")
+-cp core/src
+-lib hamcrest
+-lib mlib

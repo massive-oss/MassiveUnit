@@ -31,20 +31,8 @@ class Build extends mtask.core.BuildBase
 
 	@task function compile()
 	{
-		mkdir("bin");
-
-		trace("updating all classes");
-		msys.Process.run("haxelib", ["run", "mlib", "allClasses"]);
-		
-		msys.FS.cd("core", function(path){
-			trace("building core...");
-			msys.Process.run("haxe", ["build.hxml"]);
-		});
-
-		msys.FS.cd("tool", function(path){
-			trace("building tool...");
-			msys.Process.run("haxe", ["build.hxml"]);
-		});
+		invoke("build core");
+		invoke("build tool");
 	}
 
 	@target function haxelib(t:HaxeLib)
@@ -67,7 +55,7 @@ class Build extends mtask.core.BuildBase
 
 		t.beforeCompile = function(path)
 		{
-			cp("src/*", t.path);
+			cp("core/src/*", t.path);
 			cp("bin/munit.n", t.path + "/run.n");
 			cp("tool/resource", t.path);
 			cp("bin/index.n", t.path);

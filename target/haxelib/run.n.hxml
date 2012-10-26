@@ -1,0 +1,6 @@
+common-tool.hxml
+-main massive.munit.MunitCommandLineRunner
+-cp tool/src
+-cp core/src
+-lib hamcrest
+-lib mlib

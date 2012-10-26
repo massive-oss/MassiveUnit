@@ -1,0 +1,5 @@
+-main massive.munit.ServerMain
+-cp tool/src
+-cp core/src
+-lib mlib
+-lib hamcrest

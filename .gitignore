@@ -35,8 +35,6 @@ teamcity-info.xml
 .mcover/*
 /.DS_Store
 
-
 .mcover
-workspace.json
 cached-classes-null-IgnoreCover.txt
 .temp

@@ -1,0 +1,5 @@
+-main BrowserTestsCompleteReporter
+-cp core/src
+-cp tool/src
+-lib hamcrest
+-lib mlib
