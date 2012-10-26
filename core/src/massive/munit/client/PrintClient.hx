@@ -174,7 +174,7 @@ class PrintClient extends PrintClientBase
 
 	override public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
 	{
-		super.reportFinalStatistics(testCount, passCount, failCount, errorCount, ignoreCount, time);
+		return super.reportFinalStatistics(testCount, passCount, failCount, errorCount, ignoreCount, time);
 	}
 
 	override public function print(value:Dynamic)

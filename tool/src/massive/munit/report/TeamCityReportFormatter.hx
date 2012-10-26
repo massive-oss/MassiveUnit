@@ -150,7 +150,8 @@ class TeamCityReportFormatter extends ReportFormatterBase
 
 	function generateTeamcityXML():String
 	{
-		var xml = "<build number=\"{build.number}\">";
+		// var xml = "<build number=\"{build.number}\">";
+		var xml = "<build>"; // {build.number} taking precendence of custom outputed build number
 
 		//add summary info
 		xml += "\n\t<statusInfo status=\"" +  (result ? "SUCCESS" : "FAILURE") + "\">";
