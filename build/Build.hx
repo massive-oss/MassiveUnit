@@ -121,17 +121,14 @@ class Build extends mtask.core.BuildBase
 			cmd("haxelib", args);
 			cmd("haxelib", ["run", "munit", "create", "-for", "example.Foo"]);
 			cmd("haxelib", ["run", "munit", "test", "-coverage"]);
-
-
 		});
+		
 		rm("bin/foo");
 	}
 	
 	@task function teamcity()
 	{
-		invoke("clean");
 		invoke("test");
-
 		invoke("compile");
 		invoke("build haxelib");
 		invoke("example");
