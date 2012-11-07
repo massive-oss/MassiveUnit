@@ -207,6 +207,36 @@ class AssertTest
 	}
 	
 	@Test
+	public function testAreEqualEnum():Void
+	{
+		Assert.areEqual(ValueA, ValueA);
+		try
+		{
+			Assert.areEqual(ValueA, ValueB);
+		}
+		catch (e:AssertionException)
+		{
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+
+	@Test
+	public function testAreEqualEnumWithParam():Void
+	{
+		Assert.areEqual(ValueC("foo"), ValueC("foo"));
+		try
+		{
+			Assert.areEqual(ValueC("foo"), ValueC("bar"));
+		}
+		catch (e:AssertionException)
+		{
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
 	public function testAreNotEqualString():Void
 	{
 		Assert.areNotEqual("", "yoyo");
@@ -251,8 +281,191 @@ class AssertTest
 		}
 		Assert.fail("Invalid assertion not captured");
 	}
-	
-	@test
+
+	@Test
+	public function testAreNotEqualEnum():Void
+	{
+		Assert.areNotEqual(ValueA, ValueB);
+		try
+		{
+			Assert.areNotEqual(ValueA, ValueA);
+		}
+		catch (e:AssertionException)
+		{
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+
+	@Test
+	public function testAreNotEqualEnumWithParam():Void
+	{
+		Assert.areNotEqual(ValueC("foo"), ValueC("bar"));
+		try
+		{
+			Assert.areNotEqual(ValueC("foo"), ValueC("foo"));
+		}
+		catch (e:AssertionException)
+		{
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+
+	public function testAreSameString():Void
+	{
+		Assert.areSame("yoyo", "yoyo");
+		try
+		{
+			Assert.areEqual("", "yoyo");
+		}
+		catch (e:AssertionException)
+		{
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+
+	@Test
+	public function testAreSameObject():Void
+	{
+		var obj:Dynamic = {};
+		Assert.areSame(obj, obj);
+		try
+		{
+			Assert.areSame({}, obj);
+		}
+		catch (e:AssertionException)
+		{
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+
+	@Test
+	public function testAreSameNumber():Void
+	{
+		Assert.areSame(1, 1);
+		try
+		{
+			Assert.areSame(1, 2);
+		}
+		catch (e:AssertionException)
+		{
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+
+	@Test
+	public function testAreSameEnum():Void
+	{
+		Assert.areSame(ValueA, ValueA);
+		try
+		{
+			Assert.areSame(ValueA, ValueB);
+		}
+		catch (e:AssertionException)
+		{
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+
+	@Test
+	public function testAreSameEnumWithParam():Void
+	{
+		var e = ValueC("foo");
+		Assert.areSame(e, e);
+		try
+		{
+			Assert.areSame(e, ValueC("foo"));
+		}
+		catch (e:AssertionException)
+		{
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+
+	@Test
+	public function testAreNotSameString():Void
+	{
+		Assert.areNotSame("", "yoyo");
+		try
+		{
+			Assert.areNotSame("yoyo", "yoyo");
+		}
+		catch (e:AssertionException)
+		{
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+
+	@Test
+	public function testAreNotSameObject():Void
+	{
+		var obj:Dynamic = {};
+		Assert.areNotSame({}, obj);
+		try
+		{
+			Assert.areNotSame(obj, obj);
+		}
+		catch (e:AssertionException)
+		{
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+
+	@Test
+	public function testAreNotSameNumber():Void
+	{
+		Assert.areNotSame(1, 2);
+		try
+		{
+			Assert.areNotSame(1, 1);
+		}
+		catch (e:AssertionException)
+		{
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+
+	@Test
+	public function testAreNotSameEnum():Void
+	{
+		Assert.areNotSame(ValueA, ValueB);
+		try
+		{
+			Assert.areNotSame(ValueA, ValueA);
+		}
+		catch (e:AssertionException)
+		{
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+
+	@Test
+	public function testAreNotSameEnumWithParam():Void
+	{
+		Assert.areNotSame(ValueC("foo"), ValueC("foo"));
+		try
+		{
+			var e = ValueC("foo");
+			Assert.areNotSame(e, e);
+		}
+		catch (e:AssertionException)
+		{
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+
+	@Test
 	public function testFail():Void
 	{
 		try 
@@ -266,4 +479,11 @@ class AssertTest
 		}
 		Assert.fail("Invalid assertion not captured");
 	}
+}
+
+private enum DummyEnum
+{
+	ValueA;
+	ValueB;
+	ValueC(param:String);
 }
