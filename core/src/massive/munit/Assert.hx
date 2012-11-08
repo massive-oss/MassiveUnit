@@ -137,7 +137,31 @@ class Assert
 		assertionCount++;
 		if (Std.is(value, type)) fail("Value [" + value + "] was of type: " + Type.getClassName(type), info);
 	}
-	
+
+	/**
+	* Assert that a value is of a particular EnumValue
+	*
+	* @param	value				value expected to be of a given type
+	* @param	type				type the value should be
+	*/
+	public static function isEnum(value: Dynamic, type:EnumValue):Void
+	{
+		assertionCount++;
+		if (!Type.enumEq(value, type)) fail("Value [" + value + "] was not of type: " + type);
+	}
+
+	/**
+	* Assert that a value is of a particular EnumValue
+	*
+	* @param	value				value expected to not be of a given type
+	* @param	type				type the value should not be
+	*/
+	public static function isNotEnum(value:Dynamic, type:EnumValue):Void
+	{
+		assertionCount++;
+		if (Type.enumEq(value, type)) fail("Value [" + value + "] was of type: " + type);
+	}
+
 	/**
 	 * Assert that two values are equal.
 	 * 
