@@ -52,7 +52,7 @@ class Build extends mtask.core.BuildBase
 		t.url = "http://github.com/massiveinteractive/MassiveUnit";
 		t.username = "massive";
 		t.description = "A cross platform unit testing framework for Haxe with metadata test markup and tools for generating, compiling and running tests from the command line.";
-		t.versionDescription = "Added support for c++ targets (Haxe 2.09+), Compatible with Haxe 2.10. Added project configurable mcover settings. See CHANGES for full change list.";
+		t.versionDescription = "Included support for enum equality checking through Assert.areEqual/areNotEqual. Added Assert.areSame/areNotSame for strict equality checks. Update to fix --js-modern errors. See CHANGES for full change list.";
 		t.license = BSD;
 		
 		t.addTag("cross");
@@ -132,8 +132,7 @@ class Build extends mtask.core.BuildBase
 			trace(args.join(" "));
 			cmd("haxelib", args);
 			cmd("haxelib", ["run", "munit", "create", "-for", "example.Foo"]);
-			cmd("haxelib", ["run", "munit", "test", "-coverage"]);
-
+			//cmd("haxelib", ["run", "munit", "test", "-coverage"]);
 
 		});
 		rm("bin/foo");
