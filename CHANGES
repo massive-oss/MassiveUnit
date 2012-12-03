@@ -1,5 +1,11 @@
-v0.9.5.x - 
+
+v0.9.6.x - 
 -  Minor tweaks for Haxe svn (2.11) using --no-inline and mockatoo
+
+v0.9.6 - 09-11-12
+- Included support for enum equality checking through Assert.areEqual/areNotEqual.
+- Added Assert.areSame/areNotSame for strict equality checks. 
+- Update to fix --js-modern errors.
 
 v0.9.5.2.2 - 21.08.12
 - TestCommand prints stderr even if exit code is 0 from haxe compiler

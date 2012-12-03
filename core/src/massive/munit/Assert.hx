@@ -120,10 +120,10 @@ class Assert
 	 * @param	value				value expected to be of a given type
 	 * @param	type				type the value should be
 	 */
-	public static function isType(value:Dynamic, type:Class<Dynamic>):Void
+	public static function isType(value:Dynamic, type:Class<Dynamic>, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		if (!Std.is(value, type)) fail("Value [" + value + "] was not of type: " + Type.getClassName(type));
+		if (!Std.is(value, type)) fail("Value [" + value + "] was not of type: " + Type.getClassName(type), info);
 	}
 	
 	/**
@@ -132,14 +132,17 @@ class Assert
 	 * @param	value				value expected to not be of a given type
 	 * @param	type				type the value should not be
 	 */
-	public static function isNotType(value:Dynamic, type:Class<Dynamic>):Void
+	public static function isNotType(value:Dynamic, type:Class<Dynamic>, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		if (Std.is(value, type)) fail("Value [" + value + "] was of type: " + Type.getClassName(type));
+		if (Std.is(value, type)) fail("Value [" + value + "] was of type: " + Type.getClassName(type), info);
 	}
 	
 	/**
 	 * Assert that two values are equal.
+	 * 
+	 * If the expected value is an Enum then Type.enumEq will be used to compare the two values.
+	 * Otherwise strict equality is used.
 	 *  
 	 * @param	expected			expected value
 	 * @param	actual				actual value
@@ -148,11 +151,19 @@ class Assert
 	public static function areEqual(expected:Dynamic, actual:Dynamic, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		if (expected != actual) fail("Value [" + actual +"] was not equal to expected value [" + expected + "]", info);
+		var equal = switch (Type.typeof(expected))
+		{
+			case TEnum(e): Type.enumEq(expected, actual);
+			default: expected == actual;
+		}		
+		if (!equal) fail("Value [" + actual +"] was not equal to expected value [" + expected + "]", info);
 	}
 	
 	/**
 	 * Assert that two values are not equal.
+	 *  
+	 * If the expected value is an Enum then Type.enumEq will be used to compare the two values.
+	 * Otherwise strict equality is used.
 	 *  
 	 * @param	expected			expected value
 	 * @param	actual				actual value
@@ -161,15 +172,47 @@ class Assert
 	public static function areNotEqual(expected:Dynamic, actual:Dynamic, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		if (expected == actual) fail("Value [" + actual +"] was equal to value [" + expected + "]", info);
+		var equal = switch (Type.typeof(expected))
+		{
+			case TEnum(e): Type.enumEq(expected, actual);
+			default: expected == actual;
+		}
+
+		if (equal) fail("Value [" + actual +"] was equal to value [" + expected + "]", info);
 	}
 
 	/**
-	 * Force an assertion failure.
+	 * Assert that two values are one and the same.
 	 *  
-	 * @param	msg				message describing the assertion which failed
-	 * @throws	AssertionException	thrown automatically
-	 */	
+	 * @param	expected			expected value
+	 * @param	actual				actual value
+	 * @throws	AssertionException	if expected is not the same as the actual value
+	 */
+	public static function areSame(expected:Dynamic, actual:Dynamic, ?info:PosInfos):Void
+	{
+		assertionCount++;
+		if (expected != actual) fail("Value [" + actual +"] was not the same as expected value [" + expected + "]", info);
+	}
+
+	/**
+	 * Assert that two values are not one and the same.
+	 *  
+	 * @param	expected			expected value
+	 * @param	actual				actual value
+	 * @throws	AssertionException	if expected is the same as the actual value
+	 */
+	public static function areNotSame(expected:Dynamic, actual:Dynamic, ?info:PosInfos):Void
+	{
+		assertionCount++;
+		if (expected == actual) fail("Value [" + actual +"] was the same as expected value [" + expected + "]", info);
+	}
+
+	/**
+	  * Force an assertion failure.
+	  *  
+	  * @param	msg				message describing the assertion which failed
+	  * @throws	AssertionException	thrown automatically
+	  */	
 	public static function fail(msg:String, ?info:PosInfos):Void
 	{
 		throw new AssertionException(msg, info);
