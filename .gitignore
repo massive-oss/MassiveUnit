@@ -26,9 +26,17 @@ Thumbs.db
 # Directories #
 ###############
 bin/
-report/
-
+/report/
+/examples/**/report/
 .svn
-example/.mcover-debug
-tool/.mcover-debug
-core/.mcover-debug
+munit.sublime-workspace
+
+teamcity-info.xml
+.mcover/*
+/.DS_Store
+
+
+.mcover
+workspace.json
+cached-classes-null-IgnoreCover.txt
+.temp

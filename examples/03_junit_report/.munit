@@ -1,0 +1,6 @@
+version=0.9.2.0
+src=test
+bin=bin
+report=report
+hxml=test.hxml
+classPaths=src

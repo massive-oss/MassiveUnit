@@ -37,6 +37,7 @@ import massive.munit.command.TestCommand;
 import massive.munit.command.ConfigCommand;
 import massive.munit.command.CreateTestCommand;
 import massive.munit.command.MUnitCommand;
+import massive.munit.command.ReportCommand;
 
 class MunitCommandLineRunner extends CommandLineRunner
 {
@@ -54,6 +55,8 @@ class MunitCommandLineRunner extends CommandLineRunner
 		mapCommand(TestCommand, "test", ["t"], "Updates, compiles and runs all targets from an hxml file", Resource.getString("help_test"));
 		mapCommand(CreateTestCommand, "create", ["ct"], "Create test class", Resource.getString("help_create"));
 		mapCommand(ConfigCommand, "config", ["c"], "Modify default project specific settings for munit", Resource.getString("help_config"));
+
+		mapCommand(ReportCommand, "report", ["re"], "Generate reports for CI environments and 3rd party tools", Resource.getString("help_report"));
 		
 		version = getVersion();
 		config = new Config(console.dir, version);

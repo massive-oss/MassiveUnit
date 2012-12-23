@@ -1,5 +1,14 @@
-html, body, div { margin:0; padding:0; font-family: monaco, Andale Mono, Courier New, monospace; font-size:12px; }
+/*
+  spritemapper.output_css = css/printclient.css
+*/
 
+html, body, di
+{
+    margin:0;
+    padding:0;
+    font-family: monaco, Andale Mono, Courier New, monospace;
+    font-size:12px; 
+}
 html
 {
 	height: 100%;
@@ -52,6 +61,15 @@ hr
 	
 }
 
+/* Top level warnings or errors */
+.munit div.line
+{
+	padding:10px;
+	background-color: #f9d5ab;
+	font-weight: bold;
+	color: #212121;
+}
+
 .line
 {
 	white-space: nowrap;
@@ -60,7 +78,7 @@ hr
 
 .debug
 {
-	font-family: monospace
+	font-family: monospace;
 }
 
 
@@ -122,44 +140,44 @@ hr
 
 .icon
 {
-	/*background-image: url("img/spinner.gif");*/
+	
 }
 
 .icon-busy
 {
-	background-image: url("img/spinner.gif");
+	background-image: url("../img/spinner.gif");
 }
 
 .icon-passed
 {
-	background-image: url("img/tick.png");
+	background:url(../img/icons.png) no-repeat -112px 0px;
 }
 
 .icon-failed
 {
-	background-image: url("img/cross.png");
+	background:url(../img/icons.png) no-repeat -96px 0px;
 }
 
 .icon-error
 {
-	background-image: url("img/exclamation.png");
+	background:url(../img/icons.png) no-repeat -80px 0px;
 }
 
 
 .test-coverage-header-parent > .icon
 {
-	background-image: url("img/coverage.png");
+	background:url(../img/icons.png) no-repeat -64px 0px;
 }
 
 .munit-coverage-header-parent > .icon
 {
-	background-image: url("img/coverage.png");
+	background:url(../img/icons.png) no-repeat -64px 0px;
 }
 
 
 #munit-coverage .icon
 {
-	background-image: url("img/coverage.png");
+	background:url(../img/icons.png) no-repeat -64px 0px;
 }
 
 
@@ -170,7 +188,7 @@ hr
 	width: 16px;
 	height: 16px;
 	display: inline-block;
-	background: url(img/arrow.gif) no-repeat 0 0;
+	background:url(../img/icons.png) no-repeat 0 0;
 }
 .arrow-open
 {

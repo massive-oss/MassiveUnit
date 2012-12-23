@@ -42,4 +42,6 @@ Optional Parameters
 
    -coverage      : Compiles and runs tests with MCover code coverage enabled 
 
+  -result-exit-code : Exits with error code (1) if tests fail
+
 

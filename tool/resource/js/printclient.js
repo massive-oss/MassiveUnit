@@ -98,7 +98,7 @@ function setResult(result)
 
 	currentClassId = null;
 
-	if(parent != null) parent.testComplete();
+	if(parent != null && parent != this) parent.testComplete();
 	
 }
 
@@ -349,7 +349,7 @@ function addMissingCoverageClass(coverageClass, percentage)
 {
 	if(missingCoverageDiv == null)
 	{
-		addCoverageReportSection("Mising Code Coverage");
+		addCoverageReportSection("Missing Code Coverage");
 		missingCoverageDiv = document.getElementById(currentCoverageReportID + "_contents");
 	}
 

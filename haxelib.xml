@@ -1,10 +1,13 @@
-<project name="munit" url="https://github.com/massiveinteractive/MassiveUnit" license="BSD">
-    <user name="massive"/>
-    <tag v="cross" />
-    <tag v="utility" />
-    <description>MassiveUnit is a cross-platform haXe unit testing framework from Massive Interactive that utilises haxe metadata markup for test cases and includes tools for generating, compiling and running test cases from the command line.</description>
-    <version name="0.9.2.3">Added support for custom html templates and runtime resources. See 'munit help config' for details.</version>
-    <depends name="hamcrest"/>
-    <depends name="mlib"/>
-    <depends name="mcover"/>
+<project name="munit" url="http://github.com/massiveinteractive/MassiveUnit" license="BSD">
+	<user name="massive"/>
+	<description><![CDATA[A cross platform unit testing framework for Haxe with metadata test markup and tools for generating, compiling and running tests from the command line.]]></description>
+	<version name="0.9.6"><![CDATA[Included support for enum equality checking through Assert.areEqual/areNotEqual. Added Assert.areSame/areNotSame for strict equality checks. Update to fix --js-modern errors. See CHANGES for full change list.]]></version>
+	<depends name="hamcrest"/>
+	<depends name="mlib"/>
+	<depends name="mcover"/>
+	<tag v="cross"/>
+	<tag v="utility"/>
+	<tag v="unittest"/>
+	<tag v="testing"/>
+	<tag v="massive"/>
 </project>

@@ -1,0 +1,24 @@
+usage: report [format] [destFile]
+
+    Runs a unit test application and saves results to output directory
+    
+Optional Arguments:
+
+   format         : The report format to generate.
+                    Supported values: teamcity
+
+   destFile       : Path to save report at
+
+Optional Parameters:
+	
+    -[platform]       : One or more specific target platforms to compile (defaults to
+                        contents of results.txt file in report directory)
+    
+   -coverage [value]  : Customise the minimum coverage (defaults to 0);
+
+Example:
+
+    Output teamcity-info.xml file in project directory
+
+        munit report teamcity . -coverage 90
+

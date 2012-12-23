@@ -1,0 +1,16 @@
+
+# Neko
+-main TestMain
+# -lib munit
+-lib hamcrest
+-lib mlib
+-cp src
+-cp test
+-cpp bin/cpp_test
+-cp ../../core/src
+-D HXCPP_M64
+-debug
+-lib mcover
+-D MCOVER
+--macro mcover.MCover.coverage([''],['src'])
+-cmd bin/cpp_test/TestMain-debug

@@ -50,23 +50,28 @@ class UnhandledException extends MUnitException
 	
 	function formatLocation(source:Dynamic, testLocation:String):String
 	{
-		var stackTrace = getStackTrace(source);
-		if (stackTrace == "")
-			stackTrace = " at " + testLocation;
-		else
-			stackTrace = " " + stackTrace.substr(1); // remove first "\t"
+		var stackTrace = " at " + testLocation;
+
+		var stack = getStackTrace(source);
+
+		if (stack !=  "")
+			stackTrace += " " + stack.substr(1); // remove first "\t"
+
 		return stackTrace;
 	}
 	
 	function getStackTrace(source:Dynamic):String
 	{
 		var s = "";
-		#if flash9
+		#if (flash && !flash8)
 			if (Std.is(source, flash.errors.Error))
 			{
-				var lines = source.getStackTrace().split("\n");
-				lines.shift(); // remove repeated error name
-				s = lines.join("\n");
+				if(flash.system.Capabilities.isDebugger)
+				{
+					var lines = source.getStackTrace().split("\n");
+					lines.shift(); // remove repeated error name
+					s = lines.join("\n");
+				}
 			}
 		#end
 		if (s == "")

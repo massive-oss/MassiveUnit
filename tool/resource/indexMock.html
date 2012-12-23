@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
   <head>
 	<title>Massive Unit Test Runner</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-    <link rel="stylesheet" type="text/css" href="htmlprintclient.css" />
-    
-    <script type="text/JavaScript" language="JavaScript" src="swfobject.js"></script>
-    <script type="text/JavaScript" language="JavaScript" src="htmlprintclient.js"></script>
-    
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<link rel="stylesheet" type="text/css" href="css/printclient.css" />
+	
+	<script type="text/JavaScript" language="JavaScript" src="js/swfobject.js"></script>
+	<script type="text/JavaScript" language="JavaScript" src="js/printclient.js"></script>
+	
   
 	<style type="text/css">
 		html, body, div { margin:0; padding:0; font-family: monaco, Andale Mono, Courier New, monospace; font-size:12px;}
@@ -23,11 +23,11 @@
 	<div id="haxe:trace" ></div>
 	<div id="munit" class="munit" >
 <!--   		<div id="munit-header"  ></div>
-  		<div id="munit-tests"  ></div>
-  		<div id="munit-coverage"  ></div>
-  		<div id="munit-results"  ></div>
-  		<div id="munit-summary" ></div> -->
-  	</div>
+		<div id="munit-tests"  ></div>
+		<div id="munit-coverage"  ></div>
+		<div id="munit-results"  ></div>
+		<div id="munit-summary" ></div> -->
+	</div>
 
 <script language='JavaScript' type='text/JavaScript' >
 	
@@ -68,6 +68,8 @@ function mockCoverageClass(name)
 	addMissingCoverageClass(name, 45);
 	addTestCoverageItem("coverage is bad");
 }
+
+munitPrintLine("WARNING: Bad thing may happened.");
 
 mockTest("com.example.Item1Test", false, false, false, false, "0")
 mockTest("com.example.Item2Test", true, false, false,true,  "0");

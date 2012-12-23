@@ -32,6 +32,7 @@ import massive.haxe.util.RegExpUtil;
 import massive.munit.client.HTTPClient;
 import massive.munit.client.PrintClient;
 import massive.munit.client.JUnitReportClient;
+import massive.munit.client.SummaryReportClient;
 import massive.munit.util.Timer;
 import neko.Lib;
 import neko.Sys;
@@ -108,6 +109,8 @@ class ServerMain
 				result = writeJUnitReportData(data, platformDir);
 			case PrintClient.DEFAULT_ID: 
 				result = writePrintData(data, platformDir);
+			case SummaryReportClient.DEFAULT_ID:
+				result = writeSummaryReportData(data, platformDir);
 			default:
 				result = writePrintData(data, platformDir);
 		}
@@ -211,5 +214,32 @@ class ServerMain
 		}
 		
 		return ERROR;
+	}
+
+	/**
+	Parses a summary text report
+	*/
+	function writeSummaryReportData(data:String, dir:File):String
+	{
+		var file:File = dir.resolvePath("summary.txt");
+		file.writeString(data, false);
+
+		var exitCode = 0;
+
+		var lines:Array<String> = data.split("\n");
+
+		for (line in lines)
+		{	
+			if(line == "" || line.indexOf("#") == 0) continue;
+
+			var tmp = line.split(":");
+
+			if(tmp[0] == "result" && tmp[1] == "true") return PASSED;
+		
+			if(tmp[0] == "error" && tmp[1] != "0") return ERROR;
+		}
+		
+		return FAILED;
+		
 	}
 }

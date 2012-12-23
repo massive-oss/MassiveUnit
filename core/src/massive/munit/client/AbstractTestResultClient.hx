@@ -75,7 +75,7 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 
 	var currentCoverageResult:CoverageResult;
 	
-	var traces:Array<String>;
+	static var traces:Array<String>;
 	
 	var totalResults:Array<TestResult>;
 
@@ -94,9 +94,6 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 
 	function init():Void
 	{
-		originalTrace = haxe.Log.trace;
-		haxe.Log.trace = customTrace;
-
 		currentTestClass = null;
 
 		currentClassResults = [];
@@ -185,7 +182,7 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 	}
 
 	////// FINAL REPORTS //////
-	public function reportFinalCoverage(percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
+	public function reportFinalCoverage(?percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
 		?classBreakdown:String=null,
 		?packageBreakdown:String=null,
 		?executionFrequency:String=null
@@ -280,10 +277,18 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 
 	///////
 
-	function customTrace(value, ?info:haxe.PosInfos)
+	function addTrace(value:Dynamic, ?info:haxe.PosInfos)
 	{
 		var traceString = info.fileName + "|" + info.lineNumber + "| " + Std.string(value);
 		traces.push(traceString);
+	}
+
+	/**
+	* returns the current class trace statements
+	*/
+	function getTraces():Array<String>
+	{
+		return traces.concat([]);
 	}
 
 	function sortTestResults(a:TestResult, b:TestResult):Int

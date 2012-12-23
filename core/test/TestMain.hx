@@ -30,11 +30,21 @@ import massive.munit.client.PrintClient;
 import massive.munit.client.RichPrintClient;
 import massive.munit.client.HTTPClient;
 import massive.munit.client.JUnitReportClient;
+import massive.munit.client.SummaryReportClient;
 import massive.munit.TestRunner;
-
 #if js
 import js.Lib;
 import js.Dom;
+#end
+
+#if (haxe_208 && !haxe_209)
+	#if neko
+		import neko.Sys;
+	#elseif cpp
+		import cpp.Sys;
+	#elseif php
+		import php.Sys
+	#end
 #end
 
 
@@ -53,12 +63,15 @@ class TestMain
 		suites.push(TestSuite);
 
 		#if MCOVER
-			var client = new massive.mcover.munit.client.MCoverPrintClient();
+			var client = new mcover.coverage.munit.client.MCoverPrintClient();
+			var httpClient = new HTTPClient(new mcover.coverage.munit.client.MCoverSummaryReportClient());
 		#else
 			var client = new RichPrintClient();
+			var httpClient = new HTTPClient(new SummaryReportClient());
 		#end
 
 		var runner:TestRunner = new TestRunner(client);	
+		runner.addResultClient(httpClient);
 		//runner.addResultClient(new HTTPClient(new JUnitReportClient()));	
 		runner.completionHandler = completionHandler;
 		runner.run(suites);
@@ -76,8 +89,8 @@ class TestMain
 				flash.external.ExternalInterface.call("testResult", successful);	
 			#elseif js
 				js.Lib.eval("testResult(" + successful + ");");
-			#elseif neko
-				neko.Sys.exit(0);
+			#elseif (neko || cpp || php)
+				Sys.exit(0);
 			#end
 		}
 		// if run from outside browser can get error which we can ignore

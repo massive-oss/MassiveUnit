@@ -95,7 +95,7 @@ class PrintClientBase extends AbstractTestResultClient
 	{
 		super.finalizeTestClass();
 
-		for(item in traces)
+		for(item in getTraces())
 		{
 			printLine("TRACE: " + item, 1);
 		}
@@ -134,7 +134,7 @@ class PrintClientBase extends AbstractTestResultClient
 		// 	}
 		// }
 	}
-	override public function reportFinalCoverage(percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
+	override public function reportFinalCoverage(?percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
 		?classBreakdown:String=null,
 		?packageBreakdown:String=null,
 		?executionFrequency:String=null
@@ -314,24 +314,26 @@ class ExternalPrintClientJS implements ExternalPrintClient
 	{
 
 		#if flash
+		
 			if(!flash.external.ExternalInterface.available)
 			{
 				throw new MUnitException("ExternalInterface not available");
 			}
 
-			#if flash
+			if(flashInitialised != true)
 			{
-				if(flashInitialised != true)
-				{
-					flashInitialised = true;
-					#if flash8
-						flash.Lib.current.onEnterFrame = enterFrameHandler;
-					#else
-						flash.Lib.current.stage.addEventListener(flash.events.Event.ENTER_FRAME, enterFrameHandler);
-					#end
-				}
+				flashInitialised = true;
+				#if flash8
+					flash.Lib.current.onEnterFrame = enterFrameHandler;
+				#else
+					flash.Lib.current.stage.addEventListener(flash.events.Event.ENTER_FRAME, enterFrameHandler);
+				#end
 			}
-			#end
+
+			if(!flash.system.Capabilities.isDebugger)
+			{
+				printLine("WARNING: Flash Debug Player not installed. May cause unexpected behaviour in MUnit when handling thrown exceptions.");
+			}
 			
 		#elseif js
 			var div = js.Lib.document.getElementById("haxe:trace");

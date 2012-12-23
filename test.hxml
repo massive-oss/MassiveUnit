@@ -1,5 +1,0 @@
--cmd cd core
--cmd haxelib run munit test -neko -browser Firefox
--cmd cd ../tool
--cmd haxelib run munit test -neko
--cmd cd ../

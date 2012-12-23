@@ -4,11 +4,6 @@ import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 import massive.munit.UnhandledException;
-
-/**
-* Auto generated MassiveUnit Test Class  for massive.munit.UnhandledException 
-*/
-
 import massive.haxe.util.ReflectUtil;
 class UnhandledExceptionTest 
 {
@@ -42,14 +37,19 @@ class UnhandledExceptionTest
 	@Test
 	public function testConstructor():Void
 	{
-		var source = "original msg";
-		var location:String = "location";
-		var exception = new UnhandledException(source, location);
-
-		Assert.isNull(exception.info);
-		Assert.isTrue(exception.message.indexOf(source) == 0);
-		Assert.isTrue(exception.message.indexOf(" at " + location) > 0);
-
+		try
+		{
+			throw "";
+		}
+		catch(e:Dynamic)
+		{
+			var source = "original msg";
+			var location:String = "location";
+			var exception = new UnhandledException(source, location);
+			Assert.isNull(exception.info);
+			Assert.isTrue(exception.message.indexOf(source) == 0);
+			Assert.isTrue(exception.message.indexOf(" at " + location) > 0);
+		}
 	}
 	
 }

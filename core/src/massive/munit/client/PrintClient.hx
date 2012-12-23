@@ -35,6 +35,17 @@ import massive.munit.util.MathUtil;
 import massive.haxe.util.ReflectUtil;
 import massive.munit.util.Timer;
 
+
+#if haxe208
+	#if neko
+	import neko.Lib;
+	#elseif cpp
+	import cpp.Lib;
+	#elseif php
+	import php.Lib;
+	#end
+#end
+
 /**
  * Generates basic text formatted test result output.
  * 
@@ -65,10 +76,10 @@ class PrintClient extends PrintClientBase
 
 	#if (js||flash)
 		var external:ExternalPrintClient;
-		#if flash9
-			var textField:flash.text.TextField;
-		#elseif flash
+		#if flash8
 			var textField:flash.TextField;
+		#elseif flash
+			var textField:flash.text.TextField;
 		#elseif js
 			var textArea:Dynamic;
 		#end
@@ -92,6 +103,9 @@ class PrintClient extends PrintClientBase
 				initJS();
 			#end
 		#end
+
+		originalTrace = haxe.Log.trace;
+		haxe.Log.trace = customTrace;
 	}
 
 	#if flash
@@ -102,17 +116,26 @@ class PrintClient extends PrintClientBase
 			throw new MUnitException("ExternalInterface not available");
 		}
 		
-		#if flash9
+		#if flash8
+			textField = flash.Lib.current.createTextField("__munitOutput", 20000, 0, 0, flash.Stage.width, flash.Stage.height);
+			textField.wordWrap = true;
+			textField.selectable = true;
+		#else
 			textField = new flash.text.TextField();
 			textField.selectable = true;
 			textField.width = flash.Lib.current.stage.stageWidth;
 			textField.height = flash.Lib.current.stage.stageHeight;
 			flash.Lib.current.addChild(textField);
-		#elseif flash
-			textField = flash.Lib.current.createTextField("__munitOutput", 20000, 0, 0, flash.Stage.width, flash.Stage.height);
-			textField.wordWrap = true;
-			textField.selectable = true;
+
+			if(!flash.system.Capabilities.isDebugger)
+			{
+				printLine("WARNING: Flash Debug Player not installed. May cause unexpected behaviour in MUnit when handling thrown exceptions.");
+			}
 		#end
+
+
+
+
 	}
 	#elseif js
 	function initJS()
@@ -139,39 +162,46 @@ class PrintClient extends PrintClientBase
 			external.setResultBackground(result);
 		#end
 	}
+
+
+
+	function customTrace(value, ?info:haxe.PosInfos)
+	{
+		addTrace(value, info);
+	}
 	
 	////// PRINT APIS //////
 
 	override public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
 	{
-		super.reportFinalStatistics(testCount, passCount, failCount, errorCount, ignoreCount, time);
+		return super.reportFinalStatistics(testCount, passCount, failCount, errorCount, ignoreCount, time);
 	}
 
 	override public function print(value:Dynamic)
 	{
 		super.print(value);
 
-		#if flash9
-			textField.appendText(value);
-			textField.scrollV = textField.maxScrollV;
-		#elseif flash
+		#if flash8
 			value = untyped flash.Boot.__string_rec(value, "");
 			textField.text += value;
 			textField.scroll = textField.maxscroll;
+		#elseif flash
+			textField.appendText(value);
+			textField.scrollV = textField.maxScrollV;
 		#end
 
 		#if (js || flash)
 			external.print(value);
-		#elseif neko
-			neko.Lib.print(value);
-		#elseif cpp
-			cpp.Lib.print(value);
-		#elseif php
-			php.Lib.print(value);
+		#elseif (neko || cpp || php)
+			#if (haxe_208 && !haxe_209)
+			Lib.print(value);
+			#else
+			Sys.print(value);
+			#end
 		#end
 	}
 
-	override public function printLine(value, ?indent:Int = 0)
+	override public function printLine(value:Dynamic, ?indent:Int = 0)
 	{
 		super.printLine(value, indent);
 	}
