@@ -8,5 +8,6 @@ Note: all types should be in lowercase for consistency when specifying on the co
 enum ReportType
 {
 	teamcity;
+	other;
 }
 
