@@ -56,7 +56,7 @@ time:1234.3
 */
 class SummaryReportClient extends AbstractTestResultClient
 {
-	public static var DEFAULT_ID:String = "summary";
+	public static inline var DEFAULT_ID:String = "summary";
 
 	public function new()
 	{
