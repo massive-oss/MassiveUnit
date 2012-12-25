@@ -123,9 +123,9 @@ class AsyncDelegate
 		if(deferredTimer!=null) deferredTimer.stop();
 	}
 
-	private function responseHandler(?params:Array<Dynamic>):Void
+	private function responseHandler(?params:Array<Dynamic>):Dynamic
 	{	
-		if (timedOut || canceled) return;
+		if (timedOut || canceled) return null;
 
 		timer.stop();
 	
@@ -136,6 +136,8 @@ class AsyncDelegate
 		
 		// defer callback to force async runner
 		if (observer != null) Timer.delay(delayActualResponseHandler, 1);
+
+		return null;
 	}
 
 	private function delayActualResponseHandler()
