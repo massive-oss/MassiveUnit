@@ -45,6 +45,7 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 	/**
 	 * Handler which if present, is called when the client has completed generating its results.
 	 */
+	@:isVar
 	public var completionHandler(get_completeHandler, set_completeHandler):ITestResultClient -> Void;
 	function get_completeHandler():ITestResultClient -> Void 
 	{
@@ -58,6 +59,7 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 	/*
 	* String representation of print output
 	*/
+	@:isVar
 	public var output(get_output, null):String;
 	function get_output():String
 	{

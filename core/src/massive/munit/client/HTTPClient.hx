@@ -69,6 +69,7 @@ class HTTPClient implements IAdvancedTestResultClient
 	 * Handler which if present, is called when the client has completed sending the test results to the specificied url. 
 	 * This will be called once an HTTP response has been recieved.
 	 */
+	@:isVar
 	public var completionHandler(get_completeHandler, set_completeHandler):ITestResultClient -> Void;
 	private function get_completeHandler():ITestResultClient -> Void 
 	{
