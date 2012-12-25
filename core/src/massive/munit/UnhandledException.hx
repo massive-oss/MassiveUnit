@@ -29,7 +29,7 @@
 package massive.munit;
 import haxe.PosInfos;
 import massive.haxe.util.ReflectUtil;
-import haxe.Stack;
+import haxe.CallStack;
 
 /**
  * Exception thrown when a test triggers an exception in code which was not captured.
@@ -76,7 +76,7 @@ class UnhandledException extends MUnitException
 		#end
 		if (s == "")
 		{
-			var stack:Array<haxe.StackItem> = Stack.exceptionStack();
+			var stack:Array<haxe.StackItem> = CallStack.exceptionStack();
 			while (stack.length > 0)
 			{
 				switch(stack.shift()) 
