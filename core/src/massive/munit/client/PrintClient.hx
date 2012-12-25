@@ -140,7 +140,7 @@ class PrintClient extends PrintClientBase
 	#elseif js
 	function initJS()
 	{
-		var div = js.Lib.document.getElementById("haxe:trace");
+		var div = js.Browser.document.getElementById("haxe:trace");
 		
 		if (div == null) 
 		{

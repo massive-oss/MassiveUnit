@@ -336,7 +336,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 			}
 			
 		#elseif js
-			var div = js.Lib.document.getElementById("haxe:trace");
+			var div = js.Browser.document.getElementById("haxe:trace");
 				
 			if (div == null) 
 			{
