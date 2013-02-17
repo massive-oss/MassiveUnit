@@ -34,7 +34,7 @@ import massive.munit.client.SummaryReportClient;
 import massive.munit.TestRunner;
 #if js
 import js.Lib;
-import js.Dom;
+import js.html.*;
 #end
 
 /**

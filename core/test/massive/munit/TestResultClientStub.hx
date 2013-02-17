@@ -56,13 +56,13 @@ class TestResultClientStub implements IAdvancedTestResultClient
 	public var currentTestClass:String;
 	public var testClasses:Array<String>;
 
-	public var completionHandler(get, set):ITestResultClient -> Void;
-	private function get_completionHandler():ITestResultClient -> Void 
+	@:isVar public var completionHandler(get, set):ITestResultClient -> Void;
+	function get_completionHandler():ITestResultClient -> Void 
 	{
 		return completionHandler;
 	}
 	
-	private function set_completionHandler(value:ITestResultClient -> Void):ITestResultClient -> Void
+	function set_completionHandler(value:ITestResultClient -> Void):ITestResultClient -> Void
 	{
 		return completionHandler = value;
 	}
@@ -121,6 +121,8 @@ class TestResultClientStub implements IAdvancedTestResultClient
 		this.time = time;
 		if (completionHandler != null) 
 			completionHandler(this);
+
+		return null;
 	}
 	
 	public function toString():String
