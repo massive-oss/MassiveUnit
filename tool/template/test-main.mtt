@@ -7,7 +7,6 @@ import massive.munit.TestRunner;
 
 #if js
 import js.Lib;
-import js.Dom;
 #end
 
 /**
