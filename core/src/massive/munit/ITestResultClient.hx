@@ -43,7 +43,7 @@ interface ITestResultClient
 	/**
 	 * Handler which if present, should be called when the client has completed its processing of the results.
 	 */
-	var completionHandler(get_completeHandler, set_completeHandler):ITestResultClient -> Void;
+	var completionHandler(get, set):ITestResultClient -> Void;
 	
 	/**
 	 * The unique identifier for the client.
@@ -102,7 +102,7 @@ interface ITestResultClient
  * @author Dominic De Lorenzo
  * @see TestRunner
  */
-interface IAdvancedTestResultClient implements ITestResultClient
+interface IAdvancedTestResultClient extends ITestResultClient
 {	
 	/**
 	 * Called before a new test class in run.
@@ -118,7 +118,7 @@ interface IAdvancedTestResultClient implements ITestResultClient
  * @author Dominic De Lorenzo
  * @see TestRunner
  */
-interface ICoverageTestResultClient implements IAdvancedTestResultClient
+interface ICoverageTestResultClient extends IAdvancedTestResultClient
 {	
 	/**
 	 * Called after all tests have completed for current class

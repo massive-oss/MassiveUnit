@@ -58,16 +58,6 @@ import neko.vm.Thread;
 import cpp.vm.Thread;
 #end
 
-#if (haxe_208 && !haxe_209)
-	#if neko
-		import neko.Sys;
-	#elseif cpp
-		import cpp.Sys;
-	#elseif php
-		import php.Sys
-	#end
-#end
-
 @:expose('massive.munit.util.Timer')
 class Timer 
 {

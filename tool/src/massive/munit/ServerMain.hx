@@ -26,16 +26,16 @@
  * or implied, of Massive Interactive.
  */
 package massive.munit;
-import massive.neko.io.File;
-import massive.neko.io.FileSys;
+import massive.sys.io.File;
+import massive.sys.io.FileSys;
 import massive.haxe.util.RegExpUtil;
 import massive.munit.client.HTTPClient;
 import massive.munit.client.PrintClient;
 import massive.munit.client.JUnitReportClient;
 import massive.munit.client.SummaryReportClient;
 import massive.munit.util.Timer;
-import neko.Lib;
-import neko.Sys;
+import Sys;
+import Sys;
 import neko.vm.Thread;
 
 class ServerMain
@@ -60,9 +60,9 @@ class ServerMain
 		}
 		catch(e:Dynamic)
 		{
-			neko.Lib.print("Error: Server terminated with fatal error. \n");
+			Sys.print("Error: Server terminated with fatal error. \n");
 			recordResult(END + "\n");
-			neko.Sys.exit(-1);
+			Sys.exit(-1);
 		}
 	}
 		
@@ -83,7 +83,7 @@ class ServerMain
 		if (client == null || platform == null)
 			return;
 		
-		var hash:Hash<String> = neko.Web.getParams();
+		var hash:Map<String,String> = neko.Web.getParams();
 		var data:String = hash.get("data"); // gets variable 'data' from posted data (as2 LoadVars)
 
 		if (data == null)
@@ -91,9 +91,9 @@ class ServerMain
 
 		if (data == null)
 		{
-			neko.Lib.print("Error: Invalid content sent to server: \n" + data);
+			Sys.print("Error: Invalid content sent to server: \n" + data);
 			recordResult(END + "\n");
-			neko.Sys.exit(-1);
+			Sys.exit(-1);
 		}
 		
 		var clientDir:File = tmpDir.resolveDirectory(client, true);
@@ -122,7 +122,7 @@ class ServerMain
 	private function recordResult(result:String)
 	{
 		var MAX_WRITE_ATTEMPTS = 4;
-		Lib.println(result);
+		Sys.println(result);
 		var writeAttempts = 0;
 		var writeSuccess = false;
 		

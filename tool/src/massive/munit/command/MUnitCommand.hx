@@ -28,9 +28,9 @@
 package massive.munit.command;
 
 import massive.munit.Config;
-import massive.neko.cmd.Command;
+import massive.sys.cmd.Command;
 
-import neko.Lib;
+import Sys;
 
 class MUnitCommand extends Command
 {

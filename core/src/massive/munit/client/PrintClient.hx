@@ -36,16 +36,6 @@ import massive.haxe.util.ReflectUtil;
 import massive.munit.util.Timer;
 
 
-#if haxe208
-	#if neko
-	import neko.Lib;
-	#elseif cpp
-	import cpp.Lib;
-	#elseif php
-	import php.Lib;
-	#end
-#end
-
 /**
  * Generates basic text formatted test result output.
  * 
@@ -193,11 +183,7 @@ class PrintClient extends PrintClientBase
 		#if (js || flash)
 			external.print(value);
 		#elseif (neko || cpp || php)
-			#if (haxe_208 && !haxe_209)
-			Lib.print(value);
-			#else
 			Sys.print(value);
-			#end
 		#end
 	}
 

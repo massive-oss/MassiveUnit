@@ -36,16 +36,6 @@ import massive.munit.util.Timer;
 
 import massive.munit.client.PrintClientBase;
 
-#if haxe208
-	#if neko
-	import neko.Lib;
-	#elseif cpp
-	import cpp.Lib;
-	#elseif php
-	import php.Lib;
-	#end
-#end
-
 class RichPrintClient extends PrintClientBase
 {
 	/**
@@ -300,11 +290,7 @@ class RichPrintClient extends PrintClientBase
 			//external.queue(ExternalPrintClientJS.PRINT, value);
 			return;
 		#elseif (neko || cpp || php)
-			#if (haxe_208 && !haxe_209)
-			Lib.print(value);
-			#else
 			Sys.print(value);
-			#end
 		#end
 	}
 

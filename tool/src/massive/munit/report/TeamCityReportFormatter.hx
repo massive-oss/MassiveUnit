@@ -1,6 +1,6 @@
 package massive.munit.report;
 
-import massive.neko.io.File;
+import massive.sys.io.File;
 import massive.munit.report.ReportFormatter;
 import massive.munit.report.ReportType;
 
@@ -16,7 +16,7 @@ class TeamCityReportFormatter extends ReportFormatterBase
 	static inline var DEFAULT_FILE_NAME:String = "teamcity-info.xml";
 
 	var statusTexts:Array<String>;
-	var statistics:Hash<Float>;
+	var statistics:Map<String,Float>;
 	
 	public function new()
 	{
@@ -30,7 +30,7 @@ class TeamCityReportFormatter extends ReportFormatterBase
 		super.format(files, dest, minCoverage);
 
 		statusTexts = [];
-		statistics = new Hash();
+		statistics = new Map();
 
 		serializeTestResults();
 		serializeCoverageResults();

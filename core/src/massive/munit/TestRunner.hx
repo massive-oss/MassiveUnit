@@ -29,7 +29,7 @@
 package massive.munit;
 
 import haxe.PosInfos;
-import haxe.Stack;
+import haxe.CallStack;
 import massive.munit.Assert;
 import massive.munit.async.AsyncDelegate;
 import massive.munit.async.AsyncFactory;
@@ -38,16 +38,6 @@ import massive.munit.async.IAsyncDelegateObserver;
 import massive.munit.async.MissingAsyncDelegateException;
 import massive.munit.util.Timer;
 import massive.munit.ITestResultClient;
-
-#if (haxe_208 && !haxe_209)
-    #if neko
-        import neko.Sys;
-    #elseif cpp
-        import cpp.Sys;
-    #else if php
-        import php.Sys;
-    #end
-#end
 
 #if neko
 import neko.vm.Thread;

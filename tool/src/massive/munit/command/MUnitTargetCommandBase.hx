@@ -1,11 +1,11 @@
 package massive.munit.command;
 
-import massive.neko.io.File;
+import massive.sys.io.File;
 
 import massive.munit.Config;
 import massive.munit.Target;
 
-import massive.neko.io.FileSys;
+import massive.sys.io.FileSys;
 
 
 class MUnitTargetCommandBase extends MUnitCommand

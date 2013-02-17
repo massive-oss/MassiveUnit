@@ -56,13 +56,13 @@ class TestResultClientStub implements IAdvancedTestResultClient
 	public var currentTestClass:String;
 	public var testClasses:Array<String>;
 
-	public var completionHandler(get_completeHandler, set_completeHandler):ITestResultClient -> Void;
-	private function get_completeHandler():ITestResultClient -> Void 
+	public var completionHandler(get, set):ITestResultClient -> Void;
+	private function get_completionHandler():ITestResultClient -> Void 
 	{
 		return completionHandler;
 	}
 	
-	private function set_completeHandler(value:ITestResultClient -> Void):ITestResultClient -> Void
+	private function set_completionHandler(value:ITestResultClient -> Void):ITestResultClient -> Void
 	{
 		return completionHandler = value;
 	}
