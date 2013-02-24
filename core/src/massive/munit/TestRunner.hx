@@ -29,7 +29,7 @@
 package massive.munit;
 
 import haxe.PosInfos;
-import haxe.Stack;
+import haxe.CallStack;
 import massive.munit.Assert;
 import massive.munit.async.AsyncDelegate;
 import massive.munit.async.AsyncFactory;
