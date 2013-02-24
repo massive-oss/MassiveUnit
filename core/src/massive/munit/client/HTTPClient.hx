@@ -246,7 +246,7 @@ class URLRequest
 	public var data:Dynamic;
 
 	var url:String;
-	var headers:Hash<String>;
+	var headers:Map<String,String>;
 
 	#if (js || neko || cpp)
 		public var client:Http;
