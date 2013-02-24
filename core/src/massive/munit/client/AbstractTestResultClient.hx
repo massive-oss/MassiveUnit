@@ -35,7 +35,7 @@ import massive.munit.util.MathUtil;
 import massive.haxe.util.ReflectUtil;
 import massive.munit.util.Timer;
 
-class AbstractTestResultClient implements IAdvancedTestResultClient, implements ICoverageTestResultClient
+class AbstractTestResultClient implements IAdvancedTestResultClient implements ICoverageTestResultClient
 {
 	/**
 	 * The unique identifier for the client.
