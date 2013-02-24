@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -29,7 +29,7 @@
 package massive.munit;
 import haxe.PosInfos;
 import massive.haxe.util.ReflectUtil;
-import haxe.Stack;
+import haxe.CallStack;
 
 /**
  * Exception thrown when a test triggers an exception in code which was not captured.
@@ -76,15 +76,15 @@ class UnhandledException extends MUnitException
 		#end
 		if (s == "")
 		{
-			var stack:Array<haxe.StackItem> = Stack.exceptionStack();
+			var stack:Array<haxe.StackItem> = CallStack.exceptionStack();
 			while (stack.length > 0)
 			{
 				switch(stack.shift()) 
 				{
-	         		case FilePos(item, file, line): s += "\tat " + file + " (" + line + ")\n";
-	         		case Module(module):
+	         		case FilePos(_, file, line): s += "\tat " + file + " (" + line + ")\n";
+	         		case Module(_):
 	         		case Method(classname, method): s += "\tat " + classname + "#" + method + "\n";
-	         		case Lambda(v):
+	         		case Lambda(_):
 	         		case CFunction:
 	            }
 	        }

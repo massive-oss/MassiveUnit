@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -123,9 +123,9 @@ class AsyncDelegate
 		if(deferredTimer!=null) deferredTimer.stop();
 	}
 
-	private function responseHandler(?params:Array<Dynamic>):Void
+	private function responseHandler(?params:Array<Dynamic>):Dynamic
 	{	
-		if (timedOut || canceled) return;
+		if (timedOut || canceled) return null;
 
 		timer.stop();
 	
@@ -136,6 +136,8 @@ class AsyncDelegate
 		
 		// defer callback to force async runner
 		if (observer != null) Timer.delay(delayActualResponseHandler, 1);
+
+		return null;
 	}
 
 	private function delayActualResponseHandler()

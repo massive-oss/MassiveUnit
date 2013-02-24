@@ -30,6 +30,7 @@ bin/
 /examples/**/report/
 .svn
 munit.sublime-workspace
+munit.sublime-project
 
 teamcity-info.xml
 .mcover/*

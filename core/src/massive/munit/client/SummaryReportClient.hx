@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -56,7 +56,7 @@ time:1234.3
 */
 class SummaryReportClient extends AbstractTestResultClient
 {
-	public static var DEFAULT_ID:String = "summary";
+	public static inline var DEFAULT_ID:String = "summary";
 
 	public function new()
 	{

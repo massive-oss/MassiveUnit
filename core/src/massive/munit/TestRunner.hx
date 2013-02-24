@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -29,7 +29,7 @@
 package massive.munit;
 
 import haxe.PosInfos;
-import haxe.Stack;
+import haxe.CallStack;
 import massive.munit.Assert;
 import massive.munit.async.AsyncDelegate;
 import massive.munit.async.AsyncFactory;

@@ -226,8 +226,8 @@ class MUnitTargetCommandBase extends MUnitCommand
 					var s:String = null;
 					switch(type)
 					{
-						case TargetType.as2: s = "swf-version 8";
-						case TargetType.as3: s = "swf-version [^8]";
+						case as2: s = "swf-version 8";
+						case as3: s = "swf-version [^8]";
 						default: s = Std.string(type);
 					}	
 					var targetMatcher = new EReg("^-" + s, "");
@@ -258,8 +258,8 @@ class MUnitTargetCommandBase extends MUnitCommand
 
 		switch(target.type)
 		{
-			case TargetType.as2: output = "-swf";
-			case TargetType.as3: output = "-swf";
+			case as2: output = "-swf";
+			case as3: output = "-swf";
 			default: output = "-" + Std.string(target.type);
 		}
 
@@ -296,8 +296,8 @@ class MUnitTargetCommandBase extends MUnitCommand
 			var s:String = null;
 			switch (type)
 			{
-				case TargetType.as2: s = "swf";
-				case TargetType.as3: s = "swf";
+				case as2: s = "swf";
+				case as3: s = "swf";
 				default: s = Std.string(type);
 			}
 			var targetMatcher = new EReg("^-" + s + "\\s+", "");
