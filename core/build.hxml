@@ -3,7 +3,7 @@
 -cp src
 -lib hamcrest
 -lib mlib
--swf9 ../bin/munit_all.swf
+-swf ../bin/munit_all.swf
 
 --next
 
@@ -12,6 +12,7 @@
 -cp src
 -lib hamcrest
 -lib mlib
+-swf-version 8
 -swf ../bin/munit_all.swf
 
 --next
