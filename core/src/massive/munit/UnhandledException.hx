@@ -29,7 +29,12 @@
 package massive.munit;
 import haxe.PosInfos;
 import massive.haxe.util.ReflectUtil;
+#if haxe3
 import haxe.CallStack;
+#else
+import haxe.Stack;
+private typedef CallStack = Stack;
+#end
 
 /**
  * Exception thrown when a test triggers an exception in code which was not captured.

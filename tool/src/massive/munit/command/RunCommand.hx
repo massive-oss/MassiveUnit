@@ -37,7 +37,6 @@ import sys.FileSystem;
 import neko.vm.Thread;
 import neko.vm.Mutex;
 import Sys;
-import Sys;
 import haxe.io.Path;
 import massive.sys.io.File;
 import massive.sys.io.FileSys;
@@ -48,6 +47,12 @@ import massive.munit.util.MathUtil;
 import massive.munit.Config;
 import massive.munit.Target;
 
+
+#if haxe3
+import haxe.ds.StringMap;
+#else
+private typedef StringMap<T> = Hash<T>
+#end
  
 /**
 Don't ask - compiler always thinks it is massive.munit.TargetType enum 'neko'
@@ -467,7 +472,7 @@ class RunCommand extends MUnitTargetCommandBase
 		var fileName = tmpDir.nativePath + "results.txt";
 		var file = null;
 		var lineCount = 0;
-		var platformMap = new Map<String,Bool>();
+		var platformMap = new StringMap<Bool>();
 		do
 		{
 			if ((Sys.time() - lastResultTime) > serverTimeoutTimeSec)

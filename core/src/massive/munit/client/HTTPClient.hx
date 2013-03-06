@@ -33,6 +33,12 @@ import massive.munit.ITestResultClient;
 import massive.munit.TestResult;
 import massive.munit.util.Timer;
 
+#if haxe3
+import haxe.ds.StringMap;
+#else
+private typedef StringMap<T> = Hash<T>
+#end
+
 /**
  * Decorates other ITestResultClient's, adding behavior to post test results to a specified url.
  * 
@@ -70,7 +76,11 @@ class HTTPClient implements IAdvancedTestResultClient
 	 * This will be called once an HTTP response has been recieved.
 	 */
 	@:isVar
+	#if haxe3
 	public var completionHandler(get, set):ITestResultClient -> Void;
+	#else
+	public var completionHandler(get_completionHandler, set_completionHandler):ITestResultClient -> Void;
+	#end
 	private function get_completionHandler():ITestResultClient -> Void 
 	{
 		return completionHandler;
@@ -246,7 +256,7 @@ class URLRequest
 	public var data:Dynamic;
 
 	var url:String;
-	var headers:Map<String,String>;
+	var headers:StringMap<String>;
 
 	#if (js || neko || cpp)
 		public var client:Http;

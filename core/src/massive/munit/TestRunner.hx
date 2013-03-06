@@ -29,7 +29,7 @@
 package massive.munit;
 
 import haxe.PosInfos;
-import haxe.CallStack;
+
 import massive.munit.Assert;
 import massive.munit.async.AsyncDelegate;
 import massive.munit.async.AsyncFactory;
@@ -43,6 +43,13 @@ import massive.munit.ITestResultClient;
 import neko.vm.Thread;
 #elseif cpp
 import cpp.vm.Thread;
+#end
+
+#if haxe3
+import haxe.CallStack;
+#else
+import haxe.Stack;
+private typedef CallStack = Stack;
 #end
 
 /**

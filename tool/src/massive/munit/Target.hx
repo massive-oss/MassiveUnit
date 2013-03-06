@@ -2,13 +2,20 @@ package massive.munit;
 
 import massive.sys.io.File;
 
+#if haxe3
+import haxe.ds.StringMap;
+#else
+private typedef StringMap<T> = Hash<T>
+#end
+
+
 class Target
 {
 	public var type:TargetType;
 	public var hxml:String;
 	public var file:File;
 	public var main:File;
-	public var flags:Map<String,String>;
+	public var flags:StringMap<String>;
 	public var debug:Bool;
 
 	public var executableFile:File;
@@ -17,7 +24,7 @@ class Target
 	{
 		hxml = "";
 		debug = false;
-		flags = new Map();
+		flags = new StringMap();
 	}
 	
 	public function toString():String

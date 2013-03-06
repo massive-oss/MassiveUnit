@@ -35,8 +35,13 @@ import massive.munit.client.JUnitReportClient;
 import massive.munit.client.SummaryReportClient;
 import massive.munit.util.Timer;
 import Sys;
-import Sys;
 import neko.vm.Thread;
+
+#if haxe3
+import haxe.ds.StringMap;
+#else
+private typedef StringMap<T> = Hash<T>
+#end
 
 class ServerMain
 {
@@ -83,7 +88,7 @@ class ServerMain
 		if (client == null || platform == null)
 			return;
 		
-		var hash:Map<String,String> = neko.Web.getParams();
+		var hash:StringMap<String> = neko.Web.getParams();
 		var data:String = hash.get("data"); // gets variable 'data' from posted data (as2 LoadVars)
 
 		if (data == null)
