@@ -26,7 +26,7 @@
  * or implied, of Massive Interactive.
  */
 package massive.munit;
-import massive.neko.io.File;
+import massive.sys.io.File;
 import massive.munit.Target;
 
 class Config

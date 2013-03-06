@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -35,7 +35,11 @@ import massive.munit.util.MathUtil;
 import massive.haxe.util.ReflectUtil;
 import massive.munit.util.Timer;
 
+#if haxe3
+class AbstractTestResultClient implements IAdvancedTestResultClient implements ICoverageTestResultClient
+#else
 class AbstractTestResultClient implements IAdvancedTestResultClient, implements ICoverageTestResultClient
+#end
 {
 	/**
 	 * The unique identifier for the client.
@@ -45,12 +49,18 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 	/**
 	 * Handler which if present, is called when the client has completed generating its results.
 	 */
-	public var completionHandler(get_completeHandler, set_completeHandler):ITestResultClient -> Void;
-	function get_completeHandler():ITestResultClient -> Void 
+	@:isVar
+	#if haxe3
+	public var completionHandler(get, set):ITestResultClient -> Void;
+	#else
+	public var completionHandler(get_completionHandler, set_completionHandler):ITestResultClient -> Void;
+	#end
+
+	function get_completionHandler():ITestResultClient -> Void 
 	{
 		return completionHandler;
 	}
-	function set_completeHandler(value:ITestResultClient -> Void):ITestResultClient -> Void
+	function set_completionHandler(value:ITestResultClient -> Void):ITestResultClient -> Void
 	{
 		return completionHandler = value;
 	}
@@ -58,7 +68,13 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 	/*
 	* String representation of print output
 	*/
+	@:isVar
+	#if haxe3
+	public var output(get, null):String;
+	#else
 	public var output(get_output, null):String;
+	#end
+	
 	function get_output():String
 	{
 		return output;

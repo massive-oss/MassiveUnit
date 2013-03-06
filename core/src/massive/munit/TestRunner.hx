@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -29,7 +29,7 @@
 package massive.munit;
 
 import haxe.PosInfos;
-import haxe.Stack;
+
 import massive.munit.Assert;
 import massive.munit.async.AsyncDelegate;
 import massive.munit.async.AsyncFactory;
@@ -39,20 +39,17 @@ import massive.munit.async.MissingAsyncDelegateException;
 import massive.munit.util.Timer;
 import massive.munit.ITestResultClient;
 
-#if (haxe_208 && !haxe_209)
-    #if neko
-        import neko.Sys;
-    #elseif cpp
-        import cpp.Sys;
-    #else if php
-        import php.Sys;
-    #end
-#end
-
 #if neko
 import neko.vm.Thread;
 #elseif cpp
 import cpp.vm.Thread;
+#end
+
+#if haxe3
+import haxe.CallStack;
+#else
+import haxe.Stack;
+private typedef CallStack = Stack;
 #end
 
 /**

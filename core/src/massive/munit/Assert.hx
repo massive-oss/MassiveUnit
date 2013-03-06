@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -120,7 +120,7 @@ class Assert
 	 * @param	value				value expected to be of a given type
 	 * @param	type				type the value should be
 	 */
-	public static function isType(value:Dynamic, type:Class<Dynamic>, ?info:PosInfos):Void
+	public static function isType(value:Dynamic, type:Dynamic, ?info:PosInfos):Void
 	{
 		assertionCount++;
 		if (!Std.is(value, type)) fail("Value [" + value + "] was not of type: " + Type.getClassName(type), info);
@@ -132,7 +132,7 @@ class Assert
 	 * @param	value				value expected to not be of a given type
 	 * @param	type				type the value should not be
 	 */
-	public static function isNotType(value:Dynamic, type:Class<Dynamic>, ?info:PosInfos):Void
+	public static function isNotType(value:Dynamic, type:Dynamic, ?info:PosInfos):Void
 	{
 		assertionCount++;
 		if (Std.is(value, type)) fail("Value [" + value + "] was of type: " + Type.getClassName(type), info);
@@ -153,7 +153,12 @@ class Assert
 		assertionCount++;
 		var equal = switch (Type.typeof(expected))
 		{
+			#if haxe3
+			case TEnum(_): Type.enumEq(expected, actual);
+			#else
 			case TEnum(e): Type.enumEq(expected, actual);
+			#end
+			
 			default: expected == actual;
 		}		
 		if (!equal) fail("Value [" + actual +"] was not equal to expected value [" + expected + "]", info);
@@ -174,7 +179,11 @@ class Assert
 		assertionCount++;
 		var equal = switch (Type.typeof(expected))
 		{
+			#if haxe3
+			case TEnum(_): Type.enumEq(expected, actual);
+			#else
 			case TEnum(e): Type.enumEq(expected, actual);
+			#end
 			default: expected == actual;
 		}
 

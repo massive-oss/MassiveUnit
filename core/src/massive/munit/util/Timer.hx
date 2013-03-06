@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -56,16 +56,6 @@ package massive.munit.util;
 import neko.vm.Thread;
 #elseif cpp
 import cpp.vm.Thread;
-#end
-
-#if (haxe_208 && !haxe_209)
-	#if neko
-		import neko.Sys;
-	#elseif cpp
-		import cpp.Sys;
-	#elseif php
-		import php.Sys
-	#end
 #end
 
 @:expose('massive.munit.util.Timer')

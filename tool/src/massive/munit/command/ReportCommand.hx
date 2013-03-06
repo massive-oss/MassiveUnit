@@ -4,7 +4,7 @@ import massive.munit.report.ReportType;
 import massive.munit.report.ReportFormatter;
 import massive.munit.Config;
 import massive.munit.Target;
-import massive.neko.io.File;
+import massive.sys.io.File;
 import massive.haxe.log.Log;
 
 /**

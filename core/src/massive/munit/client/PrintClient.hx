@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -35,16 +35,6 @@ import massive.munit.util.MathUtil;
 import massive.haxe.util.ReflectUtil;
 import massive.munit.util.Timer;
 
-
-#if haxe208
-	#if neko
-	import neko.Lib;
-	#elseif cpp
-	import cpp.Lib;
-	#elseif php
-	import php.Lib;
-	#end
-#end
 
 /**
  * Generates basic text formatted test result output.
@@ -140,8 +130,11 @@ class PrintClient extends PrintClientBase
 	#elseif js
 	function initJS()
 	{
+		#if haxe3
+		var div = js.Browser.document.getElementById("haxe:trace");
+		#else
 		var div = js.Lib.document.getElementById("haxe:trace");
-		
+		#end
 		if (div == null) 
 		{
 			var positionInfo = ReflectUtil.here();
@@ -193,11 +186,7 @@ class PrintClient extends PrintClientBase
 		#if (js || flash)
 			external.print(value);
 		#elseif (neko || cpp || php)
-			#if (haxe_208 && !haxe_209)
-			Lib.print(value);
-			#else
 			Sys.print(value);
-			#end
 		#end
 	}
 

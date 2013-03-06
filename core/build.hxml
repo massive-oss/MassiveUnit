@@ -3,7 +3,7 @@
 -cp src
 -lib hamcrest
 -lib mlib
--swf9 ../bin/munit_all.swf
+-swf ../bin/munit_all.swf
 
 --next
 
@@ -12,6 +12,7 @@
 -cp src
 -lib hamcrest
 -lib mlib
+-swf-version 8
 -swf ../bin/munit_all.swf
 
 --next
@@ -36,12 +37,12 @@
 
 
 # CPP
--main massive.munit.AllClasses
--cp src
--lib hamcrest
--lib mlib
--D HXCPP_M64
--cpp ../bin/munit_all_cpp
+# -main massive.munit.AllClasses
+# -cp src
+# -lib hamcrest
+# -lib mlib
+# -D HXCPP_M64
+# -cpp ../bin/munit_all_cpp
 
 #--next
 
