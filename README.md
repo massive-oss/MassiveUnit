@@ -3,6 +3,8 @@ MUnit is a metadata driven unit testing framework for cross-platform Haxe develo
 
 It includes tools for creating, updating, compiling and running unit test cases from the command line.
 
+Munit supports Haxe 2.10 and Haxe 3 RC
+
 Installation
 ---------------------
 
@@ -17,7 +19,7 @@ To check that it is all installed and to view the help run:
 	haxelib run munit
 
 
-**Please note:** After upgrading you may be required to update the TestMain.hx in existing project before being able to test with -coverage
+**Please note:** After upgrading you may be required to update the TestMain.hx in existing project before being able to test
 
 
 Features
@@ -109,6 +111,19 @@ Munit now supports custom [mcover](https://github.com/massiveinteractive/Massive
 re-run `haxelib run munit config` in a project to set `coverage packages` and `coverage ignored classes`
 
 Thanks to [tynril](https://github.com/tynril) for adding these options.
+
+
+New since 2.0.x
+--------------------
+
+### Haxe 3 Support
+
+Munit now supports Haxe 3 RC.
+
+There aren't any new features in this release, however there are several breaking 
+changes to internal APIS and Interfaces to ensure compatibility with both versions of Haxe.
+
+To compile tests aginst Haxe 3, you may need to delete any references to js.Dom in the generated TestMain class in your project. 
 
 
 New since 0.9.4.x
