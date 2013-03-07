@@ -1,3 +1,7 @@
+v 2.0.x
+- Added support for Haxe3
+- Some breaking changes to APIs and interfaces for Haxe 3 compatibility
+- Cleaned up folder structure to support haxelib dev path on src
 
 v0.9.6.x - 
 -  Minor tweaks for Haxe svn (2.11) using --no-inline and mockatoo

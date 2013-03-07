@@ -1,8 +1,14 @@
 package massive.munit.report;
 
-import massive.neko.io.File;
+import massive.sys.io.File;
 import massive.munit.report.ReportFormatter;
 import massive.munit.report.ReportType;
+
+#if haxe3
+import haxe.ds.StringMap;
+#else
+private typedef StringMap<T> = Hash<T>
+#end
 
 /**
 Converts result summary data into the teamcity-info.xml format.
@@ -16,7 +22,7 @@ class TeamCityReportFormatter extends ReportFormatterBase
 	static inline var DEFAULT_FILE_NAME:String = "teamcity-info.xml";
 
 	var statusTexts:Array<String>;
-	var statistics:Hash<Float>;
+	var statistics:StringMap<Float>;
 	
 	public function new()
 	{
@@ -30,7 +36,7 @@ class TeamCityReportFormatter extends ReportFormatterBase
 		super.format(files, dest, minCoverage);
 
 		statusTexts = [];
-		statistics = new Hash();
+		statistics = new StringMap();
 
 		serializeTestResults();
 		serializeCoverageResults();

@@ -1,25 +1,23 @@
 #!/bin/bash
 set -e
 
-#update allClasses imports
-haxelib run mlib allClasses
-
-
-#compile tool
+## compile tool
 cd tool
 haxe build.hxml
 cd ../
 
-#compile core library
-cd core
-haxe build.hxml
+## set dev directory for testing
+haxelib dev munit `pwd`/src
+
+## run tool tests
+
+cd tool
+haxelib run munit test -coverage
 cd ../
 
-#test core and tool
+## run core tests
+haxelib run munit test -coverage
 
-#bash test.sh
 
-
-echo haxelib run mlib install
-#package up and install over current version
+## package up and install over current version
 haxelib run mlib install

@@ -5,9 +5,6 @@ import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 ::if hasClass::import ::qualifiedClassName::;::end::
 
-/**
-* Auto generated MassiveUnit Test Class ::if hasClass:: for ::qualifiedClassName:: ::end::
-*/
 class ::testName:: 
 {
 	::if hasClass::var instance:::className::; ::end::
@@ -36,7 +33,6 @@ class ::testName::
 	public function tearDown():Void
 	{
 	}
-	
 	
 	@Test
 	public function testExample():Void

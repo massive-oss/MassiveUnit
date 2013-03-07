@@ -1,6 +1,13 @@
 package massive.munit;
 
-import massive.neko.io.File;
+import massive.sys.io.File;
+
+#if haxe3
+import haxe.ds.StringMap;
+#else
+private typedef StringMap<T> = Hash<T>
+#end
+
 
 class Target
 {
@@ -8,7 +15,7 @@ class Target
 	public var hxml:String;
 	public var file:File;
 	public var main:File;
-	public var flags:Hash<String>;
+	public var flags:StringMap<String>;
 	public var debug:Bool;
 
 	public var executableFile:File;
@@ -17,12 +24,13 @@ class Target
 	{
 		hxml = "";
 		debug = false;
-		flags = new Hash();
+		flags = new StringMap();
 	}
 	
 	public function toString():String
 	{
-		return "Target " + [type, file];
+
+		return "Target " + Std.string(type) + " " + file.toString();
 	}
 
 	public function toHxmlString():String

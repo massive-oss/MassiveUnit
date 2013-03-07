@@ -7,17 +7,6 @@ import massive.munit.TestRunner;
 
 #if js
 import js.Lib;
-import js.Dom;
-#end
-
-#if (haxe_208 && !haxe_209)
-	#if neko
-		import neko.Sys;
-	#elseif cpp
-		import cpp.Sys;
-	#elseif php
-		import php.Sys
-	#end
 #end
 
 /**
@@ -61,7 +50,7 @@ class TestMain
 				flash.external.ExternalInterface.call("testResult", successful);
 			#elseif js
 				js.Lib.eval("testResult(" + successful + ");");
-			#elseif (neko || cpp || php)
+			#elseif sys
 				Sys.exit(0);
 			#end
 		}

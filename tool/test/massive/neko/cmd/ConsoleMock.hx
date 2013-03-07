@@ -1,6 +1,6 @@
-package massive.neko.cmd;
+package massive.sys.cmd;
 
-import massive.neko.io.FileSys;
+import massive.sys.io.FileSys;
 import haxe.PosInfos;
 
 class ConsoleMock extends Console
