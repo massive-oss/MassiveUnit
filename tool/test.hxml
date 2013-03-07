@@ -2,7 +2,7 @@
 -main TestMain
 -cp test
 -cp src
--cp ../core/src
+-cp ../src
 -lib mlib
 -lib hamcrest
 -neko ../bin/test/tool/munit_tool_test.n

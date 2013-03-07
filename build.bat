@@ -1,11 +1,14 @@
-haxelib run mlib allClasses
 
 cd tool
 haxe build.hxml
 cd ../
 
-cd core
-haxe build.hxml
+haxelib dev munit `pwd`/src
+
+cd tool
+haxelib run munit test -coverage
 cd ../
+
+haxelib run munit test -coverage
 
 haxelib run mlib install
