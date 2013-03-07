@@ -41,3 +41,4 @@ teamcity-info.xml
 workspace.json
 cached-classes-null-IgnoreCover.txt
 .temp
+/lib/

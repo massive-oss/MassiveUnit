@@ -1,5 +1,13 @@
 {
 	"name":"MassiveUnit",
 	"version":"2.0.0",
-	"id":"munit"
+	"id":"munit",
+	"haxelib":
+	{
+		"user": "massive"
+	},
+	"dependencies": 
+	{
+		"mlib":"2.x"
+	}
 }

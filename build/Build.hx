@@ -81,6 +81,7 @@ class Build extends mtask.core.BuildBase
 		msys.FS.cd("tool", function(path){
 			trace("testing tool...");
 			cmd("haxelib", ["run", "munit", "test", "-coverage"]);
+			cmd("haxelib", ["run", "munit", "report", "teamcity"]);
 		});
 
 		cmd("haxelib", ["run", "munit", "test", "-coverage"]);
