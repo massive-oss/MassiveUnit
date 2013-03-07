@@ -33,18 +33,14 @@ class Build extends mtask.core.BuildBase
 	{
 		mkdir("bin");
 
-		trace("updating all classes");
-		msys.Process.run("haxelib", ["run", "mlib", "allClasses"]);
-		
-		msys.FS.cd("core", function(path){
-			trace("building core...");
-			msys.Process.run("haxe", ["build.hxml"]);
-		});
 
 		msys.FS.cd("tool", function(path){
 			trace("building tool...");
 			msys.Process.run("haxe", ["build.hxml"]);
 		});
+
+		trace("building core...");
+		msys.Process.run("haxe", ["build.hxml"]);
 	}
 
 	@target function haxelib(t:HaxeLib)
@@ -52,8 +48,8 @@ class Build extends mtask.core.BuildBase
 		t.url = "http://github.com/massiveinteractive/MassiveUnit";
 		t.username = "massive";
 		t.description = "A cross platform unit testing framework for Haxe with metadata test markup and tools for generating, compiling and running tests from the command line.";
-		t.versionDescription = "Included support for enum equality checking through Assert.areEqual/areNotEqual. Added Assert.areSame/areNotSame for strict equality checks. Update to fix --js-modern errors. See CHANGES for full change list.";
-		t.license = BSD;
+		t.versionDescription = "Added support for Haxe 3. See CHANGES for full change list.";
+		t.license = MIT;
 		
 		t.addTag("cross");
 		t.addTag("utility");
@@ -67,28 +63,29 @@ class Build extends mtask.core.BuildBase
 
 		t.beforeCompile = function(path)
 		{
-			cp("src/*", t.path);
-			cp("bin/munit.n", t.path + "/run.n");
-			cp("tool/resource", t.path);
-			cp("bin/index.n", t.path);
-			cp("bin/haxedoc.xml", t.path);
+			rm("src/haxelib.xml");
+			cp("src/*", path);
 		}
+
+		t.afterCompile = function(path)
+		{
+			cp("bin/release/haxelib/haxelib.xml", "src/haxelib.xml");
+		}
+
 	}
 
 	@task function test()
 	{
 		mkdir("bin/test");
 
-		msys.FS.cd("core", function(path){
-			trace("testing core...");
-			cmd("haxelib", ["run", "munit", "test", "-coverage"]);
-			cmd("haxelib", ["run", "munit", "report", "teamcity"]);
-		});
-
 		msys.FS.cd("tool", function(path){
 			trace("testing tool...");
 			cmd("haxelib", ["run", "munit", "test", "-coverage"]);
 		});
+
+		cmd("haxelib", ["run", "munit", "test", "-coverage"]);
+		cmd("haxelib", ["run", "munit", "report", "teamcity"]);
+		
 	}
 
 
