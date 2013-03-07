@@ -21,6 +21,9 @@ To check that it is all installed and to view the help run:
 
 **Please note:** After upgrading you may be required to update the TestMain.hx in existing project before being able to test
 
+To install latest build from git:
+
+    haxelib git munit https://github.com/massiveinteractive/MassiveUnit.git src
 
 Features
 ---------------------
@@ -28,9 +31,7 @@ Features
 ### Cross Platform
 
 MUnit has been designed for cross platform Haxe development.
-It currently supports js, swf8, swf9, neko and c++ (beta, see note below), and the tool chain works on PC and OSX
-
-> Note: C++ target is currently in beta. Only supported using hxcpp 2.10 or greater (Haxe 2.09/Haxe 2.10). All other targets supported in Haxe 2.08 +
+It currently supports js, swf8, swf9, neko and c++, and the tool chain works on PC and OSX
 
 
 ### Test Metadata
@@ -81,17 +82,35 @@ If you find a bug, [report it](https://github.com/massiveinteractive/MassiveUnit
 
 If you want to help, [fork it](https://github.com/massiveinteractive/MassiveUnit/fork_select).
 
+
+To install latest build from git:
+
+    haxelib git munit https://github.com/massiveinteractive/MassiveUnit.git src
+
+
 If you want to make sure it works, make sure to run the bash script (build.sh) and check that the tests all pass on all platforms:
 
-	cd core
 	haxelib run munit test -coverage
 
 	cd ../test
 	haxelib run munit test -coverage
 
 
+
+New since 2.0.0
+--------------------
+
+### Haxe 3 Support
+
+Some APIs have changed to ensure compatibility with both Haxe 2.10 and Haxe3.
+
+>Note: Support for Haxe 2.09 and Haxe 2.08 have been dropped
+
+
+
 New since 0.9.5.x
 --------------------
+
 
 ### C++ Target
 
