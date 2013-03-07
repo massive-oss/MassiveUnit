@@ -5,7 +5,7 @@
 ::foreach classPaths::-cp ::__current__::
 ::end::
 -cp ::src::
--swf-version 9
+-swf-version 11
 -swf ::bin::/as3_test.swf
 
 --next

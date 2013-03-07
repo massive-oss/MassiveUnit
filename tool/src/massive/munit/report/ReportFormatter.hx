@@ -1,7 +1,7 @@
 package massive.munit.report;
 
 import massive.munit.report.ReportType;
-import massive.neko.io.File;
+import massive.sys.io.File;
 
 /**
 Interface for any report formatter.

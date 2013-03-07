@@ -27,17 +27,13 @@
  */
 package massive.munit.command;
 
-import neko.Sys;
-
 import massive.haxe.log.Log;
-import massive.neko.haxe.HaxeWrapper;
-import massive.neko.io.File;
-import massive.neko.io.FileSys;
-import massive.neko.util.PathUtil;
+import massive.sys.haxe.HaxeWrapper;
+import massive.sys.io.File;
+import massive.sys.io.FileSys;
+import massive.sys.util.PathUtil;
 import massive.munit.Config;
 import massive.munit.Target;
-
-import neko.Lib;
 
 class TestCommand extends MUnitTargetCommandBase
 {
@@ -97,7 +93,7 @@ class TestCommand extends MUnitTargetCommandBase
 		{
 			if (line.indexOf("main_test.") != -1)
 			{
-				Lib.println("Error: The naming convention main_test.<type> is deprecated. Please update your test.hxml file to generate the file(s) 'as2_test.swf', 'as3_test.swf', 'js_test.js', 'neko_test.n', 'cpp_test' respectively. [Cause: " + line + "]");
+				Sys.println("Error: The naming convention main_test.<type> is deprecated. Please update your test.hxml file to generate the file(s) 'as2_test.swf', 'as3_test.swf', 'js_test.js', 'neko_test.n', 'cpp_test' respectively. [Cause: " + line + "]");
 				invalid = true;
 			}
 		}
@@ -225,32 +221,32 @@ class TestCommand extends MUnitTargetCommandBase
 
 		if (str == null || !reg.match(str))
 		{
-			Lib.println("");
-			Lib.println("WARNING:");
-			Lib.println("");
-			Lib.println("   Compiling " + target.type + " for MCover may not execute coverage");
-			Lib.println("   " + target.main.name + ".hx does not contain 'MCOVER' conditional flag expected for code coverage.");
-			Lib.println("   Either update manually, or delete '" + target.main.name + ".hx' and re-run 'munit gen'");
-			Lib.println("   or 'munit test' to regenerate class from template.");
-			Lib.println("");
-			Lib.println("   Location: " + target.main);
-			Lib.println("");
+			Sys.println("");
+			Sys.println("WARNING:");
+			Sys.println("");
+			Sys.println("   Compiling " + target.type + " for MCover may not execute coverage");
+			Sys.println("   " + target.main.name + ".hx does not contain 'MCOVER' conditional flag expected for code coverage.");
+			Sys.println("   Either update manually, or delete '" + target.main.name + ".hx' and re-run 'munit gen'");
+			Sys.println("   or 'munit test' to regenerate class from template.");
+			Sys.println("");
+			Sys.println("   Location: " + target.main);
+			Sys.println("");
 		}
 
 		var outdatedRef:EReg = ~/(m\.cover|massive\.cover)(.*)/;
 
 		if (outdatedRef.match(str))
 		{
-			Lib.println("");
-			Lib.println("ERROR:");
-			Lib.println("");
-			Lib.println("   Some references in this project's '" + target.main.name + ".hx' are out of date.");
-			Lib.println("   Please replace all references to '" + outdatedRef.matched(1) + ".*' with 'mcover.*', or");
-			Lib.println("   delete '" + target.main.name + ".hx' and re-run 'munit test' to regenerate class");
-			Lib.println("   from template.");
-			Lib.println("");
-			Lib.println("   Location: " + target.main);
-			Lib.println("");
+			Sys.println("");
+			Sys.println("ERROR:");
+			Sys.println("");
+			Sys.println("   Some references in this project's '" + target.main.name + ".hx' are out of date.");
+			Sys.println("   Please replace all references to '" + outdatedRef.matched(1) + ".*' with 'mcover.*', or");
+			Sys.println("   delete '" + target.main.name + ".hx' and re-run 'munit test' to regenerate class");
+			Sys.println("   from template.");
+			Sys.println("");
+			Sys.println("   Location: " + target.main);
+			Sys.println("");
 			Sys.exit(1);
 		}
 	}

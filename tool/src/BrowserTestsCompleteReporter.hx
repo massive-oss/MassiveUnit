@@ -7,7 +7,7 @@ import massive.munit.client.HTTPClient;
  * @author Mike Stead
  */
 
-class BrowserTestsCompleteReporter
+@:expose class BrowserTestsCompleteReporter
 {
 	public static inline var CLIENT_RUNNER_HOST = "munit-tool-host";
 

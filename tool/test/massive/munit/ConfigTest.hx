@@ -2,7 +2,7 @@ package massive.munit;
 
 import massive.munit.util.Timer;
 import massive.munit.Assert;
-import massive.neko.io.File;
+import massive.sys.io.File;
 
 class ConfigTest 
 {

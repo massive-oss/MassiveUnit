@@ -27,8 +27,8 @@
  */
 package massive.munit;
 import massive.haxe.log.Log;
-import massive.neko.cmd.CommandLineRunner;
-import massive.neko.cmd.ICommand;
+import massive.sys.cmd.CommandLineRunner;
+import massive.sys.cmd.ICommand;
 import haxe.Resource;
 
 import massive.munit.command.GenerateCommand;

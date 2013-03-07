@@ -32,28 +32,32 @@ import haxe.Http;
 import haxe.io.Eof;
 import massive.haxe.util.RegExpUtil;
 import massive.munit.client.HTTPClient;
-import neko.io.Process;
+import sys.io.Process;
 import sys.FileSystem;
 import neko.vm.Thread;
 import neko.vm.Mutex;
-import neko.Lib;
-import Sys;
-import neko.io.Path;
-import massive.neko.io.File;
-import massive.neko.io.FileSys;
-
-
- 
-/**
-Don't ask - compiler always thinks it is massive.munit.TargetType enum 'neko'
-*/
-typedef NekoFile = sys.io.File;
-
+import haxe.io.Path;
+import massive.sys.io.File;
+import massive.sys.io.FileSys;
 import massive.haxe.log.Log;
 import massive.munit.ServerMain;
 import massive.munit.util.MathUtil;
 import massive.munit.Config;
 import massive.munit.Target;
+
+
+#if haxe3
+import haxe.ds.StringMap;
+#else
+private typedef StringMap<T> = Hash<T>
+#end
+ 
+/**
+Don't ask - compiler always thinks it is massive.munit.TargetType enum 'neko'
+*/
+typedef SysFile = sys.io.File;
+
+
 
 
 class RunCommand extends MUnitTargetCommandBase
@@ -421,15 +425,8 @@ class RunCommand extends MUnitTargetCommandBase
 		if (platformResults == false && resultExitCode)
 		{
 			//print("TESTS FAILED");
-
-			#if haxe_209
 			Sys.stderr().writeString("TESTS FAILED\n");
 			Sys.stderr().flush();
-			#else
-
-			NekoFile.stderr().writeString("TESTS FAILED\n");
-			NekoFile.stderr().flush();
-			#end
 			
 			exit(1);
 		}
@@ -473,7 +470,7 @@ class RunCommand extends MUnitTargetCommandBase
 		var fileName = tmpDir.nativePath + "results.txt";
 		var file = null;
 		var lineCount = 0;
-		var platformMap = new Hash<Bool>();
+		var platformMap = new StringMap<Bool>();
 		do
 		{
 			if ((Sys.time() - lastResultTime) > serverTimeoutTimeSec)
@@ -651,7 +648,7 @@ class RunCommand extends MUnitTargetCommandBase
 
 	function runCommand(command:String):Int
 	{
-		Lib.println(command);
+		Sys.println(command);
 
 		var args = command.split(" ");
 		var name = args.shift();
@@ -664,7 +661,7 @@ class RunCommand extends MUnitTargetCommandBase
 			{
 				Sys.sleep(0.01);
 				var output = process.stdout.readLine();
-				Lib.println(output);
+				Sys.println(output);
 			}
 		}
 		catch (e:haxe.io.Eof) {}
@@ -689,7 +686,7 @@ class RunCommand extends MUnitTargetCommandBase
 		if (exitCode > 0 || stfErrString.length > 0)
 		{
 			if(error != null) error += "\n\t";
-			Lib.println("Error running '" + command + "'\n\t" + error);
+			Sys.println("Error running '" + command + "'\n\t" + error);
 		}
 
 		return exitCode;
