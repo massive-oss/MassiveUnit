@@ -40,4 +40,4 @@
 -cp ../src
 -lib hamcrest
 -lib mlib
--js ../src/tests-complete.js
+-js ../src/resource/tests-complete.js
