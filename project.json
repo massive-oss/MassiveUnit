@@ -8,6 +8,8 @@
 	},
 	"dependencies": 
 	{
-		"mlib":"2.x"
+		"mtask":"1.x",
+		"mlib":"2.x",
+		"mcover":"2.x"
 	}
 }
