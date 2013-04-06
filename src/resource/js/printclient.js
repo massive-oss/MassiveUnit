@@ -59,7 +59,7 @@ function emptyQueue()
 //////////
 
 var initialized = false;
-var munit = null;
+var munitDiv = null;
 
 var currentLine = null;
 
@@ -118,7 +118,7 @@ function setResultBackground(result)
 function debug(value)
 {
 	 var div = createDiv("debug", "debug");
-	 munit.appendChild(div);
+	 munitDiv.appendChild(div);
 	 div.innerHTML = value;
 }
 
@@ -126,8 +126,8 @@ function initialize()
 {
 	initialized = true;
 
-	munit = createDiv("munit", "munit");
-	document.body.appendChild(munit);
+	munitDiv = createDiv("munit", "munit");
+	document.body.appendChild(munitDiv);
 
 	var swf = document.getElementById("swfContainer");
 	if(swf != null && swf != undefined)
@@ -144,7 +144,7 @@ function munitPrintLine(value, clazz)
 	if(clazz == null) clazz = "line";
 	currentLine = createDiv(null, clazz);
 	currentLine.innerHTML = value;
-	munit.appendChild(currentLine);
+	munitDiv.appendChild(currentLine);
 }
 
 function munitPrint(value)
@@ -188,7 +188,7 @@ function createTestClass(testClass)
 	if(currentClassId == null)
 	{
 		var tests = createDiv(MUNIT_TESTS, MUNIT_TESTS);
-		munit.appendChild(tests);
+		munitDiv.appendChild(tests);
 	}
 	
 	currentClassId = convertStringToId(testClass);
@@ -327,11 +327,11 @@ function setTestClassResult(level)
 function createCoverageReport(value)
 {
 	var lineBreak = createLineBreak();
-	munit.appendChild(lineBreak);
+	munitDiv.appendChild(lineBreak);
 
 
 	var coverage = createSectionDiv(MUNIT_COVERAGE, "munit-coverage");
-	munit.appendChild(coverage);
+	munitDiv.appendChild(coverage);
 
 	var header = document.getElementById(MUNIT_COVERAGE + "_header");
 	header.innerHTML = "<b>Code Coverage Result: " + value + "%</b>";
@@ -414,13 +414,13 @@ function addCoverageSummary(value)
 function printSummary(value)
 {
 	var lineBreak = createLineBreak();
-	munit.appendChild(lineBreak);
+	munitDiv.appendChild(lineBreak);
 
 	
 	var coverage = createDiv(MUNIT_SUMMARY, "munit-summary");
 
 	coverage.innerHTML = value;
-	munit.appendChild(coverage);
+	munitDiv.appendChild(coverage);
 }
 
 
