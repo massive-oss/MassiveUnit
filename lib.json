@@ -1,9 +1,10 @@
 {
-	"msignal":"1.1.2",
+	"msignal":"1.2.0",
 	"mlib":"2.0.0",
-	"mcover":"2.0.0",
-	"msys":"1.1.0",
-	"mconsole":"1.2.2",
-	"mcore":"1.1.0",
-	"mtask":"1.4.2"
+	"mcover":"2.0.1",
+	"msys":"1.2.0",
+	"mconsole":"1.3.0",
+	"mcore":"1.2.0",
+	"munit":"2.0.0",
+	"mtask":"1.4.3"
 }
