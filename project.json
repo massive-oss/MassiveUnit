@@ -2,7 +2,7 @@
 	"project":
 	{
 		"name":"MassiveUnit",
-		"version":"2.0.0",
+		"version":"2.0.1",
 		"id":"munit",
 		"haxelib":
 		{
@@ -15,8 +15,8 @@
 		},
 		"devDependencies": 
 		{
-			"mtask":"1.x",
-			"mcover":"2.x"
+			"mtask":">=1.4 <2",
+			"mcover":"2"
 		}
 	}
 }
