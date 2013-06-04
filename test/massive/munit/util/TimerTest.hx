@@ -45,9 +45,9 @@ class TimerTest
 	}
 	
 	@AsyncTest
-	public function testConstructor(factory:AsyncFactory):Void
+	public function testConstructor():Void
 	{
-		handler = factory.createHandler(this, onRepeatedTimer, 5000);
+		handler = Async.asyncHandler(this, onRepeatedTimer, 5000);
 		instance = new Timer(10);
 		instance.run = timerHandler;
 		Timer.delay(delayedHandler, 200);
@@ -65,9 +65,9 @@ class TimerTest
 
 
 	@AsyncTest
-	public function shouldStopTimer(factory:AsyncFactory):Void
+	public function shouldStopTimer():Void
 	{
-		handler = factory.createHandler(this, onStoppedTimer);
+		handler = Async.asyncHandler(this, onStoppedTimer);
 	
 		instance = new Timer(10);
 		instance.run = timerHandler;
@@ -82,9 +82,9 @@ class TimerTest
 	}
 
 	@AsyncTest
-	public function shouldDelayAndCallOnce(factory:AsyncFactory):Void
+	public function shouldDelayAndCallOnce():Void
 	{
-		handler = factory.createHandler(this, onDelayedTimer);
+		handler = Async.asyncHandler(this, onDelayedTimer);
 		instance = Timer.delay(timerHandler, 10);
 		Timer.delay(handler, 200);
 	}
@@ -95,9 +95,9 @@ class TimerTest
 	}
 
 	@AsyncTest
-	public function shouldIncrementStamp(factory:AsyncFactory):Void
+	public function shouldIncrementStamp():Void
 	{
-		handler = factory.createHandler(this, onStampDelay);
+		handler = Async.asyncHandler(this, onStampDelay);
 		stamp = Timer.stamp();
 		Timer.delay(handler, 200);
 	}
@@ -110,11 +110,11 @@ class TimerTest
 
 	#if js
 		@AsyncTest
-		public function shouldClearOutIntervals(factory:AsyncFactory):Void
+		public function shouldClearOutIntervals():Void
 		{
 			var timer:Timer;
 
-			handler = factory.createHandler(this, onMegaTimerDelay);
+			handler = Async.asyncHandler(this, onMegaTimerDelay);
 
 			for(i in 1...102)
 			{

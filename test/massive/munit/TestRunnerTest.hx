@@ -77,11 +77,11 @@ class TestRunnerTest
     }
 
     @AsyncTest
-    public function testRun(factory:AsyncFactory):Void
+    public function testRun():Void
     {
         var suites = new Array<Class<massive.munit.TestSuite>>();
         suites.push(TestSuiteStub);
-        runner.completionHandler = factory.createHandler(this, completionHandler, 5000);
+        runner.completionHandler = Async.asyncHandler(this, completionHandler, 5000);
         runner.run(suites);
     }
 
@@ -103,22 +103,22 @@ class TestRunnerTest
     }
 
     @AsyncTest
-    public function testDebug(factory:AsyncFactory):Void
+    public function testDebug():Void
     {
         var suites = new Array<Class<massive.munit.TestSuite>>();
 
         suites.push(TestSuiteStub);
-        runner.completionHandler = factory.createHandler(this, completionHandler, 5000);
+        runner.completionHandler = Async.asyncHandler(this, completionHandler, 5000);
         runner.debug(suites);
     }
 
     @AsyncTest
-    public function testAsyncAssertionTests(factory:AsyncFactory):Void
+    public function testAsyncAssertionTests():Void
     {
         var suites = new Array<Class<massive.munit.TestSuite>>();
 
         suites.push(AsyncTestSuiteStub);
-        runner.completionHandler = factory.createHandler(this, asyncCompletionHandler, 5000);
+        runner.completionHandler = Async.asyncHandler(this, asyncCompletionHandler, 5000);
         runner.run(suites);
     }
 

@@ -93,6 +93,18 @@ class TestClassHelper
 	public inline static var META_TAG_TEST_DEBUG:String = "TestDebug";
 	
 	/**
+	*  Meta tag marking a test as having an argument data provider
+	*/
+	public inline static var META_TAG_DATA_PROVIDER:String = "DataProvider";
+
+	/**
+	 * Pseudo meta tag marking method inheritance depth.  Auto generated
+	 * by test parser, thus not in META_TAGS below as it is never expected
+	 * to be in a test file.
+	 **/
+	public inline static var META_TAG_INHERITANCE_DEPTH:String = "InheritanceDepth";
+	
+	/**
 	 * Array of all valid meta tags.
 	 */
 	public static var META_TAGS = [META_TAG_BEFORE_CLASS,
@@ -114,24 +126,24 @@ class TestClassHelper
 	public var test(default, null):Dynamic;
 	
 	/**
-	 * The life cycle method to be called once, before tests in the class are executed.
+	 * The life cycle methods to be called once, before tests in the class are executed.
 	 */
-	public var beforeClass(default, null):Dynamic;
+	public var beforeClass(default, null):Array<Dynamic>;
 	
 	/**
-	 * The life cycle method to be called once, after tests in the class are executed.
+	 * The life cycle methods to be called once, after tests in the class are executed.
 	 */
-	public var afterClass(default, null):Dynamic;
+	public var afterClass(default, null):Array<Dynamic>;
 	
 	/**
-	 * The life cycle method to be called once, before each test in the class is executed.
+	 * The life cycle methods to be called once, before each test in the class is executed.
 	 */
-	public var before(default, null):Dynamic;
+	public var before(default, null):Array<Dynamic>;
 	
 	/**
-	 * The life cycle method to be called once, after each test in the class is executed.
+	 * The life cycle methods to be called once, after each test in the class is executed.
 	 */
-	public var after(default, null):Dynamic;
+	public var after(default, null):Array<Dynamic>;
 	
 	private var tests:Array<TestCaseData>;
 	private var index:Int;
@@ -151,10 +163,10 @@ class TestClassHelper
 		index = 0;
 		className = Type.getClassName(type);
 		
-		beforeClass = nullFunc;
-		afterClass = nullFunc;
-		before = nullFunc;
-		after = nullFunc;
+		beforeClass = new Array();
+		afterClass = new Array();
+		before = new Array();
+		after = new Array();
 		
 		parse(type);
 	}
@@ -197,6 +209,9 @@ class TestClassHelper
 		var fieldMeta = collateFieldMeta(inherintanceChain);
 		scanForTests(fieldMeta);
 		tests.sort(sortTestsByName); // not pc as allows for possible test dependencies but useful for report consistency
+		// after methods should be called from subclass to base class order
+		after.reverse();
+		afterClass.reverse();
 	}
 		
 	function getInheritanceChain(clazz:Class<Dynamic>):Array<Class<Dynamic>>
@@ -210,10 +225,18 @@ class TestClassHelper
 	function collateFieldMeta(inherintanceChain:Array<Class<Dynamic>>):Dynamic
 	{
 		var meta = {};
+		var depth = -1; // initially negative since incremented at top of loop
 		while (inherintanceChain.length > 0)
 		{
 			var clazz = inherintanceChain.pop(); // start at root
-			var newMeta = Meta.getFields(clazz);			
+			// go to next inheritance depth
+			depth++;
+			// update lifecycle function arrays with new depth
+			beforeClass.push(nullFunc);
+			afterClass.push(nullFunc);
+			before.push(nullFunc);
+			after.push(nullFunc);
+			var newMeta = Meta.getFields(clazz);
 			var markedFieldNames = Reflect.fields(newMeta);
 			
 			for (fieldName in markedFieldNames)
@@ -230,7 +253,9 @@ class TestClassHelper
 					var tagsCopy = {};
 					for (tagName in newTagNames)
 						Reflect.setField(tagsCopy, tagName, Reflect.field(newFieldTags, tagName));
-						
+					// remember the inheritance depth of this field with a pseudo-tag
+					Reflect.setField(tagsCopy, META_TAG_INHERITANCE_DEPTH, [depth]);
+
 					Reflect.setField(meta, fieldName, tagsCopy);
 				}
 				else
@@ -252,6 +277,9 @@ class TestClassHelper
 						var tagValue = Reflect.field(newFieldTags, tagName);
 						Reflect.setField(recordedFieldTags, tagName, tagValue);
 					}
+					// update the inheritance depth of this field, as it overrides the
+					// earlier definition
+					Reflect.setField(recordedFieldTags, META_TAG_INHERITANCE_DEPTH, [depth]);
 				}
 			}
 		}
@@ -274,6 +302,7 @@ class TestClassHelper
 	
 	function searchForMatchingTags(fieldName:String, func:Dynamic, funcMeta:Dynamic)
 	{
+		var depth = Reflect.field(funcMeta, META_TAG_INHERITANCE_DEPTH)[0];
 		for (tag in META_TAGS)
 		{
 			if (Reflect.hasField(funcMeta, tag))
@@ -282,7 +311,9 @@ class TestClassHelper
 				var description = (args != null) ? args[0] : "";
 				var isAsync = (args != null && description == META_PARAM_ASYNC_TEST); // deprecated support for @Test("Async")
 				var isIgnored = Reflect.hasField(funcMeta, META_TAG_IGNORE);
-				
+				var hasDataProvider = Reflect.hasField(funcMeta, META_TAG_DATA_PROVIDER);
+				var dataProvider:String = null;
+
 				if (isAsync) 
 				{
 					description = "";
@@ -292,26 +323,39 @@ class TestClassHelper
 					args = Reflect.field(funcMeta, META_TAG_IGNORE);
 					description = (args != null) ? args[0] : "";
 				}
-				
+
+				if (hasDataProvider)
+				{
+					args = Reflect.field(funcMeta, META_TAG_DATA_PROVIDER);
+					if (args != null)
+					{
+						dataProvider = args[0];
+					}
+					else
+					{
+						throw new MUnitException("Missing dataProvider source", null);
+					}
+				}
+
 				switch(tag)
 				{
 					case META_TAG_BEFORE_CLASS:
-						beforeClass = func;
+						beforeClass[depth] = func;
 					case META_TAG_AFTER_CLASS:
-						afterClass = func;
+						afterClass[depth] = func;
 					case META_TAG_BEFORE:
-						before = func;
+						before[depth] = func;
 					case META_TAG_AFTER:
-						after = func;
+						after[depth] = func;
 					case META_TAG_ASYNC_TEST:
 						if (!isDebug)
-							addTest(fieldName, func, test, true, isIgnored, description);
+							addTest(fieldName, func, test, true, isIgnored, description, dataProvider);
 					case META_TAG_TEST:
 						if (!isDebug)
-							addTest(fieldName, func, test, isAsync, isIgnored, description);
+							addTest(fieldName, func, test, isAsync, isIgnored, description, dataProvider);
 					case META_TAG_TEST_DEBUG:
 						if (isDebug)
-							addTest(fieldName, func, test, isAsync, isIgnored, description);
+							addTest(fieldName, func, test, isAsync, isIgnored, description, dataProvider);
 				}
 			}
 		}
@@ -322,16 +366,39 @@ class TestClassHelper
 							testInstance:Dynamic, 
 							isAsync:Bool, 
 							isIgnored:Bool, 
-							description:String):Void
+							description:String,
+							dataProvider:String):Void
 	{
-		var result:TestResult = new TestResult();
-		result.async = isAsync;
-		result.ignore = isIgnored;
-		result.className = className;
-		result.description = description;
-		result.name = field;
-		var data:TestCaseData = { test:testFunction, scope:testInstance, result:result };
-		tests.push(data);
+		var argsData:Array<Array<Dynamic>> = [[]];
+		if (dataProvider != null)
+		{
+			var provider:Dynamic = Reflect.field(testInstance, dataProvider);
+			if (Reflect.isFunction(provider))
+			{
+				provider = Reflect.callMethod(testInstance, provider, []);
+			}
+			if (Std.is(provider, Array))
+			{
+				argsData = cast provider;
+			}
+			else
+			{
+				throw new MUnitException("dataProvider \'" + dataProvider +
+				"\' did not provide args array", null);
+			}
+		}
+		for (args in argsData)
+		{
+			var result:TestResult = new TestResult();
+			result.async = isAsync;
+			result.ignore = isIgnored;
+			result.className = className;
+			result.description = description;
+			result.name = field;
+			result.args = args;
+			var data:TestCaseData = { test:testFunction, scope:testInstance, result:result };
+			tests.push(data);
+		}
 	}
 	
 	private function sortTestsByName(x:TestCaseData, y:TestCaseData):Int

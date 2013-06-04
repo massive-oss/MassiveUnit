@@ -104,8 +104,8 @@ class PrintClientBase extends AbstractTestResultClient
 		{
 			switch(result.type)
 			{
-				case ERROR: printLine("ERROR: " + Std.string(result.error), 1);
-				case FAIL: printLine("FAIL: " + Std.string(result.failure), 1);
+				case ERROR: printLine("ERROR: " + result.location + " - "+ Std.string(result.error), 1);
+				case FAIL: printLine("FAIL: " + result.location + " - " + Std.string(result.failure), 1);
 				case IGNORE:
 				{
 					var ingoredString = result.location;

@@ -81,6 +81,11 @@ class TestResult
     public var ignore:Bool;
 	
 	/**
+	 * Arguments for the test, or null if no args
+	 **/
+	public var args:Array<Dynamic>;
+	
+	/**
 	 * If this test failed, the assertion exception that was captured.
 	 */
 	public var failure:AssertionException;
@@ -103,6 +108,7 @@ class TestResult
 		description = "";
 		async = false;
 		ignore = false;
+		args = null;
 		error = null;
 		failure = null;
 	}
