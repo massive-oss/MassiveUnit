@@ -84,22 +84,16 @@ class UnhandledException extends MUnitException
 			var stack:Array<haxe.StackItem> = CallStack.exceptionStack();
 			while (stack.length > 0)
 			{
-				
-				switch(stack.shift()) 
+				switch (stack.shift()) 
 				{
 					#if haxe3
 						case FilePos(_, file, line): s += "\tat " + file + " (" + line + ")\n";
-						case Module(_):
 						case Method(classname, method): s += "\tat " + classname + "#" + method + "\n";
-						case Lambda(_):
-						case CFunction:
 					#else
 						case FilePos(item, file, line): s += "\tat " + file + " (" + line + ")\n";
-						case Module(module):
 						case Method(classname, method): s += "\tat " + classname + "#" + method + "\n";
-						case Lambda(v):
-						case CFunction:
 					#end
+					default:
 				}
 	        }
 		}
