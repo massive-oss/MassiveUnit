@@ -1,4 +1,5 @@
 v 2.0.x
+- Added haxelib.json
 - Added support for Haxe3
 - Some breaking changes to APIs and interfaces for Haxe 3 compatibility
 - Cleaned up folder structure to support haxelib dev path on src
