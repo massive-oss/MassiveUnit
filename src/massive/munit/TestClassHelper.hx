@@ -372,7 +372,12 @@ class TestClassHelper
 		var argsData:Array<Array<Dynamic>> = [[]];
 		if (dataProvider != null)
 		{
-			var provider:Dynamic = Reflect.field(testInstance, dataProvider);
+            // look for object instance field
+            var provider:Dynamic = Reflect.field(testInstance, dataProvider);
+            if (null == provider) {
+                // look for static class field
+                provider = Reflect.field(Type.getClass(testInstance), dataProvider);
+            }
 			if (Reflect.isFunction(provider))
 			{
 				provider = Reflect.callMethod(testInstance, provider, []);

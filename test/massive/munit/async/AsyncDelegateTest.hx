@@ -93,7 +93,7 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 	{
 		delegate = new AsyncDelegate(this, asyncTestHandler, 10); 
 		delegate.observer = this;
-		handler = Async.asyncHandler(this, onTestTimeout);//created after delegate to ensure delegate timer executes beofre handler one (interval bug in flash when under heavy load)
+		handler = Async.handler(this, onTestTimeout);//created after delegate to ensure delegate timer executes beofre handler one (interval bug in flash when under heavy load)
 	}
 		
 	public function asyncTimeoutHandler(delegate:AsyncDelegate):Void
@@ -121,7 +121,7 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 
 		Assert.isTrue(delegate.canceled);
 
-		handler = Async.asyncHandler(this, onTestCancelHandler);
+		handler = Async.handler(this, onTestCancelHandler);
 		Timer.delay(handler, 100);
 
 	}
@@ -148,7 +148,7 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 	@AsyncTest
 	public function testHandler():Void
 	{
-		handler = Async.asyncHandler(this, onTestHandler, 1000);
+		handler = Async.handler(this, onTestHandler, 1000);
 		delegate = new AsyncDelegate(this, asyncTestHandler);
 		delegate.observer = this;		
 		Timer.delay(asyncDelegateTestHandler, 10);

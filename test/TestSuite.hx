@@ -5,9 +5,13 @@ import massive.munit.AssertTest;
 import massive.munit.async.AsyncDelegateTest;
 import massive.munit.async.AsyncFactoryTest;
 import massive.munit.async.AsyncTimeoutExceptionTest;
+import massive.munit.async.ChainedAsyncTest;
 import massive.munit.async.MissingAsyncDelegateExceptionTest;
+import massive.munit.async.ParallelAsyncTest;
 import massive.munit.client.URLRequestTest;
+import massive.munit.DataProviderTest;
 import massive.munit.MUnitExceptionTest;
+import massive.munit.PrePostActionAssertsTest;
 import massive.munit.TestClassHelperTest;
 import massive.munit.TestResultTest;
 import massive.munit.TestRunnerTest;
@@ -28,20 +32,24 @@ class TestSuite extends massive.munit.TestSuite
 	{
 		super();
 
-		add(massive.munit.AssertionExceptionTest);
-		add(massive.munit.AssertTest);
-		add(massive.munit.async.AsyncDelegateTest);
-		add(massive.munit.async.AsyncFactoryTest);
-		add(massive.munit.async.AsyncTimeoutExceptionTest);
-		add(massive.munit.async.MissingAsyncDelegateExceptionTest);
-		add(massive.munit.client.URLRequestTest);
-		add(massive.munit.MUnitExceptionTest);
-		add(massive.munit.TestClassHelperTest);
-		add(massive.munit.TestResultTest);
-		add(massive.munit.TestRunnerTest);
-		add(massive.munit.TestSuiteTest);
-		add(massive.munit.UnhandledExceptionTest);
-		add(massive.munit.util.MathUtilTest);
-		add(massive.munit.util.TimerTest);
+        add(massive.munit.AssertionExceptionTest);
+        add(massive.munit.AssertTest);
+        add(massive.munit.async.AsyncDelegateTest);
+        add(massive.munit.async.AsyncFactoryTest);
+        add(massive.munit.async.AsyncTimeoutExceptionTest);
+        add(massive.munit.async.ChainedAsyncTest);
+        add(massive.munit.async.MissingAsyncDelegateExceptionTest);
+        add(massive.munit.async.ParallelAsyncTest);
+        add(massive.munit.client.URLRequestTest);
+        add(massive.munit.DataProviderTest);
+        add(massive.munit.MUnitExceptionTest);
+        add(massive.munit.PrePostActionAssertsTest);
+        add(massive.munit.TestClassHelperTest);
+        add(massive.munit.TestResultTest);
+        add(massive.munit.TestRunnerTest);
+        add(massive.munit.TestSuiteTest);
+        add(massive.munit.UnhandledExceptionTest);
+        add(massive.munit.util.MathUtilTest);
+        add(massive.munit.util.TimerTest);
 	}
 }

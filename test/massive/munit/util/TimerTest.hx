@@ -47,7 +47,7 @@ class TimerTest
 	@AsyncTest
 	public function testConstructor():Void
 	{
-		handler = Async.asyncHandler(this, onRepeatedTimer, 5000);
+		handler = Async.handler(this, onRepeatedTimer, 5000);
 		instance = new Timer(10);
 		instance.run = timerHandler;
 		Timer.delay(delayedHandler, 200);
@@ -67,7 +67,7 @@ class TimerTest
 	@AsyncTest
 	public function shouldStopTimer():Void
 	{
-		handler = Async.asyncHandler(this, onStoppedTimer);
+		handler = Async.handler(this, onStoppedTimer);
 	
 		instance = new Timer(10);
 		instance.run = timerHandler;
@@ -84,7 +84,7 @@ class TimerTest
 	@AsyncTest
 	public function shouldDelayAndCallOnce():Void
 	{
-		handler = Async.asyncHandler(this, onDelayedTimer);
+		handler = Async.handler(this, onDelayedTimer);
 		instance = Timer.delay(timerHandler, 10);
 		Timer.delay(handler, 200);
 	}
@@ -97,7 +97,7 @@ class TimerTest
 	@AsyncTest
 	public function shouldIncrementStamp():Void
 	{
-		handler = Async.asyncHandler(this, onStampDelay);
+		handler = Async.handler(this, onStampDelay);
 		stamp = Timer.stamp();
 		Timer.delay(handler, 200);
 	}
@@ -114,7 +114,7 @@ class TimerTest
 		{
 			var timer:Timer;
 
-			handler = Async.asyncHandler(this, onMegaTimerDelay);
+			handler = Async.handler(this, onMegaTimerDelay);
 
 			for(i in 1...102)
 			{

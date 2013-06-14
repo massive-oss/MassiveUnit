@@ -1,7 +1,3 @@
-/*
- * Copyright 2013 TiVo Inc.
- */
-
 package massive.munit.async;
 
 import haxe.PosInfos;

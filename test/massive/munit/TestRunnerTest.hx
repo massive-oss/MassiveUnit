@@ -81,7 +81,7 @@ class TestRunnerTest
     {
         var suites = new Array<Class<massive.munit.TestSuite>>();
         suites.push(TestSuiteStub);
-        runner.completionHandler = Async.asyncHandler(this, completionHandler, 5000);
+        runner.completionHandler = Async.handler(this, completionHandler, 5000);
         runner.run(suites);
     }
 
@@ -108,7 +108,7 @@ class TestRunnerTest
         var suites = new Array<Class<massive.munit.TestSuite>>();
 
         suites.push(TestSuiteStub);
-        runner.completionHandler = Async.asyncHandler(this, completionHandler, 5000);
+        runner.completionHandler = Async.handler(this, completionHandler, 5000);
         runner.debug(suites);
     }
 
@@ -118,7 +118,7 @@ class TestRunnerTest
         var suites = new Array<Class<massive.munit.TestSuite>>();
 
         suites.push(AsyncTestSuiteStub);
-        runner.completionHandler = Async.asyncHandler(this, asyncCompletionHandler, 5000);
+        runner.completionHandler = Async.handler(this, asyncCompletionHandler, 5000);
         runner.run(suites);
     }
 

@@ -124,8 +124,7 @@ class TestRunner implements IAsyncDelegateObserver
     private var activeHelper:TestClassHelper;
     private var testSuites:Array<TestSuite>;
 
-    private var asyncPending:Bool;
-    private var asyncDelegate:AsyncDelegate;
+    private var asyncDelegates:Array<AsyncDelegate>; // array to support multiple async handlers (chaining, or simultaneous)
     private var suiteIndex:Int;
 
     public var asyncFactory(default, set_asyncFactory):AsyncFactory;
@@ -199,8 +198,7 @@ class TestRunner implements IAsyncDelegateObserver
         if (running) return;
 
         running = true;
-        asyncPending = false;
-        asyncDelegate = null;
+        activeRunner = this;
         testCount = 0;
         failCount = 0;
         errorCount = 0;
@@ -210,6 +208,7 @@ class TestRunner implements IAsyncDelegateObserver
         clientCompleteCount = 0;
         Assert.assertionCount = 0; // don't really like this static but can't see way around it atm. ms 17/12/10
         emptyParams = new Array();
+        asyncDelegates = new Array<AsyncDelegate>();
         testSuites = new Array<TestSuite>();
         startTime = Timer.stamp();
 
@@ -238,10 +237,54 @@ class TestRunner implements IAsyncDelegateObserver
         #end
     }
 
-    private function callHelperMethod(method:Dynamic):Void
+    private function callHelperMethod ( method:Dynamic ):Void
     {
-        Reflect.callMethod(activeHelper.test, method, emptyParams);
+        try
+        {
+            /*
+                Wrapping in try/catch solves below problem:
+                    If @BeforeClass, @AfterClass, @Before, @After methods
+                    have any Assert calls that fail, and if they are not
+                    caught and handled here ... then TestRunner stalls.
+            */
+            Reflect.callMethod(activeHelper.test, method, emptyParams);
+        }
+        catch (e:Dynamic)
+        {
+            var testcaseData: Dynamic = activeHelper.current(); // fetch the test context
+            exceptionHandler ( e, testcaseData.result );
+        }
     }
+
+
+    private inline function exceptionHandler ( e:Dynamic, result:TestResult ):Void
+    {
+        if (Std.is(e, org.hamcrest.AssertionException))
+        {
+            e = new AssertionException(e.message, e.info);
+        }
+
+        result.executionTime = Timer.stamp() - testStartTime;
+
+        if (Std.is(e, AssertionException))
+        {
+            result.failure = e;
+            failCount++;
+            for (c in clients)
+                c.addFail(result);
+        }
+        else
+        {
+            if (!Std.is(e, MUnitException))
+                e = new UnhandledException(e, result.location);
+
+            result.error = e;
+            errorCount++;
+            for (c in clients)
+                c.addError(result);
+        }
+    }
+
 
     private function execute():Void
     {
@@ -256,7 +299,7 @@ class TestRunner implements IAsyncDelegateObserver
                     activeHelper.beforeClass.iter(callHelperMethod);
                 }
                 executeTestCases();
-                if (!asyncPending)
+                if ( ! isAsyncPending() )
                 {
                     activeHelper.afterClass.iter(callHelperMethod);
                 }
@@ -269,7 +312,7 @@ class TestRunner implements IAsyncDelegateObserver
             }
         }
 
-        if (!asyncPending)
+        if ( ! isAsyncPending() )
         {
             var time:Float = Timer.stamp() - startTime;
             for (client in clients)
@@ -305,9 +348,9 @@ class TestRunner implements IAsyncDelegateObserver
                 testCount++; // note we don't include ignored in final test count
                 activeHelper.before.iter(callHelperMethod);
                 testStartTime = Timer.stamp();
-                executeTestCase(testCaseData, testCaseData.result.async);
+                executeTestCase(testCaseData);
 
-                if (!asyncPending) {
+                if ( ! isAsyncPending() ) {
                     activeRunner = null;  // for SYNC tests: resetting this here instead of clientCompletionHandler
                     activeHelper.after.iter(callHelperMethod);
                 }
@@ -317,7 +360,7 @@ class TestRunner implements IAsyncDelegateObserver
         }
     }
 
-    private function executeTestCase(testCaseData:Dynamic, async:Bool):Void
+    private function executeTestCase(testCaseData:Dynamic):Void
     {
         var result:TestResult = testCaseData.result;
         try
@@ -328,26 +371,10 @@ class TestRunner implements IAsyncDelegateObserver
             // By setting this here, this runner value will be valid right when tests (Sync/ASync) are about to run.
             activeRunner = this;
 
-            if (async)
+            Reflect.callMethod(testCaseData.scope, testCaseData.test, result.args);
+
+            if (! isAsyncPending())
             {
-                Reflect.callMethod(testCaseData.scope, testCaseData.test, result.args);
-
-                if(asyncDelegate == null)
-                {
-                    throw new MissingAsyncDelegateException("No AsyncDelegate was created in async test at " + result.location, null);
-                }
-
-                asyncPending = true;
-            }
-            else
-            {
-                Reflect.callMethod(testCaseData.scope, testCaseData.test, result.args);
-
-                if (asyncDelegate != null)
-                {
-                    throw new UnexpectedAsyncDelegateException("AsyncDelegate was created in non async (or chained async) test at " + result.location, null);
-                }
-
                 result.passed = true;
                 result.executionTime = Timer.stamp() - testStartTime;
                 passCount++;
@@ -357,34 +384,8 @@ class TestRunner implements IAsyncDelegateObserver
         }
         catch(e:Dynamic)
         {
-            if(async && asyncDelegate != null)
-            {
-                asyncDelegate.cancelTest();
-                asyncDelegate = null;
-            }
-            if (Std.is(e, org.hamcrest.AssertionException))
-                e = new AssertionException(e.message, e.info);
-
-            if (Std.is(e, AssertionException))
-            {
-                result.executionTime = Timer.stamp() - testStartTime;
-                result.failure = e;
-                failCount++;
-                for (c in clients)
-                    c.addFail(result);
-            }
-            else
-            {
-                result.executionTime = Timer.stamp() - testStartTime;
-                if (!Std.is(e, MUnitException))
-                    e = new UnhandledException(e, result.location);
-
-                result.error = e;
-                errorCount++;
-                for (c in clients)
-                    c.addError(result);
-            }
-
+            cancelAllPendingAsyncTests();
+            exceptionHandler ( e, result );
         }
     }
 
@@ -414,12 +415,13 @@ class TestRunner implements IAsyncDelegateObserver
         testCaseData.test = delegate.runTest;
         testCaseData.scope = delegate;
 
-        asyncPending = false;
-        asyncDelegate = null;
-        executeTestCase(testCaseData, false);
-        activeRunner = null; // for ASync regular cases: resetting this here instead of clientCompletionHandler
-        activeHelper.after.iter(callHelperMethod);
-        execute();
+        asyncDelegates.remove(delegate);
+        executeTestCase(testCaseData);
+        if ( ! isAsyncPending() ) {
+            activeRunner = null; // for ASync regular cases: resetting this here instead of clientCompletionHandler
+            activeHelper.after.iter(callHelperMethod);
+            execute();
+        }
     }
 
     /**
@@ -431,17 +433,18 @@ class TestRunner implements IAsyncDelegateObserver
     public function asyncTimeoutHandler(delegate:AsyncDelegate):Void
     {
         var testCaseData:Dynamic = activeHelper.current();
-        asyncPending = false;
-        asyncDelegate = null;
+        asyncDelegates.remove(delegate);
 
         if (delegate.hasTimeoutHandler)
         {
             testCaseData.test = delegate.runTimeout;
             testCaseData.scope = delegate;
-            executeTestCase(testCaseData, false);
+            executeTestCase(testCaseData);
         }
         else
         {
+            cancelAllPendingAsyncTests();
+
             var result:TestResult = testCaseData.result;
             result.executionTime = Timer.stamp() - testStartTime;
             result.error = new AsyncTimeoutException("", delegate.info);
@@ -449,22 +452,34 @@ class TestRunner implements IAsyncDelegateObserver
             errorCount++;
             for (c in clients) c.addError(result);
         }
-        activeRunner = null; // for ASync Time-out cases: resetting this here instead of clientCompletionHandler
-        activeHelper.after.iter(callHelperMethod);
-        execute();
+        if ( ! isAsyncPending() ) {
+             activeRunner = null; // for ASync Time-out cases: resetting this here instead of clientCompletionHandler
+             activeHelper.after.iter(callHelperMethod);
+             execute();
+        }
     }
 
     public function asyncDelegateCreatedHandler(delegate:AsyncDelegate):Void
     {
-        if (asyncDelegate != null)
-        {
-            throw new UnexpectedAsyncDelegateException("Second AsyncDelegate created when one already exists", null);
-        }
-        asyncDelegate = delegate;
+        asyncDelegates.push(delegate);
     }
 
     private function createAsyncFactory():AsyncFactory
     {
         return new AsyncFactory(this);
+    }
+
+    private inline function isAsyncPending() : Bool
+    {
+        return (asyncDelegates.length > 0);
+    }
+
+    private function cancelAllPendingAsyncTests() : Void
+    {
+        for (delegate in asyncDelegates)
+        {
+            delegate.cancelTest();
+            asyncDelegates.remove(delegate);
+        }
     }
 }

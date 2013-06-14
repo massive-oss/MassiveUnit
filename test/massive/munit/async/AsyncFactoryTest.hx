@@ -78,7 +78,7 @@ class AsyncFactoryTest implements IAsyncDelegateObserver
 		
 		tempHandler();
 
-		var actualHandler:Dynamic = Async.asyncHandler(this, assertOnTestCreateBasicHandlerCalled, 333);
+		var actualHandler:Dynamic = Async.handler(this, assertOnTestCreateBasicHandlerCalled, 333);
 		Timer.delay(actualHandler, 10);
 	}
 

@@ -38,21 +38,21 @@ class AsyncTestClassStub
 	@AsyncTest
 	public function shouldAssertAsync():Void
 	{
-		var handler:Dynamic = Async.asyncHandler(this, asyncHandler, 100);
+		var handler:Dynamic = Async.handler(this, asyncHandler, 100);
 		Timer.delay(handler, 1);
 	}
 
 	@AsyncTest
 	public function shouldAsyncTimeout():Void
 	{
-		var handler:Dynamic = Async.asyncHandler(this, asyncHandler, 100);
+		var handler:Dynamic = Async.handler(this, asyncHandler, 100);
 		//Timer.delay(handler, 500); //not necessary, however is bug where this handler called first on flash targets
 	}
 
 	@AsyncTest
 	public function shouldAllowSyncAssertInsideAsyncTest():Void
 	{
-		var handler:Dynamic = Async.asyncHandler(this, asyncHandler, 100);
+		var handler:Dynamic = Async.handler(this, asyncHandler, 100);
 		Assert.isTrue(true);
 		Timer.delay(handler, 1);
 	}
@@ -60,7 +60,7 @@ class AsyncTestClassStub
 	@AsyncTest
 	public function shouldCancelAsyncIfExceptionThrown():Void
 	{
-		var handler:Dynamic = Async.asyncHandler(this, asyncHandler, 100);
+		var handler:Dynamic = Async.handler(this, asyncHandler, 100);
 		Timer.delay(handler, 1);
 		throw "exception in async test";
 	}
@@ -68,7 +68,7 @@ class AsyncTestClassStub
 	@AsyncTest
 	public function shouldCancelAsyncIfSyncAssertFailsAfterHandlerCreated():Void
 	{
-		var handler:Dynamic = Async.asyncHandler(this, asyncHandler, 100);
+		var handler:Dynamic = Async.handler(this, asyncHandler, 100);
 		Assert.fail("failed assert in async test");
 		Timer.delay(handler, 1);
 	}
@@ -76,7 +76,7 @@ class AsyncTestClassStub
 	@AsyncTest
 	public function shouldCancelAsyncIfSyncAssertFailsAfterTimerCreated():Void
 	{
-		var handler:Dynamic = Async.asyncHandler(this, asyncHandler, 100);
+		var handler:Dynamic = Async.handler(this, asyncHandler, 100);
 		Timer.delay(handler, 1);
 		Assert.fail("failed assert in async test");
 	}
@@ -85,7 +85,7 @@ class AsyncTestClassStub
 	public function shouldCancelAsyncIfSyncAssertFailsBeforeHandlerCreated():Void
 	{
 		Assert.fail("failed assert in async test");
-		var handler:Dynamic = Async.asyncHandler(this, asyncHandler, 100);
+		var handler:Dynamic = Async.handler(this, asyncHandler, 100);
 		Timer.delay(handler, 1);
 		
 	}
@@ -118,7 +118,7 @@ class AsyncTestClassStub2
 	@AsyncTest
 	public function shouldAssertAsync():Void
 	{
-		var handler:Dynamic = Async.asyncHandler(this, asyncHandler, 5000);
+		var handler:Dynamic = Async.handler(this, asyncHandler, 5000);
 		Timer.delay(handler, 10);
 	}
 

@@ -135,7 +135,9 @@ class AsyncDelegate
 	 **/
 	public function runTimeout():Void
 	{
-		if (timeoutHandler == null)
+        if (canceled) return;
+
+        if (timeoutHandler == null)
 		{
 			throw new MUnitException("Observer attempted to run timeout handler when none set!");
 		}
