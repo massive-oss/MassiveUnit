@@ -84,8 +84,9 @@ class PrintClient extends PrintClientBase
 	override function init():Void
 	{
 		super.init();
-		
-		#if (js || flash)
+
+		#if nodejs		
+		#elseif (js || flash)
 			external = new ExternalPrintClientJS();
 			#if flash
 				initFlash();
@@ -150,7 +151,8 @@ class PrintClient extends PrintClientBase
 	{
 		super.printOverallResult(result);
 
-		#if (js || flash)
+		#if (nodejs)
+		#elseif (js || flash)
 			external.setResult(result);
 			external.setResultBackground(result);
 		#end
@@ -183,10 +185,12 @@ class PrintClient extends PrintClientBase
 			textField.scrollV = textField.maxScrollV;
 		#end
 
-		#if (js || flash)
-			external.print(value);
+		#if nodejs
+			untyped process.stdout.write(value);
 		#elseif (neko || cpp || php)
 			Sys.print(value);
+		#elseif (js || flash)
+			external.print(value);
 		#end
 	}
 
