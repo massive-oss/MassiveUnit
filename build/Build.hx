@@ -48,7 +48,7 @@ class Build extends mtask.core.BuildBase
 		t.url = "http://github.com/massiveinteractive/MassiveUnit";
 		t.username = "massive";
 		t.description = "A cross platform unit testing framework for Haxe with metadata test markup and tools for generating, compiling and running tests from the command line.";
-		t.versionDescription = "Added haxelib.json.";
+		t.versionDescription = "Minor pattern matching fix for stricter 3.next (backwards compatible)";
 		t.license = MIT;
 		
 		t.addTag("cross");
@@ -138,6 +138,8 @@ class Build extends mtask.core.BuildBase
 	
 	@task function teamcity()
 	{
+		mtask.tool.HaxeLib.dev("munit", sys.FileSystem.fullPath("src"));
+
 		invoke("clean");
 		invoke("test");
 

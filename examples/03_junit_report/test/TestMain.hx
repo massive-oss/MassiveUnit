@@ -3,12 +3,6 @@ import massive.munit.client.HTTPClient;
 import massive.munit.client.JUnitReportClient;
 import massive.munit.TestRunner;
 
-#if js
-import js.Lib;
-import js.Dom;
-#end
-
-
 /**
  * Auto generated Test Application.
  * Refer to munit command line tool for more information (haxelib run munit)
@@ -48,7 +42,7 @@ class TestMain
             #elseif js
                 js.Lib.eval("testResult(" + successful + ");");
             #elseif neko
-                neko.Sys.exit(0);
+                Sys.exit(0);
             #end
         }
         // if run from outside browser can get error which we can ignore
