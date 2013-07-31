@@ -276,7 +276,8 @@ class TestRunner implements IAsyncDelegateObserver
         {
             if(Std.is(c, IAdvancedTestResultClient))
             {
-                cast(c, IAdvancedTestResultClient).setCurrentTestClass(activeHelper.className);
+                if(activeHelper.hasNext())
+                    cast(c, IAdvancedTestResultClient).setCurrentTestClass(activeHelper.className);
             }
         }
         for (testCaseData in activeHelper)
