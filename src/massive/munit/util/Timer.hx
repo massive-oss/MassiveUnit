@@ -81,6 +81,11 @@ class Timer
 		#elseif flash
 			var me = this;
 			id = untyped _global["setInterval"](function() { me.run(); },time_ms);
+		#elseif nodejs
+			var arr :Array<Dynamic> = untyped global.haxe_timers = global.haxe_timers == null ? [] : global.haxe_timers;
+			var me 	= this;
+			me.id		= arr.length;
+			arr[me.id] = me;
 		#elseif js
 			id = arr.length;
 			arr[id] = this;
@@ -100,6 +105,8 @@ class Timer
 			untyped __global__["flash.utils.clearInterval"](id);
 		#elseif flash
 			untyped _global["clearInterval"](id);
+		#elseif nodejs
+			untyped clearInterval(timerId);
 		#elseif js
 			untyped window.clearInterval(timerId);
 			arr[id] = null;
