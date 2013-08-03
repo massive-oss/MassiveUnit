@@ -263,7 +263,7 @@ class TestRunner implements IAsyncDelegateObserver
             {
                 if(Std.is(client, IAdvancedTestResultClient))
                 {
-                    var cl : IAdvancedTestResultClient = cast client;
+                    var cl:IAdvancedTestResultClient = cast client;
                     cl.setCurrentTestClass(null);
                 }
                 client.reportFinalStatistics(testCount, passCount, failCount, errorCount, ignoreCount, time);
@@ -277,8 +277,11 @@ class TestRunner implements IAsyncDelegateObserver
         {
             if(Std.is(c, IAdvancedTestResultClient))
             {
-                var cl : IAdvancedTestResultClient = cast c;
-                cl.setCurrentTestClass(activeHelper.className);
+                if (activeHelper.hasNext())
+                {
+                    var cl:IAdvancedTestResultClient = cast c;
+                    cl.setCurrentTestClass(activeHelper.className);
+                }
             }
         }
         for (testCaseData in activeHelper)
