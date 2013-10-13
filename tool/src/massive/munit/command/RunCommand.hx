@@ -44,6 +44,8 @@ import massive.munit.ServerMain;
 import massive.munit.util.MathUtil;
 import massive.munit.Config;
 import massive.munit.Target;
+import sys.net.Host;
+import sys.net.Socket;
 
 
 #if haxe3
@@ -585,7 +587,13 @@ class RunCommand extends MUnitTargetCommandBase
 		{
 			parameters.push("start");
 			if (browser != null)
+			{
+				if (browser.substr(0, 12) == "flashdevelop") 
+				{
+					return sendFlashDevelopCommand(browser, "Browse", targetLocation);
+				}
 				parameters.push(browser);
+			}
 		}
 		else if (FileSys.isMac)
 		{
@@ -609,6 +617,26 @@ class RunCommand extends MUnitTargetCommandBase
 			error("Error running " + targetLocation, exitCode);
   
 		return exitCode;
+	}
+	
+	private function sendFlashDevelopCommand(args:String, cmd:String, data:String) 
+	{
+		var port = 1978;
+		var parts = args.split(':');
+		if (parts.length > 1) port = Std.parseInt(parts[1]);
+		
+		try {
+			var conn = new Socket();
+			conn.connect(new Host("localhost"), port);
+			conn.write('<flashconnect><message cmd="call" command="' + cmd + '">' + data + '</message></flashconnect>');
+			conn.output.writeByte(0);
+			conn.close(); 
+		}
+		catch (ex:Dynamic) {
+			print("ERROR: Failed to connect to FlashDevelop socket server");
+			return 1;
+		}
+		return 0;
 	}
 
 	private function launchNeko(file:File):Int
