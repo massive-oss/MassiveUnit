@@ -1,3 +1,9 @@
+v 2.1.0
+
+- Adds support to launch tests in FlashDevelop browser
+- No longer displays test classes when no tests are executed
+- Improved nodejs support
+
 v 2.0.3
 
 - Minor pattern matching fix for stricter 3.next (backwards compatible)

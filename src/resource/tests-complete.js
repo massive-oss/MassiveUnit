@@ -1,11 +1,14 @@
+(function () { "use strict";
 var $estr = function() { return js.Boot.__string_rec(this,''); };
 function $extend(from, fields) {
 	function inherit() {}; inherit.prototype = from; var proto = new inherit();
 	for (var name in fields) proto[name] = fields[name];
+	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
 var BrowserTestsCompleteReporter = function() {
 };
+$hxExpose(BrowserTestsCompleteReporter, "BrowserTestsCompleteReporter");
 BrowserTestsCompleteReporter.__name__ = true;
 BrowserTestsCompleteReporter.main = function() {
 }
@@ -21,115 +24,8 @@ BrowserTestsCompleteReporter.sendReport = function(onData,onError) {
 BrowserTestsCompleteReporter.prototype = {
 	__class__: BrowserTestsCompleteReporter
 }
-var Hash = function() {
-	this.h = { };
-};
-Hash.__name__ = true;
-Hash.prototype = {
-	toString: function() {
-		var s = new StringBuf();
-		s.b += Std.string("{");
-		var it = this.keys();
-		while( it.hasNext() ) {
-			var i = it.next();
-			s.b += Std.string(i);
-			s.b += Std.string(" => ");
-			s.b += Std.string(Std.string(this.get(i)));
-			if(it.hasNext()) s.b += Std.string(", ");
-		}
-		s.b += Std.string("}");
-		return s.b;
-	}
-	,iterator: function() {
-		return { ref : this.h, it : this.keys(), hasNext : function() {
-			return this.it.hasNext();
-		}, next : function() {
-			var i = this.it.next();
-			return this.ref["$" + i];
-		}};
-	}
-	,keys: function() {
-		var a = [];
-		for( var key in this.h ) {
-		if(this.h.hasOwnProperty(key)) a.push(key.substr(1));
-		}
-		return HxOverrides.iter(a);
-	}
-	,remove: function(key) {
-		key = "$" + key;
-		if(!this.h.hasOwnProperty(key)) return false;
-		delete(this.h[key]);
-		return true;
-	}
-	,exists: function(key) {
-		return this.h.hasOwnProperty("$" + key);
-	}
-	,get: function(key) {
-		return this.h["$" + key];
-	}
-	,set: function(key,value) {
-		this.h["$" + key] = value;
-	}
-	,__class__: Hash
-}
 var HxOverrides = function() { }
 HxOverrides.__name__ = true;
-HxOverrides.dateStr = function(date) {
-	var m = date.getMonth() + 1;
-	var d = date.getDate();
-	var h = date.getHours();
-	var mi = date.getMinutes();
-	var s = date.getSeconds();
-	return date.getFullYear() + "-" + (m < 10?"0" + m:"" + m) + "-" + (d < 10?"0" + d:"" + d) + " " + (h < 10?"0" + h:"" + h) + ":" + (mi < 10?"0" + mi:"" + mi) + ":" + (s < 10?"0" + s:"" + s);
-}
-HxOverrides.strDate = function(s) {
-	switch(s.length) {
-	case 8:
-		var k = s.split(":");
-		var d = new Date();
-		d.setTime(0);
-		d.setUTCHours(k[0]);
-		d.setUTCMinutes(k[1]);
-		d.setUTCSeconds(k[2]);
-		return d;
-	case 10:
-		var k = s.split("-");
-		return new Date(k[0],k[1] - 1,k[2],0,0,0);
-	case 19:
-		var k = s.split(" ");
-		var y = k[0].split("-");
-		var t = k[1].split(":");
-		return new Date(y[0],y[1] - 1,y[2],t[0],t[1],t[2]);
-	default:
-		throw "Invalid date format : " + s;
-	}
-}
-HxOverrides.cca = function(s,index) {
-	var x = s.charCodeAt(index);
-	if(x != x) return undefined;
-	return x;
-}
-HxOverrides.substr = function(s,pos,len) {
-	if(pos != null && pos != 0 && len != null && len < 0) return "";
-	if(len == null) len = s.length;
-	if(pos < 0) {
-		pos = s.length + pos;
-		if(pos < 0) pos = 0;
-	} else if(len < 0) len = s.length + len - pos;
-	return s.substr(pos,len);
-}
-HxOverrides.remove = function(a,obj) {
-	var i = 0;
-	var l = a.length;
-	while(i < l) {
-		if(a[i] == obj) {
-			a.splice(i,1);
-			return true;
-		}
-		i++;
-	}
-	return false;
-}
 HxOverrides.iter = function(a) {
 	return { cur : 0, arr : a, hasNext : function() {
 		return this.cur < this.arr.length;
@@ -137,169 +33,26 @@ HxOverrides.iter = function(a) {
 		return this.arr[this.cur++];
 	}};
 }
-var IntIter = function(min,max) {
-	this.min = min;
-	this.max = max;
-};
-IntIter.__name__ = true;
-IntIter.prototype = {
-	next: function() {
-		return this.min++;
-	}
-	,hasNext: function() {
-		return this.min < this.max;
-	}
-	,__class__: IntIter
-}
+var IMap = function() { }
+IMap.__name__ = true;
 var Std = function() { }
 Std.__name__ = true;
-Std["is"] = function(v,t) {
-	return js.Boot.__instanceof(v,t);
-}
 Std.string = function(s) {
 	return js.Boot.__string_rec(s,"");
-}
-Std["int"] = function(x) {
-	return x | 0;
-}
-Std.parseInt = function(x) {
-	var v = parseInt(x,10);
-	if(v == 0 && (HxOverrides.cca(x,1) == 120 || HxOverrides.cca(x,1) == 88)) v = parseInt(x);
-	if(isNaN(v)) return null;
-	return v;
-}
-Std.parseFloat = function(x) {
-	return parseFloat(x);
-}
-Std.random = function(x) {
-	return Math.floor(Math.random() * x);
-}
-var StringBuf = function() {
-	this.b = "";
-};
-StringBuf.__name__ = true;
-StringBuf.prototype = {
-	toString: function() {
-		return this.b;
-	}
-	,addSub: function(s,pos,len) {
-		this.b += HxOverrides.substr(s,pos,len);
-	}
-	,addChar: function(c) {
-		this.b += String.fromCharCode(c);
-	}
-	,add: function(x) {
-		this.b += Std.string(x);
-	}
-	,__class__: StringBuf
 }
 var StringTools = function() { }
 StringTools.__name__ = true;
 StringTools.urlEncode = function(s) {
 	return encodeURIComponent(s);
 }
-StringTools.urlDecode = function(s) {
-	return decodeURIComponent(s.split("+").join(" "));
-}
-StringTools.htmlEscape = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-}
-StringTools.htmlUnescape = function(s) {
-	return s.split("&gt;").join(">").split("&lt;").join("<").split("&amp;").join("&");
-}
-StringTools.startsWith = function(s,start) {
-	return s.length >= start.length && HxOverrides.substr(s,0,start.length) == start;
-}
-StringTools.endsWith = function(s,end) {
-	var elen = end.length;
-	var slen = s.length;
-	return slen >= elen && HxOverrides.substr(s,slen - elen,elen) == end;
-}
-StringTools.isSpace = function(s,pos) {
-	var c = HxOverrides.cca(s,pos);
-	return c >= 9 && c <= 13 || c == 32;
-}
-StringTools.ltrim = function(s) {
-	var l = s.length;
-	var r = 0;
-	while(r < l && StringTools.isSpace(s,r)) r++;
-	if(r > 0) return HxOverrides.substr(s,r,l - r); else return s;
-}
-StringTools.rtrim = function(s) {
-	var l = s.length;
-	var r = 0;
-	while(r < l && StringTools.isSpace(s,l - r - 1)) r++;
-	if(r > 0) return HxOverrides.substr(s,0,l - r); else return s;
-}
-StringTools.trim = function(s) {
-	return StringTools.ltrim(StringTools.rtrim(s));
-}
-StringTools.rpad = function(s,c,l) {
-	var sl = s.length;
-	var cl = c.length;
-	while(sl < l) if(l - sl < cl) {
-		s += HxOverrides.substr(c,0,l - sl);
-		sl = l;
-	} else {
-		s += c;
-		sl += cl;
-	}
-	return s;
-}
-StringTools.lpad = function(s,c,l) {
-	var ns = "";
-	var sl = s.length;
-	if(sl >= l) return s;
-	var cl = c.length;
-	while(sl < l) if(l - sl < cl) {
-		ns += HxOverrides.substr(c,0,l - sl);
-		sl = l;
-	} else {
-		ns += c;
-		sl += cl;
-	}
-	return ns + s;
-}
-StringTools.replace = function(s,sub,by) {
-	return s.split(sub).join(by);
-}
-StringTools.hex = function(n,digits) {
-	var s = "";
-	var hexChars = "0123456789ABCDEF";
-	do {
-		s = hexChars.charAt(n & 15) + s;
-		n >>>= 4;
-	} while(n > 0);
-	if(digits != null) while(s.length < digits) s = "0" + s;
-	return s;
-}
-StringTools.fastCodeAt = function(s,index) {
-	return s.charCodeAt(index);
-}
-StringTools.isEOF = function(c) {
-	return c != c;
-}
-var haxe = haxe || {}
+var haxe = {}
 haxe.Http = function(url) {
 	this.url = url;
-	this.headers = new Hash();
-	this.params = new Hash();
+	this.headers = new haxe.ds.StringMap();
+	this.params = new haxe.ds.StringMap();
 	this.async = true;
 };
 haxe.Http.__name__ = true;
-haxe.Http.requestUrl = function(url) {
-	var h = new haxe.Http(url);
-	h.async = false;
-	var r = null;
-	h.onData = function(d) {
-		r = d;
-	};
-	h.onError = function(e) {
-		throw e;
-	};
-	h.request(false);
-	return r;
-}
 haxe.Http.prototype = {
 	onStatus: function(status) {
 	}
@@ -309,8 +62,9 @@ haxe.Http.prototype = {
 	}
 	,request: function(post) {
 		var me = this;
-		var r = new js.XMLHttpRequest();
-		var onreadystatechange = function() {
+		me.responseData = null;
+		var r = js.Browser.createXMLHttpRequest();
+		var onreadystatechange = function(_) {
 			if(r.readyState != 4) return;
 			var s = (function($this) {
 				var $r;
@@ -323,10 +77,7 @@ haxe.Http.prototype = {
 			}(this));
 			if(s == undefined) s = null;
 			if(s != null) me.onStatus(s);
-			if(s != null && s >= 200 && s < 400) me.onData(r.responseText); else switch(s) {
-			case null: case undefined:
-				me.onError("Failed to connect or resolve host");
-				break;
+			if(s != null && s >= 200 && s < 400) me.onData(me.responseData = r.responseText); else if(s == null) me.onError("Failed to connect or resolve host"); else switch(s) {
 			case 12029:
 				me.onError("Failed to connect to host");
 				break;
@@ -334,6 +85,7 @@ haxe.Http.prototype = {
 				me.onError("Unknown host");
 				break;
 			default:
+				me.responseData = r.responseText;
 				me.onError("Http Error #" + r.status);
 			}
 		};
@@ -364,44 +116,47 @@ haxe.Http.prototype = {
 			r.setRequestHeader(h,this.headers.get(h));
 		}
 		r.send(uri);
-		if(!this.async) onreadystatechange();
+		if(!this.async) onreadystatechange(null);
 	}
 	,setPostData: function(data) {
 		this.postData = data;
+		return this;
 	}
 	,setParameter: function(param,value) {
 		this.params.set(param,value);
+		return this;
 	}
 	,setHeader: function(header,value) {
 		this.headers.set(header,value);
+		return this;
 	}
 	,__class__: haxe.Http
 }
-var js = js || {}
+haxe.ds = {}
+haxe.ds.StringMap = function() {
+	this.h = { };
+};
+haxe.ds.StringMap.__name__ = true;
+haxe.ds.StringMap.__interfaces__ = [IMap];
+haxe.ds.StringMap.prototype = {
+	keys: function() {
+		var a = [];
+		for( var key in this.h ) {
+		if(this.h.hasOwnProperty(key)) a.push(key.substr(1));
+		}
+		return HxOverrides.iter(a);
+	}
+	,get: function(key) {
+		return this.h["$" + key];
+	}
+	,set: function(key,value) {
+		this.h["$" + key] = value;
+	}
+	,__class__: haxe.ds.StringMap
+}
+var js = {}
 js.Boot = function() { }
 js.Boot.__name__ = true;
-js.Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-}
-js.Boot.__trace = function(v,i) {
-	var msg = i != null?i.fileName + ":" + i.lineNumber + ": ":"";
-	msg += js.Boot.__string_rec(v,"");
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js.Boot.__unhtml(msg) + "<br/>"; else if(typeof(console) != "undefined" && console.log != null) console.log(msg);
-}
-js.Boot.__clear_trace = function() {
-	var d = document.getElementById("haxe:trace");
-	if(d != null) d.innerHTML = "";
-}
-js.Boot.isClass = function(o) {
-	return o.__name__;
-}
-js.Boot.isEnum = function(e) {
-	return e.__ename__;
-}
-js.Boot.getClass = function(o) {
-	return o.__class__;
-}
 js.Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -483,38 +238,45 @@ js.Boot.__interfLoop = function(cc,cl) {
 	return js.Boot.__interfLoop(cc.__super__,cl);
 }
 js.Boot.__instanceof = function(o,cl) {
-	try {
-		if(o instanceof cl) {
-			if(cl == Array) return o.__enum__ == null;
-			return true;
-		}
-		if(js.Boot.__interfLoop(o.__class__,cl)) return true;
-	} catch( e ) {
-		if(cl == null) return false;
-	}
+	if(cl == null) return false;
 	switch(cl) {
 	case Int:
-		return Math.ceil(o%2147483648.0) === o;
+		return (o|0) === o;
 	case Float:
 		return typeof(o) == "number";
 	case Bool:
-		return o === true || o === false;
+		return typeof(o) == "boolean";
 	case String:
 		return typeof(o) == "string";
 	case Dynamic:
 		return true;
 	default:
-		if(o == null) return false;
-		if(cl == Class && o.__name__ != null) return true; else null;
-		if(cl == Enum && o.__ename__ != null) return true; else null;
+		if(o != null) {
+			if(typeof(cl) == "function") {
+				if(o instanceof cl) {
+					if(cl == Array) return o.__enum__ == null;
+					return true;
+				}
+				if(js.Boot.__interfLoop(o.__class__,cl)) return true;
+			}
+		} else return false;
+		if(cl == Class && o.__name__ != null) return true;
+		if(cl == Enum && o.__ename__ != null) return true;
 		return o.__enum__ == cl;
 	}
 }
 js.Boot.__cast = function(o,t) {
 	if(js.Boot.__instanceof(o,t)) return o; else throw "Cannot cast " + Std.string(o) + " to " + Std.string(t);
 }
-var massive = massive || {}
-if(!massive.haxe) massive.haxe = {}
+js.Browser = function() { }
+js.Browser.__name__ = true;
+js.Browser.createXMLHttpRequest = function() {
+	if(typeof XMLHttpRequest != "undefined") return new XMLHttpRequest();
+	if(typeof ActiveXObject != "undefined") return new ActiveXObject("Microsoft.XMLHTTP");
+	throw "Unable to create XMLHttpRequest object.";
+}
+var massive = {}
+massive.haxe = {}
 massive.haxe.Exception = function(message,info) {
 	this.message = message;
 	this.info = info;
@@ -529,13 +291,13 @@ massive.haxe.Exception.prototype = {
 	}
 	,__class__: massive.haxe.Exception
 }
-if(!massive.haxe.util) massive.haxe.util = {}
+massive.haxe.util = {}
 massive.haxe.util.ReflectUtil = function() { }
 massive.haxe.util.ReflectUtil.__name__ = true;
 massive.haxe.util.ReflectUtil.here = function(info) {
 	return info;
 }
-if(!massive.munit) massive.munit = {}
+massive.munit = {}
 massive.munit.MUnitException = function(message,info) {
 	massive.haxe.Exception.call(this,message,info);
 	this.type = massive.haxe.util.ReflectUtil.here({ fileName : "MUnitException.hx", lineNumber : 50, className : "massive.munit.MUnitException", methodName : "new"}).className;
@@ -612,7 +374,7 @@ massive.munit.TestResultType.ERROR.__enum__ = massive.munit.TestResultType;
 massive.munit.TestResultType.IGNORE = ["IGNORE",4];
 massive.munit.TestResultType.IGNORE.toString = $estr;
 massive.munit.TestResultType.IGNORE.__enum__ = massive.munit.TestResultType;
-if(!massive.munit.client) massive.munit.client = {}
+massive.munit.client = {}
 massive.munit.client.HTTPClient = function(client,url,queueRequest) {
 	if(queueRequest == null) queueRequest = true;
 	if(url == null) url = "http://localhost:2000";
@@ -709,12 +471,13 @@ massive.munit.client.URLRequest.prototype = {
 	}
 	,__class__: massive.munit.client.URLRequest
 }
-if(!massive.munit.util) massive.munit.util = {}
+massive.munit.util = {}
 massive.munit.util.Timer = function(time_ms) {
 	this.id = massive.munit.util.Timer.arr.length;
 	massive.munit.util.Timer.arr[this.id] = this;
 	this.timerId = window.setInterval("massive.munit.util.Timer.arr[" + this.id + "].run();",time_ms);
 };
+$hxExpose(massive.munit.util.Timer, "massive.munit.util.Timer");
 massive.munit.util.Timer.__name__ = true;
 massive.munit.util.Timer.delay = function(f,time_ms) {
 	var t = new massive.munit.util.Timer(time_ms);
@@ -743,24 +506,8 @@ massive.munit.util.Timer.prototype = {
 	}
 	,__class__: massive.munit.util.Timer
 }
-var $_;
-function $bind(o,m) { var f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; return f; };
-if(Array.prototype.indexOf) HxOverrides.remove = function(a,o) {
-	var i = a.indexOf(o);
-	if(i == -1) return false;
-	a.splice(i,1);
-	return true;
-}; else null;
-Math.__name__ = ["Math"];
-Math.NaN = Number.NaN;
-Math.NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY;
-Math.POSITIVE_INFINITY = Number.POSITIVE_INFINITY;
-Math.isFinite = function(i) {
-	return isFinite(i);
-};
-Math.isNaN = function(i) {
-	return isNaN(i);
-};
+var $_, $fid = 0;
+function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; };
 String.prototype.__class__ = String;
 String.__name__ = true;
 Array.prototype.__class__ = Array;
@@ -775,24 +522,19 @@ var Bool = Boolean;
 Bool.__ename__ = ["Bool"];
 var Class = { __name__ : ["Class"]};
 var Enum = { };
-var Void = { __ename__ : ["Void"]};
-js.XMLHttpRequest = window.XMLHttpRequest?XMLHttpRequest:window.ActiveXObject?function() {
-	try {
-		return new ActiveXObject("Msxml2.XMLHTTP");
-	} catch( e ) {
-		try {
-			return new ActiveXObject("Microsoft.XMLHTTP");
-		} catch( e1 ) {
-			throw "Unable to create XMLHttpRequest object.";
-		}
-	}
-}:(function($this) {
-	var $r;
-	throw "Unable to create XMLHttpRequest object.";
-	return $r;
-}(this));
 BrowserTestsCompleteReporter.CLIENT_RUNNER_HOST = "munit-tool-host";
 massive.munit.client.HTTPClient.queue = [];
 massive.munit.client.HTTPClient.responsePending = false;
 massive.munit.util.Timer.arr = new Array();
 BrowserTestsCompleteReporter.main();
+function $hxExpose(src, path) {
+	var o = typeof window != "undefined" ? window : exports;
+	var parts = path.split(".");
+	for(var ii = 0; ii < parts.length-1; ++ii) {
+		var p = parts[ii];
+		if(typeof o[p] == "undefined") o[p] = {};
+		o = o[p];
+	}
+	o[parts[parts.length-1]] = src;
+}
+})();
