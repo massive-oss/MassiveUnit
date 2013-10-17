@@ -1,3 +1,7 @@
+v 2.1.1
+- Recompile binaries for backwards compatibility with neko v1.8
+- Remove dependency on hamcrest
+
 v 2.1.0
 
 - Adds support to launch tests in FlashDevelop browser

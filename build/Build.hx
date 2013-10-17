@@ -48,7 +48,7 @@ class Build extends mtask.core.BuildBase
 		t.url = "http://github.com/massiveinteractive/MassiveUnit";
 		t.username = "massive";
 		t.description = "A cross platform unit testing framework for Haxe with metadata test markup and tools for generating, compiling and running tests from the command line.";
-		t.versionDescription = "Support for FlashDevelop browser. No longer display classes where no tests executed. Improved NodeJS support.";
+		t.versionDescription = "Remove dependency on hamcrest and recompile binaries with backwards compatibility for neko 1.8.";
 		t.license = MIT;
 		
 		t.addTag("cross");
