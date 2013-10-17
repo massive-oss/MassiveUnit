@@ -342,8 +342,11 @@ class TestRunner implements IAsyncDelegateObserver
                 asyncDelegate.cancelTest();
                 asyncDelegate = null;
             }
-            if (Std.is(e, org.hamcrest.AssertionException))
-                e = new AssertionException(e.message, e.info);
+
+			#if hamcrest
+			if (Std.is(e, org.hamcrest.AssertionException))
+				e = new AssertionException(e.message, e.info);
+			#end
 
             if (Std.is(e, AssertionException))
             {

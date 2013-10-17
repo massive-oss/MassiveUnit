@@ -3,7 +3,6 @@
 	<description><![CDATA[A cross platform unit testing framework for Haxe with metadata test markup and tools for generating, compiling and running tests from the command line.]]></description>
 	<version name="2.1.0"><![CDATA[Support for FlashDevelop browser. No longer display classes where no tests executed. Improved NodeJS support.]]></version>
 	<depends name="mlib"/>
-	<depends name="hamcrest"/>
 	<depends name="mcover"/>
 	<tag v="cross"/>
 	<tag v="utility"/>

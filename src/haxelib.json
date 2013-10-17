@@ -10,7 +10,6 @@
 	"dependencies": 
 	{
 		"mlib": "",
-		"mcover": "",
-		"hamcrest": ""
+		"mcover": ""
 	}
 }

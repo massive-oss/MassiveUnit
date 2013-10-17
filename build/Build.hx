@@ -57,7 +57,6 @@ class Build extends mtask.core.BuildBase
 		t.addTag("testing");
 		t.addTag("massive");
 		
-		t.addDependency("hamcrest");
 		t.addDependency("mlib");
 		t.addDependency("mcover");
 

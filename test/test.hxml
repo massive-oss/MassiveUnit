@@ -3,7 +3,6 @@
 -cp test
 -cp src
 -lib mlib
--lib hamcrest
 -swf bin/test/core/as3_test.swf
 -swf-version 9
 -swf-header 800:600:60:FFFFFF
@@ -14,7 +13,6 @@
 -cp test
 -cp src
 -lib mlib
--lib hamcrest
 -swf-version 8
 -swf bin/test/core/as2_test.swf
 -swf-header 800:600:60:FFFFFF
@@ -25,7 +23,6 @@
 -cp test
 -cp src
 -lib mlib
--lib hamcrest
 -js bin/test/core/js_test.js
 --next
 
@@ -34,7 +31,6 @@
 -cp test
 -cp src
 -lib mlib
--lib hamcrest
 -neko bin/test/core/neko_test.n
 --next
 
@@ -43,6 +39,5 @@
 # -cp test
 # -cp src
 # -lib mlib
-# -lib hamcrest
 # -D HXCPP_M64
 # -cpp bin/test/core/cpp_test

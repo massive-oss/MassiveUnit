@@ -1,8 +1,8 @@
 -main massive.munit.MunitCommandLineRunner
 -cp src
 -cp ../src
--lib hamcrest
 -lib mlib
+-D neko-v1
 -neko ../src/run.n
 
 -resource template/config.mtt@config
@@ -30,7 +30,7 @@
 -cp src
 -cp ../src
 -lib mlib
--lib hamcrest
+-D neko-v1
 -neko ../src/index.n
 
 --next
@@ -38,6 +38,5 @@
 -main BrowserTestsCompleteReporter
 -cp src
 -cp ../src
--lib hamcrest
 -lib mlib
 -js ../src/resource/tests-complete.js
