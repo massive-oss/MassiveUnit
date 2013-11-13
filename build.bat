@@ -1,14 +1,14 @@
 
 cd tool
 haxe build.hxml
-cd ../
+cd ..
 
-haxelib dev munit `pwd`/src
+haxelib dev munit %CD%\src
 
 cd tool
 haxelib run munit test -coverage
-cd ../
+cd ..
 
 haxelib run munit test -coverage
 
-haxelib run mlib install
+haxelib run mlib install 
