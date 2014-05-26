@@ -48,10 +48,10 @@ class Assert
 	 * @param	value				value expected to be true
 	 * @throws	AssertionException	if value is not true
 	 */ 
-	public static function isTrue(value:Bool, ?info:PosInfos):Void
+	public static function isTrue(value:Bool, ?msg:String, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		if (value != true) fail("Expected TRUE but was [" + value + "]", info);
+		if (value != true) failPrefix(msg, "Expected TRUE but was [" + value + "]", info);
 	}
 	
 	/**
@@ -60,10 +60,10 @@ class Assert
 	 * @param	value				value expected to be false
 	 * @throws	AssertionException	if value is not false
 	 */ 
-	public static function isFalse(value:Bool, ?info:PosInfos):Void
+	public static function isFalse(value:Bool, ?msg:String, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		if (value != false) fail("Expected FALSE but was [" + value + "]", info);
+		if (value != false) failPrefix(msg, "Expected FALSE but was [" + value + "]", info);
 	}
 	
 	/**
@@ -72,10 +72,10 @@ class Assert
 	 * @param	value				value expected to be null
 	 * @throws	AssertionException	if value is not null
 	 */ 
-	public static function isNull(value:Dynamic, ?info:PosInfos):Void
+	public static function isNull(value:Dynamic, ?msg:String, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		if (value != null) fail("Value [" + value + "] was not NULL", info);
+		if (value != null) failPrefix(msg, "Value [" + value + "] was not NULL", info);
 	}
 	
 	/**
@@ -84,10 +84,10 @@ class Assert
 	 * @param	value				value expected not to be null
 	 * @throws	AssertionException	if value is null
 	 */ 
-	public static function isNotNull(value:Dynamic, ?info:PosInfos):Void
+	public static function isNotNull(value:Dynamic, ?msg:String, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		if (value == null) fail("Value [" + value + "] was NULL", info);
+		if (value == null) failPrefix(msg, "Value [" + value + "] was NULL", info);
 	}
 	
 	/**
@@ -96,10 +96,10 @@ class Assert
 	 * @param	value				value expected to be Math.NaN
 	 * @throws	AssertionException	if value is not Math.NaN
 	 */ 
-	public static function isNaN(value:Float, ?info:PosInfos):Void
+	public static function isNaN(value:Float, ?msg:String, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		if (!Math.isNaN(value)) fail("Value [" + value + "]  was not NaN", info);		
+		if (!Math.isNaN(value)) failPrefix(msg, "Value [" + value + "]  was not NaN", info);		
 	}
 
 	/**
@@ -108,10 +108,10 @@ class Assert
 	 * @param	value				value expected not to be Math.NaN
 	 * @throws	AssertionException	if value is Math.NaN
 	 */
-	public static function isNotNaN(value:Float, ?info:PosInfos):Void
+	public static function isNotNaN(value:Float, ?msg:String, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		if (Math.isNaN(value)) fail("Value [" + value + "] was NaN", info);		
+		if (Math.isNaN(value)) failPrefix(msg, "Value [" + value + "] was NaN", info);		
 	}
 	
 	/**
@@ -120,10 +120,10 @@ class Assert
 	 * @param	value				value expected to be of a given type
 	 * @param	type				type the value should be
 	 */
-	public static function isType(value:Dynamic, type:Dynamic, ?info:PosInfos):Void
+	public static function isType(value:Dynamic, type:Dynamic, ?msg:String, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		if (!Std.is(value, type)) fail("Value [" + value + "] was not of type: " + Type.getClassName(type), info);
+		if (!Std.is(value, type)) failPrefix(msg, "Value [" + value + "] was not of type: " + Type.getClassName(type), info);
 	}
 	
 	/**
@@ -132,10 +132,10 @@ class Assert
 	 * @param	value				value expected to not be of a given type
 	 * @param	type				type the value should not be
 	 */
-	public static function isNotType(value:Dynamic, type:Dynamic, ?info:PosInfos):Void
+	public static function isNotType(value:Dynamic, type:Dynamic, ?msg:String, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		if (Std.is(value, type)) fail("Value [" + value + "] was of type: " + Type.getClassName(type), info);
+		if (Std.is(value, type)) failPrefix(msg, "Value [" + value + "] was of type: " + Type.getClassName(type), info);
 	}
 	
 	/**
@@ -148,7 +148,7 @@ class Assert
 	 * @param	actual				actual value
 	 * @throws	AssertionException	if expected is not equal to the actual value
 	 */
-	public static function areEqual(expected:Dynamic, actual:Dynamic, ?info:PosInfos):Void
+	public static function areEqual(expected:Dynamic, actual:Dynamic, ?msg:String, ?info:PosInfos):Void
 	{
 		assertionCount++;
 		var equal = switch (Type.typeof(expected))
@@ -161,7 +161,7 @@ class Assert
 			
 			default: expected == actual;
 		}		
-		if (!equal) fail("Value [" + actual +"] was not equal to expected value [" + expected + "]", info);
+		if (!equal) failPrefix(msg, "Value [" + actual +"] was not equal to expected value [" + expected + "]", info);
 	}
 	
 	/**
@@ -174,7 +174,7 @@ class Assert
 	 * @param	actual				actual value
 	 * @throws	AssertionException	if expected is equal to the actual value
 	 */
-	public static function areNotEqual(expected:Dynamic, actual:Dynamic, ?info:PosInfos):Void
+	public static function areNotEqual(expected:Dynamic, actual:Dynamic, ?msg:String, ?info:PosInfos):Void
 	{
 		assertionCount++;
 		var equal = switch (Type.typeof(expected))
@@ -187,7 +187,7 @@ class Assert
 			default: expected == actual;
 		}
 
-		if (equal) fail("Value [" + actual +"] was equal to value [" + expected + "]", info);
+		if (equal) failPrefix(msg, "Value [" + actual +"] was equal to value [" + expected + "]", info);
 	}
 
 	/**
@@ -197,10 +197,10 @@ class Assert
 	 * @param	actual				actual value
 	 * @throws	AssertionException	if expected is not the same as the actual value
 	 */
-	public static function areSame(expected:Dynamic, actual:Dynamic, ?info:PosInfos):Void
+	public static function areSame(expected:Dynamic, actual:Dynamic, ?msg:String, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		if (expected != actual) fail("Value [" + actual +"] was not the same as expected value [" + expected + "]", info);
+		if (expected != actual) failPrefix(msg, "Value [" + actual +"] was not the same as expected value [" + expected + "]", info);
 	}
 
 	/**
@@ -210,10 +210,10 @@ class Assert
 	 * @param	actual				actual value
 	 * @throws	AssertionException	if expected is the same as the actual value
 	 */
-	public static function areNotSame(expected:Dynamic, actual:Dynamic, ?info:PosInfos):Void
+	public static function areNotSame(expected:Dynamic, actual:Dynamic, ?msg:String, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		if (expected == actual) fail("Value [" + actual +"] was the same as expected value [" + expected + "]", info);
+		if (expected == actual) failPrefix(msg, "Value [" + actual +"] was the same as expected value [" + expected + "]", info);
 	}
 
 	/**
@@ -225,5 +225,21 @@ class Assert
 	public static function fail(msg:String, ?info:PosInfos):Void
 	{
 		throw new AssertionException(msg, info);
+	}
+
+	/**
+	  * Force an assertion failure.
+	  *  
+	  * @param	prefix				additional infomation about the assertion
+	  * @param	msg				message describing the assertion which failed
+	  * @throws	AssertionException	thrown automatically
+	  */	
+	private static function failPrefix(prefix:String, msg:String, ?info:PosInfos):Void
+	{
+		if (prefix != null)
+		{
+			msg = '$prefix - $msg';
+		}
+		fail(msg, info);
 	}
 }
