@@ -66,17 +66,95 @@ class Config
 		defaultTargetTypes = [TargetType.as2, TargetType.as3, TargetType.js, TargetType.neko, TargetType.cpp];
 		targetTypes = defaultTargetTypes;
 		targets = [];
-
-		configFile = dir.resolveFile(".munit");
 		
-		exists = configFile.exists;
-		
-		if(exists)
+		if(!parseCommandLineConfig())
 		{
-			load();
+			configFile = dir.resolveFile(".munit");
+			
+			exists = configFile.exists;
+			
+			if(exists)
+			{
+				load();
+			}
 		}
 	}
+
+	private function parseCommandLineConfig():Bool
+	{
+		var src = getCommandLineArgument("src");
+		if(src == null)
+			return false;
 		
+		configVersion = getCommandLineArgument("version");
+		this.src = File.create(src, dir, true);
+		bin = File.create(getCommandLineArgument("bin"), dir, true);
+		report = File.create(getCommandLineArgument("report"), dir, true);
+		//hxml = File.create(getCommandLineArgument("hxml"), dir);
+		hxml = null;
+		
+		var resources = getCommandLineArgument("resources");
+		this.resources = resources != null ? File.create(resources, dir) : null;
+		
+		var templates = getCommandLineArgument("templates");
+		this.templates = templates != null ? File.create(templates, dir) : null;
+		
+		var classPaths = getCommandLineArgument("classPaths");
+		var paths = classPaths.split(",");
+		this.classPaths = [];
+		for(path in paths)
+			this.classPaths.push(File.create(path, dir, true));
+		
+		var coveragePackages = getCommandLineArgument("coveragePackages");
+		this.coveragePackages = coveragePackages != null ? coveragePackages.split(",") : null;
+		
+		var coverageIgnoredClasses = getCommandLineArgument("coverageIgnoredClasses");
+		this.coverageIgnoredClasses = coverageIgnoredClasses != null ? coverageIgnoredClasses.split(",") : null;
+		
+		targets.push(getCommandLineTarget());
+		return true;
+	}
+	
+	private function getCommandLineArgument(name:String):String
+	{
+		var args = Sys.args();
+		for(arg in args)
+			if(StringTools.startsWith(arg, name + "="))
+				return arg.substr(name.length + 1);
+		return null;
+	}
+	
+	private function getCommandLineTarget():Target
+	{
+		var hxml = "";
+		var flag = "target:";
+		var args = Sys.args();
+		var type:TargetType = null;
+		var file:File = null;
+		for(arg in args)
+		{
+			if(StringTools.startsWith(arg, flag))
+			{
+				var command = arg.substr(flag.length);
+				var chunk = command.split("=");
+				hxml += "-" + chunk[0] + " " + chunk[1] + "\n";
+				switch(chunk[0])
+				{
+					case "as2": type = TargetType.as2; file = File.create(chunk[1], dir, true);
+					case "as3": type = TargetType.as3; file = File.create(chunk[1], dir, true);
+					case "js": type = TargetType.js; file = File.create(chunk[1], dir, true);
+					case "neko": type = TargetType.neko; file = File.create(chunk[1], dir, true);
+					case "cpp": type = TargetType.cpp; file = File.create(chunk[1], dir, true);
+				}
+			}
+		}
+		var result = new Target();
+		result.hxml = hxml;
+		result.type = type;
+		result.file = file;
+		return result;
+	}
+
 	public function load(?file:File):Void
 	{
 		if(file == null) file = configFile;
