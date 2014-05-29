@@ -97,7 +97,7 @@ class MUnitTargetCommandBase extends MUnitCommand
 
 		if (checkConsole) hxmlPath = console.getNextArg();
 
-		if(hxmlPath == "null" || hxmlPath == null)
+		if(hxmlPath == Config.CLI_CONFIG || hxmlPath == null)
 			return;
 
 		if (hxmlPath != null)

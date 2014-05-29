@@ -31,6 +31,8 @@ import massive.munit.Target;
 
 class Config
 {
+	inline public static var CLI_CONFIG:String = "cliconfig";
+
 	public var currentVersion(default, null):String;
 	public var configVersion(default, null):String;
 	
@@ -82,46 +84,50 @@ class Config
 
 	private function parseCommandLineConfig():Bool
 	{
-		var src = getCommandLineArgument("src");
-		if(src == null)
+		var args = Sys.args();
+		if(args[1] != CLI_CONFIG)
 			return false;
 		
-		configVersion = getCommandLineArgument("version");
-		this.src = File.create(src, dir, true);
-		bin = File.create(getCommandLineArgument("bin"), dir, true);
-		report = File.create(getCommandLineArgument("report"), dir, true);
-		//hxml = File.create(getCommandLineArgument("hxml"), dir);
+		src = File.create(args[2], dir);
+		bin = File.create(args[3], dir, true);
+		report = File.create(args[4], dir, true);
 		hxml = null;
 		
-		var resources = getCommandLineArgument("resources");
+		configVersion = getCommandLineConfigValue("version");
+		
+		var resources = getCommandLineConfigValue("resources");
 		this.resources = resources != null ? File.create(resources, dir) : null;
 		
-		var templates = getCommandLineArgument("templates");
+		var templates = getCommandLineConfigValue("templates");
 		this.templates = templates != null ? File.create(templates, dir) : null;
 		
-		var classPaths = getCommandLineArgument("classPaths");
-		var paths = classPaths.split(",");
+		var classPaths = getCommandLineConfigValues("classPath");
 		this.classPaths = [];
-		for(path in paths)
-			this.classPaths.push(File.create(path, dir, true));
+		if(classPaths != null)
+			for(classPath in classPaths)
+				this.classPaths.push(File.create(classPath, dir));
 		
-		var coveragePackages = getCommandLineArgument("coveragePackages");
-		this.coveragePackages = coveragePackages != null ? coveragePackages.split(",") : null;
-		
-		var coverageIgnoredClasses = getCommandLineArgument("coverageIgnoredClasses");
-		this.coverageIgnoredClasses = coverageIgnoredClasses != null ? coverageIgnoredClasses.split(",") : null;
+		coveragePackages = getCommandLineConfigValues("coveragePackage");
+		coverageIgnoredClasses = getCommandLineConfigValues("coverageIgnoredClass");
 		
 		targets.push(getCommandLineTarget());
 		return true;
 	}
 	
-	private function getCommandLineArgument(name:String):String
+	private function getCommandLineConfigValue(name:String):String
+	{
+		var result = getCommandLineConfigValues(name);
+		return result == null ? null : result[0];
+	}
+	
+	private function getCommandLineConfigValues(name:String):Array<String>
 	{
 		var args = Sys.args();
+		var result:Array<String> = [];
 		for(arg in args)
-			if(StringTools.startsWith(arg, name + "="))
-				return arg.substr(name.length + 1);
-		return null;
+			if(StringTools.startsWith(arg, "config:" + name + "="))
+				result.push(arg.substr(name.length + 1));
+		return result.length > 0 ? result : null;
 	}
 	
 	private function getCommandLineTarget():Target
@@ -140,11 +146,21 @@ class Config
 				hxml += "-" + chunk[0] + " " + chunk[1] + "\n";
 				switch(chunk[0])
 				{
-					case "as2": type = TargetType.as2; file = File.create(chunk[1], dir, true);
-					case "as3": type = TargetType.as3; file = File.create(chunk[1], dir, true);
-					case "js": type = TargetType.js; file = File.create(chunk[1], dir, true);
-					case "neko": type = TargetType.neko; file = File.create(chunk[1], dir, true);
-					case "cpp": type = TargetType.cpp; file = File.create(chunk[1], dir, true);
+					case "as2":
+						type = TargetType.as2;
+						file = File.create(chunk[1], dir, true);
+					case "as3":
+						type = TargetType.as3;
+						file = File.create(chunk[1], dir, true);
+					case "js":
+						type = TargetType.js;
+						file = File.create(chunk[1], dir, true);
+					case "neko":
+						type = TargetType.neko;
+						file = File.create(chunk[1], dir, true);
+					case "cpp":
+						type = TargetType.cpp;
+						file = File.create(chunk[1], dir, true);
 				}
 			}
 		}
