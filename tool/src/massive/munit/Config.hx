@@ -124,9 +124,12 @@ class Config
 	{
 		var args = Sys.args();
 		var result:Array<String> = [];
-		for(arg in args)
-			if(StringTools.startsWith(arg, "config:" + name + "="))
-				result.push(arg.substr(name.length + 1));
+		var length = args.length;
+		for(i in 0...length)
+		{
+			if(args[i] == ("config:" + name) && length > i)
+				result.push(args[i + 1]);
+		}
 		return result.length > 0 ? result : null;
 	}
 	
@@ -137,30 +140,32 @@ class Config
 		var args = Sys.args();
 		var type:TargetType = null;
 		var file:File = null;
-		for(arg in args)
+		var length = args.length;
+		for(i in 0...length)
 		{
-			if(StringTools.startsWith(arg, flag))
+			var arg = args[i];
+			if(StringTools.startsWith(arg, flag) && length > i)
 			{
 				var command = arg.substr(flag.length);
-				var chunk = command.split("=");
-				hxml += "-" + chunk[0] + " " + chunk[1] + "\n";
-				switch(chunk[0])
+				var value = args[i + 1];
+				hxml += command + " " + value + "\n";
+				switch(command)
 				{
-					case "as2":
+					case "-as2":
 						type = TargetType.as2;
-						file = File.create(chunk[1], dir, true);
-					case "as3":
+						file = File.create(value, dir, true);
+					case "-as3":
 						type = TargetType.as3;
-						file = File.create(chunk[1], dir, true);
-					case "js":
+						file = File.create(value, dir, true);
+					case "-js":
 						type = TargetType.js;
-						file = File.create(chunk[1], dir, true);
-					case "neko":
+						file = File.create(value, dir, true);
+					case "-neko":
 						type = TargetType.neko;
-						file = File.create(chunk[1], dir, true);
-					case "cpp":
+						file = File.create(value, dir, true);
+					case "-cpp":
 						type = TargetType.cpp;
-						file = File.create(chunk[1], dir, true);
+						file = File.create(value, dir, true);
 				}
 			}
 		}
