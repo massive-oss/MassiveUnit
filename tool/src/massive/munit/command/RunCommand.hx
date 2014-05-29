@@ -313,7 +313,8 @@ class RunCommand extends MUnitTargetCommandBase
 		indexPage.writeString(pageContent, true);
 
 		var commonResourceDir:File = console.originalDir.resolveDirectory("resource");
-		commonResourceDir.copyTo(reportRunnerDir);
+		if(commonResourceDir.exists)
+			commonResourceDir.copyTo(reportRunnerDir);
 
 		if (config.resources != null)
 		{
