@@ -1,5 +1,5 @@
 /****
-* Copyright 2013 Massive Interactive. All rights reserved.
+* Copyright 2014 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -240,7 +240,30 @@ class TestRunner implements IAsyncDelegateObserver
                 if (activeHelper == null || activeHelper.type != testClass)
                 {
                     activeHelper = new TestClassHelper(testClass, isDebug);
-                    Reflect.callMethod(activeHelper.test, activeHelper.beforeClass, emptyParams);
+					for(c in clients)
+					{
+						if(Std.is(c, IAdvancedTestResultClient))
+						{
+							if (activeHelper.hasNext())
+							{
+								var cl:IAdvancedTestResultClient = cast c;
+								cl.setCurrentTestClass(activeHelper.className);
+							}
+						}
+					}
+					try
+					{
+						Reflect.callMethod(activeHelper.test, activeHelper.beforeClass, emptyParams);
+					}
+					catch(e:Dynamic)
+					{
+						for (testCaseData in activeHelper)
+						{
+							testCount++;
+							handleTestCaseException(e, testCaseData.result);
+						}
+						continue;
+					}
                 }
                 executeTestCases();
                 if (!asyncPending)
@@ -273,17 +296,6 @@ class TestRunner implements IAsyncDelegateObserver
 
     private function executeTestCases():Void
     {
-        for(c in clients)
-        {
-            if(Std.is(c, IAdvancedTestResultClient))
-            {
-                if (activeHelper.hasNext())
-                {
-                    var cl:IAdvancedTestResultClient = cast c;
-                    cl.setCurrentTestClass(activeHelper.className);
-                }
-            }
-        }
         for (testCaseData in activeHelper)
         {
             var result:TestResult = testCaseData.result;
@@ -304,6 +316,7 @@ class TestRunner implements IAsyncDelegateObserver
                 catch(e:Dynamic)
                 {
                     handleTestCaseException(e, result);
+					continue;
                 }
 
                 testStartTime = Timer.stamp();
@@ -318,15 +331,28 @@ class TestRunner implements IAsyncDelegateObserver
                     catch(e:Dynamic)
                     {
                         handleTestCaseException(e, result);
+						continue;
                     }
                 }
                 else
                 {
                     break;
                 }
+
+				markTestPassed(result);
             }
         }
     }
+
+	function markTestPassed(result:TestResult)
+	{
+		if (result.passed)
+		{
+			passCount++;
+			for (c in clients)
+				c.addPass(result);
+		}
+	}
 
     private function executeTestCase(testCaseData:Dynamic, async:Bool):Void
     {
@@ -351,9 +377,6 @@ class TestRunner implements IAsyncDelegateObserver
 
                 result.passed = true;
                 result.executionTime = Timer.stamp() - testStartTime;
-                passCount++;
-                for (c in clients)
-                    c.addPass(result);
             }
         }
         catch(e:Dynamic)
@@ -375,7 +398,7 @@ class TestRunner implements IAsyncDelegateObserver
                e = new AssertionException(e.message, e.info);
         #end
 
-        if (Std.is(e, AssertionException))
+		if (Std.is(e, AssertionException))
         {
             result.executionTime = Timer.stamp() - testStartTime;
             result.failure = e;
@@ -428,6 +451,8 @@ class TestRunner implements IAsyncDelegateObserver
         try
         {
             Reflect.callMethod(activeHelper.test, activeHelper.after, emptyParams);
+
+			markTestPassed(testCaseData.result);
         }
         catch(e:Dynamic)
         {

@@ -26,6 +26,7 @@
  * or implied, of Massive Interactive.
  */
 package massive.munit;
+import massive.munit.errorbefore.ExceptionInBeforeAfterSuiteStub;
 import massive.munit.client.JUnitReportClient;
 import massive.munit.async.AsyncFactory;
 import massive.munit.async.AsyncTestSuiteStub;
@@ -100,6 +101,30 @@ class TestRunnerTest
         Assert.isNull(client.currentTestClass);
 
         Assert.areEqual("massive.munit.TestClassStub", client.testClasses[client.testClasses.length-1]);
+    }
+
+    @AsyncTest
+    public function testErrorsInBeforeAfter(factory:AsyncFactory):Void
+    {
+        var suites = new Array<Class<massive.munit.TestSuite>>();
+        suites.push(ExceptionInBeforeAfterSuiteStub);
+        runner.completionHandler = factory.createHandler(this, errorInBeforeAfterCompletionHandler, 5000);
+        runner.run(suites);
+    }
+
+    private function errorInBeforeAfterCompletionHandler(isSuccessful:Bool):Void
+    {
+        Assert.isFalse(isSuccessful);
+        Assert.areEqual(6, client.testCount);
+        Assert.areEqual(6, client.finalTestCount);
+        Assert.areEqual(0, client.passCount);
+        Assert.areEqual(0, client.finalPassCount);
+        Assert.areEqual(1, client.failCount);
+        Assert.areEqual(1, client.finalFailCount);
+        Assert.areEqual(5, client.errorCount);
+        Assert.areEqual(5, client.finalErrorCount);
+        Assert.areEqual(5, client.testClasses.length);
+        Assert.isNull(client.currentTestClass);
     }
 
     @AsyncTest
