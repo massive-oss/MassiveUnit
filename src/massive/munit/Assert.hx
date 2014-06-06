@@ -46,6 +46,7 @@ class Assert
 	 * Assert that a value is true.
 	 *  
 	 * @param	value				value expected to be true
+	 * @param	msg					An optional message to be prefixed on the failure description
 	 * @throws	AssertionException	if value is not true
 	 */ 
 	public static function isTrue(value:Bool, ?msg:String, ?info:PosInfos):Void
@@ -58,6 +59,7 @@ class Assert
 	 * Assert that a value is false.
 	 *  
 	 * @param	value				value expected to be false
+	 * @param	msg					An optional message to be prefixed on the failure description
 	 * @throws	AssertionException	if value is not false
 	 */ 
 	public static function isFalse(value:Bool, ?msg:String, ?info:PosInfos):Void
@@ -70,6 +72,7 @@ class Assert
 	 * Assert that a value is null.
 	 *  
 	 * @param	value				value expected to be null
+	 * @param	msg					An optional message to be prefixed on the failure description
 	 * @throws	AssertionException	if value is not null
 	 */ 
 	public static function isNull(value:Dynamic, ?msg:String, ?info:PosInfos):Void
@@ -82,6 +85,7 @@ class Assert
 	 * Assert that a value is not null.
 	 *  
 	 * @param	value				value expected not to be null
+	 * @param	msg					An optional message to be prefixed on the failure description
 	 * @throws	AssertionException	if value is null
 	 */ 
 	public static function isNotNull(value:Dynamic, ?msg:String, ?info:PosInfos):Void
@@ -94,6 +98,7 @@ class Assert
 	 * Assert that a value is Math.NaN.
 	 *  
 	 * @param	value				value expected to be Math.NaN
+	 * @param	msg					An optional message to be prefixed on the failure description
 	 * @throws	AssertionException	if value is not Math.NaN
 	 */ 
 	public static function isNaN(value:Float, ?msg:String, ?info:PosInfos):Void
@@ -106,6 +111,7 @@ class Assert
 	 * Assert that a value is not Math.NaN.
 	 *  
 	 * @param	value				value expected not to be Math.NaN
+	 * @param	msg					An optional message to be prefixed on the failure description
 	 * @throws	AssertionException	if value is Math.NaN
 	 */
 	public static function isNotNaN(value:Float, ?msg:String, ?info:PosInfos):Void
@@ -119,6 +125,8 @@ class Assert
 	 * 
 	 * @param	value				value expected to be of a given type
 	 * @param	type				type the value should be
+	 * @param	msg					An optional message to be prefixed on the failure description
+	 * @throws	AssertionException	if value is Math.NaN
 	 */
 	public static function isType(value:Dynamic, type:Dynamic, ?msg:String, ?info:PosInfos):Void
 	{
@@ -131,6 +139,8 @@ class Assert
 	 * 
 	 * @param	value				value expected to not be of a given type
 	 * @param	type				type the value should not be
+	 * @param	msg					An optional message to be prefixed on the failure description
+	 * @throws	AssertionException	if value is Math.NaN
 	 */
 	public static function isNotType(value:Dynamic, type:Dynamic, ?msg:String, ?info:PosInfos):Void
 	{
@@ -146,6 +156,7 @@ class Assert
 	 *  
 	 * @param	expected			expected value
 	 * @param	actual				actual value
+	 * @param	msg					An optional message to be prefixed on the failure description
 	 * @throws	AssertionException	if expected is not equal to the actual value
 	 */
 	public static function areEqual(expected:Dynamic, actual:Dynamic, ?msg:String, ?info:PosInfos):Void
@@ -172,6 +183,7 @@ class Assert
 	 *  
 	 * @param	expected			expected value
 	 * @param	actual				actual value
+	 * @param	msg					An optional message to be prefixed on the failure description
 	 * @throws	AssertionException	if expected is equal to the actual value
 	 */
 	public static function areNotEqual(expected:Dynamic, actual:Dynamic, ?msg:String, ?info:PosInfos):Void
@@ -195,6 +207,7 @@ class Assert
 	 *  
 	 * @param	expected			expected value
 	 * @param	actual				actual value
+	 * @param	msg					An optional message to be prefixed on the failure description
 	 * @throws	AssertionException	if expected is not the same as the actual value
 	 */
 	public static function areSame(expected:Dynamic, actual:Dynamic, ?msg:String, ?info:PosInfos):Void
@@ -208,6 +221,7 @@ class Assert
 	 *  
 	 * @param	expected			expected value
 	 * @param	actual				actual value
+	 * @param	msg					An optional message to be prefixed on the failure description
 	 * @throws	AssertionException	if expected is the same as the actual value
 	 */
 	public static function areNotSame(expected:Dynamic, actual:Dynamic, ?msg:String, ?info:PosInfos):Void
@@ -219,7 +233,7 @@ class Assert
 	/**
 	  * Force an assertion failure.
 	  *  
-	  * @param	msg				message describing the assertion which failed
+	  * @param	msg					message describing the assertion which failed
 	  * @throws	AssertionException	thrown automatically
 	  */	
 	public static function fail(msg:String, ?info:PosInfos):Void
@@ -231,14 +245,14 @@ class Assert
 	  * Force an assertion failure.
 	  *  
 	  * @param	prefix				additional infomation about the assertion
-	  * @param	msg				message describing the assertion which failed
+	  * @param	msg					message describing the assertion which failed
 	  * @throws	AssertionException	thrown automatically
 	  */	
 	private static function failPrefix(prefix:String, msg:String, ?info:PosInfos):Void
 	{
 		if (prefix != null)
 		{
-			msg = '$prefix - $msg';
+			msg = prefix + " - " + msg;
 		}
 		fail(msg, info);
 	}
