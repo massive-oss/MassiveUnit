@@ -1,5 +1,5 @@
 /****
-* Copyright 2013 Massive Interactive. All rights reserved.
+* Copyright 2014 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,6 +26,16 @@
 * or implied, of Massive Interactive.
 ****/
 
+
+
+
+
+
+
+
+
+
+
 package massive.munit.client;
 import massive.munit.AssertionException;
 import massive.munit.ITestResultClient;
@@ -35,6 +45,10 @@ import massive.haxe.util.ReflectUtil;
 import massive.munit.util.Timer;
 
 import massive.munit.client.PrintClientBase;
+
+#if nodejs
+import js.Node;
+#end
 
 class RichPrintClient extends PrintClientBase
 {
@@ -285,8 +299,9 @@ class RichPrintClient extends PrintClientBase
 	override public function print(value:Dynamic)
 	{
 		super.print(value);
-
-		#if (js || flash)
+		#if nodejs
+			Node.process.stdout.write(value);
+		#elseif (js || flash)
 			//external.queue(ExternalPrintClientJS.PRINT, value);
 			return;
 		#elseif (neko || cpp || php)

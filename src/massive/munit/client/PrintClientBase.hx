@@ -1,5 +1,5 @@
 /****
-* Copyright 2013 Massive Interactive. All rights reserved.
+* Copyright 2014 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,6 +25,16 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Massive Interactive.
 ****/
+
+
+
+
+
+
+
+
+
+
 
 package massive.munit.client;
 
@@ -305,7 +315,7 @@ interface ExternalPrintClient
 	function addCoverageSummary(value:String):Void;
 	
 	function printSummary(value:String):Void;
-		
+
 }
 
 class ExternalPrintClientJS implements ExternalPrintClient
@@ -314,7 +324,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 	{
 
 		#if flash
-		
+
 			if(!flash.external.ExternalInterface.available)
 			{
 				throw new MUnitException("ExternalInterface not available");
@@ -334,20 +344,20 @@ class ExternalPrintClientJS implements ExternalPrintClient
 			{
 				printLine("WARNING: Flash Debug Player not installed. May cause unexpected behaviour in MUnit when handling thrown exceptions.");
 			}
-			
-		#elseif js
+
+		#elseif (js && !nodejs)
 			#if haxe3
 			var div = js.Browser.document.getElementById("haxe:trace");
 			#else
 			var div = js.Lib.document.getElementById("haxe:trace");
 			#end
-				
-			if (div == null) 
+
+			if (div == null)
 			{
 				var positionInfo = ReflectUtil.here();
 				var error:String = "MissingElementException: 'haxe:trace' element not found at " + positionInfo.className + "#" + positionInfo.methodName + "(" + positionInfo.lineNumber + ")";
 				js.Lib.alert(error);
-			}	
+			}
 		#else
 
 		#end
@@ -365,7 +375,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 			if(externalInterfaceCounter ++ < EXTERNAL_INTERFACE_FRAME_DELAY) return;
 
 			externalInterfaceCounter = 0;
-			
+
 			var tempArray = externalInterfaceQueue.concat([]);
 			externalInterfaceQueue = [];
 
@@ -390,19 +400,19 @@ class ExternalPrintClientJS implements ExternalPrintClient
 
 	public function setResult(value:Bool)
 	{
-		queue("setResult", value);	
+		queue("setResult", value);
 	}
 
 	public function setResultBackground(value:Bool)
 	{
-		queue("setResultBackground", value);	
+		queue("setResultBackground", value);
 	}
 
 	//RICH CLIENT APIs
 
 	public function trace(value:Dynamic)
 	{
-		queue("munitTrace", value);	
+		queue("munitTrace", value);
 	}
 
 	public function createTestClass(className:String)
@@ -467,7 +477,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 	{
 		queue("addCoverageReportSection", [name, value]);
 	}
-	
+
 	public function addCoverageSummary(value:String):Void
 	{
 		queue("addCoverageSummary", value);
@@ -495,14 +505,16 @@ class ExternalPrintClientJS implements ExternalPrintClient
 			a.push(args);
 		}
 
-		#if (!js && !flash)
+		#if nodejs
+			return false;
+		#elseif (!js && !flash)
 			//throw new MUnitException("Cannot call from non JS/Flash targets");
 			return false;
 		#end
 
 		var jsCode = convertToJavaScript(method, a);
 
-		#if js		
+		#if js
 			return js.Lib.eval(jsCode);
 		#elseif flash
 			externalInterfaceQueue.push(jsCode);
@@ -510,7 +522,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 		return false;
 	}
 
-	
+
 
 
 	public function convertToJavaScript(method:String, ?args:Array<Dynamic>):String

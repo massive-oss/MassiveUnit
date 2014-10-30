@@ -34,6 +34,16 @@
 -neko bin/test/core/neko_test.n
 --next
 
+# JavaScript for nodejs
+-main TestMain
+-cp test
+-cp src
+-lib mlib
+-lib nodejs
+-D nodejs
+-js bin/test/core/node_js_test.js
+--next
+
 # # CPP
 # -main TestMain
 # -cp test

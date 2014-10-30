@@ -129,7 +129,7 @@ class TestCommand extends MUnitTargetCommandBase
 
 				for(path in config.classPaths)
 				{
-					if (target.flags.exists("MCOVER_DEBUG") && Sys.systemName() != "Windows")
+					if (target.flags.exists("MCOVER_DEBUG") && Sys.systemName().indexOf("Win") < 0)
 					{
 						clsPaths.push(path.toString());
 					}
@@ -161,10 +161,8 @@ class TestCommand extends MUnitTargetCommandBase
 			if (console.getOption("debug") == "true")
 			{
 				target.hxml += "-D testDebug\n";
-				target.hxml += "-D debug\n";				
+				target.hxml += "-D debug\n";
 			}
-
-			
 
 			if(target.type == TargetType.cpp)
 			{

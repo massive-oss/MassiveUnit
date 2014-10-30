@@ -93,7 +93,7 @@ class ServerMain
 		if (data == null)
 			data = neko.Web.getPostData();
 
-		if (data == null)
+		if (data == null || data.length == 0)
 		{
 			Sys.print("Error: Invalid content sent to server: \n" + data);
 			recordResult(END + "\n");
@@ -242,7 +242,7 @@ class ServerMain
 		
 			if(tmp[0] == "error" && tmp[1] != "0") return ERROR;
 		}
-		
+
 		return FAILED;
 		
 	}

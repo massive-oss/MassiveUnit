@@ -54,4 +54,5 @@ enum TargetType
 	js;
 	neko;
 	cpp;
+	nodejs;
 }

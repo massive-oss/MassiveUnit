@@ -9,6 +9,10 @@ import massive.munit.TestRunner;
 import js.Lib;
 #end
 
+#if nodejs
+import js.Node;
+#end
+
 /**
  * Auto generated Test Application.
  * Refer to munit command line tool for more information (haxelib run munit)
@@ -22,21 +26,31 @@ class TestMain
 		var suites = new Array<Class<massive.munit.TestSuite>>();
 		suites.push(TestSuite);
 
-		#if MCOVER
-			var client = new mcover.coverage.munit.client.MCoverPrintClient();
-			var httpClient = new HTTPClient(new mcover.coverage.munit.client.MCoverSummaryReportClient());
+		#if nodejs
+			//#if MCOVER
+			//	var client = new mcover.coverage.client.MCoverPrintClient();
+			//	var httpClient = new HTTPClient(new mcover.coverage.munit.client.MCoverSummaryReportClient());
+			//#else
+				var client = new RichPrintClient();
+				var httpClient = new HTTPClient(new SummaryReportClient());
+			//#end
 		#else
-			var client = new RichPrintClient();
-			var httpClient = new HTTPClient(new SummaryReportClient());
+			#if MCOVER
+				var client = new mcover.coverage.munit.client.MCoverPrintClient();
+				var httpClient = new HTTPClient(new mcover.coverage.munit.client.MCoverSummaryReportClient());
+			#else
+				var client = new RichPrintClient();
+				var httpClient = new HTTPClient(new SummaryReportClient());
+			#end
 		#end
 
-		var runner:TestRunner = new TestRunner(client); 
+		var runner : TestRunner = new TestRunner(client);
 		runner.addResultClient(httpClient);
 		//runner.addResultClient(new HTTPClient(new JUnitReportClient()));
 		
 		runner.completionHandler = completionHandler;
 		
-		#if js
+		#if (js && !nodejs)
 		var seconds = 0; // edit here to add some startup delay
 		function delayStartup() 
 		{
@@ -67,7 +81,9 @@ class TestMain
 		{
 			#if flash
 				flash.external.ExternalInterface.call("testResult", successful);
-			#elseif js
+			#elseif nodejs
+                Node.process.exit(successful ? 0 : 1);
+			#elseif (js && !nodejs)
 				js.Lib.eval("testResult(" + successful + ");");
 			#elseif sys
 				Sys.exit(0);

@@ -1,7 +1,6 @@
 ## Flash 9+
 -main TestMain
 -lib munit
--lib hamcrest
 ::foreach classPaths::-cp ::__current__::
 ::end::
 -cp ::src::
@@ -13,7 +12,6 @@
 ## Flash 8
 -main TestMain
 -lib munit
--lib hamcrest
 ::foreach classPaths::-cp ::__current__::
 ::end::
 -cp ::src::
@@ -25,7 +23,6 @@
 ## JavaScript
 -main TestMain
 -lib munit
--lib hamcrest
 ::foreach classPaths::-cp ::__current__::
 ::end::
 -cp ::src::
@@ -33,10 +30,21 @@
 
 --next
 
+## JavaScript For NodeJS
+-main TestMain
+-lib munit
+-lib nodejs
+::foreach classPaths::-cp ::__current__::
+::end::
+-cp ::src::
+-D nodejs
+-js ::bin::/js_test_node.js
+
+--next
+
 ## Neko
 -main TestMain
 -lib munit
--lib hamcrest
 ::foreach classPaths::-cp ::__current__::
 ::end::
 -cp ::src::
@@ -47,7 +55,6 @@
 ## CPP
 -main TestMain
 -lib munit
--lib hamcrest
 ::foreach classPaths::-cp ::__current__::
 ::end::
 -cp ::src::

@@ -1,5 +1,6 @@
 package massive.munit.command;
 
+import massive.munit.Target;
 import massive.sys.io.File;
 import massive.sys.io.FileSys;
 
@@ -62,6 +63,8 @@ class MUnitTargetCommandBase extends MUnitCommand
 			if (console.getOption("as3") == "true")
 				targetTypes.push(TargetType.as3);
 		}
+		if (console.getOption("nodejs") == "true")
+			targetTypes.push(TargetType.nodejs);
 		if (console.getOption("js") == "true")
 			targetTypes.push(TargetType.js);
 		if (console.getOption("neko") == "true")
@@ -170,15 +173,21 @@ class MUnitTargetCommandBase extends MUnitCommand
 		var target:Target = new Target();
 		
 		var targets:Array<Target> = [];
+
+		var nodeJsDetected : Bool = false;
+
+		var lineNr : Int = 0;
 		
 		for (line in lines)
 		{
+			lineNr++;
 			line = StringTools.trim(line);
 
 			if (line == "" || line.indexOf("#") == 0) continue;
 			
 			if (line.indexOf("--next") == 0)
 			{
+				nodeJsDetected = false;
 				targets.push(target);
 				target = new Target();
 				continue;
@@ -194,6 +203,15 @@ class MUnitTargetCommandBase extends MUnitCommand
 			if (flagReg.match(line))
 			{
 				var flag = flagReg.matched(1).split(" ");
+				// The JavaScript for NodeJS targets still have "-js <output file>" haxe parameter.
+				// So detect the "-D nodejs" define for these instead.
+				var flagStr = Std.string(flag);
+				if (flagStr == "[nodejs]")
+				{
+					nodeJsDetected = true;
+				}
+
+
 				target.flags.set(flag.shift(), flag.join(" "));
 			}
 
@@ -221,19 +239,36 @@ class MUnitTargetCommandBase extends MUnitCommand
 					var s:String = null;
 					switch(type)
 					{
-						case as2: s = "swf-version 8";
-						case as3: s = "swf-version [^8]";
+						case TargetType.as2: s = "swf-version 8";
+						case TargetType.as3: s = "swf-version [^8]";
+						case TargetType.nodejs: s = "js";
 						default: s = Std.string(type);
-					}	
+					}
+
 					var targetMatcher = new EReg("^-" + s, "");
 					if (targetMatcher.match(line))
 					{
-						target.type = type;
+						if (type == TargetType.nodejs || type == TargetType.js)
+						{
+							if (nodeJsDetected)
+							{
+								target.type = TargetType.nodejs;
+							}
+							else
+							{
+								target.type = TargetType.js;
+							}
+
+						}
+						else
+						{
+							target.type = type;
+						}
+
 						break;
 					}
 				}
 			}
-
 		}
 
 		targets.push(target);
@@ -241,7 +276,10 @@ class MUnitTargetCommandBase extends MUnitCommand
 		for(target in targets)
 		{
 			if(target.type != null)
+			{
 				updateHxmlOutput(target);
+			}
+
 		}
 
 		return targets;
@@ -253,8 +291,9 @@ class MUnitTargetCommandBase extends MUnitCommand
 
 		switch(target.type)
 		{
-			case as2: output = "-swf";
-			case as3: output = "-swf";
+			case Target.TargetType.as2: output = "-swf";
+			case Target.TargetType.as3: output = "-swf";
+			case Target.TargetType.nodejs: output = "-js";
 			default: output = "-" + Std.string(target.type);
 		}
 
@@ -293,6 +332,7 @@ class MUnitTargetCommandBase extends MUnitCommand
 			{
 				case as2: s = "swf";
 				case as3: s = "swf";
+				case nodejs: s = "js";
 				default: s = Std.string(type);
 			}
 			var targetMatcher = new EReg("^-" + s + "\\s+", "");
@@ -306,7 +346,6 @@ class MUnitTargetCommandBase extends MUnitCommand
 				{
 					return line.substr(s.length + 2);
 				}
-
 			}
 		}
 		return null;

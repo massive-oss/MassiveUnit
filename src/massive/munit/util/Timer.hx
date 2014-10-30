@@ -1,5 +1,5 @@
 /****
-* Copyright 2013 Massive Interactive. All rights reserved.
+* Copyright 2014 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,6 +25,10 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Massive Interactive.
 ****/
+
+
+
+
 
 /*
  * Copyright (c) 2005, The haXe Project Contributors
@@ -56,6 +60,8 @@ package massive.munit.util;
 import neko.vm.Thread;
 #elseif cpp
 import cpp.vm.Thread;
+#elseif nodejs
+
 #end
 
 @:expose('massive.munit.util.Timer')
@@ -82,10 +88,10 @@ class Timer
 			var me = this;
 			id = untyped _global["setInterval"](function() { me.run(); },time_ms);
 		#elseif nodejs
-			var arr :Array<Dynamic> = untyped global.haxe_timers = global.haxe_timers == null ? [] : global.haxe_timers;
-			var me 	= this;
-			me.id		= arr.length;
-			arr[me.id] = me;
+			id = arr.length;
+			var me = this;
+			arr[id] = me;
+			timerId = untyped setInterval(function() {me.run();},time_ms);
 		#elseif js
 			id = arr.length;
 			arr[id] = this;
@@ -107,6 +113,14 @@ class Timer
 			untyped _global["clearInterval"](id);
 		#elseif nodejs
 			untyped clearInterval(timerId);
+			arr[id] = null;
+			if (id > 100 && id == arr.length - 1)
+			{
+				// compact array
+				var p = id - 1;
+				while ( p >= 0 && arr[p] == null) p--;
+				arr = arr.slice(0, p + 1);
+			}
 		#elseif js
 			untyped window.clearInterval(timerId);
 			arr[id] = null;

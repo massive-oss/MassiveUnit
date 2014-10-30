@@ -1,5 +1,5 @@
 /****
-* Copyright 2013 Massive Interactive. All rights reserved.
+* Copyright 2014 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,6 +26,16 @@
 * or implied, of Massive Interactive.
 ****/
 
+
+
+
+
+
+
+
+
+
+
 package massive.munit;
 
 import haxe.PosInfos;
@@ -43,6 +53,10 @@ import massive.munit.ITestResultClient;
 import neko.vm.Thread;
 #elseif cpp
 import cpp.vm.Thread;
+#end
+
+#if nodejs
+import js.Node;
 #end
 
 #if haxe3
@@ -210,7 +224,7 @@ class TestRunner implements IAsyncDelegateObserver
             testSuites.push(Type.createInstance(suiteType, new Array()));
         }
 
-        #if (neko||cpp) 
+        #if (neko||cpp)
             var self = this;
             var runThread:Thread = Thread.create(function()
             {
@@ -226,12 +240,12 @@ class TestRunner implements IAsyncDelegateObserver
             runThread.sendMessage(Thread.current());
             Thread.readMessage(true);
         #else
-            execute();
+			execute();
         #end
     }
 
     private function execute():Void
-    {
+	{
         for (i in suiteIndex...testSuites.length)
         {
             var suite:TestSuite = testSuites[i];
@@ -267,7 +281,7 @@ class TestRunner implements IAsyncDelegateObserver
                     cl.setCurrentTestClass(null);
                 }
                 client.reportFinalStatistics(testCount, passCount, failCount, errorCount, ignoreCount, time);
-            } 
+            }
         }
     }
 

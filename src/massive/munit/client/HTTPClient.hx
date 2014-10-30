@@ -1,5 +1,5 @@
 /****
-* Copyright 2013 Massive Interactive. All rights reserved.
+* Copyright 2014 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,6 +25,20 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Massive Interactive.
 ****/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 package massive.munit.client;
 
@@ -102,7 +116,7 @@ class HTTPClient implements IAdvancedTestResultClient
 	 * @param	?queueRequest		[optional] whether to add http requests to a global queue. Default is true.
 	 * @param	?httpRequest		[optional] a custom http request to use to dispatch the result.
 	 */
-	public function new(client:ITestResultClient, ?url:String = DEFAULT_SERVER_URL, ?queueRequest:Bool = true) 
+	public function new(client:ITestResultClient, ?url:String = DEFAULT_SERVER_URL, ?queueRequest:Bool = true)
 	{
 		id = DEFAULT_ID;
 		this.client = client;
@@ -205,6 +219,7 @@ class HTTPClient implements IAdvancedTestResultClient
 	{
 		#if (flash8 || flash7 || flash6) return "as2";
 		#elseif flash return "as3";
+		#elseif nodejs return "nodejs";
 		#elseif js return "js";
 		#elseif neko return "neko";
 		#elseif cpp return "cpp";
@@ -239,7 +254,6 @@ class HTTPClient implements IAdvancedTestResultClient
 	{
 		if (responsePending || queue.length == 0) 
 			return;
-		
 		responsePending = true;
 
 		var request = queue.pop();
@@ -301,7 +315,7 @@ class URLRequest
 		#if (js || neko || cpp)
 			client.onData = onData;
 			client.onError = onError;
-			#if js
+			#if (js && !nodejs)
 				client.setPostData(data);
 			#else
 				client.setParameter("data", data);

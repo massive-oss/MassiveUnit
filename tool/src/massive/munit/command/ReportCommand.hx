@@ -63,6 +63,7 @@ class ReportCommand extends MUnitTargetCommandBase
 					{
 						switch(reg.matched(1))
 						{
+							case "nodejs": targetTypes.push(TargetType.nodejs);
 							case "js": targetTypes.push(TargetType.js);
 							case "as2": targetTypes.push(TargetType.as2);
 							case "as3": targetTypes.push(TargetType.as3);

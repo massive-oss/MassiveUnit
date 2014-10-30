@@ -28,14 +28,20 @@
 package massive.munit.command;
 
 
+import haxe.Resource;
+import haxe.Timer;
 import haxe.Http;
 import haxe.io.Eof;
 import massive.haxe.util.RegExpUtil;
 import massive.munit.client.HTTPClient;
 import sys.io.Process;
 import sys.FileSystem;
+#if nodejs
+import js.Node;
+#else
 import neko.vm.Thread;
 import neko.vm.Mutex;
+#end
 import haxe.io.Path;
 import massive.sys.io.File;
 import massive.sys.io.FileSys;
@@ -83,14 +89,19 @@ class RunCommand extends MUnitTargetCommandBase
 	
 	var hasNekoTests:Bool;
 	var hasCPPTests:Bool;
+	var hasNodeJsTests:Bool;
 
 	var nekoFile:File;
 	var cppFile:File;
+	var nodeJsFile:File;
 	
 	
 	var serverTimeoutTimeSec:Int;
 
 	var resultExitCode:Bool;
+
+	var nodeScriptFile : File;
+	var nodeServerProcess : Process;
 
 	public function new():Void
 	{
@@ -163,7 +174,7 @@ class RunCommand extends MUnitTargetCommandBase
 				continue;
 			}
 
-			//update as this will be the actual executable for cpp/php targets
+			//update as this will be the actual executable for cpp/php/nodejs targets
 			target.file = File.current.resolveFile(tmp.readString());
 			
 			if (!target.file.exists)
@@ -275,6 +286,9 @@ class RunCommand extends MUnitTargetCommandBase
 				case cpp:
 					hasCPPTests = true;
 					cppFile = file;
+				case nodejs:
+					hasNodeJsTests = true;
+					nodeJsFile = file;
 				default:
 
 					hasBrowserTests = true;
@@ -401,6 +415,9 @@ class RunCommand extends MUnitTargetCommandBase
 
 		if (hasCPPTests)
 			launchCPP(cppFile);
+
+		if (hasNodeJsTests)
+			launchNode(nodeJsFile);
 
 		if (hasBrowserTests)
 			launchFile(indexPage);
@@ -674,6 +691,23 @@ class RunCommand extends MUnitTargetCommandBase
 		return exitCode;
 	}
 
+	private function launchNode(file:File):Int
+	{
+		var reportRunnerFile:File = reportRunnerDir.resolvePath(file.fileName);
+		file.copyTo(reportRunnerFile);
+
+		FileSys.setCwd(config.dir.nativePath);
+
+		var exitCode = runCommand("node " + reportRunnerFile.nativePath);
+
+		FileSys.setCwd(console.originalDir.nativePath);
+
+		if (exitCode > 0)
+			error("Error (" + exitCode + ") running " + file, exitCode);
+
+		return exitCode;
+	}
+
 	function runCommand(command:String):Int
 	{
 		Sys.println(command);
@@ -692,7 +726,9 @@ class RunCommand extends MUnitTargetCommandBase
 				Sys.println(output);
 			}
 		}
-		catch (e:haxe.io.Eof) {}
+		catch (e:haxe.io.Eof)
+		{
+		}
 
 		var exitCode:Int = 0;
 		var error:String = null;

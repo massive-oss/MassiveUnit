@@ -1,5 +1,5 @@
 /****
-* Copyright 2013 Massive Interactive. All rights reserved.
+* Copyright 2014 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,6 +26,14 @@
 * or implied, of Massive Interactive.
 ****/
 
+
+
+
+
+
+
+
+
 package massive.munit.client;
 import massive.munit.client.PrintClientBase;
 import massive.munit.AssertionException;
@@ -34,6 +42,10 @@ import massive.munit.TestResult;
 import massive.munit.util.MathUtil;
 import massive.haxe.util.ReflectUtil;
 import massive.munit.util.Timer;
+
+#if nodejs
+import js.Node;
+#end
 
 
 /**
@@ -64,16 +76,18 @@ class PrintClient extends PrintClientBase
 	 */
 	public static inline var DEFAULT_ID:String = "print";
 
-	#if (js||flash)
-		var external:ExternalPrintClient;
-		#if flash8
-			var textField:flash.TextField;
-		#elseif flash
-			var textField:flash.text.TextField;
-		#elseif js
-			var textArea:Dynamic;
+	#if (!nodejs)
+		#if (js||flash)
+			var external:ExternalPrintClient;
+			#if flash8
+				var textField:flash.TextField;
+			#elseif flash
+				var textField:flash.text.TextField;
+			#elseif js
+				var textArea:Dynamic;
+			#end
 		#end
-	#end 
+	#end
 	
 	public function new(?includeIgnoredReport:Bool = true)
 	{
@@ -85,13 +99,14 @@ class PrintClient extends PrintClientBase
 	{
 		super.init();
 
-		#if nodejs		
-		#elseif (js || flash)
-			external = new ExternalPrintClientJS();
-			#if flash
-				initFlash();
-			#elseif js
-				initJS();
+		#if (!nodejs)
+			#if (js || flash)
+				external = new ExternalPrintClientJS();
+				#if flash
+					initFlash();
+				#elseif js
+					initJS();
+				#end
 			#end
 		#end
 
@@ -128,7 +143,7 @@ class PrintClient extends PrintClientBase
 
 
 	}
-	#elseif js
+	#elseif (js && !nodejs)
 	function initJS()
 	{
 		#if haxe3
@@ -141,7 +156,7 @@ class PrintClient extends PrintClientBase
 			var positionInfo = ReflectUtil.here();
 			var error:String = "MissingElementException: 'haxe:trace' element not found at " + positionInfo.className + "#" + positionInfo.methodName + "(" + positionInfo.lineNumber + ")";
 			js.Lib.alert(error);
-		}	
+		}
 	}
 	#end
 
@@ -151,10 +166,11 @@ class PrintClient extends PrintClientBase
 	{
 		super.printOverallResult(result);
 
-		#if (nodejs)
-		#elseif (js || flash)
-			external.setResult(result);
-			external.setResultBackground(result);
+		#if (!nodejs)
+			#if (js || flash)
+				external.setResult(result);
+				external.setResultBackground(result);
+			#end
 		#end
 	}
 
@@ -186,7 +202,7 @@ class PrintClient extends PrintClientBase
 		#end
 
 		#if nodejs
-			untyped process.stdout.write(value);
+			Node.process.stdout.write(value);
 		#elseif (neko || cpp || php)
 			Sys.print(value);
 		#elseif (js || flash)
