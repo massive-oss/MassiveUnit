@@ -82,7 +82,7 @@ class TestMain
 			#if flash
 				flash.external.ExternalInterface.call("testResult", successful);
 			#elseif nodejs
-                Node.process.exit(successful ? 0 : 1);
+                Node.process.exit(0);
 			#elseif (js && !nodejs)
 				js.Lib.eval("testResult(" + successful + ");");
 			#elseif sys
