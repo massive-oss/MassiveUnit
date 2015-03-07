@@ -100,6 +100,8 @@ class TestRunner implements IAsyncDelegateObserver
     public var completionHandler:Bool -> Void;
 
     public var clientCount(get_clientCount, null):Int;
+    public var testSuites:Array<TestSuite>;
+
     private function get_clientCount():Int { return clients.length; }
 
     public var running(default, null):Bool;
@@ -114,7 +116,6 @@ class TestRunner implements IAsyncDelegateObserver
     private var clients:Array<ITestResultClient>;
 
     private var activeHelper:TestClassHelper;
-    private var testSuites:Array<TestSuite>;
 
     private var asyncPending:Bool;
     private var asyncDelegate:AsyncDelegate;
@@ -254,6 +255,7 @@ class TestRunner implements IAsyncDelegateObserver
                     return;
                 }
             }
+            testSuites[i] = null;
         }
 
         if (!asyncPending)

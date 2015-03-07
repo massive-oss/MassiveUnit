@@ -98,6 +98,7 @@ class TestRunnerTest
         Assert.areEqual(0, client.finalErrorCount);
         Assert.areEqual(1, client.testClasses.length);
         Assert.isNull(client.currentTestClass);
+        Assert.isNull(runner.testSuites[0]);
 
         Assert.areEqual("massive.munit.TestClassStub", client.testClasses[client.testClasses.length-1]);
     }

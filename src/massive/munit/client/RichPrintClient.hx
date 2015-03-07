@@ -57,7 +57,9 @@ class RichPrintClient extends PrintClientBase
 		super.init();
 
 		originalTrace = haxe.Log.trace;
+		#if !cpp
 		haxe.Log.trace = customTrace;
+		#end
 
 		external = new ExternalPrintClientJS();
 	}
