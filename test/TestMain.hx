@@ -1,16 +1,16 @@
 /**************************************** ****************************************
  * Copyright 2010 Massive Interactive. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
- * 
+ *
  *    1. Redistributions of source code must retain the above copyright notice, this list of
  *       conditions and the following disclaimer.
- * 
+ *
  *    2. Redistributions in binary form must reproduce the above copyright notice, this list
  *       of conditions and the following disclaimer in the documentation and/or other materials
  *       provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
@@ -20,7 +20,7 @@
  * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * The views and conclusions contained in the software and documentation are those of the
  * authors and should not be interpreted as representing official policies, either expressed
  * or implied, of Massive Interactive.
@@ -37,16 +37,16 @@ import js.Lib;
 #end
 
 /**
- * Auto generated Test Application.	
+ * Auto generated Test Application.
  * Refer to munit command line tool for more information (haxelib run munit)
  */
 
-class TestMain 
-{		
+class TestMain
+{
 	static function main(){	new TestMain();}
 
 	public function new()
-	{		
+	{
 		var suites = new Array<Class<massive.munit.TestSuite>>();
 		suites.push(TestSuite);
 
@@ -58,13 +58,13 @@ class TestMain
 			var httpClient = new HTTPClient(new SummaryReportClient());
 		#end
 
-		var runner:TestRunner = new TestRunner(client);	
+		var runner:TestRunner = new TestRunner(client);
 		runner.addResultClient(httpClient);
-		//runner.addResultClient(new HTTPClient(new JUnitReportClient()));	
+		runner.addResultClient(new HTTPClient(new JUnitReportClient()));
 		runner.completionHandler = completionHandler;
 		runner.run(suites);
 	}
-	
+
 	/*
 		updates the background color and closes the current browser
 		for flash and html targets (useful for continous integration servers)
@@ -74,7 +74,7 @@ class TestMain
 		try
 		{
 			#if flash
-				flash.external.ExternalInterface.call("testResult", successful);	
+				flash.external.ExternalInterface.call("testResult", successful);
 			#elseif js
 				js.Lib.eval("testResult(" + successful + ");");
 			#elseif (neko || cpp || php)
