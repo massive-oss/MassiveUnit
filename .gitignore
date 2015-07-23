@@ -44,3 +44,4 @@ cached-classes-null-IgnoreCover.txt
 /lib/
 
 .haxelib
+/haxelib.json
