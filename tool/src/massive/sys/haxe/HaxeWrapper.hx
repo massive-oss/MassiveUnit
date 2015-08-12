@@ -29,7 +29,7 @@
 
 package massive.sys.haxe;
 
-import msys.Process;
+import massive.sys.Process;
 import sys.FileSystem;
 import sys.io.File;
 import massive.sys.io.File;

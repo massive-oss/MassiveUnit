@@ -1,6 +1,5 @@
 -main massive.munit.MunitCommandLineRunner
 -lib mlib
--lib msys
 -cp src
 -cp ../src
 -D neko-v1
