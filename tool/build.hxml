@@ -1,7 +1,7 @@
 -main massive.munit.MunitCommandLineRunner
+-lib mlib
 -cp src
 -cp ../src
--lib mlib
 -D neko-v1
 -neko ../src/run.n
 
