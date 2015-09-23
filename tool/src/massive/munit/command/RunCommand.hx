@@ -96,9 +96,6 @@ class RunCommand extends MUnitTargetCommandBase
 	{
 		super();
 		killBrowser = false;
-
-		// TODO: Configure this through args to munit for CI. ms 4/8/11
-		serverTimeoutTimeSec = DEFAULT_SERVER_TIMEOUT_SEC;
 	}
 
 	override public function initialise():Void
@@ -378,6 +375,10 @@ class RunCommand extends MUnitTargetCommandBase
 		tmpRunnerDir = tmpDir.resolveDirectory("runner");
 		reportRunnerDir.copyTo(tmpRunnerDir);
 
+		var userTimeout = console.getOption("timeout");
+		if (userTimeout != null) serverTimeoutTimeSec = Std.parseInt(userTimeout);
+		if (serverTimeoutTimeSec == null) serverTimeoutTimeSec = DEFAULT_SERVER_TIMEOUT_SEC;
+		else print('Running tests with $serverTimeoutTimeSec seconds timeout');
 
 		var serverProcess:Process = null;
 

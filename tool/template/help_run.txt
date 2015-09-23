@@ -26,3 +26,6 @@ Optional Parameters:
                        Works in Chrome but not other browsers due to JS security.
 
    -result-exit-code : Exits with error code (1) if tests fail
+
+   -timeout          : Maximum time that the tests are allowed to run (default: 30s)
+   
