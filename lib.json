@@ -1,11 +1,11 @@
 {
-	"msignal":"1.2.2",
-	"mlib":"2.0.2",
-	"mcover":"2.0.3",
-	"msys":"1.2.2",
-	"mconsole":"1.6.0",
-	"mcore":"1.3.6",
-	"munit":"2.1.1",
 	"hamcrest":"1.2.1",
-	"mtask":"2.1.2"
+	"mconsole":"1.6.1",
+	"mcore":"1.3.13",
+	"mcover":"2.1.2",
+	"mlib":"2.0.2",
+	"msignal":"1.2.3",
+	"msys":"1.2.2",
+	"mtask":"3.7.1",
+	"munit":"2.1.1"
 }
