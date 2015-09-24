@@ -12,8 +12,8 @@
 	"contributors": [
 	"massive"
 ],
-	"releasenote": "Remove dependency on hamcrest and recompile binaries with backwards compatibility for neko 1.8.",
-	"version": "2.1.1",
+	"releasenote": "See https://github.com/massiveinteractive/MassiveUnit/blob/master/CHANGES.md",
+	"version": "2.1.2",
 	"url": "http://github.com/massiveinteractive/MassiveUnit",
 	"dependencies": 
 	{
