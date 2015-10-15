@@ -1,22 +1,22 @@
 {
-	"project":
+	"project": 
 	{
-		"name":"MassiveUnit",
-		"version":"2.1.1",
-		"id":"munit",
-		"haxelib":
+		"name": "MassiveUnit",
+		"version": "2.1.2",
+		"id": "munit",
+		"haxelib": 
 		{
 			"user": "massive"
 		},
-		"dependencies":
-		{
-			"mlib":"2",
-			"mcover":"2.x"
-		},
 		"devDependencies": 
 		{
-			"mtask":"2.x",
-			"hamcrest":"1.2.x"
+			"hamcrest": "1.2.x",
+			"mtask": "2.x"
+		},
+		"dependencies": 
+		{
+			"mlib": "2",
+			"mcover": "2.x"
 		}
 	}
 }

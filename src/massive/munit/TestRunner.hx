@@ -256,6 +256,7 @@ class TestRunner implements IAsyncDelegateObserver
                     return;
                 }
             }
+            testSuites[i] = null;
         }
 
         if (!asyncPending)

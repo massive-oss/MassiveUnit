@@ -1,50 +1,59 @@
-v 2.1.1
+## 2.1.2
+
+- [#77](https://github.com/massiveinteractive/MassiveUnit/pull/77) Windows and FlashDevelop compatibility.
+- [#89](https://github.com/massiveinteractive/MassiveUnit/pull/89) Easily add a delay before the test suite runs.
+- [#99](https://github.com/massiveinteractive/MassiveUnit/pull/99) Completed TestSuites are available for GC.
+- [#102](https://github.com/massiveinteractive/MassiveUnit/pull/102) Fixes munit hanging when the haxe compiler spits too many errors.
+- [#105](https://github.com/massiveinteractive/MassiveUnit/pull/105) The server output must be read, otherwise it hits a 4kb buffer limit.
+- [#106](https://github.com/massiveinteractive/MassiveUnit/pull/106) Adding custom timeout option.
+
+## 2.1.1
 - Recompile binaries for backwards compatibility with neko v1.8
 - Remove dependency on hamcrest
 
-v 2.1.0
+## 2.1.0
 
 - Adds support to launch tests in FlashDevelop browser
 - No longer displays test classes when no tests are executed
 - Improved nodejs support
 
-v 2.0.3
+## 2.0.3
 
 - Minor pattern matching fix for stricter 3.next (backwards compatible)
 
-v 2.0.x
+## 2.0.x
 - Added haxelib.json
 - Added support for Haxe3
 - Some breaking changes to APIs and interfaces for Haxe 3 compatibility
 - Cleaned up folder structure to support haxelib dev path on src
 
-v0.9.6.x - 
+## 0.9.6.x - 
 -  Minor tweaks for Haxe svn (2.11) using --no-inline and mockatoo
 
-v0.9.6 - 09-11-12
+## 0.9.6 - 09-11-12
 - Included support for enum equality checking through Assert.areEqual/areNotEqual.
 - Added Assert.areSame/areNotSame for strict equality checks. 
 - Update to fix --js-modern errors.
 
-v0.9.5.2.2 - 21.08.12
+## 0.9.5.2.2 - 21.08.12
 - TestCommand prints stderr even if exit code is 0 from haxe compiler
 
-v0.9.5.2.1 - 21.08.12
+## 0.9.5.2.1 - 21.08.12
 - reverted '#if mcover' to '#if MCOVER' in template
 
-v0.9.5.2 - 21.08.12
+## 0.9.5.2 - 21.08.12
 - added forced update to testmain to use coverage
 - added clearer CLI warning if TestMain uses outdated mcover references
 - update TestMain template to use '#if mcover' rather than '#if MCOVER' (still checks for both for backwards compatibility)
 
-v0.9.5.1 - 20.08.12
+## 0.9.5.1 - 20.08.12
 - neko/cpp: Added catch for when process throws exception before process.exitCode()
 - cpp: Remove executable before re-compiling
 - cpp: Added CLI support for cpp TestMain-debug executables
 - cli: Added Target.executableFile for targets that output a directory
 - all: updated integration with mcover 1.4.0
 
-v0.9.5.0 - 19.08.12
+## 0.9.5.0 - 19.08.12
 - new : added cpp support (beta - hxcpp 2.09 only)
 - all : updated internals of test/run/report commands
 - all : removed optional params from ICoverageTestResultClient due to incompatibility with hxcpp209
@@ -54,15 +63,15 @@ v0.9.5.0 - 19.08.12
 - cpp: compile coverage and non-coverage versions of cpp target to different directories (appends '-coverage' to cpp output dir) to prevent full recompile when switching between the two
 - all: merged pull request #38 from tynril - adding custom coverage include/ignored packages to munit config 
 
-v0.9.4.3 - 17.08.12
+## 0.9.4.3 - 17.08.12
 - all: Fixed issue #36 - trace statements no longer appear in print client output
 - removed haxe.trace redirect from AbstractTestResultClient, now only in concrete instances
 - traces now logged to static array to prevent dropped traces when print clients compose other print clients
 
-v0.9.4.2 - 23.07.12
+## 0.9.4.2 - 23.07.12
 - all: Fixed Issue #35 - TestMain template uses incorrect coverage package
 
-v0.9.4.1 - 14.07.12
+## 0.9.4.1 - 14.07.12
 - flash: Fixed issue #32 - icons don't always appear in result client for AS3 
 - flash, js : moved html print client icons into single spritesheet
 - flash, js : cleaned up js and css on html print client (and html templates)
@@ -71,58 +80,58 @@ v0.9.4.1 - 14.07.12
 - flash : Fixed issue #27 - Use name of swf file in hxml
 - all : changed how target files are located in RunCommand (TestCommadn generates temp files containing target file locations )
 
-v0.9.4.0 - 02.07.12
+## 0.9.4.0 - 02.07.12
 - added report command
 - added ReportFormatter and TeamCityReportFormatter
 
-v0.9.3.3 - 29.06.12
+## 0.9.3.3 - 29.06.12
 - fixed '-debug' option not being detected correctly
 - fixed occassional issue on Windows with line return encoding in hxml file.
 - changed icon for code coverage
 
-v0.9.3.2 - 22.06.12
+## 0.9.3.2 - 22.06.12
 - Bug fix: AsyncTest with successful sync asserts causing runner to execute out of order.
 
-v0.9.3.1
+## 0.9.3.1
 - hotfix for 9.3.0
 
-v0.9.3.0 - 25.05.12
+## 0.9.3.0 - 25.05.12
 - Improved CI support
 - Added -result-exit-code option for exiting if tests on one or more platforms fail.
 - Added simple SummaryReportClient to en in the testable results back to command line without incurring HTTP POST bugs in nekotools server.
 - Re-enabled http result clients for examples
 
-v0.9.2.6 - 23.05.12
+## 0.9.2.6 - 23.05.12
 - added example for junit report functionality
 - enabled permature exitcode (1) if either the neko test app or the browser returns exit code > 0
 
-v0.9.2.5
+## 0.9.2.5
 - Minor hotfix for linux
 
-v0.9.2.4 - 09.05.12
+## 0.9.2.4 - 09.05.12
 - Fixed tooling issues on Linux due to location of tmp nekotools server files
 - Fixed https://github.com/massiveinteractive/MassiveUnit/issues/8 (test runner not respecting targets in hxml file)
 - moved tmp runner directory (and nekotools server file) on osx and linux targets to local bin directory. Windows remained as is
 
-v0.9.2.3 - 31.03.12
+## 0.9.2.3 - 31.03.12
 - Added configuration for project specific html templates
 - Added configuration for project specific runner resources
 - Added new example: examples/02_customTemplates 
 
-v0.9.2.2 - 28.02.12
+## 0.9.2.2 - 28.02.12
 - Added support for synchronous assertions inside async tests.
 - Fixed related bug with exceptions inside async tests not removing async timeout.
 - Fixed bug with neko tests not running from local project directory.
 - Updated coverage support to MCover 1.2.x
 
-v0.9.2.1 - 22.11.11
+## 0.9.2.1 - 22.11.11
 - Added rich html print client
 - added support for MCover
 - added command line apis for creating stub test classes,
 - minor additions to .munit project config file.
 - Fixed bug with as2/as3 targets being compiled when not targets
 
-v0.9.2.0 - 22.11.2011
+## 0.9.2.0 - 22.11.2011
 - Added RichPrintClient outputs rich html for js/flash targets
 - Added integrated support for mcover code coverage ('munit test -coverage').
 - Added support for creating stub tests (and stub classes if they dont already exist)
@@ -134,21 +143,21 @@ v0.9.2.0 - 22.11.2011
 - Added support for setting .munit properties inline (e.g. 'munit config -src path/to/test')
 - Added new classPath(s) property to .munit config file to facilitate coverage and stub class creation
 
-v0.9.1.8 - 11.10.2011
+## 0.9.1.8 - 11.10.2011
 - Added hamcrest support.
 
-v0.9.1.7 - 7.10.2011
+## 0.9.1.7 - 7.10.2011
 - Added -debug flag to command line tool to run only tests marked with @TestDebug.
 - Switched to using monospace font when printing results in browser.
 - Now auto removes old test runner files not being executed in latest test run.
 
-v0.9.1.6 - 13.9.2011
+## 0.9.1.6 - 13.9.2011
 - Improved HTML Test Runner output (displays as2/as3 results in HTML using same styles as JS). Fixed AsyncTest race condition bug where timeout and response handlers execute out of order when both occur on same frame (as2/as3 targets only)
 
-v0.9.1.5 - 5.9.2011
+## 0.9.1.5 - 5.9.2011
 - Added support for @Ignore("optional explanation") tag against @Test method. More info here https://github.com/massiveinteractive/MassiveUnit/wiki/Working-with-test-classes
 
-v0.9.1.4 - 3.9.2011
+## 0.9.1.4 - 3.9.2011
 
 - Added support for tag inheritance, i.e. @Test in super classes now picked up.
 - Added support for stack trace in uncaught exceptions for AS3 and Neko targets (unable to get this info in other supported targets).
@@ -156,7 +165,7 @@ v0.9.1.4 - 3.9.2011
 - Updated example in project.
 - Added haxelib docs to lib package, should now appear on lib.haxe.org.
 
-v0.9.1.3 - 18.8.2011
+## 0.9.1.3 - 18.8.2011
 
 - Fixed win bug where spaces in path to neko test file would cause file not to be found.
 - Updated munit config to generate template test.hxml file if one doesn't exist.
@@ -165,7 +174,7 @@ v0.9.1.3 - 18.8.2011
 - Made sure HTTPClient POSTs reports across all supported platforms.
 - Still open issue of nekoserver hanging. See http://lists.motion-twin.com/pipermail/neko/2011-August/002913.html
 
-v0.9.1.2 - 27.7.2011
+## 0.9.1.2 - 27.7.2011
 
 - Updated test runner tool to run multiple target tests in parallel instead of sequentially (good speed boost).
 - Local result server is now opened once per test run instead of for each target in test run.

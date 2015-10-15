@@ -1,7 +1,7 @@
 <project name="munit" url="http://github.com/massiveinteractive/MassiveUnit" license="MIT">
 	<user name="massive"/>
 	<description><![CDATA[A cross platform unit testing framework for Haxe with metadata test markup and tools for generating, compiling and running tests from the command line.]]></description>
-	<version name="2.1.1"><![CDATA[Remove dependency on hamcrest and recompile binaries with backwards compatibility for neko 1.8.]]></version>
+	<version name="2.1.2"><![CDATA[See https://github.com/massiveinteractive/MassiveUnit/blob/master/CHANGES.md]]></version>
 	<depends name="mlib"/>
 	<depends name="mcover"/>
 	<tag v="cross"/>

@@ -97,9 +97,6 @@ class RunCommand extends MUnitTargetCommandBase
 	{
 		super();
 		killBrowser = false;
-
-		// TODO: Configure this through args to munit for CI. ms 4/8/11
-		serverTimeoutTimeSec = DEFAULT_SERVER_TIMEOUT_SEC;
 	}
 
 	override public function initialise():Void
@@ -384,6 +381,10 @@ class RunCommand extends MUnitTargetCommandBase
 		tmpRunnerDir = tmpDir.resolveDirectory("runner");
 		reportRunnerDir.copyTo(tmpRunnerDir);
 
+		var userTimeout = console.getOption("timeout");
+		if (userTimeout != null) serverTimeoutTimeSec = Std.parseInt(userTimeout);
+		if (serverTimeoutTimeSec == null) serverTimeoutTimeSec = DEFAULT_SERVER_TIMEOUT_SEC;
+		else print('Running tests with $serverTimeoutTimeSec seconds timeout');
 
 		var serverProcess:Process = null;
 
@@ -396,6 +397,8 @@ class RunCommand extends MUnitTargetCommandBase
 			error("Unable to launch nekotools server. Please kill existing process and try again.", 1);
 		}
 		
+		var serverMonitor = Thread.create(readServerOutput);
+		serverMonitor.sendMessage(serverProcess);
 		
 		var resultMonitor = Thread.create(monitorResults);
 		resultMonitor.sendMessage(Thread.current());
@@ -455,6 +458,19 @@ class RunCommand extends MUnitTargetCommandBase
 		return copy;
 	}
 
+	private function readServerOutput():Void
+	{
+		// just consume server output
+		var serverProcess:Process = Thread.readMessage(true);
+		try
+		{
+			while (true)
+			{
+				serverProcess.stdout.readLine();
+			}
+		}
+		catch (e:haxe.io.Eof) {}
+	}
 
 	private function monitorResults():Void
 	{
