@@ -28,12 +28,10 @@
 
 package massive.munit.client;
 
-import massive.munit.AssertionException;
-import massive.munit.ITestResultClient;
+import js.Browser;
+import massive.haxe.util.ReflectUtil;
 import massive.munit.TestResult;
 import massive.munit.util.MathUtil;
-import massive.haxe.util.ReflectUtil;
-import massive.munit.util.Timer;
 
 class PrintClientBase extends AbstractTestResultClient
 {
@@ -346,7 +344,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 			{
 				var positionInfo = ReflectUtil.here();
 				var error:String = "MissingElementException: 'haxe:trace' element not found at " + positionInfo.className + "#" + positionInfo.methodName + "(" + positionInfo.lineNumber + ")";
-				js.Lib.alert(error);
+				Browser.alert(error);
 			}	
 		#else
 
