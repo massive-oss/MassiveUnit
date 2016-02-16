@@ -196,7 +196,7 @@ class HTTPClient implements IAdvancedTestResultClient
 
 	private function platform():String
 	{
-		#if flash return "as3";
+		#if flash return "flash";
 		#elseif js return "js";
 		#elseif neko return "neko";
 		#elseif cpp return "cpp";

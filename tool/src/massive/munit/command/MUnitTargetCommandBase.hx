@@ -1,5 +1,7 @@
 package massive.munit.command;
 
+import massive.munit.Target.TargetType;
+import massive.munit.Target.TargetType;
 import massive.sys.io.File;
 import massive.sys.io.FileSys;
 
@@ -50,14 +52,11 @@ class MUnitTargetCommandBase extends MUnitCommand
 	{
 		var targetTypes = new Array();
 
-		if (console.getOption("swf") == "true")
+		if (console.getOption("swf") == "true" ||
+			console.getOption("as3") == "true" ||
+			console.getOption("flash") == "true")
 		{
-			targetTypes.push(TargetType.as3);
-		}
-		else
-		{
-			if (console.getOption("as3") == "true")
-				targetTypes.push(TargetType.as3);
+			targetTypes.push(TargetType.flash);
 		}
 		if (console.getOption("js") == "true")
 			targetTypes.push(TargetType.js);
@@ -218,7 +217,7 @@ class MUnitTargetCommandBase extends MUnitCommand
 					var s:String = null;
 					switch(type)
 					{
-						case as3: s = "swf-version [^8]";
+						case TargetType.flash: s = "swf-version [^8]";
 						default: s = Std.string(type);
 					}
 					var targetMatcher = new EReg("^-" + s, "");
@@ -249,7 +248,7 @@ class MUnitTargetCommandBase extends MUnitCommand
 
 		switch(target.type)
 		{
-			case as3: output = "-swf";
+			case TargetType.flash: output = "-swf";
 			default: output = "-" + Std.string(target.type);
 		}
 
@@ -286,7 +285,7 @@ class MUnitTargetCommandBase extends MUnitCommand
 			var s:String = null;
 			switch (type)
 			{
-				case as3: s = "swf";
+				case TargetType.flash: s = "swf";
 				default: s = Std.string(type);
 			}
 			var targetMatcher = new EReg("^-" + s + "\\s+", "");

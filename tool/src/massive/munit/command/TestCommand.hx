@@ -153,7 +153,7 @@ class TestCommand extends MUnitTargetCommandBase
 				target.hxml += "--macro mcover.MCover.coverage(['" + coverPackages + "'],['" + clsPaths.join("','") + "'],['" + coverIgnoredClasses + "'])\n";
 			}
 
-			if (target.type == TargetType.as3)
+			if (target.type == TargetType.flash)
 			{
 				target.hxml = updateSwfHeader(target.hxml);
 			}

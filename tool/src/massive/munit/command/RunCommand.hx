@@ -608,8 +608,10 @@ class RunCommand extends MUnitTargetCommandBase
 		else if (FileSys.isMac)
 		{
 			parameters.push("open");
-			if (browser != null)
-				parameters.push("-a " + browser);
+			if (browser != null) {
+				parameters.push("-a");
+				parameters.push(browser);
+			}
 		}
 		else if (FileSys.isLinux)
 		{
@@ -621,7 +623,7 @@ class RunCommand extends MUnitTargetCommandBase
 
 		parameters.push(targetLocation);
 
-		var exitCode:Int = Sys.command(parameters.join(" "));
+		var exitCode:Int = Sys.command(parameters.shift(), parameters);
 
 		if (exitCode > 0)
 			error("Error running " + targetLocation, exitCode);
@@ -656,8 +658,8 @@ class RunCommand extends MUnitTargetCommandBase
 
 		FileSys.setCwd(config.dir.nativePath);
 
-//		var exitCode = runCommand("neko " + reportRunnerFile.nativePath);
-		var exitCode = runCommand('neko "${reportRunnerFile.nativePath}"');
+		var path = escapePath(reportRunnerFile.nativePath);
+		var exitCode = runCommand("neko", [path]);
 
 		FileSys.setCwd(console.originalDir.nativePath);
 
@@ -665,6 +667,14 @@ class RunCommand extends MUnitTargetCommandBase
 			error("Error (" + exitCode + ") running " + file, exitCode);
 
 		return exitCode;
+	}
+
+	private function escapePath(path:String):String
+	{
+		// quoting on osx seems to fail under neko 2.0 when using sys.io.Process or Sys.command
+		// so we only do it when we have to. Works ok on windows.
+		if (path.indexOf(' ') != -1) path = '"${path}"';
+		return path;
 	}
 
 	private function launchCPP(file:File):Int
@@ -675,7 +685,8 @@ class RunCommand extends MUnitTargetCommandBase
 
 		FileSys.setCwd(config.dir.nativePath);
 
-		var exitCode = runProgram(file.nativePath, []);
+		var path = escapePath(file.nativePath);
+		var exitCode = runCommand(path);
 
 		FileSys.setCwd(console.originalDir.nativePath);
 
@@ -685,21 +696,14 @@ class RunCommand extends MUnitTargetCommandBase
 		return exitCode;
 	}
 
-	function runCommand(command:String):Int
+	private function runCommand(command:String, ?args:Array<String>):Int
 	{
-		Sys.println(command);
+		if (args == null) args = [];
 
-		var args = command.split(" ");
-		var name = args.shift();
+		var fullCmd = [command].concat(args).join(" ");
+		Sys.println(fullCmd);
 
-		trace(name, args);
-
-        return runProgram(name, args);
-    }
-
-	function runProgram(name:String, args:Array<String>)
-	{
-		var process = new Process(name, args);
+		var process = new Process(command, args);
 
 		try
 		{
@@ -732,7 +736,7 @@ class RunCommand extends MUnitTargetCommandBase
 		if (exitCode > 0 || stfErrString.length > 0)
 		{
 			if(error != null) error += "\n\t";
-			Sys.println("Error running '" + name + "'\n\t" + error);
+			Sys.println("Error running '" + fullCmd + "'\n\t" + error + ' ' + stfErrString);
 		}
 
 		return exitCode;
