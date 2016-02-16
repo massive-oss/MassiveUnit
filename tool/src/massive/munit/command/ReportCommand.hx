@@ -57,14 +57,13 @@ class ReportCommand extends MUnitTargetCommandBase
 
 				var reg:EReg = new EReg("under (.*) using", "g");
 				for(line in lines)
-				{ 
+				{
 					line = StringTools.trim(line);
 					if (reg.match(line))
 					{
 						switch(reg.matched(1))
 						{
 							case "js": targetTypes.push(TargetType.js);
-							case "as2": targetTypes.push(TargetType.as2);
 							case "as3": targetTypes.push(TargetType.as3);
 							case "neko": targetTypes.push(TargetType.neko);
 							case "cpp": targetTypes.push(TargetType.cpp);

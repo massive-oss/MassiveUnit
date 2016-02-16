@@ -12,7 +12,7 @@ class MUnitTargetCommandBase extends MUnitCommand
 	var targets:Array<Target>;
 	var targetTypes:Array<TargetType>;
 
-	var includeCoverage:Bool; 
+	var includeCoverage:Bool;
 
 	public function new()
 	{
@@ -41,7 +41,7 @@ class MUnitTargetCommandBase extends MUnitCommand
 
 		hxml = config.hxml;
 		targetTypes = config.targetTypes;
-		targets = config.targets;	
+		targets = config.targets;
 	}
 
 	///////// common utilities
@@ -53,12 +53,9 @@ class MUnitTargetCommandBase extends MUnitCommand
 		if (console.getOption("swf") == "true")
 		{
 			targetTypes.push(TargetType.as3);
-			targetTypes.push(TargetType.as2);
 		}
 		else
 		{
-			if (console.getOption("as2") == "true")
-				targetTypes.push(TargetType.as2);
 			if (console.getOption("as3") == "true")
 				targetTypes.push(TargetType.as3);
 		}
@@ -112,7 +109,7 @@ class MUnitTargetCommandBase extends MUnitCommand
 		else
 		{
 			hxml = config.hxml;
-			
+
 			if (hxml == null)
 			{
 				error("Default hxml file path is not set. Please run munit config.");
@@ -120,7 +117,7 @@ class MUnitTargetCommandBase extends MUnitCommand
 			if (!hxml.exists)
 			{
 				error("Default hxml file path does not exist. Please run munit config.");
-			}			
+			}
 		}
 	}
 
@@ -134,7 +131,7 @@ class MUnitTargetCommandBase extends MUnitCommand
 		if (config.targets.length > 0 ) return;
 
 		var tempTargets = getTargetsFromHXML(config.hxml);
-		
+
 		var targets:Array<Target> = [];
 
 		var tempTargetTypes = [];
@@ -161,30 +158,30 @@ class MUnitTargetCommandBase extends MUnitCommand
 
 	@param hxml: path to hxml file
 	@return array of Targets
-	
+
 	*/
 	function getTargetsFromHXML(hxml:File):Array<Target>
 	{
-		var contents:String = hxml.readString();		
+		var contents:String = hxml.readString();
 		var lines:Array<String> = contents.split("\n");
 		var target:Target = new Target();
-		
+
 		var targets:Array<Target> = [];
-		
+
 		for (line in lines)
 		{
 			line = StringTools.trim(line);
 
 			if (line == "" || line.indexOf("#") == 0) continue;
-			
+
 			if (line.indexOf("--next") == 0)
 			{
 				targets.push(target);
 				target = new Target();
 				continue;
 			}
-			
-			var mainReg:EReg = ~/^-main (.*)/;	
+
+			var mainReg:EReg = ~/^-main (.*)/;
 			if (mainReg.match(line))
 			{
 				target.main = config.src.resolveFile(mainReg.matched(1) + ".hx");
@@ -221,10 +218,9 @@ class MUnitTargetCommandBase extends MUnitCommand
 					var s:String = null;
 					switch(type)
 					{
-						case as2: s = "swf-version 8";
 						case as3: s = "swf-version [^8]";
 						default: s = Std.string(type);
-					}	
+					}
 					var targetMatcher = new EReg("^-" + s, "");
 					if (targetMatcher.match(line))
 					{
@@ -253,7 +249,6 @@ class MUnitTargetCommandBase extends MUnitCommand
 
 		switch(target.type)
 		{
-			case as2: output = "-swf";
 			case as3: output = "-swf";
 			default: output = "-" + Std.string(target.type);
 		}
@@ -291,7 +286,6 @@ class MUnitTargetCommandBase extends MUnitCommand
 			var s:String = null;
 			switch (type)
 			{
-				case as2: s = "swf";
 				case as3: s = "swf";
 				default: s = Std.string(type);
 			}

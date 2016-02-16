@@ -1,16 +1,16 @@
 /**************************************** ****************************************
  * Copyright 2010 Massive Interactive. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
- * 
+ *
  *    1. Redistributions of source code must retain the above copyright notice, this list of
  *       conditions and the following disclaimer.
- * 
+ *
  *    2. Redistributions in binary form must reproduce the above copyright notice, this list
  *       of conditions and the following disclaimer in the documentation and/or other materials
  *       provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
@@ -20,7 +20,7 @@
  * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * The views and conclusions contained in the software and documentation are those of the
  * authors and should not be interpreted as representing official policies, either expressed
  * or implied, of Massive Interactive.
@@ -38,7 +38,7 @@ import massive.munit.Target;
 class TestCommand extends MUnitTargetCommandBase
 {
 	var testsAborted:Bool;
-	
+
 
 	public function new():Void
 	{
@@ -59,15 +59,15 @@ class TestCommand extends MUnitTargetCommandBase
 
 		//prevent generation from occuring
 		var noGen:String  = console.getOption("-nogen");
-		
+
 		if (noGen != "true")
 		{
 			addPreRequisite(GenerateCommand);
 		}
-		
+
 		//prevent generation from occuring
 		var noRun:String  = console.getOption("-norun");
-		
+
 		if (noRun != "true")
 		{
 			addPostRequisite(RunCommand);
@@ -82,18 +82,18 @@ class TestCommand extends MUnitTargetCommandBase
 		}
 	}
 
-	// In v0.9.0.3 we made a significant change to the required format of test.hxml. 
+	// In v0.9.0.3 we made a significant change to the required format of test.hxml.
 	// This ensures everything is in place
 	function invalidHxmlFormat():Bool
 	{
-		var contents:String = config.hxml.readString();		
+		var contents:String = config.hxml.readString();
 		var lines:Array<String> = contents.split("\n");
 		var invalid = false;
 		for (line in lines)
 		{
 			if (line.indexOf("main_test.") != -1)
 			{
-				Sys.println("Error: The naming convention main_test.<type> is deprecated. Please update your test.hxml file to generate the file(s) 'as2_test.swf', 'as3_test.swf', 'js_test.js', 'neko_test.n', 'cpp_test' respectively. [Cause: " + line + "]");
+				Sys.println("Error: The naming convention main_test.<type> is deprecated. Please update your test.hxml file to generate the file(s) 'as3_test.swf', 'js_test.js', 'neko_test.n', 'cpp_test' respectively. [Cause: " + line + "]");
 				invalid = true;
 			}
 		}
@@ -120,7 +120,7 @@ class TestCommand extends MUnitTargetCommandBase
 
 		for(target in targets)
 		{
-			if (target.type == null && targetTypes.length < config.targetTypes.length ) 
+			if (target.type == null && targetTypes.length < config.targetTypes.length )
 				continue;
 
 			if (includeCoverage && target.main != null)
@@ -139,32 +139,32 @@ class TestCommand extends MUnitTargetCommandBase
 					}
 				}
 				validateTestMainCoverageConfiguration(target);
-				
+
 				//ingore lib if testing MCOVER (causes compiler errors from dup src path)
 				if (!target.flags.exists("MCOVER_DEBUG"))
 				{
-					target.hxml += "-lib mcover\n";	
+					target.hxml += "-lib mcover\n";
 				}
-				
+
 				target.hxml += "-D MCOVER\n";
 
 				var coverPackages = config.coveragePackages != null ? config.coveragePackages.join("','") : "";
 				var coverIgnoredClasses = config.coverageIgnoredClasses != null ? config.coverageIgnoredClasses.join("','") : "";
-				target.hxml += "--macro mcover.MCover.coverage(['" + coverPackages + "'],['" + clsPaths.join("','") + "'],['" + coverIgnoredClasses + "'])\n";	
+				target.hxml += "--macro mcover.MCover.coverage(['" + coverPackages + "'],['" + clsPaths.join("','") + "'],['" + coverIgnoredClasses + "'])\n";
 			}
-			
-			if (target.type == TargetType.as2 || target.type == TargetType.as3)
+
+			if (target.type == TargetType.as3)
 			{
 				target.hxml = updateSwfHeader(target.hxml);
 			}
-			
+
 			if (console.getOption("debug") == "true")
 			{
 				target.hxml += "-D testDebug\n";
-				target.hxml += "-D debug\n";				
+				target.hxml += "-D debug\n";
 			}
 
-			
+
 
 			if(target.type == TargetType.cpp)
 			{
@@ -176,7 +176,7 @@ class TestCommand extends MUnitTargetCommandBase
 			if (HaxeWrapper.compile(target.hxml) > 0)
 			{
 				error("Error compiling hxml for " + target.type + "\n" + target);
-			}	
+			}
 
 			var tmp = config.bin.resolveFile(".temp/" + target.type + ".txt");
 			if (target.type == cpp)
@@ -188,7 +188,7 @@ class TestCommand extends MUnitTargetCommandBase
 				tmp.writeString(target.file, false);
 			}
 		}
-		
+
 		Log.debug("All targets compiled successfully");
 	}
 

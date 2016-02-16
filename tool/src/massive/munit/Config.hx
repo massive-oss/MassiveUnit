@@ -1,16 +1,16 @@
 /**************************************** ****************************************
  * Copyright 2010 Massive Interactive. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
- * 
+ *
  *    1. Redistributions of source code must retain the above copyright notice, this list of
  *       conditions and the following disclaimer.
- * 
+ *
  *    2. Redistributions in binary form must reproduce the above copyright notice, this list
  *       of conditions and the following disclaimer in the documentation and/or other materials
  *       provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
@@ -20,7 +20,7 @@
  * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * The views and conclusions contained in the software and documentation are those of the
  * authors and should not be interpreted as representing official policies, either expressed
  * or implied, of Massive Interactive.
@@ -33,12 +33,12 @@ class Config
 {
 	public var currentVersion(default, null):String;
 	public var configVersion(default, null):String;
-	
+
 	public var dir(default, null):File;
 	private var configFile:File;
-	
+
 	public var exists(default, null):Bool;
-	
+
 	public var bin(default, null):File;
 	public var report(default, null):File;
 	public var src(default, null):File;
@@ -48,35 +48,35 @@ class Config
 	public var templates(default, null):File;
 
 	public var classPaths:Array<File>;
-	
+
 	public var targets:Array<Target>;
-	
+
 	public var targetTypes:Array<TargetType>;
 
 	public var defaultTargetTypes:Array<TargetType>;
 
 	public var coveragePackages:Array<String>;
 	public var coverageIgnoredClasses:Array<String>;
-	
+
 	public function new(dir:File, currentVersion:String):Void
 	{
 		this.dir = dir;
 		this.currentVersion = currentVersion;
-		
-		defaultTargetTypes = [TargetType.as2, TargetType.as3, TargetType.js, TargetType.neko, TargetType.cpp];
+
+		defaultTargetTypes = [TargetType.as3, TargetType.js, TargetType.neko, TargetType.cpp];
 		targetTypes = defaultTargetTypes;
 		targets = [];
 
 		configFile = dir.resolveFile(".munit");
-		
+
 		exists = configFile.exists;
-		
+
 		if(exists)
 		{
 			load();
 		}
 	}
-		
+
 	public function load(?file:File):Void
 	{
 		if(file == null) file = configFile;
@@ -86,20 +86,20 @@ class Config
 	private function parseConfig(string:String)
 	{
 		var lines:Array<String>  = string.split("\n");
-	
+
 		for(line in lines)
 		{
 			line = StringTools.trim(line);
 			if(line.length == 0 || line.substr(0,1) == "#") continue;
-			
+
 			var args:Array<String> = line.split("=");
-			
+
 			var value:String = args[1];
 			if(value == null) continue;
-			
-			
+
+
 			if(value.substr(-1) == ";") value = value.substr(0,-1);
-			
+
 			switch(args[0])
 			{
 				case "version": configVersion = value;
@@ -123,10 +123,10 @@ class Config
 			}
 		}
 	}
-	
+
 	public function remove():Void
 	{
-		
+
 		configFile.deleteFile();
 		exists = false;
 		src = null;
@@ -142,7 +142,7 @@ class Config
 		coveragePackages = null;
 		coverageIgnoredClasses = null;
 	}
-	
+
 	public function createDefault(?src:File=null, ?bin:File=null, ?report:File=null, ?hxml:File=null, ?classPaths:Array<File>=null, ?resources:File=null, ?templates:File=null, ?coveragePackages:Array<String>=null, ?coverageIgnoredClasses:Array<String>=null):Void
 	{
 		this.src = src != null ? src : dir.resolveDirectory("test", true);
@@ -158,7 +158,7 @@ class Config
 
 		save();
 	}
-	
+
 	public function updateSrc(file:File):Void
 	{
 		if(!file.exists) throw "Directory does not exist " + file;
@@ -166,7 +166,7 @@ class Config
 		src = file;
 		save();
 	}
-	
+
 	public function updateBin(file:File):Void
 	{
 		if(!file.exists) throw "Directory does not exist " + file;
@@ -174,8 +174,8 @@ class Config
 		bin = file;
 		save();
 	}
-	
-	
+
+
 	public function updateReport(file:File):Void
 	{
 		if(!file.exists) throw "Directory does not exist " + file;
@@ -183,8 +183,8 @@ class Config
 		report = file;
 		save();
 	}
-	
-	
+
+
 	public function updateHxml(file:File):Void
 	{
 		if(file.isDirectory) throw "File is a directory " + file;
@@ -254,7 +254,7 @@ class Config
 		}
 		if(hxml != null)
 		{
-			str += "hxml=" + dir.getRelativePath(hxml) + "\n";	
+			str += "hxml=" + dir.getRelativePath(hxml) + "\n";
 		}
 		if(classPaths != null)
 		{
@@ -263,17 +263,17 @@ class Config
 			{
 				if(value != "") value += ",";
 				value += dir.getRelativePath(path);
-				
+
 			}
 			str += "classPaths=" + value + "\n";
 		}
 		if(resources != null)
 		{
-			str += "resources=" + dir.getRelativePath(resources) + "\n";	
+			str += "resources=" + dir.getRelativePath(resources) + "\n";
 		}
 		if(templates != null)
 		{
-			str += "templates=" + dir.getRelativePath(templates) + "\n";	
+			str += "templates=" + dir.getRelativePath(templates) + "\n";
 		}
 		if(coveragePackages != null)
 		{
@@ -283,17 +283,17 @@ class Config
 		{
 			str += "coverageIgnoredClasses=" + coverageIgnoredClasses.join(",") + "\n";
 		}
-		
+
 		return str;
 	}
-	
+
 	public function save():Void
 	{
-		configFile.writeString(toString());	
-		
+		configFile.writeString(toString());
+
 		if(!exists) exists = true;
 	}
-	
+
 	/*
 	version=::version::
 	src=::src::

@@ -124,7 +124,7 @@ class PrintClient extends PrintClientBase
 		{
 			var positionInfo = ReflectUtil.here();
 			var error:String = "MissingElementException: 'haxe:trace' element not found at " + positionInfo.className + "#" + positionInfo.methodName + "(" + positionInfo.lineNumber + ")";
-			js.Lib.alert(error);
+			js.Browser.alert(error);
 		}
 	}
 	#end

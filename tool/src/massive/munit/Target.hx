@@ -43,7 +43,6 @@ class Target
 
 enum TargetType
 {
-	as2;
 	as3;
 	js;
 	neko;

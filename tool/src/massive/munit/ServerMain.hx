@@ -84,7 +84,7 @@ class ServerMain
 			return;
 
 		var hash:StringMap<String> = neko.Web.getParams();
-		var data:String = hash.get("data"); // gets variable 'data' from posted data (as2 LoadVars)
+		var data:String = hash.get("data"); // gets variable 'data' from posted data
 
 		if (data == null)
 			data = neko.Web.getPostData();
