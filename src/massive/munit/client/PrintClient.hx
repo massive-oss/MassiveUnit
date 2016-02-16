@@ -1,16 +1,16 @@
 /****
 * Copyright 2013 Massive Interactive. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
-* 
+*
 *    1. Redistributions of source code must retain the above copyright notice, this list of
 *       conditions and the following disclaimer.
-* 
+*
 *    2. Redistributions in binary form must reproduce the above copyright notice, this list
 *       of conditions and the following disclaimer in the documentation and/or other materials
 *       provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
@@ -20,7 +20,7 @@
 * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
+*
 * The views and conclusions contained in the software and documentation are those of the
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Massive Interactive.
@@ -38,22 +38,22 @@ import massive.munit.util.Timer;
 
 /**
  * Generates basic text formatted test result output.
- * 
+ *
  * <p>
  * Example output:
  * </p>
  * <pre>
  * MUnit Results
  * ------------------------------
- * 
+ *
  * Class: SampleTest ...
  * Class: sub.ItemTest ..
- * 
+ *
  * PASSED
  * Tests: 5  Passed: 5  Failed: 0 Errors: 0 Ignored: 0 Time: 0.202
  * ==============================
  * </pre>
- * 
+ *
  * @author Mike Stead
  */
 class PrintClient extends PrintClientBase
@@ -66,15 +66,13 @@ class PrintClient extends PrintClientBase
 
 	#if (js||flash)
 		var external:ExternalPrintClient;
-		#if flash8
-			var textField:flash.TextField;
-		#elseif flash
+		#if flash
 			var textField:flash.text.TextField;
 		#elseif js
 			var textArea:Dynamic;
 		#end
-	#end 
-	
+	#end
+
 	public function new(?includeIgnoredReport:Bool = true)
 	{
 		super(includeIgnoredReport);
@@ -85,7 +83,7 @@ class PrintClient extends PrintClientBase
 	{
 		super.init();
 
-		#if nodejs		
+		#if nodejs
 		#elseif (js || flash)
 			external = new ExternalPrintClientJS();
 			#if flash
@@ -106,42 +104,28 @@ class PrintClient extends PrintClientBase
 		{
 			throw new MUnitException("ExternalInterface not available");
 		}
-		
-		#if flash8
-			textField = flash.Lib.current.createTextField("__munitOutput", 20000, 0, 0, flash.Stage.width, flash.Stage.height);
-			textField.wordWrap = true;
-			textField.selectable = true;
-		#else
-			textField = new flash.text.TextField();
-			textField.selectable = true;
-			textField.width = flash.Lib.current.stage.stageWidth;
-			textField.height = flash.Lib.current.stage.stageHeight;
-			flash.Lib.current.addChild(textField);
 
-			if(!flash.system.Capabilities.isDebugger)
-			{
-				printLine("WARNING: Flash Debug Player not installed. May cause unexpected behaviour in MUnit when handling thrown exceptions.");
-			}
-		#end
+		textField = new flash.text.TextField();
+		textField.selectable = true;
+		textField.width = flash.Lib.current.stage.stageWidth;
+		textField.height = flash.Lib.current.stage.stageHeight;
+		flash.Lib.current.addChild(textField);
 
-
-
-
+		if(!flash.system.Capabilities.isDebugger)
+		{
+			printLine("WARNING: Flash Debug Player not installed. May cause unexpected behaviour in MUnit when handling thrown exceptions.");
+		}
 	}
 	#elseif js
 	function initJS()
 	{
-		#if haxe3
 		var div = js.Browser.document.getElementById("haxe:trace");
-		#else
-		var div = js.Lib.document.getElementById("haxe:trace");
-		#end
-		if (div == null) 
+		if (div == null)
 		{
 			var positionInfo = ReflectUtil.here();
 			var error:String = "MissingElementException: 'haxe:trace' element not found at " + positionInfo.className + "#" + positionInfo.methodName + "(" + positionInfo.lineNumber + ")";
 			js.Lib.alert(error);
-		}	
+		}
 	}
 	#end
 
@@ -164,7 +148,7 @@ class PrintClient extends PrintClientBase
 	{
 		addTrace(value, info);
 	}
-	
+
 	////// PRINT APIS //////
 
 	override public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
@@ -176,11 +160,7 @@ class PrintClient extends PrintClientBase
 	{
 		super.print(value);
 
-		#if flash8
-			value = untyped flash.Boot.__string_rec(value, "");
-			textField.text += value;
-			textField.scroll = textField.maxscroll;
-		#elseif flash
+		#if flash
 			textField.appendText(value);
 			textField.scrollV = textField.maxScrollV;
 		#end

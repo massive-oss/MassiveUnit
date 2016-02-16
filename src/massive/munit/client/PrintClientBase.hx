@@ -1,16 +1,16 @@
 /****
 * Copyright 2013 Massive Interactive. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
-* 
+*
 *    1. Redistributions of source code must retain the above copyright notice, this list of
 *       conditions and the following disclaimer.
-* 
+*
 *    2. Redistributions in binary form must reproduce the above copyright notice, this list
 *       of conditions and the following disclaimer in the documentation and/or other materials
 *       provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
@@ -20,7 +20,7 @@
 * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
+*
 * The views and conclusions contained in the software and documentation are those of the
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Massive Interactive.
@@ -119,12 +119,12 @@ class PrintClientBase extends AbstractTestResultClient
 	/////////  COVERAGE
 
 	override public function setCurrentTestClassCoverage(result:CoverageResult):Void
-	{	
+	{
 		super.setCurrentTestClassCoverage(result);
 		print(" [" + result.percent + "%]");
 
 		// if(result.percent == 100) return;
-		// printLine("COVERAGE: " + result.className, 1);	
+		// printLine("COVERAGE: " + result.className, 1);
 		// for(item in result.blocks)
 		// {
 		// 	var lines = item.split("\n");
@@ -148,7 +148,7 @@ class PrintClientBase extends AbstractTestResultClient
 		printLine(divider);
 
 		if(missingCoverageResults != null && missingCoverageResults.length >0)
-		{	
+		{
 			printLine("MISSING CODE BLOCKS:");
 			for(result in missingCoverageResults)
 			{
@@ -165,9 +165,9 @@ class PrintClientBase extends AbstractTestResultClient
 		{
 			printLine("CODE EXECUTION FREQUENCY:");
 			printIndentedLines(executionFrequency, 1);
-		
+
 			printLine("");
-		}		
+		}
 
 		if(classBreakdown != null)
 		{
@@ -204,8 +204,8 @@ class PrintClientBase extends AbstractTestResultClient
 	{
 		if (!includeIgnoredReport || count == 0) return;
 
-		var items = Lambda.filter(totalResults, filterIngored); 
-		
+		var items = Lambda.filter(totalResults, filterIngored);
+
 		if(items.length == 0) return;
 
 		printLine("");
@@ -238,14 +238,14 @@ class PrintClientBase extends AbstractTestResultClient
 			+ " Time: " + MathUtil.round(time, 5);
 
 		printLine(resultString);
-		printLine("");	
+		printLine("");
 	}
 
 	override function printOverallResult(result:Bool)
 	{
 		printLine("");
 	}
-	
+
 	////// PRINT APIS //////
 	public function print(value:Dynamic)
 	{
@@ -281,7 +281,7 @@ interface ExternalPrintClient
 	function print(value:String):Void;
 	function printLine(value:String):Void;
 	function setResultBackground(value:Bool):Void;
-	
+
 	////////// RICH PLRINT CLIENT //////////////
 	//TEST CLASS APIS
 	function createTestClass(className:String):Void;
@@ -303,9 +303,9 @@ interface ExternalPrintClient
 	function addMissingCoverageClass(className:String, percent:Float=0):Void;
 	function addCoverageReportSection(name:String, value:String):Void;
 	function addCoverageSummary(value:String):Void;
-	
+
 	function printSummary(value:String):Void;
-		
+
 }
 
 class ExternalPrintClientJS implements ExternalPrintClient
@@ -314,7 +314,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 	{
 
 		#if flash
-		
+
 			if(!flash.external.ExternalInterface.available)
 			{
 				throw new MUnitException("ExternalInterface not available");
@@ -323,31 +323,23 @@ class ExternalPrintClientJS implements ExternalPrintClient
 			if(flashInitialised != true)
 			{
 				flashInitialised = true;
-				#if flash8
-					flash.Lib.current.onEnterFrame = enterFrameHandler;
-				#else
-					flash.Lib.current.stage.addEventListener(flash.events.Event.ENTER_FRAME, enterFrameHandler);
-				#end
+				flash.Lib.current.stage.addEventListener(flash.events.Event.ENTER_FRAME, enterFrameHandler);
 			}
 
 			if(!flash.system.Capabilities.isDebugger)
 			{
 				printLine("WARNING: Flash Debug Player not installed. May cause unexpected behaviour in MUnit when handling thrown exceptions.");
 			}
-			
+
 		#elseif js
-			#if haxe3
 			var div = js.Browser.document.getElementById("haxe:trace");
-			#else
-			var div = js.Lib.document.getElementById("haxe:trace");
-			#end
-				
-			if (div == null) 
+
+			if (div == null)
 			{
 				var positionInfo = ReflectUtil.here();
 				var error:String = "MissingElementException: 'haxe:trace' element not found at " + positionInfo.className + "#" + positionInfo.methodName + "(" + positionInfo.lineNumber + ")";
 				js.Lib.alert(error);
-			}	
+			}
 		#else
 
 		#end
@@ -365,7 +357,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 			if(externalInterfaceCounter ++ < EXTERNAL_INTERFACE_FRAME_DELAY) return;
 
 			externalInterfaceCounter = 0;
-			
+
 			var tempArray = externalInterfaceQueue.concat([]);
 			externalInterfaceQueue = [];
 
@@ -390,19 +382,19 @@ class ExternalPrintClientJS implements ExternalPrintClient
 
 	public function setResult(value:Bool)
 	{
-		queue("setResult", value);	
+		queue("setResult", value);
 	}
 
 	public function setResultBackground(value:Bool)
 	{
-		queue("setResultBackground", value);	
+		queue("setResultBackground", value);
 	}
 
 	//RICH CLIENT APIs
 
 	public function trace(value:Dynamic)
 	{
-		queue("munitTrace", value);	
+		queue("munitTrace", value);
 	}
 
 	public function createTestClass(className:String)
@@ -467,7 +459,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 	{
 		queue("addCoverageReportSection", [name, value]);
 	}
-	
+
 	public function addCoverageSummary(value:String):Void
 	{
 		queue("addCoverageSummary", value);
@@ -502,7 +494,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 
 		var jsCode = convertToJavaScript(method, a);
 
-		#if js		
+		#if js
 			return js.Lib.eval(jsCode);
 		#elseif flash
 			externalInterfaceQueue.push(jsCode);
@@ -510,7 +502,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 		return false;
 	}
 
-	
+
 
 
 	public function convertToJavaScript(method:String, ?args:Array<Dynamic>):String

@@ -4,11 +4,7 @@ import massive.sys.io.File;
 import massive.munit.report.ReportFormatter;
 import massive.munit.report.ReportType;
 
-#if haxe3
 import haxe.ds.StringMap;
-#else
-private typedef StringMap<T> = Hash<T>
-#end
 
 /**
 Converts result summary data into the teamcity-info.xml format.
@@ -23,7 +19,7 @@ class TeamCityReportFormatter extends ReportFormatterBase
 
 	var statusTexts:Array<String>;
 	var statistics:StringMap<Float>;
-	
+
 	public function new()
 	{
 		super();
@@ -94,7 +90,7 @@ class TeamCityReportFormatter extends ReportFormatterBase
 			statusText += testTotals.error;
 		}
 
-		if(testTotals.ignore > 0) 
+		if(testTotals.ignore > 0)
 		{
 			statusText += ", Ignored: ";
 			if(multiPlatform &&  testPlatforms.ignore > 0)
@@ -106,7 +102,7 @@ class TeamCityReportFormatter extends ReportFormatterBase
 				statusText += testTotals.ignore;
 			}
 		}
-	
+
 		statusTexts.push(statusText);
 
 
@@ -141,7 +137,7 @@ class TeamCityReportFormatter extends ReportFormatterBase
 		addTeamCityCoverageStat(coverageTotals.statements);
 		addTeamCityCoverageStat(coverageTotals.branches);
 		addTeamCityCoverageStat(coverageTotals.lines);
-			
+
 	}
 
 	function addTeamCityCoverageStat(stat:CoverageStatistics)
@@ -181,7 +177,7 @@ class TeamCityReportFormatter extends ReportFormatterBase
 		{
 			xml += "\n\t<statisticValue key=\"" + key + "\" value=\"" + statistics.get(key) + "\"/>";
 		}
-	
+
 		xml += "\n</build>";
 
 		return xml;

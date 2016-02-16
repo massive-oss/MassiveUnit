@@ -9,12 +9,12 @@ import js.Lib;
 #end
 
 /**
- * Auto generated Test Application.	
+ * Auto generated Test Application.
  * Refer to munit command line tool for more information (haxelib run munit)
  */
 
-class TestMain 
-{		
+class TestMain
+{
 	static function main(){	new TestMain();}
 
 	public function new()
@@ -30,13 +30,13 @@ class TestMain
 			var httpClient = new HTTPClient(new SummaryReportClient());
 		#end
 
-		var runner:TestRunner = new TestRunner(client);	
+		var runner:TestRunner = new TestRunner(client);
 		runner.addResultClient(httpClient);
 		//runner.addResultClient(new TestRunner(new HTTPClient(new JUnitReportClient(), "http://localhost:2000")));
 		runner.completionHandler = completionHandler;
 		runner.run(suites);
 	}
-	
+
 	/*
 		updates the background color and closes the current browser
 		for flash and html targets (useful for continous integration servers)
@@ -46,9 +46,7 @@ class TestMain
 		try
 		{
 			#if flash
-				flash.external.ExternalInterface.call("testResult", successful);	
-			#elseif flash9
-				flash.external.ExternalInterface.call("testResult", successful);	
+				flash.external.ExternalInterface.call("testResult", successful);
 			#elseif js
 				js.Lib.eval("testResult(" + successful + ");");
 			#elseif sys

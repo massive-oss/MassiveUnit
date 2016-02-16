@@ -11,7 +11,7 @@
 		"devDependencies": 
 		{
 			"hamcrest": "1.2.x",
-			"mtask": "2.x"
+			"mtask": "3.x"
 		},
 		"dependencies": 
 		{

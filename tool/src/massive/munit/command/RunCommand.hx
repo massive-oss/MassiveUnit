@@ -46,14 +46,8 @@ import massive.munit.Config;
 import massive.munit.Target;
 import sys.net.Host;
 import sys.net.Socket;
-
-
-#if haxe3
 import haxe.ds.StringMap;
-#else
-private typedef StringMap<T> = Hash<T>
-#end
- 
+
 /**
 Don't ask - compiler always thinks it is massive.munit.TargetType enum 'neko'
 */
@@ -80,14 +74,14 @@ class RunCommand extends MUnitTargetCommandBase
 	var indexPage:File;
 
 	var hasBrowserTests:Bool;
-	
+
 	var hasNekoTests:Bool;
 	var hasCPPTests:Bool;
 
 	var nekoFile:File;
 	var cppFile:File;
-	
-	
+
+
 	var serverTimeoutTimeSec:Int;
 
 	var resultExitCode:Bool;
@@ -162,7 +156,7 @@ class RunCommand extends MUnitTargetCommandBase
 
 			//update as this will be the actual executable for cpp/php targets
 			target.file = File.current.resolveFile(tmp.readString());
-			
+
 			if (!target.file.exists)
 			{
 				print("WARNING: File for target type '" + target.type + "' not found: " + target.toString());
@@ -173,13 +167,13 @@ class RunCommand extends MUnitTargetCommandBase
 				if (type == TargetType.neko)
 				{
 					hasNekoTests = true;
-				}	
+				}
 				if (type == TargetType.cpp)
 				{
 					hasCPPTests = true;
-				}	
+				}
 			}
-			
+
 		}
 
 		targets = config.targets = tempTargets;
@@ -279,7 +273,7 @@ class RunCommand extends MUnitTargetCommandBase
 					var pageName = Std.string(target.type);
 					var templateName = file.extension + "_runner-html";
 					var pageContent = getTemplateContent(templateName, {runnerName:file.fileName});
-					
+
 					var runnerPage = reportRunnerDir.resolvePath(pageName + ".html");
 
 					runnerPage.writeString(pageContent);
@@ -364,7 +358,7 @@ class RunCommand extends MUnitTargetCommandBase
 
 		var errors:Array<String> = new Array();
 
-		
+
 		var serverExitCode:Int = 0;
 
 		tmpDir = File.current.resolveDirectory("tmp");
@@ -390,10 +384,10 @@ class RunCommand extends MUnitTargetCommandBase
 		{
 			error("Unable to launch nekotools server. Please kill existing process and try again.", 1);
 		}
-		
+
 		var serverMonitor = Thread.create(readServerOutput);
 		serverMonitor.sendMessage(serverProcess);
-		
+
 		var resultMonitor = Thread.create(monitorResults);
 		resultMonitor.sendMessage(Thread.current());
 		resultMonitor.sendMessage(serverProcess);
@@ -416,7 +410,7 @@ class RunCommand extends MUnitTargetCommandBase
 
 		if (reportTestDir.exists)
 			reportTestDir.deleteDirectoryContents();
-		
+
 		if (!FileSys.isWindows)
 		{
 			serverFile.deleteFile();
@@ -432,7 +426,7 @@ class RunCommand extends MUnitTargetCommandBase
 			//print("TESTS FAILED");
 			Sys.stderr().writeString("TESTS FAILED\n");
 			Sys.stderr().flush();
-			
+
 			exit(1);
 		}
 	}
@@ -445,7 +439,7 @@ class RunCommand extends MUnitTargetCommandBase
 		var serverFile = console.originalDir.resolveFile("index.n");
 
 		if (FileSys.isWindows) return serverFile;
-		
+
 		var copy = File.current.resolveFile("index.n");
 
 		serverFile.copyTo(copy);
@@ -572,7 +566,7 @@ class RunCommand extends MUnitTargetCommandBase
 			print("------------------------------");
 			print("ERROR: Local results server appeared to hang so test reporting was cancelled.");
 		}
-		
+
 		var platformResult:Bool = platformCount > 0 && testFailCount == 0 && testErrorCount == 0 && !serverHung;
 
 		mainThread.sendMessage(platformResult);
@@ -604,7 +598,7 @@ class RunCommand extends MUnitTargetCommandBase
 			parameters.push("start");
 			if (browser != null)
 			{
-				if (browser.substr(0, 12) == "flashdevelop") 
+				if (browser.substr(0, 12) == "flashdevelop")
 				{
 					return sendFlashDevelopCommand(browser, "Browse", targetLocation);
 				}
@@ -621,32 +615,32 @@ class RunCommand extends MUnitTargetCommandBase
 		{
 			if (browser != null)
 				parameters.push(browser);
-			else 
+			else
 				parameters.push("xdg-open");
 		}
 
 		parameters.push(targetLocation);
 
 		var exitCode:Int = Sys.command(parameters.join(" "));
-		
+
 		if (exitCode > 0)
 			error("Error running " + targetLocation, exitCode);
-  
+
 		return exitCode;
 	}
-	
-	private function sendFlashDevelopCommand(args:String, cmd:String, data:String) 
+
+	private function sendFlashDevelopCommand(args:String, cmd:String, data:String)
 	{
 		var port = 1978;
 		var parts = args.split(':');
 		if (parts.length > 1) port = Std.parseInt(parts[1]);
-		
+
 		try {
 			var conn = new Socket();
 			conn.connect(new Host("localhost"), port);
 			conn.write('<flashconnect><message cmd="call" command="' + cmd + '">' + data + '</message></flashconnect>');
 			conn.output.writeByte(0);
-			conn.close(); 
+			conn.close();
 		}
 		catch (ex:Dynamic) {
 			print("ERROR: Failed to connect to FlashDevelop socket server");
@@ -661,14 +655,15 @@ class RunCommand extends MUnitTargetCommandBase
 		file.copyTo(reportRunnerFile);
 
 		FileSys.setCwd(config.dir.nativePath);
-  
+
+//		var exitCode = runCommand("neko " + reportRunnerFile.nativePath);
 		var exitCode = runCommand('neko "${reportRunnerFile.nativePath}"');
 
 		FileSys.setCwd(console.originalDir.nativePath);
-		
+
 		if (exitCode > 0)
 			error("Error (" + exitCode + ") running " + file, exitCode);
-		
+
 		return exitCode;
 	}
 
@@ -679,14 +674,14 @@ class RunCommand extends MUnitTargetCommandBase
 		file.copyTo(tmpFile);
 
 		FileSys.setCwd(config.dir.nativePath);
-  
+
 		var exitCode = runProgram(file.nativePath, []);
 
 		FileSys.setCwd(console.originalDir.nativePath);
-		
+
 		if (exitCode > 0)
 			error("Error (" + exitCode + ") running " + file, exitCode);
-		
+
 		return exitCode;
 	}
 
@@ -697,11 +692,13 @@ class RunCommand extends MUnitTargetCommandBase
 		var args = command.split(" ");
 		var name = args.shift();
 
-    return runProgram(name, args);
-  }
+		trace(name, args);
 
-  function runProgram(name:String, args:Array<String>)
-  {
+        return runProgram(name, args);
+    }
+
+	function runProgram(name:String, args:Array<String>)
+	{
 		var process = new Process(name, args);
 
 		try

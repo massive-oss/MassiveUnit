@@ -1,16 +1,16 @@
 /****
 * Copyright 2013 Massive Interactive. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
-* 
+*
 *    1. Redistributions of source code must retain the above copyright notice, this list of
 *       conditions and the following disclaimer.
-* 
+*
 *    2. Redistributions in binary form must reproduce the above copyright notice, this list
 *       of conditions and the following disclaimer in the documentation and/or other materials
 *       provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
@@ -20,7 +20,7 @@
 * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
+*
 * The views and conclusions contained in the software and documentation are those of the
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Massive Interactive.
@@ -59,7 +59,7 @@ import cpp.vm.Thread;
 #end
 
 @:expose('massive.munit.util.Timer')
-class Timer 
+class Timer
 {
 	#if (php)
 	#else
@@ -78,9 +78,6 @@ class Timer
 		#if flash9
 			var me = this;
 			id = untyped __global__["flash.utils.setInterval"](function() { me.run(); },time_ms);
-		#elseif flash
-			var me = this;
-			id = untyped _global["setInterval"](function() { me.run(); },time_ms);
 		#elseif nodejs
 			var arr :Array<Dynamic> = untyped global.haxe_timers = global.haxe_timers == null ? [] : global.haxe_timers;
 			var me 	= this;
@@ -103,14 +100,12 @@ class Timer
 		#end
 		#if flash9
 			untyped __global__["flash.utils.clearInterval"](id);
-		#elseif flash
-			untyped _global["clearInterval"](id);
 		#elseif nodejs
 			untyped clearInterval(timerId);
 		#elseif js
 			untyped window.clearInterval(timerId);
 			arr[id] = null;
-			if (id > 100 && id == arr.length - 1) 
+			if (id > 100 && id == arr.length - 1)
 			{
 				// compact array
 				var p = id - 1;
@@ -124,7 +119,7 @@ class Timer
 		id = null;
 	}
 
-	public dynamic function run() 
+	public dynamic function run()
 	{}
 
 	#if (neko||cpp)

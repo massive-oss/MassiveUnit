@@ -1,16 +1,16 @@
 /****
 * Copyright 2013 Massive Interactive. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
-* 
+*
 *    1. Redistributions of source code must retain the above copyright notice, this list of
 *       conditions and the following disclaimer.
-* 
+*
 *    2. Redistributions in binary form must reproduce the above copyright notice, this list
 *       of conditions and the following disclaimer in the documentation and/or other materials
 *       provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
@@ -20,7 +20,7 @@
 * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
+*
 * The views and conclusions contained in the software and documentation are those of the
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Massive Interactive.
@@ -35,11 +35,7 @@ import massive.munit.util.MathUtil;
 import massive.haxe.util.ReflectUtil;
 import massive.munit.util.Timer;
 
-#if haxe3
 class AbstractTestResultClient implements IAdvancedTestResultClient implements ICoverageTestResultClient
-#else
-class AbstractTestResultClient implements IAdvancedTestResultClient, implements ICoverageTestResultClient
-#end
 {
 	/**
 	 * The unique identifier for the client.
@@ -50,13 +46,9 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 	 * Handler which if present, is called when the client has completed generating its results.
 	 */
 	@:isVar
-	#if haxe3
 	public var completionHandler(get, set):ITestResultClient -> Void;
-	#else
-	public var completionHandler(get_completionHandler, set_completionHandler):ITestResultClient -> Void;
-	#end
 
-	function get_completionHandler():ITestResultClient -> Void 
+	function get_completionHandler():ITestResultClient -> Void
 	{
 		return completionHandler;
 	}
@@ -69,12 +61,8 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 	* String representation of print output
 	*/
 	@:isVar
-	#if haxe3
 	public var output(get, null):String;
-	#else
-	public var output(get_output, null):String;
-	#end
-	
+
 	function get_output():String
 	{
 		return output;
@@ -84,15 +72,15 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 	var failCount:Int;
 	var errorCount:Int;
 	var ignoreCount:Int;
-	
-	var currentTestClass:String;	
+
+	var currentTestClass:String;
 	var currentClassResults:Array<TestResult>;
 
 
 	var currentCoverageResult:CoverageResult;
-	
+
 	static var traces:Array<String>;
-	
+
 	var totalResults:Array<TestResult>;
 
 	var totalCoveragePercent:Float;
@@ -122,7 +110,7 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 
 		currentCoverageResult = null;
 
-	
+
 		totalResults = [];
 		totalCoveragePercent = 0;
 		totalCoverageReport = null;
@@ -142,14 +130,14 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 		{
 			finalizeTestClass();
 		}
-			
+
 		currentTestClass = className;
 		if(currentTestClass != null) initializeTestClass();
 	}
 
 	/**
 	 * Called when a test passes.
-	 *  
+	 *
 	 * @param	result			a passed test result
 	 */
 	public function addPass(result:TestResult):Void
@@ -157,10 +145,10 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 		passCount ++;
 		updateTestClass(result);
 	}
-	
+
 	/**
 	 * Called when a test fails.
-	 *  
+	 *
 	 * @param	result			a failed test result
 	 */
 	public function addFail(result:TestResult):Void
@@ -168,10 +156,10 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 		failCount ++;
 		updateTestClass(result);
 	}
-	
+
 	/**
 	 * Called when a test triggers an unexpected exception.
-	 *  
+	 *
 	 * @param	result			an erroneous test result
 	 */
 	public function addError(result:TestResult):Void
@@ -210,7 +198,7 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 	}
 	/**
 	 * Called when all tests are complete.
-	 *  
+	 *
 	 * @param	testCount		total number of tests run
 	 * @param	passCount		total number of tests which passed
 	 * @param	failCount		total number of tests which failed
@@ -226,11 +214,11 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 		printReports();
 
 		printFinalStatistics(finalResult, testCount, passCount, failCount, errorCount, ignoreCount, time);
-		
+
 		printOverallResult(finalResult);
-		
+
 		haxe.Log.trace = originalTrace;
-		if (completionHandler != null) completionHandler(this); 
+		if (completionHandler != null) completionHandler(this);
 		return output;
 	}
 
@@ -275,20 +263,20 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 	*/
 	function printReports()
 	{
-		
+
 	}
 
 	/**
-	* Override to print final summary 
+	* Override to print final summary
 	*/
 	function printFinalStatistics(result:Bool, testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float)
 	{
-		
+
 	}
 
 	function printOverallResult(result:Bool)
 	{
-		
+
 	}
 
 	///////
@@ -326,7 +314,7 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 			case PASS: -1;
 			default:-2;
 		}
-		
+
 		return aInt - bInt;
 	}
 }
