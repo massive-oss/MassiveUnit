@@ -226,4 +226,22 @@ class Assert
 	{
 		throw new AssertionException(msg, info);
 	}
+    
+    /**
+     * Assert that an expectation was thrown. Can expect strings and non-strings.
+     *
+     * @param   code                a function which should throw an exception 
+     * @return                      the exception that was thrown      
+     * @throws  AssertionException  if no expectation is thrown
+     */
+    public static function throws(code:Dynamic):Dynamic
+    {
+        try {
+            code();
+            fail("Expected exception wasn't thrown!");
+            return null; // needed to compile
+        } catch (e:Dynamic) {
+            return e;
+        }
+    }
 }
