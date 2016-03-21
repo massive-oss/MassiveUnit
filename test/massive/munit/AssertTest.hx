@@ -4,12 +4,12 @@
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
  * 
- *    1. Redistributions of source code must retain the above copyright notice, this list of
- *       conditions and the following disclaimer.
+ *	1. Redistributions of source code must retain the above copyright notice, this list of
+ *	   conditions and the following disclaimer.
  * 
- *    2. Redistributions in binary form must reproduce the above copyright notice, this list
- *       of conditions and the following disclaimer in the documentation and/or other materials
- *       provided with the distribution.
+ *	2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *	   of conditions and the following disclaimer in the documentation and/or other materials
+ *	   provided with the distribution.
  * 
  * THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -479,42 +479,39 @@ class AssertTest
 		}
 		Assert.fail("Invalid assertion not captured");
 	}
-    
-    @Test
-    public function testThrowsStringAndObject():Void
-    {
-        // Positive case: throws expected string
-        var expectedMessage:String = "Invalid operation!";
-        var actualMessage:String = Assert.throws(function()
-        {
-            throw expectedMessage;
-        });
-        Assert.areEqual(expectedMessage, actualMessage);
-        
-        // Positive case: throws expected exception
-        var expectedError:CustomException = new CustomException('URL not reachable', 37);
-        var actualError:CustomException = Assert.throws(function()
-        {
-            throw expectedError;
-        });
-        Assert.areEqual(expectedError.message, actualError.message);
-        Assert.areEqual(expectedError.code, actualError.code);
-        
-        // Negative case: assertion if it doesn't throw
-        var failureMessage:String = "Assert.throws didn't raise an exception when nothing was thrown";
-        try {
-            Assert.throws(function()
-            {
-                var message:String = "Nothing thrown here!";
-                Assert.fail(failureMessage);                
-            });
-        }
-        catch (e:AssertionException)
-        {
-            Assert.areNotEqual(failureMessage, e.message);
-            Assert.isTrue(e.message.indexOf("wasn't thrown") > -1);
-        }
-    }
+	
+	@Test
+	public function testThrowsStringAndObject():Void
+	{
+		// Positive case: throws expected string
+		var expectedMessage:String = "Invalid operation!";
+		var actualMessage:String = Assert.throws(function()
+		{
+			throw expectedMessage;
+		});
+		Assert.areEqual(expectedMessage, actualMessage);
+		
+		// Positive case: throws expected exception
+		var expectedError:CustomException = new CustomException('URL not reachable', 37);
+		var actualError:CustomException = Assert.throws(function()
+		{
+			throw expectedError;
+		});
+		Assert.areEqual(expectedError.message, actualError.message);
+		Assert.areEqual(expectedError.code, actualError.code);
+		
+		// Negative case: assertion raised if block doesn't throw
+		try {
+			Assert.throws(function()
+			{
+				// Doesn't throw
+			});
+		}
+		catch (e:AssertionException)
+		{
+			Assert.isTrue(e.message.indexOf("wasn't thrown") > -1);
+		}
+	}
 }
 
 private enum DummyEnum
@@ -526,12 +523,12 @@ private enum DummyEnum
 
 private class CustomException
 {
-    public var message(default, default):String;
-    public var code(default, default):Int;
-    
-    public function new(message:String, code:Int)
-    {
-        this.message = message;
-        this.code = code;
-    }
+	public var message(default, default):String;
+	public var code(default, default):Int;
+	
+	public function new(message:String, code:Int)
+	{
+		this.message = message;
+		this.code = code;
+	}
 }
