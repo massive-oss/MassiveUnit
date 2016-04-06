@@ -485,7 +485,7 @@ class AssertTest
 	{
 		// Positive case: throws expected string
 		var expectedMessage:String = "Invalid operation!";
-		var actualMessage:String = Assert.throws(function()
+		var actualMessage:String = Assert.throws(String, function()
 		{
 			throw expectedMessage;
 		});
@@ -493,7 +493,7 @@ class AssertTest
 		
 		// Positive case: throws expected exception
 		var expectedError:CustomException = new CustomException('URL not reachable', 37);
-		var actualError:CustomException = Assert.throws(function()
+		var actualError:CustomException = Assert.throws(CustomException, function()
 		{
 			throw expectedError;
 		});
@@ -501,8 +501,9 @@ class AssertTest
 		Assert.areEqual(expectedError.code, actualError.code);
 		
 		// Negative case: assertion raised if block doesn't throw
-		try {
-			Assert.throws(function()
+		try
+        {
+			Assert.throws(String, function()
 			{
 				// Doesn't throw
 			});
@@ -512,6 +513,24 @@ class AssertTest
 			Assert.isTrue(e.message.indexOf("wasn't thrown") > -1);
 		}
 	}
+    
+    @Test
+    public function testThrowsFailsIfWrongExceptionTypeThrown():Void
+    {
+        try
+        {
+            Assert.throws(CustomException, function()
+            {
+                throw "String error!";
+            });
+            Assert.fail("Throwing the wrong exception type didn't fail");
+        }
+        catch (e:AssertionException)
+        {
+            Assert.isTrue(e.message.indexOf("Expected exception of type") > -1);
+        }
+    }
+    
 }
 
 private enum DummyEnum

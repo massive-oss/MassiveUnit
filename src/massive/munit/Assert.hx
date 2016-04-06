@@ -215,6 +215,36 @@ class Assert
 		assertionCount++;
 		if (expected == actual) fail("Value [" + actual +"] was the same as expected value [" + expected + "]", info);
 	}
+    
+	/**
+	 * Assert that an expectation was thrown. Can expect strings and non-strings.
+	 *
+     * @Param   expectedType        the type of exception expected (eg. String, AssertionException)
+	 * @param   code				a function which should throw an exception 
+	 * @return					  the exception that was thrown	  
+	 * @throws  AssertionException  if no expectation is thrown
+	 */
+	public static function throws(expectedType:Dynamic, code:Dynamic, ?info:PosInfos):Dynamic
+	{
+		try
+		{
+			code();
+			fail("Expected exception wasn't thrown!", info);
+			return null; // needed to compile
+		}
+		catch (e:Dynamic)
+		{
+            if (Type.getClass(e) == expectedType)
+            {
+                return e;
+            }
+            else
+            {
+			    Assert.fail('Expected exception of type ${Type.getClassName(expectedType)} but got ${Type.getClassName(Type.getClass(e))}: ${e}');
+                return null; // needed to compile
+            }
+		}
+	}
 
 	/**
 	  * Force an assertion failure.
@@ -225,26 +255,5 @@ class Assert
 	public static function fail(msg:String, ?info:PosInfos):Void
 	{
 		throw new AssertionException(msg, info);
-	}
-	
-	/**
-	 * Assert that an expectation was thrown. Can expect strings and non-strings.
-	 *
-	 * @param   code				a function which should throw an exception 
-	 * @return					  the exception that was thrown	  
-	 * @throws  AssertionException  if no expectation is thrown
-	 */
-	public static function throws(code:Dynamic, ?info:PosInfos):Dynamic
-	{
-		try
-		{
-			code();
-			fail("Expected exception wasn't thrown!", info);
-			return null; // needed to compile
-		}
-		catch (e:Dynamic)
-		{
-			return e;
-		}
 	}
 }
