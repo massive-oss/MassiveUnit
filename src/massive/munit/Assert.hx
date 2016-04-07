@@ -234,7 +234,7 @@ class Assert
 		}
 		catch (e:Dynamic)
 		{
-            if (Type.getClass(e) == expectedType)
+            if (Std.is(e, expectedType))
             {
                 return e;
             }
