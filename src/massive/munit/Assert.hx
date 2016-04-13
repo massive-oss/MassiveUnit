@@ -234,15 +234,15 @@ class Assert
 		}
 		catch (e:Dynamic)
 		{
-            if (Std.is(e, expectedType))
-            {
-                return e;
-            }
-            else
-            {
-			    Assert.fail('Expected exception of type ${Type.getClassName(expectedType)} but got ${Type.getClassName(Type.getClass(e))}: ${e}');
-                return null; // needed to compile
-            }
+			if (Std.is(e, expectedType))
+			{
+				return e;
+			}
+			else
+			{
+				Assert.fail('Expected exception of type ${Type.getClassName(expectedType)} but got ${Type.getClassName(Type.getClass(e))}: ${e}');
+				return null; // needed to compile
+			}
 		}
 	}
 

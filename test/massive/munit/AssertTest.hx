@@ -490,7 +490,7 @@ class AssertTest
 			throw expectedMessage;
 		});
 		Assert.areEqual(expectedMessage, actualMessage);
-		
+
 		// Positive case: throws expected exception
 		var expectedError:CustomException = new CustomException('URL not reachable', 37);
 		var actualError:CustomException = Assert.throws(CustomException, function()
@@ -499,10 +499,10 @@ class AssertTest
 		});
 		Assert.areEqual(expectedError.message, actualError.message);
 		Assert.areEqual(expectedError.code, actualError.code);
-		
+
 		// Negative case: assertion raised if block doesn't throw
 		try
-        {
+		{
 			Assert.throws(String, function()
 			{
 				// Doesn't throw
@@ -513,23 +513,23 @@ class AssertTest
 			Assert.isTrue(e.message.indexOf("wasn't thrown") > -1);
 		}
 	}
-    
-    @Test
-    public function testThrowsFailsIfWrongExceptionTypeThrown():Void
-    {
-        try
-        {
-            Assert.throws(CustomException, function()
-            {
-                throw "String error!";
-            });
-            Assert.fail("Throwing the wrong exception type didn't fail");
-        }
-        catch (e:AssertionException)
-        {
-            Assert.isTrue(e.message.indexOf("Expected exception of type") > -1);
-        }
-    }
+
+	@Test
+	public function testThrowsFailsIfWrongExceptionTypeThrown():Void
+	{
+		try
+		{
+			Assert.throws(CustomException, function()
+			{
+				throw "String error!";
+			});
+			Assert.fail("Throwing the wrong exception type didn't fail");
+		}
+		catch (e:AssertionException)
+		{
+			Assert.isTrue(e.message.indexOf("Expected exception of type") > -1);
+		}
+	}
     
 }
 
