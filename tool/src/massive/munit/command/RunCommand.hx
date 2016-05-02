@@ -668,7 +668,7 @@ class RunCommand extends MUnitTargetCommandBase
 
 		FileSys.setCwd(config.dir.nativePath);
   
-		var exitCode = runCommand("neko " + reportRunnerFile.nativePath);
+		var exitCode = runCommand('neko "${reportRunnerFile.nativePath}"');
 
 		FileSys.setCwd(console.originalDir.nativePath);
 		
@@ -686,7 +686,7 @@ class RunCommand extends MUnitTargetCommandBase
 
 		FileSys.setCwd(config.dir.nativePath);
   
-		var exitCode = runCommand(file.nativePath);
+		var exitCode = runProgram(file.nativePath, []);
 
 		FileSys.setCwd(console.originalDir.nativePath);
 		
@@ -703,6 +703,11 @@ class RunCommand extends MUnitTargetCommandBase
 		var args = command.split(" ");
 		var name = args.shift();
 
+    return runProgram(name, args);
+  }
+
+  function runProgram(name:String, args:Array<String>)
+  {
 		var process = new Process(name, args);
 
 		try
@@ -736,7 +741,7 @@ class RunCommand extends MUnitTargetCommandBase
 		if (exitCode > 0 || stfErrString.length > 0)
 		{
 			if(error != null) error += "\n\t";
-			Sys.println("Error running '" + command + "'\n\t" + error);
+			Sys.println("Error running '" + name + "'\n\t" + error);
 		}
 
 		return exitCode;
