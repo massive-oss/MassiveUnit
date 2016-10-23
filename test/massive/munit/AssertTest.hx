@@ -389,6 +389,22 @@ class AssertTest
 	}
 
 	@Test
+	public function testDoesMatch():Void
+	{
+		Assert.doesMatch("regular_example_45-", ~/^regular_example_\d+\-$/);
+
+		try
+		{
+			Assert.doesMatch("regular_example_45", ~/^regular_\d+$/);
+		}
+		catch (e:AssertionException)
+		{
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+
+	@Test
 	public function testAreNotSameString():Void
 	{
 		Assert.areNotSame("", "yoyo");
@@ -457,6 +473,23 @@ class AssertTest
 		{
 			var e = ValueC("foo");
 			Assert.areNotSame(e, e);
+		}
+		catch (e:AssertionException)
+		{
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+
+	@Test
+	public function testDoesNotMatch():Void
+	{
+		Assert.doesNotMatch("this is a string", ~/^This is a string$/);
+		Assert.doesNotMatch("fff", ~/^\d+$/);
+
+		try
+		{
+			Assert.doesNotMatch("#198c19", ~/^#[0-9a-c]+$/i);
 		}
 		catch (e:AssertionException)
 		{
