@@ -26,8 +26,6 @@
 * or implied, of Massive Interactive.
 ****/
 
-
-
 package massive.munit;
 
 import haxe.PosInfos;
@@ -45,6 +43,8 @@ import massive.munit.ITestResultClient;
 import neko.vm.Thread;
 #elseif cpp
 import cpp.vm.Thread;
+#elseif java
+import java.vm.Thread;
 #end
 
 #if haxe3
@@ -212,7 +212,7 @@ class TestRunner implements IAsyncDelegateObserver
             testSuites.push(Type.createInstance(suiteType, new Array()));
         }
 
-        #if (neko||cpp) 
+        #if (neko || cpp || java) 
             var self = this;
             var runThread:Thread = Thread.create(function()
             {

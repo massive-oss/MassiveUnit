@@ -26,8 +26,6 @@
 * or implied, of Massive Interactive.
 ****/
 
-
-
 package massive.munit.client;
 import massive.munit.client.PrintClientBase;
 import massive.munit.AssertionException;
@@ -125,10 +123,6 @@ class PrintClient extends PrintClientBase
 				printLine("WARNING: Flash Debug Player not installed. May cause unexpected behaviour in MUnit when handling thrown exceptions.");
 			}
 		#end
-
-
-
-
 	}
 	#elseif js
 	function initJS()
@@ -193,7 +187,7 @@ class PrintClient extends PrintClientBase
 
 		#if nodejs
 			untyped process.stdout.write(value);
-		#elseif (neko || cpp || php)
+		#elseif (neko || cpp || php || java)
 			Sys.print(value);
 		#elseif (js || flash)
 			external.print(value);

@@ -26,8 +26,6 @@
 * or implied, of Massive Interactive.
 ****/
 
-
-
 package massive.munit.client;
 import massive.munit.AssertionException;
 import massive.munit.ITestResultClient;
@@ -230,7 +228,6 @@ class RichPrintClient extends PrintClientBase
 		}
 
 		return output;
-		
 	}
 
 	function printMissingCoverage(missingCoverageResults:Array<CoverageResult>)
@@ -291,7 +288,7 @@ class RichPrintClient extends PrintClientBase
 		#if (js || flash)
 			//external.queue(ExternalPrintClientJS.PRINT, value);
 			return;
-		#elseif (neko || cpp || php)
+		#elseif (neko || cpp || php || java)
 			Sys.print(value);
 		#end
 	}

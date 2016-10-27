@@ -29,7 +29,6 @@ class Target
 	
 	public function toString():String
 	{
-
 		return "Target " + Std.string(type) + " " + file.toString();
 	}
 
@@ -54,4 +53,5 @@ enum TargetType
 	js;
 	neko;
 	cpp;
+	java;
 }
