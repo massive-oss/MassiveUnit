@@ -29,7 +29,7 @@ package massive.munit.command;
 
 import haxe.io.Eof;
 import haxe.io.Path;
-//import massive.haxe.log.Log;
+import massive.haxe.log.Log;
 import massive.haxe.util.RegExpUtil;
 import massive.munit.ServerMain;
 import massive.munit.client.HTTPClient;
@@ -52,10 +52,6 @@ private typedef StringMap<T> = Hash<T>
 Don't ask - compiler always thinks it is massive.munit.TargetType enum 'neko'
 */
 typedef SysFile = sys.io.File;
-
-class Log {
-	public static function debug(s:String) Sys.println(s);
-}
 
 class RunCommand extends MUnitTargetCommandBase
 {
