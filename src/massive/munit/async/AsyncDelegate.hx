@@ -39,7 +39,6 @@ import massive.munit.util.Timer;
  * 
  * @author Mike Stead
  */
-
 class AsyncDelegate 
 {
 	/**

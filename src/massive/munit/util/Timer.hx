@@ -100,7 +100,7 @@ class Timer
 
 	public function stop()
 	{
-		#if( php || flash9 || flash || js )
+		#if(php || flash9 || flash || js)
 			if (id == null) return;
 		#end
 		#if flash9
@@ -116,7 +116,7 @@ class Timer
 			{
 				// compact array
 				var p = id - 1;
-				while ( p >= 0 && arr[p] == null) p--;
+				while(p >= 0 && arr[p] == null) p--;
 				arr = arr.slice(0, p + 1);
 			}
 		#elseif (neko || cpp || java)
@@ -126,27 +126,26 @@ class Timer
 		id = null;
 	}
 
-	public dynamic function run() 
-	{}
+	public dynamic function run() {}
 
 	#if (neko || cpp || java)
 	private function runLoop(time_ms)
 	{
 		var shouldStop = false;
-		while( !shouldStop )
+		while(!shouldStop)
 		{
-			Sys.sleep(time_ms/1000);
+			Sys.sleep(time_ms / 1000);
 			try
 			{
 				run();
 			}
-			catch( ex:Dynamic )
+			catch(ex:Dynamic)
 			{
 				trace(ex);
 			}
 
 			var msg = Thread.readMessage(false);
-			if (msg == "stop") shouldStop = true;
+			if(msg == "stop") shouldStop = true;
 		}
 	}
 	#end

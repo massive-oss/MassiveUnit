@@ -153,14 +153,14 @@ class Assert
 	public static function areEqual(expected:Dynamic, actual:Dynamic, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		var equal = switch (Type.typeof(expected))
+		var equal = switch(Type.typeof(expected))
 		{
 			#if haxe3
 			case TEnum(_): Type.enumEq(expected, actual);
 			#else
 			case TEnum(e): Type.enumEq(expected, actual);
 			#end
-			
+			case TFunction: Reflect.compareMethods(expected, actual);
 			default: expected == actual;
 		}		
 		if (!equal) fail("Value [" + actual +"] was not equal to expected value [" + expected + "]", info);

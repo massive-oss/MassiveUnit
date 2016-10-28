@@ -13,3 +13,10 @@
 # -lib mlib
 # -D HXCPP_M64
 # -cpp bin/test/core/cpp_test
+
+## Java
+-main TestMain
+-cp test
+-cp src
+-lib mlib
+-java bin/test/core/java_test
