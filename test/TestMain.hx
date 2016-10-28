@@ -77,7 +77,7 @@ class TestMain
 				flash.external.ExternalInterface.call("testResult", successful);
 			#elseif js
 				js.Lib.eval("testResult(" + successful + ");");
-			#elseif (neko || cpp || php)
+			#elseif (neko || cpp || php || java)
 				Sys.exit(0);
 			#end
 		}

@@ -38,7 +38,6 @@ class ExampleTest
 	{
 	}
 	
-	
 	@Test
 	public function testExample():Void
 	{
@@ -56,7 +55,6 @@ class ExampleTest
 	{
 		Assert.isFalse(false);
 	}
-	
 	
 	/**
 	* test that only runs when compiled with the -D testDebug flag
