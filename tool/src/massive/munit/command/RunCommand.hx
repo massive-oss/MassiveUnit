@@ -640,23 +640,39 @@ class RunCommand extends MUnitTargetCommandBase
 		return 0;
 	}
 
-	function launchNeko(file:File):Int return lauch('neko', [reportRunnerFile.nativePath]);
-
-	function launchCPP(file:File):Int return launch(file.nativePath, []);
-	
-	function launchJava(file:File):Int return launch('java', ['-jar', reportRunnerFile.nativePath]);
-	
-	function launch(launcher:String, args:Array<String>):Int
+	function launchNeko(file:File):Int
 	{
 		var reportRunnerFile = reportRunnerDir.resolvePath(file.fileName);
 		file.copyTo(reportRunnerFile);
 		FileSys.setCwd(config.dir.nativePath);
-		var exitCode = runProgram(launcher, args);
+		var exitCode = runProgram('neko', [reportRunnerFile.nativePath]);
 		FileSys.setCwd(console.originalDir.nativePath);
 		if (exitCode > 0) error('Error ($exitCode) running $file', exitCode);
 		return exitCode;
 	}
-
+	
+	function launchCPP(file:File):Int
+	{
+		var reportRunnerFile = reportRunnerDir.resolvePath(file.fileName);
+		file.copyTo(reportRunnerFile);
+		FileSys.setCwd(config.dir.nativePath);
+		var exitCode = runProgram(file.nativePath);
+		FileSys.setCwd(console.originalDir.nativePath);
+		if (exitCode > 0) error('Error ($exitCode) running $file', exitCode);
+		return exitCode;
+	}
+	
+	function launchJava(file:File):Int
+	{
+		var reportRunnerFile = reportRunnerDir.resolvePath(file.fileName);
+		file.copyTo(reportRunnerFile);
+		FileSys.setCwd(config.dir.nativePath);
+		var exitCode = runProgram('java', ['-jar', reportRunnerFile.nativePath]);
+		FileSys.setCwd(console.originalDir.nativePath);
+		if (exitCode > 0) error('Error ($exitCode) running $file', exitCode);
+		return exitCode;
+	}
+	
 	function runProgram(name:String, ?args:Array<String>)
 	{
 		var process = new Process(name, args);
