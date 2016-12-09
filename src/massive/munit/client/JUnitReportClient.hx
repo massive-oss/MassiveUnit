@@ -27,6 +27,7 @@
 ****/
 
 package massive.munit.client;
+import StringTools;
 import massive.munit.ITestResultClient;
 import massive.munit.TestResult;
 import massive.munit.util.MathUtil;
@@ -138,7 +139,7 @@ class JUnitReportClient implements IAdvancedTestResultClient
 		suiteFailCount++;
 		
 		testSuiteXML.add( "<testcase classname=\"" + result.className + "\" name=\"" + result.name + "\" time=\"" + MathUtil.round(result.executionTime, 5) + "\" >" + newline);
-		testSuiteXML.add("<failure message=\"" + result.failure.message + "\" type=\"" + result.failure.type + "\">");
+		testSuiteXML.add("<failure message=\"" + StringTools.htmlEscape(result.failure.message) + "\" type=\"" + result.failure.type + "\">");
 		testSuiteXML.add(result.failure);
 		testSuiteXML.add("</failure>" + newline);
 		testSuiteXML.add("</testcase>" + newline);
@@ -154,7 +155,7 @@ class JUnitReportClient implements IAdvancedTestResultClient
 		suiteErrorCount++;
 
 		testSuiteXML.add("<testcase classname=\"" + result.className + "\" name=\"" + result.name + "\" time=\"" + MathUtil.round(result.executionTime, 5) + "\" >" + newline);
-		testSuiteXML.add("<error message=\"" + result.error.message + "\" type=\"" + result.error.type + "\">");
+		testSuiteXML.add("<error message=\"" + StringTools.htmlEscape(result.error.message) + "\" type=\"" + result.error.type + "\">");
 		testSuiteXML.add(result.error);
 		testSuiteXML.add("</error>" + newline);
 		testSuiteXML.add("</testcase>" + newline);
