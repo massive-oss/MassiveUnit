@@ -23,7 +23,7 @@ To check that it is all installed and to view the help run:
 
 To install latest build from git:
 
-    haxelib git munit https://github.com/massiveinteractive/MassiveUnit.git src
+    haxelib git munit https://github.com/massiveinteractive/MassiveUnit.git master src
 
 Features
 ---------------------
@@ -38,21 +38,25 @@ It currently supports js, swf8, swf9, neko and c++, and the tool chain works on 
 
 Test cases use Haxe metadata to simplify creating tests (and avoid needing to extend or implement framework classes).
 
-	@Test
-	public function testExample():Void
-	{
-		Assert.isTrue(true);
-	}
+```haxe
+@Test
+public function testExample():Void
+{
+	Assert.isTrue(true);
+}
+```
 
 ### Asynchronous Tests
 
 Unlike the default haxe unit test classes, MUnit supports asynchronous testing
 
-	@AsyncTest
-	public function asyncTestExample(factory:AsyncFactory):Void
-	{
-		...
-	}
+```haxe
+@AsyncTest
+public function asyncTestExample(factory:AsyncFactory):Void
+{
+	...
+}
+```
 
 ### Tool Chain
 
@@ -176,9 +180,11 @@ Get error exit code when tests on one or more platforms fail
 > Note: haxelib currently doesnt return exit codes > 0 on OSX (see [issue](http://code.google.com/p/haxe/issues/detail?id=879))
 
 Workaround for issues with nekotools server HTTP POST via a simple SummaryReportClient
-	
-	var httpClient = new HTTPClient(new SummaryReportClient())
-	runner.addResultClient(httpClient);
+
+```haxe
+var httpClient = new HTTPClient(new SummaryReportClient())
+runner.addResultClient(httpClient);
+```
 
 
 New since 0.9.2.x
@@ -186,7 +192,9 @@ New since 0.9.2.x
 
 Rich HTML output for JavaScript and Flash targets (see RichPrintClient)
 
-	var client = new RichPrintClient();
+```haxe
+var client = new RichPrintClient();
+```
 
 Seamless support for MCover code coverage
 
@@ -204,10 +212,12 @@ CI friendly options for munit config command
 
 Support for assertions inside async tests
 
-	public function someAsyncTest(factory:AsyncFactory)
-	{
-		Assert.isTrue(false);
-	}
+```haxe
+public function someAsyncTest(factory:AsyncFactory)
+{
+	Assert.isTrue(false);
+}
+```
 
 Support for custom runner html templates and resources
 
