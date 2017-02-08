@@ -662,7 +662,7 @@ class RunCommand extends MUnitTargetCommandBase
 
 		FileSys.setCwd(config.dir.nativePath);
   
-		var exitCode = runCommand('neko "${reportRunnerFile.nativePath}"');
+		var exitCode = runCommand('neko ${reportRunnerFile.nativePath}');
 
 		FileSys.setCwd(console.originalDir.nativePath);
 		
