@@ -36,12 +36,12 @@ class GenerateCommand extends MUnitCommand
 	private var dir:File;
 	private var hxmlOutput:File;
 	private var includeHxml:Bool;
-	private var testFilter:String;
+	private var testFilters:Array<String>;
 	
 	public function new():Void
 	{
 		super();
-		testFilter = null;
+		testFilters = null;
 		includeHxml = true;
 	}
 	
@@ -60,7 +60,11 @@ class GenerateCommand extends MUnitCommand
 	
 		
 		
-		testFilter = console.getOption("-filter");
+		var filter = console.getOption("-filter");
+		if(filter != null)
+		{
+			testFilters = filter.split(",");
+		}
 	}
 
 	
@@ -200,7 +204,7 @@ class GenerateCommand extends MUnitCommand
 			clasz = dir.getRelativePath(file).substr(0, -3);
 			clasz = clasz.split("/").join(".");
 			if(clasz == "TestMain") continue;
-			if(testFilter != null && clasz.indexOf(testFilter) == -1) continue;
+			if(testFilters != null && !matchesAnyFilters(clasz)) continue;
 			
 			classes.push(clasz);
 			
@@ -208,7 +212,20 @@ class GenerateCommand extends MUnitCommand
 		
 		return classes;
 	}
-	
+
+	private function matchesAnyFilters(clasz:String):Bool
+	{
+		for(filter in testFilters)
+		{
+			if(clasz.indexOf(filter) >= 0)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	private function generateTestSuiteClassFromClasses(classes:Array<String>):String
 	{
 		var imports:String = "";
