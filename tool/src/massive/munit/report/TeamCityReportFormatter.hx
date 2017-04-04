@@ -4,11 +4,7 @@ import massive.sys.io.File;
 import massive.munit.report.ReportFormatter;
 import massive.munit.report.ReportType;
 
-#if haxe3
 import haxe.ds.StringMap;
-#else
-private typedef StringMap<T> = Hash<T>
-#end
 
 /**
 Converts result summary data into the teamcity-info.xml format.

@@ -39,12 +39,6 @@ class TestCommand extends MUnitTargetCommandBase
 {
 	var testsAborted:Bool;
 	
-
-	public function new():Void
-	{
-		super();
-	}
-
 	override public function initialise():Void
 	{
 		super.initialise();

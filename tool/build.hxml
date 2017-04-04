@@ -2,7 +2,6 @@
 -lib mlib
 -cp src
 -cp ../src
--D neko-v1
 -neko ../src/run.n
 
 -resource template/config.mtt@config
@@ -30,7 +29,6 @@
 -cp src
 -cp ../src
 -lib mlib
--D neko-v1
 -neko ../src/index.n
 
 --next

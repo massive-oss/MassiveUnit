@@ -45,12 +45,7 @@ import neko.vm.Thread;
 import cpp.vm.Thread;
 #end
 
-#if haxe3
 import haxe.CallStack;
-#else
-import haxe.Stack;
-private typedef CallStack = Stack;
-#end
 
 /**
  * Runner used to execute one or more suites of unit tests.

@@ -35,11 +35,7 @@ import massive.munit.util.MathUtil;
 import massive.haxe.util.ReflectUtil;
 import massive.munit.util.Timer;
 
-#if haxe3
 class AbstractTestResultClient implements IAdvancedTestResultClient implements ICoverageTestResultClient
-#else
-class AbstractTestResultClient implements IAdvancedTestResultClient, implements ICoverageTestResultClient
-#end
 {
 	/**
 	 * The unique identifier for the client.
@@ -49,12 +45,7 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 	/**
 	 * Handler which if present, is called when the client has completed generating its results.
 	 */
-	@:isVar
-	#if haxe3
-	public var completionHandler(get, set):ITestResultClient -> Void;
-	#else
-	public var completionHandler(get_completionHandler, set_completionHandler):ITestResultClient -> Void;
-	#end
+	@:isVar public var completionHandler(get, set):ITestResultClient -> Void;
 
 	function get_completionHandler():ITestResultClient -> Void 
 	{
@@ -68,12 +59,7 @@ class AbstractTestResultClient implements IAdvancedTestResultClient, implements 
 	/*
 	* String representation of print output
 	*/
-	@:isVar
-	#if haxe3
-	public var output(get, null):String;
-	#else
-	public var output(get_output, null):String;
-	#end
+	@:isVar public var output(get, null):String;
 	
 	function get_output():String
 	{

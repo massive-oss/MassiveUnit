@@ -29,12 +29,7 @@
 package massive.munit;
 import haxe.PosInfos;
 import massive.haxe.util.ReflectUtil;
-#if haxe3
 import haxe.CallStack;
-#else
-import haxe.Stack;
-private typedef CallStack = Stack;
-#end
 
 /**
  * Exception thrown when a test triggers an exception in code which was not captured.
@@ -86,13 +81,8 @@ class UnhandledException extends MUnitException
 			{
 				switch (stack.shift()) 
 				{
-					#if haxe3
-						case FilePos(_, file, line): s += "\tat " + file + " (" + line + ")\n";
-						case Method(classname, method): s += "\tat " + classname + "#" + method + "\n";
-					#else
-						case FilePos(item, file, line): s += "\tat " + file + " (" + line + ")\n";
-						case Method(classname, method): s += "\tat " + classname + "#" + method + "\n";
-					#end
+					case FilePos(_, file, line): s += "\tat " + file + " (" + line + ")\n";
+					case Method(classname, method): s += "\tat " + classname + "#" + method + "\n";
 					default:
 				}
 	        }

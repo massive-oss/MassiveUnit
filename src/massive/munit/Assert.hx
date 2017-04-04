@@ -153,12 +153,7 @@ class Assert
 		assertionCount++;
 		var equal = switch (Type.typeof(expected))
 		{
-			#if haxe3
 			case TEnum(_): Type.enumEq(expected, actual);
-			#else
-			case TEnum(e): Type.enumEq(expected, actual);
-			#end
-			
 			default: expected == actual;
 		}		
 		if (!equal) fail("Value [" + actual +"] was not equal to expected value [" + expected + "]", info);
@@ -179,11 +174,7 @@ class Assert
 		assertionCount++;
 		var equal = switch (Type.typeof(expected))
 		{
-			#if haxe3
 			case TEnum(_): Type.enumEq(expected, actual);
-			#else
-			case TEnum(e): Type.enumEq(expected, actual);
-			#end
 			default: expected == actual;
 		}
 

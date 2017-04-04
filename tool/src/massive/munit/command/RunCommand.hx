@@ -48,11 +48,7 @@ import sys.net.Host;
 import sys.net.Socket;
 
 
-#if haxe3
 import haxe.ds.StringMap;
-#else
-private typedef StringMap<T> = Hash<T>
-#end
  
 /**
 Don't ask - compiler always thinks it is massive.munit.TargetType enum 'neko'
@@ -398,7 +394,7 @@ class RunCommand extends MUnitTargetCommandBase
 		resultMonitor.sendMessage(Thread.current());
 		resultMonitor.sendMessage(serverProcess);
 		resultMonitor.sendMessage(serverTimeoutTimeSec);
-
+		
 		if (hasNekoTests)
 			launchNeko(nekoFile);
 
@@ -662,7 +658,7 @@ class RunCommand extends MUnitTargetCommandBase
 
 		FileSys.setCwd(config.dir.nativePath);
   
-		var exitCode = runCommand('neko "${reportRunnerFile.nativePath}"');
+		var exitCode = runCommand('neko ${reportRunnerFile.nativePath}');
 
 		FileSys.setCwd(console.originalDir.nativePath);
 		
@@ -697,11 +693,11 @@ class RunCommand extends MUnitTargetCommandBase
 		var args = command.split(" ");
 		var name = args.shift();
 
-    return runProgram(name, args);
-  }
+		return runProgram(name, args);
+	}
 
-  function runProgram(name:String, args:Array<String>)
-  {
+	function runProgram(name:String, args:Array<String>)
+	{
 		var process = new Process(name, args);
 
 		try
