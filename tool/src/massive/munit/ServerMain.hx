@@ -36,11 +36,7 @@ import massive.munit.client.SummaryReportClient;
 import massive.munit.util.Timer;
 import neko.vm.Thread;
 
-#if haxe3
 import haxe.ds.StringMap;
-#else
-private typedef StringMap<T> = Hash<T>
-#end
 
 class ServerMain
 {
