@@ -195,8 +195,7 @@ class HTTPClient implements IAdvancedTestResultClient
 
 	private function platform():String
 	{
-		#if (flash8 || flash7 || flash6) return "as2";
-		#elseif flash return "as3";
+		#if flash return "as3";
 		#elseif js return "js";
 		#elseif neko return "neko";
 		#elseif cpp return "cpp";

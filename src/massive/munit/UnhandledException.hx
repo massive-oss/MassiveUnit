@@ -63,7 +63,7 @@ class UnhandledException extends MUnitException
 	function getStackTrace(source:Dynamic):String
 	{
 		var s = "";
-		#if (flash && !flash8)
+		#if flash
 			if (Std.is(source, flash.errors.Error))
 			{
 				if(flash.system.Capabilities.isDebugger)

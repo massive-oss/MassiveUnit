@@ -312,9 +312,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 {
 	public function new()
 	{
-
 		#if flash
-		
 			if(!flash.external.ExternalInterface.available)
 			{
 				throw new MUnitException("ExternalInterface not available");
@@ -323,18 +321,13 @@ class ExternalPrintClientJS implements ExternalPrintClient
 			if(flashInitialised != true)
 			{
 				flashInitialised = true;
-				#if flash8
-					flash.Lib.current.onEnterFrame = enterFrameHandler;
-				#else
-					flash.Lib.current.stage.addEventListener(flash.events.Event.ENTER_FRAME, enterFrameHandler);
-				#end
+				flash.Lib.current.stage.addEventListener(flash.events.Event.ENTER_FRAME, enterFrameHandler);
 			}
 
 			if(!flash.system.Capabilities.isDebugger)
 			{
 				printLine("WARNING: Flash Debug Player not installed. May cause unexpected behaviour in MUnit when handling thrown exceptions.");
 			}
-			
 		#elseif js
 			var div = js.Browser.document.getElementById("haxe:trace");
 			if (div == null) 
@@ -344,7 +337,6 @@ class ExternalPrintClientJS implements ExternalPrintClient
 				js.Browser.alert(error);
 			}	
 		#else
-
 		#end
 	}
 
@@ -354,7 +346,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 		static var externalInterfaceCounter:Int = 0;
 		static var EXTERNAL_INTERFACE_FRAME_DELAY:Int = 20;
 
-		static function enterFrameHandler(#if !flash8 event:Dynamic#end)
+		static function enterFrameHandler(_)
 		{
 			if(externalInterfaceQueue.length == 0) return;
 			if(externalInterfaceCounter ++ < EXTERNAL_INTERFACE_FRAME_DELAY) return;
