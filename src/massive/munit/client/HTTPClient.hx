@@ -327,7 +327,7 @@ class URLRequest
 	#if flash9
 		function internalOnData(event:flash.events.Event) 
 		{
-			onData(event.target.data);
+			onData(cast (event.target, URLRequest).data);
 		}
 
 		function internalOnError(event:flash.events.Event)
