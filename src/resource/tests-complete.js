@@ -336,7 +336,7 @@ massive.haxe.util.ReflectUtil.here = function(info) {
 massive.munit = {};
 massive.munit.MUnitException = function(message,info) {
 	massive.haxe.Exception.call(this,message,info);
-	this.type = massive.haxe.util.ReflectUtil.here({ fileName : "MUnitException.hx", lineNumber : 50, className : "massive.munit.MUnitException", methodName : "new"}).className;
+	this.type = massive.haxe.util.ReflectUtil.here({ fileName : "MUnitException.hx", lineNumber : 52, className : "massive.munit.MUnitException", methodName : "new"}).className;
 };
 massive.munit.MUnitException.__name__ = true;
 massive.munit.MUnitException.__super__ = massive.haxe.Exception;
@@ -345,7 +345,7 @@ massive.munit.MUnitException.prototype = $extend(massive.haxe.Exception.prototyp
 });
 massive.munit.AssertionException = function(msg,info) {
 	massive.munit.MUnitException.call(this,msg,info);
-	this.type = massive.haxe.util.ReflectUtil.here({ fileName : "AssertionException.hx", lineNumber : 49, className : "massive.munit.AssertionException", methodName : "new"}).className;
+	this.type = massive.haxe.util.ReflectUtil.here({ fileName : "AssertionException.hx", lineNumber : 51, className : "massive.munit.AssertionException", methodName : "new"}).className;
 };
 massive.munit.AssertionException.__name__ = true;
 massive.munit.AssertionException.__super__ = massive.munit.MUnitException;

@@ -51,7 +51,7 @@ class TestCommand extends MUnitTargetCommandBase
 
 		initialiseTargets(true);
 
-		if (invalidHxmlFormat())
+		if (config.hxml != null && invalidHxmlFormat())
 		{
 			testsAborted = true;
 			return;

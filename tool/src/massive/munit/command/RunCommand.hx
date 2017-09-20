@@ -36,6 +36,7 @@ import sys.io.Process;
 import sys.FileSystem;
 import neko.vm.Thread;
 import neko.vm.Mutex;
+import neko.vm.Module;
 import haxe.io.Path;
 import massive.sys.io.File;
 import massive.sys.io.FileSys;
@@ -310,7 +311,8 @@ class RunCommand extends MUnitTargetCommandBase
 		indexPage.writeString(pageContent, true);
 
 		var commonResourceDir:File = console.originalDir.resolveDirectory("resource");
-		commonResourceDir.copyTo(reportRunnerDir);
+		if(commonResourceDir.exists)
+			commonResourceDir.copyTo(reportRunnerDir);
 
 		if (config.resources != null)
 		{
@@ -352,7 +354,11 @@ class RunCommand extends MUnitTargetCommandBase
 			//Windows has issue releasing port registries reliably.
 			//To prevent possibility of nekotools server failing, on
 			//windows the tmp directory is always located inside the munit install
-			FileSys.setCwd(console.originalDir.nativePath);
+			//FileSys.setCwd(console.originalDir.nativePath);
+			//console.originalDir.nativePath points to a place where neko command was executed from 
+			//not exactly where run.n is located
+			var nekoLocalDirectory = haxe.io.Path.directory(Module.local().name);
+			FileSys.setCwd(nekoLocalDirectory != "" ? nekoLocalDirectory : console.originalDir.nativePath);
 		}
 		else
 		{

@@ -97,7 +97,10 @@ class HaxeWrapper
 	{
 		if (arg.length == 0) return arg;
 		if (arg.charAt(0) == '"') return arg;
-		return arg.split(" ").join("\\ ");
+		
+		// -cp c:/Program\ Files/HaxeToolkit/haxelib/... is not a valid class path
+		//return arg.split(" ").join("\\ ");
+		return arg;
 	}
 
 	static function printIndented(str:String, indent:String="   ")
