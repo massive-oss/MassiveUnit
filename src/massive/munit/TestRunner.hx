@@ -205,11 +205,8 @@ class TestRunner implements IAsyncDelegateObserver
         testSuites = new Array<TestSuite>();
         startTime = Timer.stamp();
 
-        for (suiteType in testSuiteClasses)
-        {
-            testSuites.push(Type.createInstance(suiteType, new Array()));
-        }
-
+        makeTestClasses(testSuiteClasses);
+        
         #if (neko||cpp) 
             var self = this;
             var runThread:Thread = Thread.create(function()
@@ -230,31 +227,53 @@ class TestRunner implements IAsyncDelegateObserver
         #end
     }
 
+    private function makeTestClasses(testSuiteClasses:Array<Class<TestSuite>>) {
+      for (suiteType in testSuiteClasses)
+      {
+        var suite = Type.createInstance(suiteType, new Array());
+        #if MUNIT_TEST_GC_CPP
+        cpp.vm.Gc.doNotKill(suite);
+        #end
+        testSuites.push(suite);
+      }
+    }
+
+    function runSuite(i):Void {
+        var suite:TestSuite = testSuites[i];
+        for (testClass in suite)
+        {
+            if (activeHelper == null || activeHelper.type != testClass)
+            {
+                activeHelper = new TestClassHelper(testClass, isDebug);
+                Reflect.callMethod(activeHelper.test, activeHelper.beforeClass, emptyParams);
+            }
+            executeTestCases();
+            if (!asyncPending)
+            {
+                Reflect.callMethod(activeHelper.test, activeHelper.afterClass, emptyParams);
+            }
+            else
+            {
+                suite.repeat();
+                suiteIndex = i;
+                return;
+            }
+        }
+    }
+
     private function execute():Void
     {
         for (i in suiteIndex...testSuites.length)
         {
-            var suite:TestSuite = testSuites[i];
-            for (testClass in suite)
-            {
-                if (activeHelper == null || activeHelper.type != testClass)
-                {
-                    activeHelper = new TestClassHelper(testClass, isDebug);
-                    Reflect.callMethod(activeHelper.test, activeHelper.beforeClass, emptyParams);
-                }
-                executeTestCases();
-                if (!asyncPending)
-                {
-                    Reflect.callMethod(activeHelper.test, activeHelper.afterClass, emptyParams);
-                }
-                else
-                {
-                    suite.repeat();
-                    suiteIndex = i;
-                    return;
-                }
-            }
+            runSuite(i);
             testSuites[i] = null;
+            #if MUNIT_TEST_GC_CPP
+            cpp.vm.Gc.run(true);
+            if(cpp.vm.Gc.getNextZombie() != null)
+              Sys.println("zombie test: PASS");
+            else
+              Sys.println("zombie test: FAIL");
+            #end
         }
 
         if (!asyncPending)
