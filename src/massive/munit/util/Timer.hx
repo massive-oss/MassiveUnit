@@ -163,18 +163,12 @@ class Timer
 	#end
 
 	/**
-	 *	Returns a timestamp, in seconds
-	 */
+		Returns a timestamp, in seconds with fractions.
+		The value itself might differ depending on platforms, only differences
+		between two values make sense.
+	**/
 	public static function stamp():Float
 	{
-		#if flash
-			return flash.Lib.getTimer() / 1000;
-		#elseif (neko || cpp || java)
-			return Sys.time();
-		#elseif js
-			return Date.now().getTime() / 1000;
-		#else
-			return 0;
-		#end
+		return haxe.Timer.stamp();
 	}
 }

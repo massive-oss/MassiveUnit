@@ -217,7 +217,43 @@ class Assert
 		assertionCount++;
 		if (expected == actual) fail("Value [" + actual +"] was the same as expected value [" + expected + "]", info);
 	}
-    
+
+	/**
+	 * Assert that a string matches a regular expression. The internal state of the given regular expression
+	 * may be modified by this assertion.
+	 *
+	 * @param	string			value expected to match the regular expression
+	 * @param	regex			a regular expression that should match the string value
+	 * @throws	AssertionException	if regex does not match string
+	 */
+	public static function doesMatch(string:String, regexp:EReg, ?info:PosInfos)
+	{
+		assertionCount++;
+
+		var matches:Bool = regexp.match(string);
+		if (matches) return;
+
+		fail("Value [" + string +"] was expected to match [" + regexp + "]", info);
+	}
+
+	/**
+	 * Assert that a string does not match a regular expression. The internal state of the given regular expression
+	 * may be modified by this assertion.
+	 *
+	 * @param	string			value expected to not match the regular expression
+	 * @param	regex			a regular expression that should not match the string value
+	 * @throws	AssertionException	if regex matches string
+	 */
+	public static function doesNotMatch(string:String, regexp:EReg, ?info:PosInfos)
+	{
+		assertionCount++;
+
+		var matches:Bool = regexp.match(string);
+		if (!matches) return;
+
+		fail("Value [" + string +"] was expected to not match [" + regexp + "], and matched at [" + regexp.matchedPos().pos + "]", info);
+	}
+
 	/**
 	 * Assert that an expectation was thrown. Can expect strings and non-strings.
 	 *
