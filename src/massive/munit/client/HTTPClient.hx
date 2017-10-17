@@ -1,5 +1,5 @@
 /****
-* Copyright 2013 Massive Interactive. All rights reserved.
+* Copyright 2016 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -209,6 +209,8 @@ class HTTPClient implements IAdvancedTestResultClient
 		#elseif neko return "neko";
 		#elseif cpp return "cpp";
 		#elseif php return "php";
+		#elseif java
+		return "java";
 		#end
 		return "unknown";
 	}
@@ -258,7 +260,7 @@ class URLRequest
 	var url:String;
 	var headers:StringMap<String>;
 
-	#if (js || neko || cpp)
+	#if (js || neko || cpp || java)
 		public var client:Http;
 	#elseif flash9
 		public var client:flash.net.URLRequest;
@@ -276,7 +278,7 @@ class URLRequest
 
 	function createClient(url:String)
 	{
-		#if (js || neko || cpp)
+		#if (js || neko || cpp || java)
 			client = new Http(url);
 		#elseif flash9
 			client = new flash.net.URLRequest(url);
@@ -287,7 +289,7 @@ class URLRequest
 
 	public function setHeader(name:String, value:String)
 	{
-		#if (js || neko || cpp)
+		#if (js || neko || cpp || java)
 			client.setHeader(name, value);
 		#elseif flash9
 			client.requestHeaders.push(new flash.net.URLRequestHeader(name, value));
@@ -298,7 +300,7 @@ class URLRequest
 
 	public function send()
 	{
-		#if (js || neko || cpp)
+		#if (js || neko || cpp || java)
 			client.onData = onData;
 			client.onError = onError;
 			#if js

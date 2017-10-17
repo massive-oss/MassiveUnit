@@ -1,5 +1,5 @@
 /****
-* Copyright 2013 Massive Interactive. All rights reserved.
+* Copyright 2016 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -43,6 +43,8 @@ import massive.munit.ITestResultClient;
 import neko.vm.Thread;
 #elseif cpp
 import cpp.vm.Thread;
+#elseif java
+import java.vm.Thread;
 #end
 
 #if haxe3
@@ -210,7 +212,7 @@ class TestRunner implements IAsyncDelegateObserver
             testSuites.push(Type.createInstance(suiteType, new Array()));
         }
 
-        #if (neko||cpp) 
+        #if (neko || cpp || java) 
             var self = this;
             var runThread:Thread = Thread.create(function()
             {

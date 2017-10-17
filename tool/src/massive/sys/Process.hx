@@ -8,12 +8,17 @@ typedef NativeProcess = neko.io.Process;
 #elseif cpp
 typedef Sys = cpp.Sys;
 typedef NativeProcess = cpp.io.Process;
+#elseif java
+typedef Sys = java.Sys;
+typedef NativeProcess = java.io.Process;
 #end
 
 #if neko
 typedef Thread = neko.vm.Thread;
 #elseif cpp
 typedef Thread = cpp.vm.Thread;
+#elseif java
+typedef Thread = java.vm.Thread;
 #end
 
 typedef PrintStream =
@@ -53,7 +58,7 @@ class Process
 		var process = new NativeProcess(command, args);
 
 		// If the target supports it, spawn a new thread to stream stderr and stdout in parallel 
-		#if (neko || cpp)
+		#if (neko || cpp || java)
 		var monitor = Thread.create(function()
 		{
 			var process:NativeProcess = Thread.readMessage(true);

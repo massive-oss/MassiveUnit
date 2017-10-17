@@ -1,5 +1,6 @@
 package massive.munit.command;
 
+import haxe.io.Path;
 import massive.sys.io.File;
 import massive.sys.io.FileSys;
 
@@ -68,6 +69,8 @@ class MUnitTargetCommandBase extends MUnitCommand
 			targetTypes.push(TargetType.neko);
 		if (console.getOption("cpp") == "true")
 			targetTypes.push(TargetType.cpp);
+		if (console.getOption("java") == "true")
+			targetTypes.push(TargetType.java);
 
 		return targetTypes;
 	}
@@ -260,23 +263,25 @@ class MUnitTargetCommandBase extends MUnitCommand
 
 		var file = config.dir.getRelativePath(target.file);
 
-		if(target.type == TargetType.cpp)
-		{
-			var executablePath = target.main.name;
-
-			if(target.debug)
-			{
-				executablePath += "-debug";
-			}
-
-			if (FileSys.isWindows)
-				executablePath += ".exe";
-
-			target.executableFile = target.file.resolveFile(executablePath);
-		}
-		else
-		{
-			target.executableFile = target.file;
+		switch (target.type) {
+			case cpp:
+				var executablePath = target.main.name;
+		
+				if(target.debug)
+				{
+					executablePath += "-debug";
+				}
+		
+				if (FileSys.isWindows)
+					executablePath += ".exe";
+		
+				target.executableFile = target.file.resolveFile(executablePath);
+			case java:
+				var executablePath = target.main.name;
+				if(target.debug) executablePath += "-debug";
+				executablePath += ".jar";
+				target.executableFile = target.file.resolveFile(executablePath);
+			default: target.executableFile = target.file;
 		}
 
 		output += " " + file;
@@ -288,25 +293,19 @@ class MUnitTargetCommandBase extends MUnitCommand
 	{
 		for (type in config.targetTypes)
 		{
-			var s:String = null;
-			switch (type)
-			{
-				case as2: s = "swf";
-				case as3: s = "swf";
-				default: s = Std.string(type);
+			var stype:String = switch (type) {
+				case as2 | as3: "swf";
+				default: Std.string(type);
 			}
-			var targetMatcher = new EReg("^-" + s + "\\s+", "");
+			var targetMatcher = new EReg("^-" + stype + "\\s+", "");
 			if (targetMatcher.match(line))
 			{
-				if(type == cpp && includeCoverage)
-				{
-					return line.substr(s.length + 2) + "-coverage";
+				var result = line.substr(stype.length + 2);
+				result = switch(type) {
+					case cpp | java if(includeCoverage): result + "-coverage";
+					default: result;
 				}
-				else
-				{
-					return line.substr(s.length + 2);
-				}
-
+				return Path.normalize(result);
 			}
 		}
 		return null;

@@ -1,5 +1,5 @@
 /****
-* Copyright 2013 Massive Interactive. All rights reserved.
+* Copyright 2016 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -123,10 +123,6 @@ class PrintClient extends PrintClientBase
 				printLine("WARNING: Flash Debug Player not installed. May cause unexpected behaviour in MUnit when handling thrown exceptions.");
 			}
 		#end
-
-
-
-
 	}
 	#elseif js
 	function initJS()
@@ -191,7 +187,7 @@ class PrintClient extends PrintClientBase
 
 		#if nodejs
 			untyped process.stdout.write(value);
-		#elseif (neko || cpp || php)
+		#elseif (neko || cpp || php || java)
 			Sys.print(value);
 		#elseif (js || flash)
 			external.print(value);

@@ -166,9 +166,9 @@ class TestCommand extends MUnitTargetCommandBase
 
 			
 
-			if(target.type == TargetType.cpp)
-			{
-				target.executableFile.deleteFile();
+			switch(target.type) {
+				case cpp | java: target.executableFile.deleteFile();
+				default:
 			}
 
 			Log.debug("Compile " + target.type + " -- " + target);
@@ -179,13 +179,9 @@ class TestCommand extends MUnitTargetCommandBase
 			}	
 
 			var tmp = config.bin.resolveFile(".temp/" + target.type + ".txt");
-			if (target.type == cpp)
-			{
-				tmp.writeString(target.executableFile, false);
-			}
-			else
-			{
-				tmp.writeString(target.file, false);
+			switch(target.type) {
+				case cpp | java: tmp.writeString(target.executableFile, false);
+				default: tmp.writeString(target.file, false);
 			}
 		}
 		

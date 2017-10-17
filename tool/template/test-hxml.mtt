@@ -54,4 +54,13 @@
 #-D HXCPP_M64
 -cpp ::bin::/cpp_test
 
+--next
 
+## Java
+-main TestMain
+-lib munit
+-lib hamcrest
+::foreach classPaths::-cp ::__current__::
+::end::
+-cp ::src::
+-java ::bin::/java_test

@@ -28,14 +28,11 @@
 package massive.munit;
 
 /**
- * ...
  * @author Mike Stead
  */
-
 class TestClassHelperTest 
 {
-	public function new() 
-	{}
+	public function new() {}
 
 	@Test
 	public function testConstructor():Void
