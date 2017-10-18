@@ -1,5 +1,5 @@
 /****
-* Copyright 2013 Massive Interactive. All rights reserved.
+* Copyright 2017 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,7 +26,10 @@
 * or implied, of Massive Interactive.
 ****/
 
+
+
 package massive.munit.client;
+import StringTools;
 import massive.munit.ITestResultClient;
 import massive.munit.TestResult;
 import massive.munit.util.MathUtil;
@@ -133,7 +136,7 @@ class JUnitReportClient implements IAdvancedTestResultClient
 		suiteFailCount++;
 		
 		testSuiteXML.add( "<testcase classname=\"" + result.className + "\" name=\"" + result.name + "\" time=\"" + MathUtil.round(result.executionTime, 5) + "\" >" + newline);
-		testSuiteXML.add("<failure message=\"" + result.failure.message + "\" type=\"" + result.failure.type + "\">");
+		testSuiteXML.add("<failure message=\"" + StringTools.htmlEscape(result.failure.message) + "\" type=\"" + result.failure.type + "\">");
 		testSuiteXML.add(result.failure);
 		testSuiteXML.add("</failure>" + newline);
 		testSuiteXML.add("</testcase>" + newline);
@@ -149,7 +152,7 @@ class JUnitReportClient implements IAdvancedTestResultClient
 		suiteErrorCount++;
 
 		testSuiteXML.add("<testcase classname=\"" + result.className + "\" name=\"" + result.name + "\" time=\"" + MathUtil.round(result.executionTime, 5) + "\" >" + newline);
-		testSuiteXML.add("<error message=\"" + result.error.message + "\" type=\"" + result.error.type + "\">");
+		testSuiteXML.add("<error message=\"" + StringTools.htmlEscape(result.error.message) + "\" type=\"" + result.error.type + "\">");
 		testSuiteXML.add(result.error);
 		testSuiteXML.add("</error>" + newline);
 		testSuiteXML.add("</testcase>" + newline);

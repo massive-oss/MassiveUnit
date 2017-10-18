@@ -22,26 +22,24 @@ Optional Arguments:
 
 Optional Parameters
 
-   -[platform]     : One or more specific target platforms to compile
-	             Valid options are '-swf' (both -as2 and -as3) '-as2' 
-                     '-as3', '-js' and '-neko'. If not target(s) provided all found
-                     test.hxml will be run.
+   -[platform]       : One or more specific target platforms to compile
+                       Valid options are '-swf', '-as3', '-js', '-neko',
+                       '-cpp' and '-java'. If not target(s) provided all found
+                       test.hxml will be run.
 
-   -browser name  : Optional value to launch a URL from a specific browser.
-                    Uses the default browser if not set.
+   -browser name     : Optional value to launch a URL from a specific browser.
+                       Uses the default browser if not set.
 
-   -nogen         : Don't execute gen command prior to build
+   -nogen            : Don't execute gen command prior to build
 
-   -norun         : Don't execute run command after build
+   -norun            : Don't execute run command after build
 
-   -kill-browser  : Attempt to close browser window / tab when web tests are complete.
-                     Works in Chrome but not other browsers due to JS security.
+   -kill-browser     : Attempt to close browser window / tab when web tests are complete.
+                       Works in Chrome but not other browsers due to JS security.
 
-   -debug         : Runs tests in debug mode, targeting only tests marked with '@TestDebug'
-                    Also adds the 'debug' compiler flag to the build.
+   -debug            : Runs tests in debug mode, targeting only tests marked with '@TestDebug'
+                       Also adds the 'debug' compiler flag to the build.
 
-   -coverage      : Compiles and runs tests with MCover code coverage enabled 
+   -coverage         : Compiles and runs tests with MCover code coverage enabled 
 
-  -result-exit-code : Exits with error code (1) if tests fail
-
-
+   -result-exit-code : Exits with error code (1) if tests fail

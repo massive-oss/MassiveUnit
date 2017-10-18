@@ -12,20 +12,6 @@
 
 --next
 
-# Flash as2
--main TestMain
--lib munit
-# -lib mlib
-# -lib mcover
-# -cp ../../core/src
--lib hamcrest
--cp src
--cp test
--swf-version 8
--swf bin/as2_test.swf
-
---next
-
 # JavaScript
 -main TestMain
 -lib munit

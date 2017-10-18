@@ -1,5 +1,5 @@
 /****
-* Copyright 2013 Massive Interactive. All rights reserved.
+* Copyright 2017 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,6 +25,8 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Massive Interactive.
 ****/
+
+
 
 package massive.munit.client;
 import massive.munit.AssertionException;
@@ -228,7 +230,6 @@ class RichPrintClient extends PrintClientBase
 		}
 
 		return output;
-		
 	}
 
 	function printMissingCoverage(missingCoverageResults:Array<CoverageResult>)
@@ -289,7 +290,7 @@ class RichPrintClient extends PrintClientBase
 		#if (js || flash)
 			//external.queue(ExternalPrintClientJS.PRINT, value);
 			return;
-		#elseif (neko || cpp || php)
+		#elseif (neko || cpp || php || java)
 			Sys.print(value);
 		#end
 	}

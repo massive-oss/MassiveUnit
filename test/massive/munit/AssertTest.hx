@@ -373,13 +373,13 @@ class AssertTest
 	}
 
 	@Test
-	public function testAreSameEnumWithParam():Void
+	public function testDoesMatch():Void
 	{
-		var e = ValueC("foo");
-		Assert.areSame(e, e);
+		Assert.doesMatch("regular_example_45-", ~/^regular_example_\d+\-$/);
+
 		try
 		{
-			Assert.areSame(e, ValueC("foo"));
+			Assert.doesMatch("regular_example_45", ~/^regular_\d+$/);
 		}
 		catch (e:AssertionException)
 		{
@@ -435,28 +435,14 @@ class AssertTest
 	}
 
 	@Test
-	public function testAreNotSameEnum():Void
+	public function testDoesNotMatch():Void
 	{
-		Assert.areNotSame(ValueA, ValueB);
-		try
-		{
-			Assert.areNotSame(ValueA, ValueA);
-		}
-		catch (e:AssertionException)
-		{
-			return;
-		}
-		Assert.fail("Invalid assertion not captured");
-	}
+		Assert.doesNotMatch("this is a string", ~/^This is a string$/);
+		Assert.doesNotMatch("fff", ~/^\d+$/);
 
-	@Test
-	public function testAreNotSameEnumWithParam():Void
-	{
-		Assert.areNotSame(ValueC("foo"), ValueC("foo"));
 		try
 		{
-			var e = ValueC("foo");
-			Assert.areNotSame(e, e);
+			Assert.doesNotMatch("#198c19", ~/^#[0-9a-c]+$/i);
 		}
 		catch (e:AssertionException)
 		{

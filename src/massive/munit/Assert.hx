@@ -1,15 +1,15 @@
 /****
-* Copyright 2013 Massive Interactive. All rights reserved.
+* Copyright 2017 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
 * 
-*	1. Redistributions of source code must retain the above copyright notice, this list of
-*	   conditions and the following disclaimer.
+*    1. Redistributions of source code must retain the above copyright notice, this list of
+*       conditions and the following disclaimer.
 * 
-*	2. Redistributions in binary form must reproduce the above copyright notice, this list
-*	   of conditions and the following disclaimer in the documentation and/or other materials
-*	   provided with the distribution.
+*    2. Redistributions in binary form must reproduce the above copyright notice, this list
+*       of conditions and the following disclaimer in the documentation and/or other materials
+*       provided with the distribution.
 * 
 * THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -151,9 +151,10 @@ class Assert
 	public static function areEqual(expected:Dynamic, actual:Dynamic, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		var equal = switch (Type.typeof(expected))
+		var equal = switch(Type.typeof(expected))
 		{
 			case TEnum(_): Type.enumEq(expected, actual);
+			case TFunction: Reflect.compareMethods(expected, actual);
 			default: expected == actual;
 		}		
 		if (!equal) fail("Value [" + actual +"] was not equal to expected value [" + expected + "]", info);
@@ -206,7 +207,43 @@ class Assert
 		assertionCount++;
 		if (expected == actual) fail("Value [" + actual +"] was the same as expected value [" + expected + "]", info);
 	}
-    
+
+	/**
+	 * Assert that a string matches a regular expression. The internal state of the given regular expression
+	 * may be modified by this assertion.
+	 *
+	 * @param	string			value expected to match the regular expression
+	 * @param	regex			a regular expression that should match the string value
+	 * @throws	AssertionException	if regex does not match string
+	 */
+	public static function doesMatch(string:String, regexp:EReg, ?info:PosInfos)
+	{
+		assertionCount++;
+
+		var matches:Bool = regexp.match(string);
+		if (matches) return;
+
+		fail("Value [" + string +"] was expected to match [" + regexp + "]", info);
+	}
+
+	/**
+	 * Assert that a string does not match a regular expression. The internal state of the given regular expression
+	 * may be modified by this assertion.
+	 *
+	 * @param	string			value expected to not match the regular expression
+	 * @param	regex			a regular expression that should not match the string value
+	 * @throws	AssertionException	if regex matches string
+	 */
+	public static function doesNotMatch(string:String, regexp:EReg, ?info:PosInfos)
+	{
+		assertionCount++;
+
+		var matches:Bool = regexp.match(string);
+		if (!matches) return;
+
+		fail("Value [" + string +"] was expected to not match [" + regexp + "], and matched at [" + regexp.matchedPos().pos + "]", info);
+	}
+
 	/**
 	 * Assert that an expectation was thrown. Can expect strings and non-strings.
 	 *

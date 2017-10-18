@@ -36,7 +36,6 @@ class URLRequestTest
 	{
 	}
 	
-	
 	@Test
 	public function testConstructor():Void
 	{
@@ -45,12 +44,9 @@ class URLRequestTest
 		
 		Assert.isNotNull(instance.client);
 		
-		#if (js || neko || cpp)
-			Assert.areEqual(url, instance.client.url);
-		#elseif flash9
+		#if (js || neko || cpp || java)
 			Assert.areEqual(url, instance.client.url);
 		#elseif flash
-			
 		#end
 	}
 }

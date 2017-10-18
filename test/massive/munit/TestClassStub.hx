@@ -30,14 +30,11 @@ import massive.munit.async.AsyncFactory;
 import massive.munit.util.Timer;
 
 /**
- * ...
  * @author Mike Stead
  */
-
 class TestClassStub 
 {
-	public function new() 
-	{}
+	public function new() {}
 	
 	@BeforeClass
 	public function beforeClass():Void

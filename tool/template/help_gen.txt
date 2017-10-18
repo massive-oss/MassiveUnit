@@ -7,7 +7,7 @@ usage: gen [srcPath] [hxmlPath]
 
     On subsequent runs it will only update the TestSuite to include the
     test classes insde the test source directory (All files ending in *Test.hx)
- 	
+
     To target a single class or package use the -filter option (This will only
     include Test classes matching the string provided. 
   
@@ -30,4 +30,3 @@ Options
 
    -filter [name] : reference to a class or package. Any Test classes matching the string
                    will be included in the test suite.
-

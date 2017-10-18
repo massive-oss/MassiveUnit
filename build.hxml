@@ -1,15 +1,16 @@
--cmd echo build MUnit2017
+-cmd echo build MUnit
 -cmd echo compile tool
 -cmd cd ./tool
 -cmd haxe build.hxml
 -cmd cd ..
 -cmd echo set dev directory for testing
--cmd haxelib dev munit ./src
+-cmd haxelib dev munit .
 -cmd echo run tool tests
 -cmd cd ./tool
 -cmd haxelib run munit test -coverage
 -cmd cd ..
 -cmd echo run core tests
--cmd haxelib run munit test -coverage
--cmd echo "package up and install over current version
--cmd haxelib run mlib install
+#-cmd haxelib run munit test -coverage
+-cmd haxelib run munit test
+#-cmd echo "package up and install over current version
+#-cmd haxelib run mlib install

@@ -26,18 +26,17 @@
  * or implied, of Massive Interactive.
  */
 package massive.munit;
-import massive.haxe.log.Log;
-import massive.sys.cmd.CommandLineRunner;
-import massive.sys.cmd.ICommand;
 import haxe.Resource;
-
-import massive.munit.command.GenerateCommand;
-import massive.munit.command.RunCommand;
-import massive.munit.command.TestCommand;
+import massive.haxe.log.Log;
 import massive.munit.command.ConfigCommand;
 import massive.munit.command.CreateTestCommand;
+import massive.munit.command.GenerateCommand;
 import massive.munit.command.MUnitCommand;
 import massive.munit.command.ReportCommand;
+import massive.munit.command.RunCommand;
+import massive.munit.command.TestCommand;
+import massive.sys.cmd.CommandLineRunner;
+import massive.sys.cmd.ICommand;
 
 class MunitCommandLineRunner extends CommandLineRunner
 {

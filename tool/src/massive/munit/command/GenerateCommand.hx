@@ -169,12 +169,11 @@ class GenerateCommand extends MUnitCommand
 		if(hxmlOutput.exists) return;
 			
 		var src:String = config.src != null ? config.dir.getRelativePath(config.src) + "" : "";
-		var bin:String = config.bin != null ? config.dir.getRelativePath(config.bin) + "": "";
+		var bin:String = config.bin != null ? config.dir.getRelativePath(config.bin) + "" : "";
 
 		//write out stub hxml file
 		var content = TemplateUtil.getTemplate("test-hxml", {src:src, bin:bin});
 		hxmlOutput.writeString(content, true);
-		
 	}
 	
 	

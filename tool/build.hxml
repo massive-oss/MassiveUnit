@@ -2,7 +2,7 @@
 -lib mlib
 -cp src
 -cp ../src
--neko ../src/run.n
+-neko ../run.n
 
 -resource template/config.mtt@config
 -resource template/help.mtt@help
@@ -29,7 +29,7 @@
 -cp src
 -cp ../src
 -lib mlib
--neko ../src/index.n
+-neko ../index.n
 
 --next
 

@@ -15,8 +15,8 @@ Optional Arguments:
 Optional Parameters:
 
    -[platform]       : One or more specific target platforms to compile
-                       Valid options are '-swf' (both -as2 and -as3) '-as2' 
-                       '-as3', '-js' and '-neko'. If not target(s) provided 
+                       Valid options are '-swf', '-as3', '-js', '-neko',
+                       '-cpp' and '-java'. If not target(s) provided 
                        all found test.hxml will be run.
 
    -browser name     : Optional value to launch a URL from a specific browser.
@@ -28,4 +28,3 @@ Optional Parameters:
    -result-exit-code : Exits with error code (1) if tests fail
 
    -timeout          : Maximum time the tests are allowed to run (default: 30).
-   

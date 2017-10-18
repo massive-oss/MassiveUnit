@@ -1,5 +1,5 @@
 /****
-* Copyright 2013 Massive Interactive. All rights reserved.
+* Copyright 2017 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,6 +25,8 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Massive Interactive.
 ****/
+
+
 
 /*
  * Copyright (c) 2005, The haXe Project Contributors
@@ -56,6 +58,8 @@ package massive.munit.util;
 import neko.vm.Thread;
 #elseif cpp
 import cpp.vm.Thread;
+#elseif java
+import java.vm.Thread;
 #end
 
 @:expose('massive.munit.util.Timer')
@@ -69,28 +73,25 @@ class Timer
 	#if js
 	private static var arr = new Array<Timer>();
 	private var timerId:Int;
-	#elseif (neko||cpp)
+	#elseif (neko || cpp || java)
 	private var runThread:Thread;
 	#end
 
 	public function new(time_ms:Int)
 	{
-		#if flash9
-			var me = this;
-			id = untyped __global__["flash.utils.setInterval"](function() { me.run(); },time_ms);
-		#elseif flash
+		#if flash
 			var me = this;
 			id = untyped _global["setInterval"](function() { me.run(); },time_ms);
 		#elseif nodejs
 			var arr :Array<Dynamic> = untyped global.haxe_timers = global.haxe_timers == null ? [] : global.haxe_timers;
 			var me 	= this;
-			me.id		= arr.length;
+			me.id = arr.length;
 			arr[me.id] = me;
 		#elseif js
 			id = arr.length;
 			arr[id] = this;
 			timerId = untyped window.setInterval("massive.munit.util.Timer.arr["+id+"].run();",time_ms);
-		#elseif (neko||cpp)
+		#elseif (neko || cpp || java)
 			var me = this;
 			runThread = Thread.create(function() { me.runLoop(time_ms); } );
 		#end
@@ -98,12 +99,10 @@ class Timer
 
 	public function stop()
 	{
-		#if( php || flash9 || flash || js )
+		#if(php || flash || js)
 			if (id == null) return;
 		#end
-		#if flash9
-			untyped __global__["flash.utils.clearInterval"](id);
-		#elseif flash
+		#if flash
 			untyped _global["clearInterval"](id);
 		#elseif nodejs
 			untyped clearInterval(timerId);
@@ -114,37 +113,36 @@ class Timer
 			{
 				// compact array
 				var p = id - 1;
-				while ( p >= 0 && arr[p] == null) p--;
+				while(p >= 0 && arr[p] == null) p--;
 				arr = arr.slice(0, p + 1);
 			}
-		#elseif (neko||cpp)
+		#elseif (neko || cpp || java)
 			run = function() {};
 			runThread.sendMessage("stop");
 		#end
 		id = null;
 	}
 
-	public dynamic function run() 
-	{}
+	public dynamic function run() {}
 
-	#if (neko||cpp)
+	#if (neko || cpp || java)
 	private function runLoop(time_ms)
 	{
 		var shouldStop = false;
-		while( !shouldStop )
+		while(!shouldStop)
 		{
-			Sys.sleep(time_ms/1000);
+			Sys.sleep(time_ms / 1000);
 			try
 			{
 				run();
 			}
-			catch( ex:Dynamic )
+			catch(ex:Dynamic)
 			{
 				trace(ex);
 			}
 
 			var msg = Thread.readMessage(false);
-			if (msg == "stop") shouldStop = true;
+			if(msg == "stop") shouldStop = true;
 		}
 	}
 	#end
@@ -162,22 +160,12 @@ class Timer
 	#end
 
 	/**
-	 *	Returns a timestamp, in seconds
-	 */
+		Returns a timestamp, in seconds with fractions.
+		The value itself might differ depending on platforms, only differences
+		between two values make sense.
+	**/
 	public static function stamp():Float
 	{
-		#if flash
-			return flash.Lib.getTimer() / 1000;
-		#elseif (neko || cpp)
-			return Sys.time();
-		#elseif php
-			return Sys.time();
-		#elseif js
-			return Date.now().getTime() / 1000;
-		#elseif cpp
-			return untyped __time_stamp();
-		#else
-			return 0;
-		#end
+		return haxe.Timer.stamp();
 	}
 }
