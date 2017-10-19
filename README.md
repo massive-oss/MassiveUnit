@@ -23,7 +23,7 @@ To check that it is all installed and to view the help run:
 
 To install latest build from git:
 
-    haxelib git munit https://github.com/massiveinteractive/MassiveUnit.git master
+    haxelib git munit https://github.com/massiveinteractive/MassiveUnit.git master src
 
 Features
 ---------------------
