@@ -42,11 +42,8 @@ import sys.io.Process;
 import sys.net.Host;
 import sys.net.Socket;
 
-#if haxe3
+
 import haxe.ds.StringMap;
-#else
-private typedef StringMap<T> = Hash<T>
-#end
  
 /**
 Don't ask - compiler always thinks it is massive.munit.TargetType enum 'neko'
@@ -380,7 +377,7 @@ class RunCommand extends MUnitTargetCommandBase
 		resultMonitor.sendMessage(Thread.current());
 		resultMonitor.sendMessage(serverProcess);
 		resultMonitor.sendMessage(serverTimeoutTimeSec);
-
+		
 		if (hasNekoTests)
 			launchNeko(nekoFile);
 

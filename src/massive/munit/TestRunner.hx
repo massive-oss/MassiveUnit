@@ -1,5 +1,5 @@
 /****
-* Copyright 2016 Massive Interactive. All rights reserved.
+* Copyright 2017 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,6 +26,8 @@
 * or implied, of Massive Interactive.
 ****/
 
+
+
 package massive.munit;
 
 import haxe.PosInfos;
@@ -47,12 +49,7 @@ import cpp.vm.Thread;
 import java.vm.Thread;
 #end
 
-#if haxe3
 import haxe.CallStack;
-#else
-import haxe.Stack;
-private typedef CallStack = Stack;
-#end
 
 /**
  * Runner used to execute one or more suites of unit tests.

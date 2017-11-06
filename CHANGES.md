@@ -1,3 +1,9 @@
+## dev
+- Added java support
+- Dropped support for Haxe 2
+- Dropped support for flash8
+- Dropped support for flash9
+
 ## 2.1.2
 
 - [#77](https://github.com/massiveinteractive/MassiveUnit/pull/77) Windows and FlashDevelop compatibility.

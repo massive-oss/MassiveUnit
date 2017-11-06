@@ -45,3 +45,4 @@ cached-classes-null-IgnoreCover.txt
 
 .haxelib
 /haxelib.json
+src/tmp/

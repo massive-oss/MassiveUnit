@@ -2,21 +2,20 @@
 	"name": "munit",
 	"license": "MIT",
 	"tags": [
-	"cross",
-	"utility",
-	"unittest",
-	"testing",
-	"massive"
-],
+		"cross",
+		"utility",
+		"unittest",
+		"testing",
+		"massive"
+	],
 	"description": "A cross platform unit testing framework for Haxe with metadata test markup and tools for generating, compiling and running tests from the command line.",
 	"contributors": [
-	"massive"
-],
+		"massive"
+	],
 	"releasenote": "See https://github.com/massiveinteractive/MassiveUnit/blob/master/CHANGES.md",
 	"version": "2.1.2",
 	"url": "http://github.com/massiveinteractive/MassiveUnit",
-	"dependencies": 
-	{
+	"dependencies": {
 		"mlib": "",
 		"mcover": ""
 	}

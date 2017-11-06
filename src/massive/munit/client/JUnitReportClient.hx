@@ -1,5 +1,5 @@
 /****
-* Copyright 2016 Massive Interactive. All rights reserved.
+* Copyright 2017 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -56,12 +56,7 @@ class JUnitReportClient implements IAdvancedTestResultClient
 	/**
 	 * Handler which if present, is called when the client has completed generating its results.
 	 */
-	@:isVar
-	#if haxe3
-	public var completionHandler(get, set):ITestResultClient -> Void;
-	#else
-	public var completionHandler(get_completionHandler, set_completionHandler):ITestResultClient -> Void;
-	#end
+	@:isVar public var completionHandler(get, set):ITestResultClient -> Void;
 	
 	private function get_completionHandler():ITestResultClient -> Void 
 	{

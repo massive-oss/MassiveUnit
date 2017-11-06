@@ -1,5 +1,5 @@
 /****
-* Copyright 2016 Massive Interactive. All rights reserved.
+* Copyright 2017 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,6 +25,8 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Massive Interactive.
 ****/
+
+
 
 /*
  * Copyright (c) 2005, The haXe Project Contributors
@@ -77,10 +79,7 @@ class Timer
 
 	public function new(time_ms:Int)
 	{
-		#if flash9
-			var me = this;
-			id = untyped __global__["flash.utils.setInterval"](function() { me.run(); },time_ms);
-		#elseif flash
+		#if flash
 			var me = this;
 			id = untyped _global["setInterval"](function() { me.run(); },time_ms);
 		#elseif nodejs
@@ -100,12 +99,10 @@ class Timer
 
 	public function stop()
 	{
-		#if(php || flash9 || flash || js)
+		#if(php || flash || js)
 			if (id == null) return;
 		#end
-		#if flash9
-			untyped __global__["flash.utils.clearInterval"](id);
-		#elseif flash
+		#if flash
 			untyped _global["clearInterval"](id);
 		#elseif nodejs
 			untyped clearInterval(timerId);

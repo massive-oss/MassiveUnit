@@ -56,12 +56,8 @@ class TestResultClientStub implements IAdvancedTestResultClient
 	public var currentTestClass:String;
 	public var testClasses:Array<String>;
 
-	@:isVar
-	#if haxe3
-	public var completionHandler(get, set):ITestResultClient -> Void;
-	#else
-	public var completionHandler(get_completionHandler, set_completionHandler):ITestResultClient -> Void;
-	#end
+	@:isVar public var completionHandler(get, set):ITestResultClient -> Void;
+	
 	function get_completionHandler():ITestResultClient -> Void 
 	{
 		return completionHandler;

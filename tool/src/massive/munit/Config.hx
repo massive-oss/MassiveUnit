@@ -63,7 +63,7 @@ class Config
 		this.dir = dir;
 		this.currentVersion = currentVersion;
 		
-		defaultTargetTypes = [TargetType.as2, TargetType.as3, TargetType.js, TargetType.neko, TargetType.cpp, TargetType.java];
+		defaultTargetTypes = [TargetType.as3, TargetType.js, TargetType.neko, TargetType.cpp, TargetType.java];
 		targetTypes = defaultTargetTypes;
 		targets = [];
 

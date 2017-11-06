@@ -3,7 +3,7 @@ MUnit is a metadata driven unit testing framework for cross-platform Haxe develo
 
 It includes tools for creating, updating, compiling and running unit test cases from the command line.
 
-Munit supports Haxe 2.10 and Haxe 3 RC
+MUnit supports Haxe 3+
 
 Installation
 ---------------------
@@ -31,7 +31,7 @@ Features
 ### Cross Platform
 
 MUnit has been designed for cross platform Haxe development.
-It currently supports js, swf8, swf9, neko and c++, and the tool chain works on PC and OSX
+It currently supports js, swf, as3, neko, c++ amd java, and the tool chain works on Windows, OSX and Linux
 
 
 ### Test Metadata

@@ -1,5 +1,5 @@
 /****
-* Copyright 2016 Massive Interactive. All rights reserved.
+* Copyright 2017 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -314,9 +314,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 {
 	public function new()
 	{
-
 		#if flash
-		
 			if(!flash.external.ExternalInterface.available)
 			{
 				throw new MUnitException("ExternalInterface not available");
@@ -325,37 +323,22 @@ class ExternalPrintClientJS implements ExternalPrintClient
 			if(flashInitialised != true)
 			{
 				flashInitialised = true;
-				#if flash8
-					flash.Lib.current.onEnterFrame = enterFrameHandler;
-				#else
-					flash.Lib.current.stage.addEventListener(flash.events.Event.ENTER_FRAME, enterFrameHandler);
-				#end
+				flash.Lib.current.stage.addEventListener(flash.events.Event.ENTER_FRAME, enterFrameHandler);
 			}
 
 			if(!flash.system.Capabilities.isDebugger)
 			{
 				printLine("WARNING: Flash Debug Player not installed. May cause unexpected behaviour in MUnit when handling thrown exceptions.");
 			}
-			
 		#elseif js
-			#if haxe3
 			var div = js.Browser.document.getElementById("haxe:trace");
-			#else
-			var div = js.Lib.document.getElementById("haxe:trace");
-			#end
-				
 			if (div == null) 
 			{
 				var positionInfo = ReflectUtil.here();
 				var error:String = "MissingElementException: 'haxe:trace' element not found at " + positionInfo.className + "#" + positionInfo.methodName + "(" + positionInfo.lineNumber + ")";
-				#if haxe3
 				js.Browser.alert(error);
-				#else
-				js.Lib.alert(error);
-				#end
 			}	
 		#else
-
 		#end
 	}
 
@@ -365,7 +348,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 		static var externalInterfaceCounter:Int = 0;
 		static var EXTERNAL_INTERFACE_FRAME_DELAY:Int = 20;
 
-		static function enterFrameHandler(#if !flash8 event:Dynamic#end)
+		static function enterFrameHandler(_)
 		{
 			if(externalInterfaceQueue.length == 0) return;
 			if(externalInterfaceCounter ++ < EXTERNAL_INTERFACE_FRAME_DELAY) return;

@@ -44,7 +44,7 @@ class URLRequestTest
 		
 		Assert.isNotNull(instance.client);
 		
-		#if (js || flash9 || neko || cpp || java)
+		#if (js || neko || cpp || java)
 			Assert.areEqual(url, instance.client.url);
 		#elseif flash
 		#end

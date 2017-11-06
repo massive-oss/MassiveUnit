@@ -51,18 +51,8 @@ class MUnitTargetCommandBase extends MUnitCommand
 	{
 		var targetTypes = new Array();
 
-		if (console.getOption("swf") == "true")
-		{
+		if (console.getOption("swf") == "true" || console.getOption("as3") == "true")
 			targetTypes.push(TargetType.as3);
-			targetTypes.push(TargetType.as2);
-		}
-		else
-		{
-			if (console.getOption("as2") == "true")
-				targetTypes.push(TargetType.as2);
-			if (console.getOption("as3") == "true")
-				targetTypes.push(TargetType.as3);
-		}
 		if (console.getOption("js") == "true")
 			targetTypes.push(TargetType.js);
 		if (console.getOption("neko") == "true")
@@ -224,7 +214,6 @@ class MUnitTargetCommandBase extends MUnitCommand
 					var s:String = null;
 					switch(type)
 					{
-						case as2: s = "swf-version 8";
 						case as3: s = "swf-version [^8]";
 						default: s = Std.string(type);
 					}	
@@ -256,7 +245,6 @@ class MUnitTargetCommandBase extends MUnitCommand
 
 		switch(target.type)
 		{
-			case as2: output = "-swf";
 			case as3: output = "-swf";
 			default: output = "-" + Std.string(target.type);
 		}
@@ -294,7 +282,7 @@ class MUnitTargetCommandBase extends MUnitCommand
 		for (type in config.targetTypes)
 		{
 			var stype:String = switch (type) {
-				case as2 | as3: "swf";
+				case as3: "swf";
 				default: Std.string(type);
 			}
 			var targetMatcher = new EReg("^-" + stype + "\\s+", "");

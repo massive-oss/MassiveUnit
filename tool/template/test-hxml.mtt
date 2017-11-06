@@ -10,18 +10,6 @@
 
 --next
 
-## Flash 8
--main TestMain
--lib munit
--lib hamcrest
-::foreach classPaths::-cp ::__current__::
-::end::
--cp ::src::
--swf-version 8
--swf ::bin::/as2_test.swf
-
---next
-
 ## JavaScript
 -main TestMain
 -lib munit

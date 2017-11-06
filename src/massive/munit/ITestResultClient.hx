@@ -1,5 +1,5 @@
 /****
-* Copyright 2016 Massive Interactive. All rights reserved.
+* Copyright 2017 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -45,11 +45,7 @@ interface ITestResultClient
 	/**
 	 * Handler which if present, should be called when the client has completed its processing of the results.
 	 */
-	#if haxe3
 	var completionHandler(get, set):ITestResultClient -> Void;
-	#else
-	var completionHandler(get_completionHandler, set_completionHandler):ITestResultClient -> Void;
-	#end
 
 	/**
 	 * The unique identifier for the client.
@@ -108,11 +104,7 @@ interface ITestResultClient
  * @author Dominic De Lorenzo
  * @see TestRunner
  */
-#if haxe3
 interface IAdvancedTestResultClient extends ITestResultClient
-#else
-interface IAdvancedTestResultClient implements ITestResultClient
-#end
 {	
 	/**
 	 * Called before a new test class in run.
@@ -128,11 +120,7 @@ interface IAdvancedTestResultClient implements ITestResultClient
  * @author Dominic De Lorenzo
  * @see TestRunner
  */
-#if haxe3
 interface ICoverageTestResultClient extends IAdvancedTestResultClient
-#else
-interface ICoverageTestResultClient implements IAdvancedTestResultClient
-#end
 {	
 	/**
 	 * Called after all tests have completed for current class

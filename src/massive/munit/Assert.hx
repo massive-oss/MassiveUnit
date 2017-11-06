@@ -1,5 +1,5 @@
 /****
-* Copyright 2016 Massive Interactive. All rights reserved.
+* Copyright 2017 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,8 +25,6 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Massive Interactive.
 ****/
-
-
 
 package massive.munit;
 
@@ -155,11 +153,7 @@ class Assert
 		assertionCount++;
 		var equal = switch(Type.typeof(expected))
 		{
-			#if haxe3
 			case TEnum(_): Type.enumEq(expected, actual);
-			#else
-			case TEnum(e): Type.enumEq(expected, actual);
-			#end
 			case TFunction: Reflect.compareMethods(expected, actual);
 			default: expected == actual;
 		}		
@@ -181,11 +175,7 @@ class Assert
 		assertionCount++;
 		var equal = switch (Type.typeof(expected))
 		{
-			#if haxe3
 			case TEnum(_): Type.enumEq(expected, actual);
-			#else
-			case TEnum(e): Type.enumEq(expected, actual);
-			#end
 			default: expected == actual;
 		}
 

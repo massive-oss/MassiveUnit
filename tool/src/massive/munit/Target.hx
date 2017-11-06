@@ -2,12 +2,7 @@ package massive.munit;
 
 import massive.sys.io.File;
 
-#if haxe3
 import haxe.ds.StringMap;
-#else
-private typedef StringMap<T> = Hash<T>
-#end
-
 
 class Target
 {
@@ -48,7 +43,6 @@ class Target
 
 enum TargetType
 {
-	as2;
 	as3;
 	js;
 	neko;
