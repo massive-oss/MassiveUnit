@@ -4,7 +4,7 @@
 -cmd haxe build.hxml
 -cmd cd ..
 -cmd echo set dev directory for testing
--cmd haxelib dev munit .
+-cmd haxelib dev munit ./src
 -cmd echo run tool tests
 -cmd cd ./tool
 -cmd haxelib run munit test -coverage

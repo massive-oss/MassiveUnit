@@ -1,7 +1,26 @@
-# Neko
+## Neko
 -main TestMain
 -cp test
 -cp src
 -cp ../src
 -lib mlib
 -neko ../bin/test/tool/munit_tool_test.n
+
+### CPP
+#--next
+#-main TestMain
+#-cp test
+#-cp src
+#-cp ../src
+#-lib mlib
+##-D HXCPP_M64
+#-cpp ../bin/test/tool/
+#
+### Java
+#--next
+#-main TestMain
+#-cp test
+#-cp src
+#-cp ../src
+#-lib mlib
+#-java ../bin/test/tool

@@ -13,19 +13,11 @@ The ReportCommand converts raw report data into a specific format for a 3rd part
 class ReportCommand extends MUnitTargetCommandBase
 {
 	var reportType:ReportType;
-	var minCoverage:Int;
-
+	var minCoverage:Int = 0;
 	var reportDir:File;
 	var destDir:File;
 
-	public function new():Void
-	{
-		super();
-		minCoverage = 0;
-		reportType = null;
-	}
-
-	override public function initialise():Void
+	override public function initialise()
 	{
 		reportDir = config.report;
 
@@ -44,17 +36,14 @@ class ReportCommand extends MUnitTargetCommandBase
 	{
 		//first get from console
 		targetTypes = getTargetsFromConsole();
-
 		if (targetTypes.length == 0)
 		{
 			//look up generated results summary
 			var file =  reportDir.resolveFile("test/results.txt");
-
 			if (file.exists)
 			{
 				var contents = file.readString();
 				var lines = contents.split("\n");
-
 				var reg:EReg = new EReg("under (.*) using", "g");
 				for(line in lines)
 				{ 
@@ -63,29 +52,24 @@ class ReportCommand extends MUnitTargetCommandBase
 					{
 						switch(reg.matched(1))
 						{
-							case "js": targetTypes.push(TargetType.js);
-							case "as3": targetTypes.push(TargetType.as3);
-							case "neko": targetTypes.push(TargetType.neko);
-							case "cpp": targetTypes.push(TargetType.cpp);
-							case "java": targetTypes.push(TargetType.java);
+							case TargetType.js: targetTypes.push(TargetType.js);
+							case TargetType.as3: targetTypes.push(TargetType.as3);
+							case TargetType.neko: targetTypes.push(TargetType.neko);
+							case TargetType.cpp: targetTypes.push(TargetType.cpp);
+							case TargetType.java: targetTypes.push(TargetType.java);
+							case TargetType.cs: targetTypes.push(TargetType.cs);
 						}
 					}
 				}
 			}
 		}
-
 		//last option is to get from default target types
-		if (targetTypes.length == 0)
-		{
-			targetTypes = config.targetTypes.concat([]);
-		}
+		if (targetTypes.length == 0) targetTypes = config.targetTypes.copy();
 	}
-
 
 	function getReportFormatType()
 	{
 		var format:String = console.getNextArg();
-
 		if (format == null)
 		{
 			error("Please specify one of the following report types: " + Std.string(Type.allEnums(ReportType)));
@@ -127,7 +111,6 @@ class ReportCommand extends MUnitTargetCommandBase
 	function getMinCoverage()
 	{
 		var coverage:String = console.getOption("coverage");
-
 		if (coverage != null)
 		{
 			minCoverage = Std.parseInt(coverage);
@@ -137,7 +120,7 @@ class ReportCommand extends MUnitTargetCommandBase
 
 	////// EXECUTION PHASE ////////
 
-	override public function execute():Void
+	override public function execute()
 	{
 		var files = getSummaryFiles();
 		var formatter = getReportFormatterForType(reportType);
@@ -147,29 +130,24 @@ class ReportCommand extends MUnitTargetCommandBase
 	function getSummaryFiles():Array<File>
 	{
 		var files:Array<File> = [];
-
 		for(target in targetTypes)
 		{
 			var file = reportDir.resolveFile("test/summary/" + Std.string(target) + "/summary.txt");
-
 			if (!file.exists)
 			{
 				print("Warning: Report summary file does not exist for target (" + Std.string(target) + "): " + file);
 			}
-
 			files.push(file);
 		}
-
 		return files;
 	}
 
 	function getReportFormatterForType(type:ReportType):ReportFormatter
 	{
-		switch(type)
+		return switch(type)
 		{
-			case teamcity:
-				return new massive.munit.report.TeamCityReportFormatter();
-			default: return null;
+			case teamcity: new massive.munit.report.TeamCityReportFormatter();
+			case _: null;
 		}
 	}
 }

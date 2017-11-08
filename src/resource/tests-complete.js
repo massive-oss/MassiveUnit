@@ -556,15 +556,13 @@ massive_munit_ICoverageTestResultClient.prototype = {
 	__class__: massive_munit_ICoverageTestResultClient
 };
 var massive_munit_TestResult = function() {
-	this.passed = false;
-	this.executionTime = 0.0;
-	this.name = "";
-	this.className = "";
-	this.description = "";
-	this.async = false;
 	this.ignore = false;
-	this.error = null;
-	this.failure = null;
+	this.async = false;
+	this.description = "";
+	this.className = "";
+	this.name = "";
+	this.executionTime = 0.0;
+	this.passed = false;
 };
 massive_munit_TestResult.__name__ = true;
 massive_munit_TestResult.prototype = {
@@ -582,10 +580,10 @@ massive_munit_TestResult.prototype = {
 		if(this.failure != null) {
 			return massive_munit_TestResultType.FAIL;
 		}
-		if(this.ignore == true) {
+		if(this.ignore) {
 			return massive_munit_TestResultType.IGNORE;
 		}
-		if(this.passed == true) {
+		if(this.passed) {
 			return massive_munit_TestResultType.PASS;
 		}
 		return massive_munit_TestResultType.UNKNOWN;

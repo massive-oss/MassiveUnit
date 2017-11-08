@@ -69,7 +69,7 @@ class TestMain
 		updates the background color and closes the current browser
 		for flash and html targets (useful for continous integration servers)
 	*/
-	private function completionHandler(successful:Bool):Void
+	function completionHandler(successful:Bool)
 	{
 		try
 		{
@@ -77,7 +77,7 @@ class TestMain
 				flash.external.ExternalInterface.call("testResult", successful);
 			#elseif js
 				js.Lib.eval("testResult(" + successful + ");");
-			#elseif (neko || cpp || php || java)
+			#elseif (neko || cpp || php || java || cs)
 				Sys.exit(0);
 			#end
 		}

@@ -43,7 +43,7 @@ class MunitCommandLineRunner extends CommandLineRunner
 	static function main() {new MunitCommandLineRunner();}
 	
 	public var config:Config;
-	private var version:String;
+	var version:String;
 
 	function new()
 	{
@@ -59,30 +59,27 @@ class MunitCommandLineRunner extends CommandLineRunner
 		run();
 	}
 	
-	override private function createCommandInstance(commandClass:Class<ICommand>):ICommand
+	override function createCommandInstance(commandClass:Class<ICommand>):ICommand
 	{
 		var command:ICommand = super.createCommandInstance(commandClass);
-		
-		var className:String = Type.getClassName(commandClass);	
+		var className:String = Type.getClassName(commandClass);
 		Log.debug("Command: " + className);
-	
 		var cmd:MUnitCommand = cast(command, MUnitCommand);
 		cmd.config = config;
-			
 		return cmd;
 	}
 	
-	override public function printHeader():Void
+	override public function printHeader()
 	{	
 		print("Massive Unit - Copyright " + Date.now().getFullYear() + " Massive Interactive. Version " + version);
 	}
 	
-	override public function printUsage():Void
+	override public function printUsage()
 	{
 		print("Usage: munit [subcommand] [options]");
 	}
 	
-	override public function printHelp():Void
+	override public function printHelp()
 	{
 		if(!config.exists)
 		{
@@ -90,15 +87,9 @@ class MunitCommandLineRunner extends CommandLineRunner
 		}
 	}
 	
-	private function getVersion():String
+	function getVersion():String
 	{
-		if (version == null)
-		{
-			var versionPath:String = console.originalDir.name;
-			var a:Array<String> = versionPath.split(",");
-			version = a.join(".");
-		}
-
+		if(version == null) version = console.originalDir.name.split(",").join(".");
 		return version;
 	}
 }

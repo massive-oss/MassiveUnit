@@ -30,6 +30,7 @@
 
 package massive.munit;
 
+import haxe.Constraints.Function;
 import haxe.rtti.Meta;
 
 /**
@@ -118,27 +119,27 @@ class TestClassHelper
 	/**
 	 * The life cycle method to be called once, before tests in the class are executed.
 	 */
-	public var beforeClass(default, null):Dynamic;
+	public var beforeClass(default, null):Function;
 	
 	/**
 	 * The life cycle method to be called once, after tests in the class are executed.
 	 */
-	public var afterClass(default, null):Dynamic;
+	public var afterClass(default, null):Function;
 	
 	/**
 	 * The life cycle method to be called once, before each test in the class is executed.
 	 */
-	public var before(default, null):Dynamic;
+	public var before(default, null):Function;
 	
 	/**
 	 * The life cycle method to be called once, after each test in the class is executed.
 	 */
-	public var after(default, null):Dynamic;
+	public var after(default, null):Function;
 	
-	private var tests:Array<TestCaseData>;
-	private var index:Int;
 	public var className(default, null):String;
-	private var isDebug:Bool;
+	var tests:Array<TestCaseData> = [];
+	var index:Int = 0;
+	var isDebug:Bool;
 
 	/**
 	 * Class constructor.
@@ -149,8 +150,6 @@ class TestClassHelper
 	{
 		this.type = type;
 		this.isDebug = isDebug;
-		tests = [];
-		index = 0;
 		className = Type.getClassName(type);
 		
 		beforeClass = nullFunc;
@@ -176,7 +175,7 @@ class TestClassHelper
 	 * 
 	 * @return	if another test is available it's returned, otherwise returns null
 	 */
-	public function next():Dynamic
+	public function next():TestCaseData
 	{
 		return hasNext() ? tests[index++] : null;
 	}
@@ -186,12 +185,12 @@ class TestClassHelper
 	 * 
 	 * @return	current test in the iterable list of tests
 	 */
-	public function current():Dynamic
+	public function current():TestCaseData
 	{
 		return (index <= 0) ? tests[0] : tests[index - 1];
 	}
 	
-	private function parse(type:Class<Dynamic>):Void
+	function parse(type:Class<Dynamic>)
 	{
 		test = Type.createEmptyInstance(type);
 		
@@ -215,7 +214,7 @@ class TestClassHelper
 		while (inherintanceChain.length > 0)
 		{
 			var clazz = inherintanceChain.pop(); // start at root
-			var newMeta = Meta.getFields(clazz);			
+			var newMeta = Meta.getFields(clazz);
 			var markedFieldNames = Reflect.fields(newMeta);
 			
 			for (fieldName in markedFieldNames)
@@ -265,12 +264,10 @@ class TestClassHelper
 		var fieldNames = Reflect.fields(fieldMeta);
 		for (fieldName in fieldNames)
 		{
-			var f:Dynamic = Reflect.field(test, fieldName);
-			if (Reflect.isFunction(f))
-			{
-				var funcMeta:Dynamic = Reflect.field(fieldMeta, fieldName);
-				searchForMatchingTags(fieldName, f, funcMeta);
-			}
+			var f = Reflect.field(test, fieldName);
+			if (!Reflect.isFunction(f)) continue;
+			var funcMeta:Dynamic = Reflect.field(fieldMeta, fieldName);
+			searchForMatchingTags(fieldName, f, funcMeta);
 		}
 	}
 	
@@ -278,53 +275,36 @@ class TestClassHelper
 	{
 		for (tag in META_TAGS)
 		{
-			if (Reflect.hasField(funcMeta, tag))
+			if (!Reflect.hasField(funcMeta, tag)) continue;
+			var args:Array<String> = Reflect.field(funcMeta, tag);
+			var description = (args != null) ? args[0] : "";
+			var isAsync = (args != null && description == META_PARAM_ASYNC_TEST); // deprecated support for @Test("Async")
+			var isIgnored = Reflect.hasField(funcMeta, META_TAG_IGNORE);
+			
+			if (isAsync) 
 			{
-				var args:Array<String> = Reflect.field(funcMeta, tag);
-				var description = (args != null) ? args[0] : "";
-				var isAsync = (args != null && description == META_PARAM_ASYNC_TEST); // deprecated support for @Test("Async")
-				var isIgnored = Reflect.hasField(funcMeta, META_TAG_IGNORE);
-				
-				if (isAsync) 
-				{
-					description = "";
-				}
-				else if (isIgnored)
-				{
-					args = Reflect.field(funcMeta, META_TAG_IGNORE);
-					description = (args != null) ? args[0] : "";
-				}
-				
-				switch(tag)
-				{
-					case META_TAG_BEFORE_CLASS:
-						beforeClass = func;
-					case META_TAG_AFTER_CLASS:
-						afterClass = func;
-					case META_TAG_BEFORE:
-						before = func;
-					case META_TAG_AFTER:
-						after = func;
-					case META_TAG_ASYNC_TEST:
-						if (!isDebug)
-							addTest(fieldName, func, test, true, isIgnored, description);
-					case META_TAG_TEST:
-						if (!isDebug)
-							addTest(fieldName, func, test, isAsync, isIgnored, description);
-					case META_TAG_TEST_DEBUG:
-						if (isDebug)
-							addTest(fieldName, func, test, isAsync, isIgnored, description);
-				}
+				description = "";
+			}
+			else if (isIgnored)
+			{
+				args = Reflect.field(funcMeta, META_TAG_IGNORE);
+				description = (args != null) ? args[0] : "";
+			}
+			
+			switch(tag)
+			{
+				case META_TAG_BEFORE_CLASS: beforeClass = func;
+				case META_TAG_AFTER_CLASS: afterClass = func;
+				case META_TAG_BEFORE: before = func;
+				case META_TAG_AFTER: after = func;
+				case META_TAG_ASYNC_TEST: if(!isDebug) addTest(fieldName, func, test, true, isIgnored, description);
+				case META_TAG_TEST: if(!isDebug) addTest(fieldName, func, test, isAsync, isIgnored, description);
+				case META_TAG_TEST_DEBUG: if(isDebug) addTest(fieldName, func, test, isAsync, isIgnored, description);
 			}
 		}
 	}
 	
-	private function addTest(field:String, 
-							testFunction:Dynamic, 
-							testInstance:Dynamic, 
-							isAsync:Bool, 
-							isIgnored:Bool, 
-							description:String):Void
+	function addTest(field:String, testFunction:Dynamic, testInstance:Dynamic, isAsync:Bool, isIgnored:Bool, description:String)
 	{
 		var result:TestResult = new TestResult();
 		result.async = isAsync;
@@ -332,19 +312,17 @@ class TestClassHelper
 		result.className = className;
 		result.description = description;
 		result.name = field;
-		var data:TestCaseData = { test:testFunction, scope:testInstance, result:result };
-		tests.push(data);
+		tests.push({test:testFunction, scope:testInstance, result:result});
 	}
 	
-	private function sortTestsByName(x:TestCaseData, y:TestCaseData):Int
+	function sortTestsByName(x:TestCaseData, y:TestCaseData):Int
 	{
 		if (x.result.name == y.result.name) return 0;
 		if (x.result.name > y.result.name) return 1;
 		else return -1;
 	}
 
-	private function nullFunc():Void
-	{}
+	public static function nullFunc() {}
 }
 
 typedef TestCaseData =

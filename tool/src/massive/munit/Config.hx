@@ -33,73 +33,49 @@ class Config
 {
 	public var currentVersion(default, null):String;
 	public var configVersion(default, null):String;
-	
 	public var dir(default, null):File;
-	private var configFile:File;
-	
 	public var exists(default, null):Bool;
-	
 	public var bin(default, null):File;
 	public var report(default, null):File;
 	public var src(default, null):File;
 	public var hxml:File;
-
 	public var resources(default, null):File;
 	public var templates(default, null):File;
-
 	public var classPaths:Array<File>;
-	
-	public var targets:Array<Target>;
-	
+	public var targets:Array<Target> = [];
 	public var targetTypes:Array<TargetType>;
-
-	public var defaultTargetTypes:Array<TargetType>;
-
+	public var defaultTargetTypes:Array<TargetType> = [TargetType.as3, TargetType.js, TargetType.neko, TargetType.cpp, TargetType.java, TargetType.cs];
 	public var coveragePackages:Array<String>;
 	public var coverageIgnoredClasses:Array<String>;
+	var configFile:File;
 	
-	public function new(dir:File, currentVersion:String):Void
+	public function new(dir:File, currentVersion:String)
 	{
 		this.dir = dir;
 		this.currentVersion = currentVersion;
-		
-		defaultTargetTypes = [TargetType.as3, TargetType.js, TargetType.neko, TargetType.cpp, TargetType.java];
 		targetTypes = defaultTargetTypes;
-		targets = [];
-
 		configFile = dir.resolveFile(".munit");
-		
 		exists = configFile.exists;
-		
-		if(exists)
-		{
-			load();
-		}
+		if(exists) load();
 	}
-		
-	public function load(?file:File):Void
+	
+	public function load(?file:File)
 	{
 		if(file == null) file = configFile;
 		parseConfig(file.readString());
 	}
 
-	private function parseConfig(string:String)
+	function parseConfig(string:String)
 	{
 		var lines:Array<String>  = string.split("\n");
-	
 		for(line in lines)
 		{
 			line = StringTools.trim(line);
 			if(line.length == 0 || line.substr(0,1) == "#") continue;
-			
 			var args:Array<String> = line.split("=");
-			
 			var value:String = args[1];
 			if(value == null) continue;
-			
-			
 			if(value.substr(-1) == ";") value = value.substr(0,-1);
-			
 			switch(args[0])
 			{
 				case "version": configVersion = value;
@@ -109,24 +85,15 @@ class Config
 				case "hxml": hxml = File.create(value, dir);
 				case "resources": resources = value != "null" ? File.create(value, dir) : null;
 				case "templates": templates = value != "null" ? File.create(value, dir) : null;
-				case "classPaths" :
-				{
-					var paths = value.split(",");
-					classPaths = [];
-					for(path in paths)
-					{
-						classPaths.push(File.create(path, dir, true));
-					}
-				}
+				case "classPaths": classPaths = [for(path in value.split(",")) File.create(path, dir, true)];
 				case "coveragePackages": coveragePackages = value != "null" ? value.split(",") : null;
 				case "coverageIgnoredClasses": coverageIgnoredClasses = value != "null" ? value.split(",") : null;
 			}
 		}
 	}
 	
-	public function remove():Void
+	public function remove()
 	{
-		
 		configFile.deleteFile();
 		exists = false;
 		src = null;
@@ -135,31 +102,28 @@ class Config
 		hxml = null;
 		configVersion = null;
 		classPaths = [];
-
 		resources = null;
 		templates = null;
-
 		coveragePackages = null;
 		coverageIgnoredClasses = null;
 	}
 	
-	public function createDefault(?src:File=null, ?bin:File=null, ?report:File=null, ?hxml:File=null, ?classPaths:Array<File>=null, ?resources:File=null, ?templates:File=null, ?coveragePackages:Array<String>=null, ?coverageIgnoredClasses:Array<String>=null):Void
+	public function createDefault(?src:File, ?bin:File, ?report:File, ?hxml:File, ?classPaths:Array<File>, ?resources:File, ?templates:File, ?coveragePackages:Array<String>, ?coverageIgnoredClasses:Array<String>)
 	{
 		this.src = src != null ? src : dir.resolveDirectory("test", true);
 		this.bin = bin != null ? bin : dir.resolveDirectory("bin", true);
 		this.report = report != null ? report : dir.resolveDirectory("report", true);
 		this.hxml = hxml != null ? hxml : dir.resolveFile("test.hxml");
 		this.classPaths = classPaths != null ? classPaths : [dir.resolveDirectory("src", true)];
-		this.resources = resources != null ? resources : null;
-		this.templates = templates != null ? templates : null;
+		this.resources = resources;
+		this.templates = templates;
 		this.configVersion = currentVersion;
-		this.coveragePackages = coveragePackages != null ? coveragePackages : null;
-		this.coverageIgnoredClasses = coverageIgnoredClasses != null ? coverageIgnoredClasses : null;
-
+		this.coveragePackages = coveragePackages;
+		this.coverageIgnoredClasses = coverageIgnoredClasses;
 		save();
 	}
 	
-	public function updateSrc(file:File):Void
+	public function updateSrc(file:File)
 	{
 		if(!file.exists) throw "Directory does not exist " + file;
 		if(!file.isDirectory) throw "File is not a directory " + file;
@@ -167,7 +131,7 @@ class Config
 		save();
 	}
 	
-	public function updateBin(file:File):Void
+	public function updateBin(file:File)
 	{
 		if(!file.exists) throw "Directory does not exist " + file;
 		if(!file.isDirectory) throw "File is not a directory " + file;
@@ -175,8 +139,7 @@ class Config
 		save();
 	}
 	
-	
-	public function updateReport(file:File):Void
+	public function updateReport(file:File)
 	{
 		if(!file.exists) throw "Directory does not exist " + file;
 		if(!file.isDirectory) throw "File is not a directory " + file;
@@ -184,15 +147,14 @@ class Config
 		save();
 	}
 	
-	
-	public function updateHxml(file:File):Void
+	public function updateHxml(file:File)
 	{
 		if(file.isDirectory) throw "File is a directory " + file;
 		hxml = file;
 		save();
 	}
 
-	public function updateResources(file:File):Void
+	public function updateResources(file:File)
 	{
 		if(!file.exists) throw "Directory does not exist " + file;
 		if(!file.isDirectory) throw "File is not a directory " + file;
@@ -200,7 +162,7 @@ class Config
 		save();
 	}
 
-	public function updateTemplates(file:File):Void
+	public function updateTemplates(file:File)
 	{
 		if(!file.exists) throw "Directory does not exist " + file;
 		if(!file.isDirectory) throw "File is not a directory " + file;
@@ -208,25 +170,24 @@ class Config
 		save();
 	}
 
-	public function updateClassPaths(classPaths:Array<File>):Void
+	public function updateClassPaths(classPaths:Array<File>)
 	{
 		for(file in classPaths)
 		{
 			if(!file.exists) throw "Class path does not exist " + file;
 			if(!file.isDirectory) throw "Class path is not a directory " + file;
-
 		}
 		this.classPaths = classPaths;
 		save();
 	}
 
-	public function updateCoveragePackages(coveragePackages:Array<String>):Void
+	public function updateCoveragePackages(coveragePackages:Array<String>)
 	{
 		this.coveragePackages = coveragePackages;
 		save();
 	}
 
-	public function updateCoverageIgnoredClasses(coverageIgnoredClasses:Array<String>):Void
+	public function updateCoverageIgnoredClasses(coverageIgnoredClasses:Array<String>)
 	{
 		this.coverageIgnoredClasses = coverageIgnoredClasses;
 		save();
@@ -235,27 +196,11 @@ class Config
 	public function toString():String
 	{
 		var str:String = "";
-
-		if(currentVersion != null)
-		{
-			str += "version=" + currentVersion + "\n";
-		}
-		if(src != null)
-		{
-			str += "src=" + dir.getRelativePath(src) + "\n";
-		}
-		if(bin != null)
-		{
-			str += "bin=" + dir.getRelativePath(bin) + "\n";
-		}
-		if(report != null)
-		{
-			str += "report=" + dir.getRelativePath(report) + "\n";
-		}
-		if(hxml != null)
-		{
-			str += "hxml=" + dir.getRelativePath(hxml) + "\n";	
-		}
+		if(currentVersion != null) str += "version=" + currentVersion + "\n";
+		if(src != null) str += "src=" + dir.getRelativePath(src) + "\n";
+		if(bin != null) str += "bin=" + dir.getRelativePath(bin) + "\n";
+		if(report != null) str += "report=" + dir.getRelativePath(report) + "\n";
+		if(hxml != null) str += "hxml=" + dir.getRelativePath(hxml) + "\n";
 		if(classPaths != null)
 		{
 			var value = "";
@@ -263,34 +208,19 @@ class Config
 			{
 				if(value != "") value += ",";
 				value += dir.getRelativePath(path);
-				
 			}
 			str += "classPaths=" + value + "\n";
 		}
-		if(resources != null)
-		{
-			str += "resources=" + dir.getRelativePath(resources) + "\n";	
-		}
-		if(templates != null)
-		{
-			str += "templates=" + dir.getRelativePath(templates) + "\n";	
-		}
-		if(coveragePackages != null)
-		{
-			str += "coveragePackages=" + coveragePackages.join(",") + "\n";
-		}
-		if(coverageIgnoredClasses != null)
-		{
-			str += "coverageIgnoredClasses=" + coverageIgnoredClasses.join(",") + "\n";
-		}
-		
+		if(resources != null) str += "resources=" + dir.getRelativePath(resources) + "\n";
+		if(templates != null) str += "templates=" + dir.getRelativePath(templates) + "\n";
+		if(coveragePackages != null) str += "coveragePackages=" + coveragePackages.join(",") + "\n";
+		if(coverageIgnoredClasses != null) str += "coverageIgnoredClasses=" + coverageIgnoredClasses.join(",") + "\n";
 		return str;
 	}
 	
-	public function save():Void
+	public function save()
 	{
-		configFile.writeString(toString());	
-		
+		configFile.writeString(toString());
 		if(!exists) exists = true;
 	}
 	

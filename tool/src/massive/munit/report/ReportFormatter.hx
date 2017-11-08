@@ -96,10 +96,7 @@ class ReportFormatterBase implements ReportFormatter
 	*/
 	var coverageTotals:CoverageResults;
 
-	public function new()
-	{
-
-	}
+	public function new() {}
 
 	/**
 	Formats an array of target summary files into a report for the specified format.
@@ -109,44 +106,33 @@ class ReportFormatterBase implements ReportFormatter
 	@param dest 		the output file or directory (defaults to project report dir)
 	@param minCoverage 	specify a minimum coverage (0 to 100) for successful build
 	*/
-	public function format(files:Array<File>,  dest:File, ?minCoverage:Int=0):Bool
+	public function format(files:Array<File>,  dest:File, ?minCoverage:Int = 0):Bool
 	{
 		result = true;//defaults to true
 		this.files = files;
 		this.dest = dest;
 		this.minCoverage = minCoverage;
-
 		hasTestResults = false;
 		hasCoverageResults = false;
-
 		testResults = [];
 		coverageResults = [];
-
 		for (file in files)
 		{	
 			var properties:Array<Property> = [];
-
-			if (file.exists)
-			{
-				properties = parseProperties(file);
-			}
-
+			if (file.exists) properties = parseProperties(file);
 			if (hasTestResults)
 			{	
 				var tests = parseTestResults(properties);
 				testResults.push(tests);
 			}
-
 			if (hasCoverageResults)
 			{
 				var coverage = parseCoverageResults(properties);
 				coverageResults.push(coverage);
 			}
 		}
-
 		calculateTestResultTotals();
 		calculateCoverageResultTotals();
-
 		return result;
 	}
 
@@ -159,33 +145,23 @@ class ReportFormatterBase implements ReportFormatter
 	function parseProperties(file:File):Array<Property>
 	{
 		var data = file.readString();
-
 		var properties:Array<Property> = [];
-
 		var lines = data.split("\n");
-		
 		for (line in lines)
 		{
 			line = StringTools.trim(line);
-
 			if (line == "" || line.indexOf("#") == 0) continue;
-
 			var vals = line.split(":");
-
 			if (vals[0] == "") continue;
-
 			var property:Property = {name:vals[0], value:vals[1]};
-
 			switch(property.name)
 			{
 				case "result":  hasTestResults = true;
 				case "coverage": hasCoverageResults = true;
-				default: null;
+				case _:
 			}
-
 			properties.push(property);
 		}
-
 		return properties;
 	}
 
@@ -198,7 +174,6 @@ class ReportFormatterBase implements ReportFormatter
 	function parseTestResults(properties:Array<Property>):TestResults
 	{
 		var result:TestResults = stubTestResults();
-
 		for (property in properties)
 		{
 			switch(property.name)
@@ -210,13 +185,10 @@ class ReportFormatterBase implements ReportFormatter
 				case "error": result.error = Std.parseInt(property.value);
 				case "ignore": result.ignore = Std.parseInt(property.value);
 				case "time": 
-				{
 					var a = property.value.split(".");
 					result.time = Std.parseFloat(a[0]) + Std.parseFloat("0." + a[1].substr(0,4));
-				}
-				default: null;
+				case _:
 			}
-
 		}
 		return result;
 	}
@@ -226,7 +198,7 @@ class ReportFormatterBase implements ReportFormatter
 	*/
 	function stubTestResults():TestResults
 	{
-		return  {result:true, count:0, pass:0, fail:0, error:0, ignore:0, time:0.0};
+		return {result:true, count:0, pass:0, fail:0, error:0, ignore:0, time:0.0};
 	}
 
 	/**
@@ -236,24 +208,19 @@ class ReportFormatterBase implements ReportFormatter
 	{
 		testTotals = stubTestResults();
 		testPlatforms = stubTestResults();
-
 		for (results in testResults)
 		{
 			if (results.result == false) testTotals.result = false;
-
 			testTotals.count += results.count;
 			testTotals.pass += results.pass;
 			testTotals.fail += results.fail;
 			testTotals.error += results.error;
 			testTotals.ignore += results.ignore;
-
 			if (results.fail > 0) testPlatforms.fail ++;
 			if (results.error > 0) testPlatforms.error ++;
 			if (results.ignore > 0) testPlatforms.ignore ++;
-
 			if (results.time > testTotals.time) testTotals.time = results.time;
 		}
-
 		if(testTotals.fail > 0 || testTotals.error > 0) result = false;
 	}
 
@@ -266,7 +233,6 @@ class ReportFormatterBase implements ReportFormatter
 	function parseCoverageResults(properties:Array<Property>):CoverageResults
 	{
 		var results:CoverageResults = stubCoverageResults();
-		
 		for (property in properties)
 		{
 			switch(property.name)
@@ -279,14 +245,11 @@ class ReportFormatterBase implements ReportFormatter
 				case "statements": results.statements = parseCoverageStats(property, "B");
 				case "branches": results.branches = parseCoverageStats(property, "Z");
 				case "lines": results.lines = parseCoverageStats(property, "L");
-				default: null;
+				case _:
 			}
 		}
-
 		return results;
-
 	}
-
 
 	/**
 	Utitlity to create an empty CoverageResults object
@@ -305,11 +268,9 @@ class ReportFormatterBase implements ReportFormatter
 	{
 		var totals = stubCoverageResults();
 		totals.coverage = coverageResults.length > 0 ? 100 : 0;
-
 		for (results in coverageResults)
 		{
 			if (results.coverage < totals.coverage) totals.coverage = results.coverage;
-
 			if (totals.packages == null || totals.packages.percent > results.packages.percent) totals.packages = results.packages;
 			if (totals.files == null || totals.files.percent > results.files.percent) totals.files = results.files;
 			if (totals.classes == null || totals.classes.percent > results.classes.percent) totals.classes = results.classes;
@@ -317,15 +278,12 @@ class ReportFormatterBase implements ReportFormatter
 			if (totals.statements == null || totals.statements.percent > results.statements.percent) totals.statements = results.statements;
 			if (totals.branches == null || totals.branches.percent > results.branches.percent) totals.branches = results.branches;
 			if (totals.lines == null || totals.lines.percent > results.lines.percent) totals.lines = results.lines;
-
 		}
 		coverageTotals = totals;
-
 	}
 
 	/**
 	converts string '12.45%' to '12.45'
-
 	@param percent 	string representation of value
 	@return percentage as float (0 - 100)
 	*/
@@ -338,27 +296,20 @@ class ReportFormatterBase implements ReportFormatter
 	/**
 	parses a coverage string of format type:percent%,count/total
 	e.g. packages:34.04%,16/47
-
 	@param p 	Propery name/value pair
 	@param key 	The type of coverage stat
 	@return a CoverageStatistics object based on the property and key
-	*/	
+	*/
 	function parseCoverageStats(p:Property, key:String):CoverageStatistics
 	{
-
 		var name = p.name.substr(0,1).toUpperCase() + p.name.substr(1, p.name.length-1);//e.g. packages > Packages
 		var a:Array<String> = p.value.split(",");
-		
 		var percent = parsePercentage(a[0]);
-
 		var b:Array<String> = a[1].split("/");
-
 		var count = Std.parseInt(b[0]);
 		var total = Std.parseInt(b[1]);
-
 		return {key:key, name:name, percent:percent, count:count, total:total};
 	}
-
 
 	/**
 	Simple utility for sorting strings alphabetically
@@ -376,7 +327,6 @@ typedef Property =
 	value:String,
 }
 
-
 typedef TestResults = 
 {
 	result:Bool,
@@ -387,7 +337,6 @@ typedef TestResults =
 	ignore:Int,
 	time:Float,
 }
-
 
 typedef CoverageResults = 
 {
@@ -408,5 +357,4 @@ typedef CoverageStatistics =
 	percent:Float,
 	count:Int,
 	total:Int
-
 }

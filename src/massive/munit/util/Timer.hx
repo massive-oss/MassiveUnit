@@ -62,6 +62,9 @@ import cpp.vm.Thread;
 import java.vm.Thread;
 #end
 
+#if cs
+typedef Timer = haxe.Timer;
+#else
 @:expose('massive.munit.util.Timer')
 class Timer 
 {
@@ -81,7 +84,7 @@ class Timer
 	{
 		#if flash
 			var me = this;
-			id = untyped _global["setInterval"](function() { me.run(); },time_ms);
+			id = untyped _global["setInterval"](me.run, time_ms);
 		#elseif nodejs
 			var arr :Array<Dynamic> = untyped global.haxe_timers = global.haxe_timers == null ? [] : global.haxe_timers;
 			var me 	= this;
@@ -90,10 +93,10 @@ class Timer
 		#elseif js
 			id = arr.length;
 			arr[id] = this;
-			timerId = untyped window.setInterval("massive.munit.util.Timer.arr["+id+"].run();",time_ms);
+			timerId = untyped window.setInterval("massive.munit.util.Timer.arr[" + id + "].run();", time_ms);
 		#elseif (neko || cpp || java)
 			var me = this;
-			runThread = Thread.create(function() { me.runLoop(time_ms); } );
+			runThread = Thread.create(me.runLoop.bind(time_ms));
 		#end
 	}
 
@@ -126,7 +129,7 @@ class Timer
 	public dynamic function run() {}
 
 	#if (neko || cpp || java)
-	private function runLoop(time_ms)
+	function runLoop(time_ms:Int)
 	{
 		var shouldStop = false;
 		while(!shouldStop)
@@ -169,3 +172,4 @@ class Timer
 		return haxe.Timer.stamp();
 	}
 }
+#end
