@@ -93,6 +93,8 @@ class TestClassHelper
 	 * Meta tag marking test method in class for execution in debug mode only.
 	 */
 	public inline static var META_TAG_TEST_DEBUG:String = "TestDebug";
+
+	public inline static var META_TAG_ASYNC_TEST_DEBUG:String = "AsyncTestDebug";
 	
 	/**
 	 * Array of all valid meta tags.
@@ -103,7 +105,8 @@ class TestClassHelper
 									META_TAG_AFTER,
 									META_TAG_TEST,
 									META_TAG_ASYNC_TEST,
-									META_TAG_TEST_DEBUG];
+									META_TAG_TEST_DEBUG,
+									META_TAG_ASYNC_TEST_DEBUG];
 
 	/**
 	 * The type of the test class this helper is wrapping.
@@ -314,6 +317,9 @@ class TestClassHelper
 					case META_TAG_TEST_DEBUG:
 						if (isDebug)
 							addTest(fieldName, func, test, isAsync, isIgnored, description);
+					case META_TAG_ASYNC_TEST_DEBUG:
+						if (isDebug)
+							addTest(fieldName, func, test, true, isIgnored, description);
 				}
 			}
 		}
