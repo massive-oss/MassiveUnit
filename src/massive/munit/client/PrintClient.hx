@@ -131,8 +131,6 @@ class PrintClient extends PrintClientBase
 	}
 	#end
 
-
-	////// TEST CLASS LIFECYCLE //////
 	override function printOverallResult(result:Bool)
 	{
 		super.printOverallResult(result);
@@ -144,15 +142,11 @@ class PrintClient extends PrintClientBase
 		#end
 	}
 
-
-
 	function customTrace(value, ?info:haxe.PosInfos)
 	{
 		addTrace(value, info);
 	}
 	
-	////// PRINT APIS //////
-
 	override public function print(value:Dynamic)
 	{
 		super.print(value);
@@ -164,7 +158,7 @@ class PrintClient extends PrintClientBase
 
 		#if nodejs
 		untyped process.stdout.write(value);
-		#elseif (neko || cpp || php || java || cs)
+		#elseif (neko || cpp || php || java || cs || python)
 		Sys.print(value);
 		#elseif (js || flash)
 		external.print(value);

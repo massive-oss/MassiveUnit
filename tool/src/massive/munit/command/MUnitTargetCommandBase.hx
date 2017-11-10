@@ -3,7 +3,6 @@ package massive.munit.command;
 import haxe.io.Path;
 import massive.sys.io.File;
 import massive.sys.io.FileSys;
-
 import massive.munit.Config;
 import massive.munit.Target;
 
@@ -35,13 +34,14 @@ class MUnitTargetCommandBase extends MUnitCommand
 	function getTargetsFromConsole():Array<TargetType>
 	{
 		var result = new Array();
-		if (console.getOption("swf") == "true" || console.getOption("as3") == "true")
-			result.push(TargetType.as3);
-		if (console.getOption(TargetType.js) == "true") result.push(TargetType.js);
-		if (console.getOption(TargetType.neko) == "true") result.push(TargetType.neko);
-		if (console.getOption(TargetType.cpp) == "true") result.push(TargetType.cpp);
-		if (console.getOption(TargetType.java) == "true") result.push(TargetType.java);
-		if (console.getOption(TargetType.cs) == "true") result.push(TargetType.cs);
+		if (console.getOption("swf") == "true" || console.getOption(as3) == "true")
+			result.push(as3);
+		if (console.getOption(js) == "true") result.push(js);
+		if (console.getOption(neko) == "true") result.push(neko);
+		if (console.getOption(cpp) == "true") result.push(cpp);
+		if (console.getOption(java) == "true") result.push(java);
+		if (console.getOption(cs) == "true") result.push(cs);
+		if (console.getOption(python) == "true") result.push(python);
 		return result;
 	}
 

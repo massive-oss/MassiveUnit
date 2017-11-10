@@ -62,3 +62,13 @@
 ::end::
 -cp ::src::
 -cs ::bin::/cs_test
+
+## Python
+--next
+-main TestMain
+-lib munit
+-lib hamcrest
+::foreach classPaths::-cp ::__current__::
+::end::
+-cp ::src::
+-python ::bin::/python_test.py

@@ -52,12 +52,13 @@ class ReportCommand extends MUnitTargetCommandBase
 					{
 						switch(reg.matched(1))
 						{
-							case TargetType.js: targetTypes.push(TargetType.js);
-							case TargetType.as3: targetTypes.push(TargetType.as3);
-							case TargetType.neko: targetTypes.push(TargetType.neko);
-							case TargetType.cpp: targetTypes.push(TargetType.cpp);
-							case TargetType.java: targetTypes.push(TargetType.java);
-							case TargetType.cs: targetTypes.push(TargetType.cs);
+							case js: targetTypes.push(js);
+							case as3: targetTypes.push(as3);
+							case neko: targetTypes.push(neko);
+							case cpp: targetTypes.push(cpp);
+							case java: targetTypes.push(java);
+							case cs: targetTypes.push(cs);
+							case python: targetTypes.push(python);
 						}
 					}
 				}
@@ -117,8 +118,6 @@ class ReportCommand extends MUnitTargetCommandBase
 			Log.debug("minCoverage " + coverage);
 		}
 	}
-
-	////// EXECUTION PHASE ////////
 
 	override public function execute()
 	{
