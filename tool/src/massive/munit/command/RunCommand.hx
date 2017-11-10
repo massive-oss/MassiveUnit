@@ -63,9 +63,6 @@ class RunCommand extends MUnitTargetCommandBase
 	var killBrowser:Bool;
 	var indexPage:File;
 	var hasBrowserTests:Bool;
-	var hasCPPTests:Bool;
-	var hasJavaTests:Bool;
-	var hasCSTests:Bool;
 	var nekoFile:File;
 	var cppFile:File;
 	var javaFile:File;
