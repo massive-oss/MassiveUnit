@@ -179,7 +179,7 @@ class MUnitTargetCommandBase extends MUnitCommand
 					var s:String = switch(type)
 					{
 						case as3: "swf-version [^8]";
-						case _: Std.string(type);
+						case _: type;
 					}	
 					var targetMatcher = new EReg("^-" + s, "");
 					if (targetMatcher.match(line))
@@ -205,7 +205,7 @@ class MUnitTargetCommandBase extends MUnitCommand
 		var output:String = switch(target.type)
 		{
 			case as3: "-swf";
-			case _: "-" + Std.string(target.type);
+			case _: '-${target.type}';
 		}
 		var file = config.dir.getRelativePath(target.file);
 		switch (target.type) {
@@ -219,11 +219,11 @@ class MUnitTargetCommandBase extends MUnitCommand
 				if(target.debug) executablePath += "-debug";
 				executablePath += ".jar";
 				target.executableFile = target.file.resolveFile(executablePath);
-            case cs:
-                var executablePath = target.main.name;
-                if(target.debug) executablePath += "-debug";
-                executablePath += ".exe";
-                target.executableFile = target.file.resolveDirectory("bin").resolveFile(executablePath);
+			case cs:
+				var executablePath = target.main.name;
+				if(target.debug) executablePath += "-debug";
+				executablePath += ".exe";
+				target.executableFile = target.file.resolveDirectory("bin").resolveFile(executablePath);
 			case _: target.executableFile = target.file;
 		}
 		output += " " + file;
@@ -236,14 +236,14 @@ class MUnitTargetCommandBase extends MUnitCommand
 		{
 			var stype:String = switch(type) {
 				case as3: "swf";
-				case _: Std.string(type);
+				case _: type;
 			}
 			var targetMatcher = new EReg("^-" + stype + "\\s+", "");
 			if (targetMatcher.match(line))
 			{
 				var result = line.substr(stype.length + 2);
 				result = switch(type) {
-					case cpp | java | cs if(includeCoverage): result + "-coverage";
+					case cpp | java | cs if(includeCoverage): '${result}-coverage';
 					case _: result;
 				}
 				return Path.normalize(result);

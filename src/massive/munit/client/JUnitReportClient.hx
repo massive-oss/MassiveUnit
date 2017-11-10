@@ -118,14 +118,8 @@ class JUnitReportClient implements IAdvancedTestResultClient
 	public function addPass(result:TestResult)
 	{
 		suitePassCount++;
-		testSuiteXML.add('<testcase classname="');
-        testSuiteXML.add(result.className);
-        testSuiteXML.add('" name="');
-        testSuiteXML.add(result.name);
-        testSuiteXML.add('" time="');
-        testSuiteXML.add(MathUtil.round(result.executionTime, 5));
-        testSuiteXML.add('" />');
-        testSuiteXML.add(newline);
+		testSuiteXML.add('<testcase classname="${result.className}" name="${result.name}" time="${MathUtil.round(result.executionTime, 5)}"/>');
+		testSuiteXML.add(newline);
 	}
 	
 	/**
@@ -137,24 +131,12 @@ class JUnitReportClient implements IAdvancedTestResultClient
 	{
 		suiteFailCount++;
 		
-		testSuiteXML.add('<testcase classname="');
-        testSuiteXML.add(result.className);
-        testSuiteXML.add('" name="');
-        testSuiteXML.add(result.name);
-        testSuiteXML.add('" time="');
-        testSuiteXML.add(MathUtil.round(result.executionTime, 5));
-        testSuiteXML.add('" >');
-        testSuiteXML.add(newline);
-        testSuiteXML.add('<failure message="');
-        testSuiteXML.add(result.failure.message);
-        testSuiteXML.add('" type="');
-        testSuiteXML.add(result.failure.type);
-        testSuiteXML.add('">');
-		testSuiteXML.add(result.failure);
-        testSuiteXML.add('</failure>');
-        testSuiteXML.add(newline);
-        testSuiteXML.add('</testcase>');
-        testSuiteXML.add(newline);
+		testSuiteXML.add('<testcase classname="${result.className}" name="${result.name}" time="${MathUtil.round(result.executionTime, 5)}">');
+		testSuiteXML.add(newline);
+		testSuiteXML.add('<failure message="${result.failure.message}" type="${result.failure.type}">${result.failure}</failure>');
+		testSuiteXML.add(newline);
+		testSuiteXML.add('</testcase>');
+		testSuiteXML.add(newline);
 	}
 	
 	/**
@@ -165,24 +147,12 @@ class JUnitReportClient implements IAdvancedTestResultClient
 	public function addError(result:TestResult)
 	{
 		suiteErrorCount++;
-		testSuiteXML.add('<testcase classname="');
-        testSuiteXML.add(result.className);
-        testSuiteXML.add('" name="');
-        testSuiteXML.add(result.name);
-        testSuiteXML.add('" time="');
-        testSuiteXML.add(MathUtil.round(result.executionTime, 5));
-        testSuiteXML.add('" >');
-        testSuiteXML.add(newline);
-        testSuiteXML.add('<error message="');
-        testSuiteXML.add(result.error.message);
-        testSuiteXML.add('" type="');
-        testSuiteXML.add(result.error.type);
-        testSuiteXML.add('">');
-		testSuiteXML.add(result.error);
-		testSuiteXML.add('</error>');
-        testSuiteXML.add(newline);
-        testSuiteXML.add('</testcase>');
-        testSuiteXML.add(newline);
+		testSuiteXML.add('<testcase classname="${result.className}" name="${result.name}" time="${MathUtil.round(result.executionTime, 5)}">');
+		testSuiteXML.add(newline);
+		testSuiteXML.add('<error message="${result.error.message}" type="${result.error.type}">${result.error}</error>');
+		testSuiteXML.add(newline);
+		testSuiteXML.add('</testcase>');
+		testSuiteXML.add(newline);
 	}
 	
 	/**
@@ -228,27 +198,16 @@ class JUnitReportClient implements IAdvancedTestResultClient
 	
 	function endTestSuite()
 	{
-        if(testSuiteXML == null) return;
-        var suiteTestCount:Int = suitePassCount + suiteFailCount + suiteErrorCount;
-        suiteExecutionTime = Timer.stamp() - suiteExecutionTime;
-        xml.add('<testsuite errors="');
-        xml.add(suiteErrorCount);
-        xml.add('" failures="');
-        xml.add(suiteFailCount);
-        xml.add('" hostname="" name="');
-        xml.add(currentTestClass);
-        xml.add('" tests="');
-        xml.add(suiteTestCount);
-        xml.add('" time="');
-        xml.add(MathUtil.round(suiteExecutionTime, 5));
-        xml.add('" timestamp="');
-        xml.add(Date.now());
-        xml.add('">');
-        xml.add(newline);
-        testSuiteXML.add('<system-out></system-out>'); testSuiteXML.add(newline);
-        testSuiteXML.add('<system-err></system-err>'); testSuiteXML.add(newline);
-        xml.add(testSuiteXML.toString());
-        xml.add('</testsuite>');
-        xml.add(newline);
+		if(testSuiteXML == null) return;
+		var suiteTestCount = suitePassCount + suiteFailCount + suiteErrorCount;
+		suiteExecutionTime = Timer.stamp() - suiteExecutionTime;
+		var time = MathUtil.round(suiteExecutionTime, 5);
+		xml.add('<testsuite errors="${suiteErrorCount}" failures="${suiteFailCount}" hostname="" name="${currentTestClass}" tests="${suiteTestCount}" time="${time}" timestamp="${Date.now()}">');
+		xml.add(newline);
+		testSuiteXML.add('<system-out></system-out>'); testSuiteXML.add(newline);
+		testSuiteXML.add('<system-err></system-err>'); testSuiteXML.add(newline);
+		xml.add(testSuiteXML.toString());
+		xml.add('</testsuite>');
+		xml.add(newline);
 	}
 }
