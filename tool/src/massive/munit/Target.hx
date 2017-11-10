@@ -15,7 +15,7 @@ class Target
 
 	public function new() {}
 	
-    public function toString():String return 'Target ${type} ${file.toString()}';
+	public function toString():String return 'Target ${type} ${file.toString()}';
 
 	public function toHxmlString():String
 	{
@@ -42,4 +42,5 @@ abstract TargetType(String) from String to String
 	var java = "java";
 	var cs = "cs";
 	var python = "python";
+	var php = "php";
 }

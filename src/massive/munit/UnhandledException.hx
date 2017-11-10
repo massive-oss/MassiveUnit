@@ -46,7 +46,7 @@ class UnhandledException extends MUnitException
 	 */
 	public function new(source:Dynamic, testLocation:String) 
 	{
-		super(source.toString() + formatLocation(source, testLocation), null);
+		super(Std.string(source) + formatLocation(source, testLocation), null);
 		type = ReflectUtil.here().className;
 	}
 	
@@ -66,15 +66,12 @@ class UnhandledException extends MUnitException
 	{
 		var s = "";
 		#if flash
-			if (Std.is(source, flash.errors.Error))
-			{
-				if(flash.system.Capabilities.isDebugger)
-				{
-					var lines = source.getStackTrace().split("\n");
-					lines.shift(); // remove repeated error name
-					s = lines.join("\n");
-				}
-			}
+		if (Std.is(source, flash.errors.Error) && flash.system.Capabilities.isDebugger)
+		{
+			var lines = source.getStackTrace().split("\n");
+			lines.shift(); // remove repeated error name
+			s = lines.join("\n");
+		}
 		#end
 		if (s == "")
 		{

@@ -237,7 +237,7 @@ class RichPrintClient extends PrintClientBase
 		#if (js || flash)
 		//external.queue(ExternalPrintClientJS.PRINT, value);
 		return;
-		#elseif (neko || cpp || php || java || cs || python)
+		#elseif (neko || cpp || php || java || cs || python || php)
 		Sys.print(value);
 		#end
 	}

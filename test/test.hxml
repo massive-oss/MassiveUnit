@@ -1,39 +1,48 @@
-## Neko
--main TestMain
--cp test
--cp src
--lib mlib
--neko bin/test/core/neko_test.n
+### Neko
+#-main TestMain
+#-cp test
+#-cp src
+#-lib mlib
+#-neko bin/test/core/neko_test.n
+#
+### CPP
+#--next
+#-main TestMain
+#-cp test
+#-cp src
+#-lib mlib
+##-D HXCPP_M64
+#-cpp bin/test/core/cpp_test
+#
+### Java
+#--next
+#-main TestMain
+#-cp test
+#-cp src
+#-lib mlib
+#-java bin/test/core/java_test
+#
+### CSharp
+#--next
+#-main TestMain
+#-cp test
+#-cp src
+#-lib mlib
+#-cs bin/test/core/cs_test
+#
+### Python
+#--next
+#-main TestMain
+#-cp test
+#-cp src
+#-lib mlib
+#-python bin/test/core/python_test.py
 
-## CPP
+## PHP 7
 --next
 -main TestMain
 -cp test
 -cp src
 -lib mlib
-#-D HXCPP_M64
--cpp bin/test/core/cpp_test
-
-## Java
---next
--main TestMain
--cp test
--cp src
--lib mlib
--java bin/test/core/java_test
-
-## CSharp
---next
--main TestMain
--cp test
--cp src
--lib mlib
--cs bin/test/core/cs_test
-
-## Python
---next
--main TestMain
--cp test
--cp src
--lib mlib
--python bin/test/core/python_test.py
+-D php7
+-php bin/test/core/php7_test
