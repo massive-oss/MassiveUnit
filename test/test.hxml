@@ -29,3 +29,11 @@
 -cp src
 -lib mlib
 -cs bin/test/core/cs_test
+
+## Python
+--next
+-main TestMain
+-cp test
+-cp src
+-lib mlib
+-python bin/test/core/python_test.py

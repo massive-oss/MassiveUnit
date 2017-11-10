@@ -31,7 +31,7 @@ Features
 ### Cross Platform
 
 MUnit has been designed for cross platform Haxe development.
-It currently supports js, swf, as3, neko, c++, java and cs, and the tool chain works on Windows, OSX and Linux
+It currently supports js, swf, as3, neko, c++, java, cs, and python and the tool chain works on Windows, OSX and Linux
 
 
 ### Test Metadata

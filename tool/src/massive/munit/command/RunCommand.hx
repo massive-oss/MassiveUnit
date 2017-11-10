@@ -63,14 +63,11 @@ class RunCommand extends MUnitTargetCommandBase
 	var killBrowser:Bool;
 	var indexPage:File;
 	var hasBrowserTests:Bool;
-	var hasNekoTests:Bool;
-	var hasCPPTests:Bool;
-	var hasJavaTests:Bool;
-	var hasCSTests:Bool;
 	var nekoFile:File;
 	var cppFile:File;
 	var javaFile:File;
 	var csFile:File;
+	var pythonFile:File;
 	var serverTimeoutTimeSec:Int;
 	var resultExitCode:Bool;
 	
@@ -135,14 +132,6 @@ class RunCommand extends MUnitTargetCommandBase
 			else
 			{
 				tempTargets.push(target);
-				switch(type)
-				{
-					case neko: hasNekoTests = true;
-					case cpp: hasCPPTests = true;
-					case java: hasJavaTests = true;
-					case cs: hasCSTests = true;
-					case _:
-				}
 			}
 		}
 		targets = config.targets = tempTargets;
@@ -211,18 +200,11 @@ class RunCommand extends MUnitTargetCommandBase
 
 			switch(target.type)
 			{
-				case neko:
-					hasNekoTests = true;
-					nekoFile = file;
-				case cpp:
-					hasCPPTests = true;
-					cppFile = file;
-				case java:
-					hasJavaTests = true;
-					javaFile = file;
-				case cs:
-                    hasCSTests = true;
-                    csFile = file;
+				case neko: nekoFile = file;
+				case cpp: cppFile = file;
+				case java: javaFile = file;
+				case cs: csFile = file;
+				case python: pythonFile = file;
 				case _:
 					hasBrowserTests = true;
 					var pageName = Std.string(target.type);
@@ -326,6 +308,7 @@ class RunCommand extends MUnitTargetCommandBase
 		if(cppFile != null) launchCPP(cppFile);
 		if(javaFile != null) launchJava(javaFile);
 		if(csFile != null) launchCS(csFile);
+		if(pythonFile != null) launchPython(pythonFile);
 		if(hasBrowserTests) launchFile(indexPage);
 		else resultMonitor.sendMessage("quit");
 		var platformResults:Bool = Thread.readMessage(true);
@@ -542,6 +525,8 @@ class RunCommand extends MUnitTargetCommandBase
 	
 	inline function launchCS(file:File):Int return FileSys.isWindows ? launch(file, file.nativePath) : launch(file, 'mono', [file.nativePath]);
 	
+	inline function launchPython(file:File):Int return launch(file, FileSys.isWindows ? 'python' : 'python3', [file.nativePath]);
+	
 	function launch(file:File, executor:String, ?args:Array<String>):Int {
 		file.copyTo(reportRunnerDir.resolvePath(file.fileName));
 		FileSys.setCwd(config.dir.nativePath);
@@ -572,6 +557,16 @@ class RunCommand extends MUnitTargetCommandBase
 		try
 		{
 			exitCode = process.exitCode();
+			if(exitCode > 0) {
+				var sb = new StringBuf();
+				try {
+					while(true) {
+						sb.add(process.stderr.readLine());
+						sb.add("\n");
+					}
+				} catch(e:haxe.io.Eof) {}
+				error = sb.toString();
+			}
 		}
 		catch(e:Dynamic)
 		{
