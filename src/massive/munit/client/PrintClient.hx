@@ -85,7 +85,7 @@ class PrintClient extends PrintClientBase
 	{
 		super.init();
 
-		#if nodejs		
+		#if nodejs
 		#elseif (js || flash)
 			external = new ExternalPrintClientJS();
 			#if flash
@@ -153,32 +153,21 @@ class PrintClient extends PrintClientBase
 	
 	////// PRINT APIS //////
 
-	override public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
-	{
-		return super.reportFinalStatistics(testCount, passCount, failCount, errorCount, ignoreCount, time);
-	}
-
 	override public function print(value:Dynamic)
 	{
 		super.print(value);
 
 		#if flash
-			textField.appendText(value);
-			textField.scrollV = textField.maxScrollV;
+		textField.appendText(value);
+		textField.scrollV = textField.maxScrollV;
 		#end
 
 		#if nodejs
-			untyped process.stdout.write(value);
-		#elseif (neko || cpp || php || java)
-			Sys.print(value);
+		untyped process.stdout.write(value);
+		#elseif (neko || cpp || php || java || cs)
+		Sys.print(value);
 		#elseif (js || flash)
-			external.print(value);
+		external.print(value);
 		#end
 	}
-
-	override public function printLine(value:Dynamic, ?indent:Int = 0)
-	{
-		super.printLine(value, indent);
-	}
-
 }

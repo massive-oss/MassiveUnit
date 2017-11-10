@@ -1,4 +1,5 @@
 ## dev
+- Added cs support
 - Added java support
 - Dropped support for Haxe 2
 - Dropped support for flash8

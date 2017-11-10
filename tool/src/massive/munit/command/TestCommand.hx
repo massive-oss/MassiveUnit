@@ -39,12 +39,10 @@ class TestCommand extends MUnitTargetCommandBase
 {
 	var testsAborted:Bool;
 	
-	override public function initialise():Void
+	override public function initialise()
 	{
 		super.initialise();
-
 		initialiseTargets(true);
-
 		if (invalidHxmlFormat())
 		{
 			testsAborted = true;
@@ -53,34 +51,21 @@ class TestCommand extends MUnitTargetCommandBase
 
 		//prevent generation from occuring
 		var noGen:String  = console.getOption("-nogen");
-		
-		if (noGen != "true")
-		{
-			addPreRequisite(GenerateCommand);
-		}
+		if (noGen != "true") addPreRequisite(GenerateCommand);
 		
 		//prevent generation from occuring
 		var noRun:String  = console.getOption("-norun");
-		
-		if (noRun != "true")
-		{
-			addPostRequisite(RunCommand);
-		}
+		if (noRun != "true") addPostRequisite(RunCommand);
 
 		//append code coverage
-
-		if (missingClassPaths())
-		{
-			testsAborted = true;
-			return;
-		}
+		if (missingClassPaths()) testsAborted = true;
 	}
 
 	// In v0.9.0.3 we made a significant change to the required format of test.hxml. 
 	// This ensures everything is in place
 	function invalidHxmlFormat():Bool
 	{
-		var contents:String = config.hxml.readString();		
+		var contents:String = config.hxml.readString();
 		var lines:Array<String> = contents.split("\n");
 		var invalid = false;
 		for (line in lines)
@@ -105,18 +90,13 @@ class TestCommand extends MUnitTargetCommandBase
 		return false;
 	}
 
-	override public function execute():Void
+	override public function execute()
 	{
-		if (testsAborted)
-			return;
-
+		if (testsAborted) return;
 		var targets = config.targets;
-
 		for(target in targets)
 		{
-			if (target.type == null && targetTypes.length < config.targetTypes.length ) 
-				continue;
-
+			if (target.type == null && targetTypes.length < config.targetTypes.length) continue;
 			if (includeCoverage && target.main != null)
 			{
 				var clsPaths:Array<String> = [];
@@ -135,50 +115,34 @@ class TestCommand extends MUnitTargetCommandBase
 				validateTestMainCoverageConfiguration(target);
 				
 				//ingore lib if testing MCOVER (causes compiler errors from dup src path)
-				if (!target.flags.exists("MCOVER_DEBUG"))
-				{
-					target.hxml += "-lib mcover\n";	
-				}
-				
+				if (!target.flags.exists("MCOVER_DEBUG")) target.hxml += "-lib mcover\n";
 				target.hxml += "-D MCOVER\n";
-
 				var coverPackages = config.coveragePackages != null ? config.coveragePackages.join("','") : "";
 				var coverIgnoredClasses = config.coverageIgnoredClasses != null ? config.coverageIgnoredClasses.join("','") : "";
 				target.hxml += "--macro mcover.MCover.coverage(['" + coverPackages + "'],['" + clsPaths.join("','") + "'],['" + coverIgnoredClasses + "'])\n";	
 			}
 			
-			if (target.type == TargetType.as3)
-			{
-				target.hxml = updateSwfHeader(target.hxml);
-			}
-			
+			if (target.type == TargetType.as3) target.hxml = updateSwfHeader(target.hxml);
 			if (console.getOption("debug") == "true")
 			{
 				target.hxml += "-D testDebug\n";
-				target.hxml += "-D debug\n";				
+				target.hxml += "-D debug\n";
 			}
-
-			
-
 			switch(target.type) {
-				case cpp | java: target.executableFile.deleteFile();
-				default:
+				case cpp | java | cs: target.executableFile.deleteFile();
+				case _:
 			}
-
 			Log.debug("Compile " + target.type + " -- " + target);
-
 			if (HaxeWrapper.compile(target.hxml) > 0)
 			{
 				error("Error compiling hxml for " + target.type + "\n" + target);
-			}	
-
+			}
 			var tmp = config.bin.resolveFile(".temp/" + target.type + ".txt");
 			switch(target.type) {
-				case cpp | java: tmp.writeString(target.executableFile, false);
-				default: tmp.writeString(target.file, false);
+				case cpp | java | cs: tmp.writeString(target.executableFile, false);
+				case _: tmp.writeString(target.file, false);
 			}
 		}
-		
 		Log.debug("All targets compiled successfully");
 	}
 
@@ -190,25 +154,20 @@ class TestCommand extends MUnitTargetCommandBase
 		{
 			var headerMatcher = new EReg("^-swf-header", "");
 			//200:300:40:FF0000
-			if (headerMatcher.match(line))
-			{
-				line = "-swf-header 800:600:60:FFFFFF";
-			}
-
+			if(headerMatcher.match(line)) line = "-swf-header 800:600:60:FFFFFF";
 			result += "\n" + line;
 		}
 		return result;
 	}
 
 	/**
-	Checks the contents of the test main to ensure it is correctly configured for mcover.
-	Prints a warning (or error) if not correctly set up.
-	*/
+	 * Checks the contents of the test main to ensure it is correctly configured for mcover.
+	 * Prints a warning (or error) if not correctly set up.
+	 */
 	function validateTestMainCoverageConfiguration(target:Target)
 	{
 		var reg:EReg = ~/#if (!?)(MCOVER)/;
 		var str = target.main.readString();
-
 		if (str == null || !reg.match(str))
 		{
 			Sys.println("");
@@ -224,7 +183,6 @@ class TestCommand extends MUnitTargetCommandBase
 		}
 
 		var outdatedRef:EReg = ~/(m\.cover|massive\.cover)(.*)/;
-
 		if (outdatedRef.match(str))
 		{
 			Sys.println("");

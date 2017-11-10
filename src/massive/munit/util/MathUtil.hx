@@ -37,9 +37,6 @@ package massive.munit.util;
  */
 class MathUtil 
 {
-	public function new() 
-	{}
-	
 	/**
 	 * Round a floating point number to a given decimal place.
 	 * 
@@ -51,5 +48,5 @@ class MathUtil
 	{
 		value = value * Math.pow(10, precision);
 		return Math.round(value) / Math.pow(10, precision);
-	}	
+	}
 }

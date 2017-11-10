@@ -51,7 +51,7 @@ class Assert
 	public static function isTrue(value:Bool, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		if (value != true) fail("Expected TRUE but was [" + value + "]", info);
+		if (!value) fail("Expected TRUE but was [" + value + "]", info);
 	}
 	
 	/**
@@ -63,7 +63,7 @@ class Assert
 	public static function isFalse(value:Bool, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		if (value != false) fail("Expected FALSE but was [" + value + "]", info);
+		if (value) fail("Expected FALSE but was [" + value + "]", info);
 	}
 	
 	/**
@@ -99,7 +99,7 @@ class Assert
 	public static function isNaN(value:Float, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		if (!Math.isNaN(value)) fail("Value [" + value + "]  was not NaN", info);		
+		if (!Math.isNaN(value)) fail("Value [" + value + "]  was not NaN", info);
 	}
 
 	/**
@@ -111,7 +111,7 @@ class Assert
 	public static function isNotNaN(value:Float, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		if (Math.isNaN(value)) fail("Value [" + value + "] was NaN", info);		
+		if (Math.isNaN(value)) fail("Value [" + value + "] was NaN", info);
 	}
 	
 	/**
@@ -156,7 +156,7 @@ class Assert
 			case TEnum(_): Type.enumEq(expected, actual);
 			case TFunction: Reflect.compareMethods(expected, actual);
 			default: expected == actual;
-		}		
+		}
 		if (!equal) fail("Value [" + actual +"] was not equal to expected value [" + expected + "]", info);
 	}
 	
@@ -173,12 +173,12 @@ class Assert
 	public static function areNotEqual(expected:Dynamic, actual:Dynamic, ?info:PosInfos):Void
 	{
 		assertionCount++;
-		var equal = switch (Type.typeof(expected))
+		var equal = switch(Type.typeof(expected))
 		{
 			case TEnum(_): Type.enumEq(expected, actual);
+			case TFunction: Reflect.compareMethods(expected, actual);
 			default: expected == actual;
 		}
-
 		if (equal) fail("Value [" + actual +"] was equal to value [" + expected + "]", info);
 	}
 
@@ -248,8 +248,8 @@ class Assert
 	 * Assert that an expectation was thrown. Can expect strings and non-strings.
 	 *
      * @Param   expectedType        the type of exception expected (eg. String, AssertionException)
-	 * @param   code				a function which should throw an exception 
-	 * @return					  the exception that was thrown	  
+	 * @param   code				a function which should throw an exception
+	 * @return					  the exception that was thrown
 	 * @throws  AssertionException  if no expectation is thrown
 	 */
 	public static function throws(expectedType:Dynamic, code:Dynamic, ?info:PosInfos):Dynamic
@@ -258,20 +258,13 @@ class Assert
 		{
 			code();
 			fail("Expected exception wasn't thrown!", info);
-			return null; // needed to compile
 		}
 		catch (e:Dynamic)
 		{
-			if (Std.is(e, expectedType))
-			{
-				return e;
-			}
-			else
-			{
-				Assert.fail('Expected exception of type ${Type.getClassName(expectedType)} but got ${Type.getClassName(Type.getClass(e))}: ${e}');
-				return null; // needed to compile
-			}
+			if(Std.is(e, expectedType)) return e;
+			Assert.fail('Expected exception of type ${Type.getClassName(expectedType)} but got ${Type.getClassName(Type.getClass(e))}: ${e}');
 		}
+		return null; // needed to compile
 	}
 
 	/**
@@ -279,7 +272,7 @@ class Assert
 	  *  
 	  * @param	msg				message describing the assertion which failed
 	  * @throws	AssertionException	thrown automatically
-	  */	
+	  */
 	public static function fail(msg:String, ?info:PosInfos):Void
 	{
 		throw new AssertionException(msg, info);

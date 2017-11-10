@@ -68,42 +68,34 @@ class SummaryReportClient extends AbstractTestResultClient
 
 	override function printFinalStatistics(result:Bool, testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float)
 	{
-		output = "";
-		output += "result:" + result;
-		output += "\ncount:" + testCount;
-		output += "\npass:" + passCount;
-		output += "\nfail:" + failCount;
-		output += "\nerror:" + errorCount;
-		output += "\nignore:" + ignoreCount;
-		output += "\ntime:" + time;
-		output += "\n";
-
+		var sb = new StringBuf();
+		sb.add('result: ${result}');
+		sb.add('\ncount: ${testCount}');
+		sb.add('\npass: ${passCount}');
+		sb.add('\nfail: ${failCount}');
+		sb.add('\nerror: ${errorCount}');
+		sb.add('\nignore: ${ignoreCount}');
+		sb.add('\ntime: ${time}');
+		sb.add('\n');
 		var resultCount = 0;
-
 		while(totalResults.length > 0 && resultCount < 10)
 		{
 			var result = totalResults.shift();
 			if(!result.passed)
 			{
-				output += "\n# " + result.location;
+				sb.add('\n# ${result.location}');
 				resultCount ++;
 			}
 		}
-
 		var remainder = (failCount + errorCount) - resultCount;
-
-		if(remainder > 0)
-		{
-			output += "# ... plus " + remainder  + " more";
-		}
-
+		if(remainder > 0) sb.add('# ... plus ${remainder} more');
+		output = sb.toString();
 	}
 
 	override function printOverallResult(result:Bool)
 	{
-		//handled by printFinalStatistics		
+		//handled by printFinalStatistics
 	}
-
 
 	override function printReports()
 	{

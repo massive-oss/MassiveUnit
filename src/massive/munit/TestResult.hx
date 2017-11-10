@@ -41,33 +41,33 @@ class TestResult
 	/**
 	 * Whether the test passed or not.
 	 */
-	public var passed:Bool;
+	public var passed:Bool = false;
 	
 	/**
 	 * The execution time of the test in milliseconds.
 	 */
-	public var executionTime:Float;
+	public var executionTime:Float = 0.0;
 	
 	/**
 	 * The name of the test. This maps to the name of the test method.
 	 */
-	public var name:String;
+	public var name:String = "";
 	
 	/**
 	 * The name of the class (qualified with package) where the test is located.
 	 */
-	public var className:String;
+	public var className:String = "";
 	
 	/**
      * An optional description.
      */
-	public var description:String;
+	public var description:String = "";
 	
 	/**
 	 * The fully qualified location of this test. (i.e. package.ClassName#method)
 	 */
-	public var location(get_location, null):String;
-	private function get_location():String 
+	public var location(get, null):String;
+	function get_location():String 
 	{
 		return (name == "" && className == "") ? "" : className + "#" + name;
 	}
@@ -75,12 +75,12 @@ class TestResult
 	/**
 	 * Whether the test is asynchronous or not.
 	 */
-	public var async:Bool;
+	public var async:Bool = false;
 	
 	/**
      * Whether the test is ignored or not.
      */
-    public var ignore:Bool;
+    public var ignore:Bool = false;
 	
 	/**
 	 * If this test failed, the assertion exception that was captured.
@@ -93,29 +93,18 @@ class TestResult
 	public var error:Dynamic;
 
 	public var type(get_type, null):TestResultType;
+	
 	/**
 	 * Class constructor.
 	 */
-	public function new() 
-	{
-		passed = false;
-		executionTime = 0.0;
-		name = "";
-		className = "";
-		description = "";
-		async = false;
-		ignore = false;
-		error = null;
-		failure = null;
-	}
+	public function new() {}
 
 	function get_type():TestResultType
 	{
 		if(error != null) return ERROR;
 		if(failure != null) return FAIL;
-		if(ignore == true) return IGNORE;
-		if(passed == true) return PASS;
-
+		if(ignore) return IGNORE;
+		if(passed) return PASS;
 		return UNKNOWN;
 	}
 

@@ -73,13 +73,13 @@ class HTTPClient implements IAdvancedTestResultClient
 	 * Handler which if present, is called when the client has completed sending the test results to the specificied url. 
 	 * This will be called once an HTTP response has been recieved.
 	 */
-	@:isVar public var completionHandler(get, set):ITestResultClient -> Void;
+	@:isVar public var completionHandler(get, set):ITestResultClient->Void;
 	
-	private function get_completionHandler():ITestResultClient -> Void 
+	private function get_completionHandler():ITestResultClient->Void
 	{
 		return completionHandler;
 	}
-	private function set_completionHandler(value:ITestResultClient -> Void):ITestResultClient -> Void
+	private function set_completionHandler(value:ITestResultClient->Void):ITestResultClient->Void
 	{
 		return completionHandler = value;
 	}
@@ -253,10 +253,10 @@ class URLRequest
 	var url:String;
 	var headers:StringMap<String>;
 
-	#if (js || neko || cpp || java)
-		public var client:Http;
+	#if(js || neko || cpp || java || cs)
+	public var client:Http;
 	#elseif flash
-		public var client:flash.LoadVars;
+	public var client:flash.LoadVars;
 	#end
 
 
@@ -269,49 +269,48 @@ class URLRequest
 
 	function createClient(url:String)
 	{
-		#if (js || neko || cpp || java)
-			client = new Http(url);
-		#elseif flash			
-			client = new flash.LoadVars();
-		#end		
+		#if(js || neko || cpp || java || cs)
+		client = new Http(url);
+		#elseif flash
+		client = new flash.LoadVars();
+		#end
 	}
 
 	public function setHeader(name:String, value:String)
 	{
-		#if (js || neko || cpp || java)
-			client.setHeader(name, value);
+		#if(js || neko || cpp || java || cs)
+		client.setHeader(name, value);
 		#elseif flash
-			client.addRequestHeader(name, value);
+		client.addRequestHeader(name, value);
 		#end
 	}
 
 	public function send()
 	{
-		#if (js || neko || cpp || java)
-			client.onData = onData;
-			client.onError = onError;
+		#if (js || neko || cpp || java || cs)
+		client.onData = onData;
+		client.onError = onError;
 			#if js
-				client.setPostData(data);
+			client.setPostData(data);
 			#else
-				client.setParameter("data", data);
+			client.setParameter("data", data);
 			#end
-			client.request(true);
+		client.request(true);
 		#elseif flash
-			var result = new flash.LoadVars();
-			result.onData = internalOnData;
-
-			client.data = data;
-			client.sendAndLoad(url, result, "POST");
-		#end		
+		var result = new flash.LoadVars();
+		result.onData = internalOnData;
+		client.data = data;
+		client.sendAndLoad(url, result, "POST");
+		#end
 	}
 
 	#if flash
-		function internalOnData(value:String)
-		{
-			if (value == null)
-				onError("Invalid Server Response.");
-			else
-				onData(value);
-		}
+	function internalOnData(value:String)
+	{
+		if (value == null)
+			onError("Invalid Server Response.");
+		else
+			onData(value);
+	}
 	#end
 }

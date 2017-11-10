@@ -47,13 +47,13 @@ class AbstractTestResultClient implements IAdvancedTestResultClient implements I
 	/**
 	 * Handler which if present, is called when the client has completed generating its results.
 	 */
-	@:isVar public var completionHandler(get, set):ITestResultClient -> Void;
+	@:isVar public var completionHandler(get, set):ITestResultClient->Void;
 
-	function get_completionHandler():ITestResultClient -> Void 
+	function get_completionHandler():ITestResultClient->Void
 	{
 		return completionHandler;
 	}
-	function set_completionHandler(value:ITestResultClient -> Void):ITestResultClient -> Void
+	function set_completionHandler(value:ITestResultClient->Void):ITestResultClient->Void
 	{
 		return completionHandler = value;
 	}
@@ -73,7 +73,7 @@ class AbstractTestResultClient implements IAdvancedTestResultClient implements I
 	var errorCount:Int;
 	var ignoreCount:Int;
 	
-	var currentTestClass:String;	
+	var currentTestClass:String;
 	var currentClassResults:Array<TestResult>;
 
 
@@ -96,7 +96,7 @@ class AbstractTestResultClient implements IAdvancedTestResultClient implements I
 		init();
 	}
 
-	function init():Void
+	function init()
 	{
 		currentTestClass = null;
 
@@ -290,10 +290,7 @@ class AbstractTestResultClient implements IAdvancedTestResultClient implements I
 	/**
 	* returns the current class trace statements
 	*/
-	function getTraces():Array<String>
-	{
-		return traces.concat([]);
-	}
+	function getTraces():Array<String> return traces.copy();
 
 	function sortTestResults(a:TestResult, b:TestResult):Int
 	{
@@ -303,7 +300,7 @@ class AbstractTestResultClient implements IAdvancedTestResultClient implements I
 			case FAIL: 1;
 			case IGNORE: 0;
 			case PASS: -1;
-			default:-2;
+			default: -2;
 		}
 
 		var bInt:Int = switch(b.type)
@@ -312,7 +309,7 @@ class AbstractTestResultClient implements IAdvancedTestResultClient implements I
 			case FAIL: 1;
 			case IGNORE: 0;
 			case PASS: -1;
-			default:-2;
+			default: -2;
 		}
 		
 		return aInt - bInt;

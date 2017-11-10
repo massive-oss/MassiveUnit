@@ -308,7 +308,7 @@ class ConfigCommand extends MUnitCommand
 		bin = tempConfig.bin;
 		report = tempConfig.report;
 		hxml = tempConfig.hxml;
-		classPaths = tempConfig.classPaths.concat([]);
+		classPaths = tempConfig.classPaths.copy();
 		resources = tempConfig.resources;
 		templates = tempConfig.templates;
 		coveragePackages = tempConfig.coveragePackages;

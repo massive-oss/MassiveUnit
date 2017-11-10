@@ -55,31 +55,27 @@ package massive.munit;
  * </pre>
  * @author Mike Stead
  */
-class TestSuite 
+class TestSuite
 {
 	/* Note that it was a considered design decision not to cater for the addition of individual
 	 * test methods to a suite. The reason being that this was not a hugely common use-case from
 	 * what we'd seen, and it allowed the framework (and tools around the framework) to be simplified.
-	 */	
+	 */
 
-	private var tests:Array<Dynamic>;
-	private var index:Int;
+	var tests:Array<Class<Dynamic>> = [];
+	var index:Int = 0;
 	
 	/**
 	 * Class constructor.
 	 */
-	public function new() 
-	{
-		tests = new Array<Dynamic>();
-		index = 0;
-	}
+	public function new() {}
 	
 	/**
 	 * Add a class which contains test methods.
 	 * 
 	 * @param	test			a class containing methods which execute tests
 	 */
-	public function add(test:Class<Dynamic>):Void
+	public function add(test:Class<Dynamic>)
 	{
 		tests.push(test);
 		sortTests();
@@ -109,22 +105,22 @@ class TestSuite
 	 * Drop the iterator back one so next call to <code>next()</code> will return the
 	 * same test class again.
 	 */
-	public function repeat():Void
+	public function repeat()
 	{
 		if (index > 0) index--;
 	}
 	
-	private function sortTests():Void
+	function sortTests()
 	{
 		tests.sort(sortByName);
 	}
 	
-	private function sortByName(x, y):Int
+	function sortByName(x:Class<Dynamic>, y:Class<Dynamic>):Int
 	{
 		var xName:String = Type.getClassName(x);
 		var yName:String = Type.getClassName(y);
 		if (xName == yName) return 0;
 		if (xName > yName) return 1;
-		else return -1;
+		return -1;
 	}
 }

@@ -1,31 +1,21 @@
 package massive.munit;
 
 import massive.sys.io.File;
-
 import haxe.ds.StringMap;
 
 class Target
 {
 	public var type:TargetType;
-	public var hxml:String;
+	public var hxml:String = "";
 	public var file:File;
 	public var main:File;
-	public var flags:StringMap<String>;
-	public var debug:Bool;
-
+	public var flags:StringMap<String> = new StringMap();
+	public var debug:Bool = false;
 	public var executableFile:File;
 
-	public function new():Void
-	{
-		hxml = "";
-		debug = false;
-		flags = new StringMap();
-	}
+	public function new() {}
 	
-	public function toString():String
-	{
-		return "Target " + Std.string(type) + " " + file.toString();
-	}
+    public function toString():String return 'Target ${type} ${file.toString()}';
 
 	public function toHxmlString():String
 	{
@@ -41,11 +31,14 @@ class Target
 	}
 }
 
-enum TargetType
+@:enum
+@:forward
+abstract TargetType(String) from String to String
 {
-	as3;
-	js;
-	neko;
-	cpp;
-	java;
+	var as3 = "as3";
+	var js = "js";
+	var neko = "neko";
+	var cpp = "cpp";
+	var java = "java";
+	var cs = "cs";
 }

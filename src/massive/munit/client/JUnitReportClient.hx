@@ -56,13 +56,13 @@ class JUnitReportClient implements IAdvancedTestResultClient
 	/**
 	 * Handler which if present, is called when the client has completed generating its results.
 	 */
-	@:isVar public var completionHandler(get, set):ITestResultClient -> Void;
+	@:isVar public var completionHandler(get, set):ITestResultClient->Void;
 	
-	private function get_completionHandler():ITestResultClient -> Void 
+	function get_completionHandler():ITestResultClient->Void
 	{
 		return completionHandler;
 	}
-	private function set_completionHandler(value:ITestResultClient -> Void):ITestResultClient -> Void
+	function set_completionHandler(value:ITestResultClient->Void):ITestResultClient->Void
 	{
 		return completionHandler = value;
 	}
@@ -75,14 +75,13 @@ class JUnitReportClient implements IAdvancedTestResultClient
 	 * </p>
 	 */
 	public var newline:String;
-	
-	private var xml:StringBuf;
-	private var testSuiteXML:StringBuf;
-	private var currentTestClass:String;
-	private var suitePassCount:Int;
-	private var suiteFailCount:Int;
-	private var suiteErrorCount:Int;
-	private var suiteExecutionTime:Float;
+	var xml:StringBuf;
+	var testSuiteXML:StringBuf;
+	var currentTestClass:String;
+	var suitePassCount:Int;
+	var suiteFailCount:Int;
+	var suiteErrorCount:Int;
+	var suiteExecutionTime:Float;
 
 	/**
 	 * Class constructor.
@@ -90,40 +89,37 @@ class JUnitReportClient implements IAdvancedTestResultClient
 	public function new()
 	{
 		id = DEFAULT_ID;
-		xml = new StringBuf();
-		currentTestClass = "";		
+		currentTestClass = "";
 		newline = "\n";
 		testSuiteXML = null;
+		xml = new StringBuf();
 		xml.add("<testsuites>" + newline);
 	}
 	
 
 	/**
-	* Classed when test class changes
-	*
-	* @param className		qualified name of current test class
-	*/
-	public function setCurrentTestClass(className:String):Void
+	 * Classed when test class changes
+	 *
+	 * @param className		qualified name of current test class
+	 */
+	public function setCurrentTestClass(className:String)
 	{
 		if(currentTestClass == className) return;
 		if(currentTestClass != null) endTestSuite();
-	
 		currentTestClass = className;
-
 		if(currentTestClass != null) startTestSuite();
 	}
-
 
 	/**
 	 * Called when a test passes.
 	 *  
 	 * @param	result			a passed test result
 	 */
-	public function addPass(result:TestResult):Void
+	public function addPass(result:TestResult)
 	{
 		suitePassCount++;
-		
-		testSuiteXML.add("<testcase classname=\"" + result.className + "\" name=\"" + result.name + "\" time=\"" + MathUtil.round(result.executionTime, 5) + "\" />" + newline);
+		testSuiteXML.add('<testcase classname="${result.className}" name="${result.name}" time="${MathUtil.round(result.executionTime, 5)}"/>');
+		testSuiteXML.add(newline);
 	}
 	
 	/**
@@ -131,15 +127,16 @@ class JUnitReportClient implements IAdvancedTestResultClient
 	 *  
 	 * @param	result			a failed test result
 	 */
-	public function addFail(result:TestResult):Void
+	public function addFail(result:TestResult)
 	{
 		suiteFailCount++;
 		
-		testSuiteXML.add( "<testcase classname=\"" + result.className + "\" name=\"" + result.name + "\" time=\"" + MathUtil.round(result.executionTime, 5) + "\" >" + newline);
-		testSuiteXML.add("<failure message=\"" + StringTools.htmlEscape(result.failure.message) + "\" type=\"" + result.failure.type + "\">");
-		testSuiteXML.add(result.failure);
-		testSuiteXML.add("</failure>" + newline);
-		testSuiteXML.add("</testcase>" + newline);
+		testSuiteXML.add('<testcase classname="${result.className}" name="${result.name}" time="${MathUtil.round(result.executionTime, 5)}">');
+		testSuiteXML.add(newline);
+		testSuiteXML.add('<failure message="${result.failure.message}" type="${result.failure.type}">${result.failure}</failure>');
+		testSuiteXML.add(newline);
+		testSuiteXML.add('</testcase>');
+		testSuiteXML.add(newline);
 	}
 	
 	/**
@@ -147,15 +144,15 @@ class JUnitReportClient implements IAdvancedTestResultClient
 	 *  
 	 * @param	result			an erroneous test result
 	 */
-	public function addError(result:TestResult):Void
+	public function addError(result:TestResult)
 	{
 		suiteErrorCount++;
-
-		testSuiteXML.add("<testcase classname=\"" + result.className + "\" name=\"" + result.name + "\" time=\"" + MathUtil.round(result.executionTime, 5) + "\" >" + newline);
-		testSuiteXML.add("<error message=\"" + StringTools.htmlEscape(result.error.message) + "\" type=\"" + result.error.type + "\">");
-		testSuiteXML.add(result.error);
-		testSuiteXML.add("</error>" + newline);
-		testSuiteXML.add("</testcase>" + newline);
+		testSuiteXML.add('<testcase classname="${result.className}" name="${result.name}" time="${MathUtil.round(result.executionTime, 5)}">');
+		testSuiteXML.add(newline);
+		testSuiteXML.add('<error message="${result.error.message}" type="${result.error.type}">${result.error}</error>');
+		testSuiteXML.add(newline);
+		testSuiteXML.add('</testcase>');
+		testSuiteXML.add(newline);
 	}
 	
 	/**
@@ -163,7 +160,7 @@ class JUnitReportClient implements IAdvancedTestResultClient
 	 *
 	 * @param	result			an ignored test
 	 */
-	public function addIgnore(result:TestResult):Void
+	public function addIgnore(result:TestResult)
 	{
 		// TODO: Looks like the "skipped" element is not in the official junit report schema
 		//       so ignoring the reporting of this for now. 
@@ -185,36 +182,32 @@ class JUnitReportClient implements IAdvancedTestResultClient
 	 */
 	public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
 	{
-
 		xml.add("</testsuites>");
 		if (completionHandler != null) completionHandler(this);
 		return xml.toString();
 	}
 	
-	private function endTestSuite():Void
-	{
-		if (testSuiteXML == null) return;
-
-		var suiteTestCount:Int = suitePassCount + suiteFailCount + suiteErrorCount;
-		suiteExecutionTime = Timer.stamp() - suiteExecutionTime;
-
-		var header:String = "<testsuite errors=\"" + suiteErrorCount + "\" failures=\"" + suiteFailCount + "\" hostname=\"\" name=\"" + currentTestClass + "\" tests=\"" + suiteTestCount + "\" time=\"" +MathUtil.round(suiteExecutionTime, 5) + "\" timestamp=\"" + Date.now() + "\">" + newline;
-		var footer:String = "</testsuite>" + newline;
-
-		testSuiteXML.add("<system-out></system-out>" + newline);
-		testSuiteXML.add("<system-err></system-err>" + newline);
-		
-		xml.add(header);
-		xml.add(testSuiteXML.toString());
-		xml.add(footer);
-	}
-	
-	private function startTestSuite():Void
+	function startTestSuite()
 	{
 		suitePassCount = 0;
 		suiteFailCount = 0;
 		suiteErrorCount = 0;
 		suiteExecutionTime = Timer.stamp();
 		testSuiteXML = new StringBuf();
+	}
+	
+	function endTestSuite()
+	{
+		if(testSuiteXML == null) return;
+		var suiteTestCount = suitePassCount + suiteFailCount + suiteErrorCount;
+		suiteExecutionTime = Timer.stamp() - suiteExecutionTime;
+		var time = MathUtil.round(suiteExecutionTime, 5);
+		xml.add('<testsuite errors="${suiteErrorCount}" failures="${suiteFailCount}" hostname="" name="${currentTestClass}" tests="${suiteTestCount}" time="${time}" timestamp="${Date.now()}">');
+		xml.add(newline);
+		testSuiteXML.add('<system-out></system-out>'); testSuiteXML.add(newline);
+		testSuiteXML.add('<system-err></system-err>'); testSuiteXML.add(newline);
+		xml.add(testSuiteXML.toString());
+		xml.add('</testsuite>');
+		xml.add(newline);
 	}
 }

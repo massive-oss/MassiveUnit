@@ -36,23 +36,17 @@ import massive.munit.client.SummaryReportClient;
 import massive.munit.util.Timer;
 import neko.vm.Thread;
 
-import haxe.ds.StringMap;
-
 class ServerMain
 {
 	public static inline var PASSED:String = "PASSED";
 	public static inline var FAILED:String = "FAILED";
 	public static inline var ERROR:String = "ERROR";
 	public static inline var END:String = "END";
-
-	private var tmpDir:File;
+	var tmpDir:File;
 	
-	static function main()
-	{
-		new ServerMain();
-	}
+	static function main() new ServerMain();
 
-	public function new():Void
+	public function new()
 	{
 		try 
 		{
@@ -66,29 +60,21 @@ class ServerMain
 		}
 	}
 		
-	private function processData():Void
+	function processData()
 	{
 		var client:String = neko.Web.getClientHeader(HTTPClient.CLIENT_HEADER_KEY);
 		var platform:String = neko.Web.getClientHeader(HTTPClient.PLATFORM_HEADER_KEY);
-		
 		tmpDir = File.current.resolveDirectory("tmp", true);
 		tmpDir.createDirectory();
-
 		if (client == BrowserTestsCompleteReporter.CLIENT_RUNNER_HOST)
 		{
 			recordResult(END + "\n");
 			return;
 		}
-		
-		if (client == null || platform == null)
-			return;
-		
-		var hash:StringMap<String> = neko.Web.getParams();
-		var data:String = hash.get("data"); // gets variable 'data' from posted data (as2 LoadVars)
-
-		if (data == null)
-			data = neko.Web.getPostData();
-
+		if (client == null || platform == null) return;
+		var hash = neko.Web.getParams();
+		var data = hash.get("data"); // gets variable 'data' from posted data (as2 LoadVars)
+		if (data == null) data = neko.Web.getPostData();
 		if (data == null)
 		{
 			Sys.print("Error: Invalid content sent to server: \n" + data);
@@ -102,24 +88,17 @@ class ServerMain
 		var platformDir:File = clientDir.resolveDirectory(platform, true);
 		platformDir.createDirectory();
 
-		var result:String = ERROR;
-		switch(client)
+		var result:String = switch(client)
 		{
-			case JUnitReportClient.DEFAULT_ID: 
-				result = writeJUnitReportData(data, platformDir);
-			case PrintClient.DEFAULT_ID: 
-				result = writePrintData(data, platformDir);
-			case SummaryReportClient.DEFAULT_ID:
-				result = writeSummaryReportData(data, platformDir);
-			default:
-				result = writePrintData(data, platformDir);
+			case JUnitReportClient.DEFAULT_ID: writeJUnitReportData(data, platformDir);
+			case PrintClient.DEFAULT_ID: writePrintData(data, platformDir);
+			case SummaryReportClient.DEFAULT_ID: writeSummaryReportData(data, platformDir);
+			case _: writePrintData(data, platformDir);
 		}
-		
-		var results:String = "Tests " + result + " under " + platform + " using " + client + " client\n";
-		recordResult(results);
+        recordResult('Tests ${result} under ${platform} using ${client} client\n');
 	}
 	
-	private function recordResult(result:String)
+	function recordResult(result:String)
 	{
 		var MAX_WRITE_ATTEMPTS = 4;
 		Sys.println(result);
@@ -141,23 +120,16 @@ class ServerMain
 			catch (e:Dynamic) {
 				Sys.sleep(0.1);
 			}
-		}
-		while (!writeSuccess && writeAttempts++ < MAX_WRITE_ATTEMPTS);
-		
-		if (writeAttempts >= MAX_WRITE_ATTEMPTS)
-			neko.Web.logMessage("ERROR: Server could not write test result to results.txt file");
+		} while(!writeSuccess && writeAttempts++ < MAX_WRITE_ATTEMPTS);
+		if (writeAttempts >= MAX_WRITE_ATTEMPTS) neko.Web.logMessage("ERROR: Server could not write test result to results.txt file");
 	}
 	
-	//------------------------ Write JUnit Report Data
-	
-	private function writeJUnitReportData(data:String, dir:File):String
+	function writeJUnitReportData(data:String, dir:File):String
 	{
-		var xml:Xml = Xml.parse(data);		
+		var xml:Xml = Xml.parse(data);
 		var suites = xml.firstChild().elementsNamed("testsuite");
-			
 		var rawDir:File = dir.resolveDirectory("xml", true);
 		rawDir.createDirectory();
-		
 		var result:String = "";
 		var count = 0;
 		for (test in suites)
@@ -165,81 +137,50 @@ class ServerMain
 			var fileName:String = "TEST-" + test.get("name") + ".xml";
 			var file:File = rawDir.resolvePath(fileName);
 			file.writeString("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" + test.toString(), false);
-			
-			// determine the result
-			
 			var failures:Int = Std.parseInt(test.get("failures"));
 			var errors:Int = Std.parseInt(test.get("errors"));
-			
-			if (failures == null) 
-				failures = 0;
-			if (errors == null) 
-				errors = 0;
-			
+			if (failures == null) failures = 0;
+			if (errors == null) errors = 0;
 			var failed:Bool = (failures > 0 || errors > 0);
-			
-			if (failed && result != FAILED) 
-				result = FAILED;
-			else if (!failed && result == "") 
-				result = PASSED;
+			if (failed && result != FAILED) result = FAILED;
+			else if (!failed && result == "") result = PASSED;
 			count++;
 		}
-		
-		if (count == 0)
-			result = PASSED; // no tests run
-		else if (result == "") 
-			result = ERROR;
-
+		if (count == 0) result = PASSED; // no tests run
+		else if (result == "") result = ERROR;
 		return result;
 	}
 	
-	//------------------------ Write Print Data
-	
-	private function writePrintData(data:String, dir:File):String
+	function writePrintData(data:String, dir:File):String
 	{
 		var file:File = dir.resolvePath("output.txt");
 		file.writeString(data, false);
-		
-		// determine the result
-		
 		var lines:Array<String> = data.split("\n");
 		lines.reverse();
-		
 		for (line in lines)
 		{	
-			if (line.indexOf("PASSED") == 0) 
-				return PASSED;
-			else if (line.indexOf("FAILED") == 0) 
-				return FAILED;
+			if (line.indexOf("PASSED") == 0) return PASSED;
+			if (line.indexOf("FAILED") == 0) return FAILED;
 		}
-		
 		return ERROR;
 	}
 
 	/**
-	Parses a summary text report
-	*/
+	 *Parses a summary text report
+	 */
 	function writeSummaryReportData(data:String, dir:File):String
 	{
 		var file:File = dir.resolvePath("summary.txt");
 		file.writeString(data, false);
-
 		var exitCode = 0;
-
 		var lines:Array<String> = data.split("\n");
-
 		for (line in lines)
 		{	
 			if(line == "" || line.indexOf("#") == 0) continue;
-
 			var tmp = line.split(":");
-
 			if(tmp[0] == "result" && tmp[1] == "true") return PASSED;
-		
 			if(tmp[0] == "error" && tmp[1] != "0") return ERROR;
 		}
-		
 		return FAILED;
-		
 	}
 }

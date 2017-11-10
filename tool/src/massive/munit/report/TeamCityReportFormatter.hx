@@ -56,7 +56,7 @@ class TeamCityReportFormatter extends ReportFormatterBase
 	{
 		var multiPlatform = testResults.length > 1;
 
-		if(testTotals.result == false) result = false;
+		if(!testTotals.result) result = false;
 
 		var statusText = "";
 

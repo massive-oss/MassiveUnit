@@ -21,3 +21,11 @@
 -cp src
 -lib mlib
 -java bin/test/core/java_test
+
+## CSharp
+--next
+-main TestMain
+-cp test
+-cp src
+-lib mlib
+-cs bin/test/core/cs_test
