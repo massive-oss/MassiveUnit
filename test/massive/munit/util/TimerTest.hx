@@ -108,7 +108,7 @@ class TimerTest
 		Assert.isTrue(newStamp > stamp);
 	}
 
-	#if js
+	#if(js && !nodejs)
 		@AsyncTest
 		public function shouldClearOutIntervals(factory:AsyncFactory):Void
 		{
@@ -128,11 +128,7 @@ class TimerTest
 		{
 			Assert.isTrue(untyped Timer.arr.length < 100);
 		}
-
 	#end
-
-
-	//-------------
 
 	function timerHandler()
 	{

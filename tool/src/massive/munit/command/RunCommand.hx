@@ -41,9 +41,9 @@ import sys.FileSystem;
 import sys.io.Process;
 import sys.net.Host;
 import sys.net.Socket;
-
-
 import haxe.ds.StringMap;
+
+using Lambda;
  
 /**
 Don't ask - compiler always thinks it is massive.munit.TargetType enum 'neko'
@@ -69,6 +69,7 @@ class RunCommand extends MUnitTargetCommandBase
 	var csFile:File;
 	var pythonFile:File;
 	var phpFile:File;
+	var nodejsFiles:Array<File> = [];
 	var serverTimeoutTimeSec:Int;
 	var resultExitCode:Bool;
 	
@@ -198,7 +199,6 @@ class RunCommand extends MUnitTargetCommandBase
 		for (target in targets)
 		{
 			var file = target.file;
-
 			switch(target.type)
 			{
 				case neko: nekoFile = file;
@@ -207,6 +207,7 @@ class RunCommand extends MUnitTargetCommandBase
 				case cs: csFile = file;
 				case python: pythonFile = file;
 				case php: phpFile = file;
+				case js if(target.flags.exists("nodejs")): nodejsFiles.push(file);
 				case _:
 					hasBrowserTests = true;
 					var pageName = Std.string(target.type);
@@ -312,6 +313,7 @@ class RunCommand extends MUnitTargetCommandBase
 		if(csFile != null) launchCS(csFile);
 		if(pythonFile != null) launchPython(pythonFile);
 		if(phpFile != null) launchPHP(pythonFile);
+		if(nodejsFiles.length > 0) nodejsFiles.iter(launchNodeJS);
 		if(hasBrowserTests) launchFile(indexPage);
 		else resultMonitor.sendMessage("quit");
 		var platformResults:Bool = Thread.readMessage(true);
@@ -531,6 +533,8 @@ class RunCommand extends MUnitTargetCommandBase
 	inline function launchPython(file:File):Int return launch(file, FileSys.isWindows ? 'python' : 'python3', [file.nativePath]);
 	
 	inline function launchPHP(file:File):Int return launch(file, 'php', [file.nativePath]);
+	
+	inline function launchNodeJS(file:File):Int return launch(file, 'node', [file.nativePath]);
 	
 	function launch(file:File, executor:String, ?args:Array<String>):Int {
 		file.copyTo(reportRunnerDir.resolvePath(file.fileName));
