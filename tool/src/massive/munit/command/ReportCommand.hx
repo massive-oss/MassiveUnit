@@ -35,7 +35,7 @@ class ReportCommand extends MUnitTargetCommandBase
 		if (targetTypes.length == 0)
 		{
 			//look up generated results summary
-			var file =  reportDir.resolveFile("test/results.txt");
+			var file = reportDir.resolveFile("test/results.txt");
 			if (file.exists)
 			{
 				var contents = file.readString();
@@ -56,6 +56,7 @@ class ReportCommand extends MUnitTargetCommandBase
 							case cs: targetTypes.push(cs);
 							case python: targetTypes.push(python);
 							case php: targetTypes.push(php);
+							case hl: targetTypes.push(hl);
 						}
 					}
 				}

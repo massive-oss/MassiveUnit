@@ -63,7 +63,6 @@ class TimerTest
 		Assert.isTrue(count > 1);
 	}
 
-
 	@AsyncTest
 	public function shouldStopTimer(factory:AsyncFactory):Void
 	{
@@ -110,17 +109,13 @@ class TimerTest
 
 	#if(js && !nodejs)
 		@AsyncTest
-		public function shouldClearOutIntervals(factory:AsyncFactory):Void
+		public function shouldClearOutIntervals(factory:AsyncFactory)
 		{
-			var timer:Timer;
-
 			handler = factory.createHandler(this, onMegaTimerDelay);
-
 			for(i in 1...102)
 			{
-				timer = Timer.delay(timerHandler, i);
+				var timer = Timer.delay(timerHandler, i);
 			}
-
 			Timer.delay(handler, 200);
 		}
 

@@ -42,37 +42,28 @@ class ConfigCommand extends MUnitCommand
 	static inline var DEFAULT_REPORT:String = "report";
 	static inline var DEFAULT_CLASSPATHS:String = "src";
 	static inline var DEFAULT_HXML:String = "test.hxml";
-		
-
+	
 	var file:File;//external file
-
-
-	var useDefaultsIfMissing:Bool;
-	var useConsoleInput:Bool;
-
+	var useDefaultsIfMissing:Bool = false;
+	var useConsoleInput:Bool = false;
 	var src:File;
 	var bin:File;
 	var report:File;
 	var hxml:File;
 	var classPaths:Array<File>;
-
 	var resources:File;
 	var templates:File;
-
 	var coveragePackages:Array<String>;
 	var coverageIgnoredClasses:Array<String>;
 
-	public function new():Void
+	public function new()
 	{
 		super();
-		useDefaultsIfMissing = false;
-		useConsoleInput = false;
 		addPostRequisite(GenerateCommand);
 	}
 
-	override public function initialise():Void
+	override public function initialise()
 	{
-
 		if(hasDeleteArg())
 		{
 			config.remove();
@@ -268,30 +259,21 @@ class ConfigCommand extends MUnitCommand
 
 	function setDefaultValuesForMissingProperties()
 	{
-		var srcArg = DEFAULT_SRC;
-		var binArg = DEFAULT_BIN;
-		var reportArg = DEFAULT_REPORT;
-		var classPathsArg = DEFAULT_CLASSPATHS;
-		var hxmlArg = DEFAULT_HXML;
-		
-		if(src == null) src = convertToDirectory(srcArg, DEFAULT_SRC, "src");
-		if(bin == null) bin = convertToDirectory(binArg, DEFAULT_BIN, "build");
-		if(report == null) report = convertToDirectory(reportArg, DEFAULT_REPORT, "report");
-		if(classPaths == null) classPaths = convertToDirectoryList(classPathsArg, DEFAULT_CLASSPATHS, "class");
-		if(hxml == null) hxml = convertToFile(hxmlArg, DEFAULT_HXML, "hxml");
+		if(src == null) src = convertToDirectory(DEFAULT_SRC, DEFAULT_SRC, "src");
+		if(bin == null) bin = convertToDirectory(DEFAULT_BIN, DEFAULT_BIN, "build");
+		if(report == null) report = convertToDirectory(DEFAULT_REPORT, DEFAULT_REPORT, "report");
+		if(classPaths == null) classPaths = convertToDirectoryList(DEFAULT_CLASSPATHS, DEFAULT_CLASSPATHS, "class");
+		if(hxml == null) hxml = convertToFile(DEFAULT_HXML, DEFAULT_HXML, "hxml");
 	}
-
-	///////////
-
 
 	function parseFromFile(filePath:String)
 	{
 		if(filePath == "true" || filePath == "")
 		{
 			error("Invalid argument. '-file' must be followed by a valid file path");
-		}	
+		}
 		
-		file = File.create(filePath, config.dir);	
+		file = File.create(filePath, config.dir);
 		
 		var label = "file";
 		if(file == null) error("invaid " + label + " path: " + filePath);
@@ -314,32 +296,17 @@ class ConfigCommand extends MUnitCommand
 		coveragePackages = tempConfig.coveragePackages;
 		coverageIgnoredClasses = tempConfig.coverageIgnoredClasses;
 	}
-
-
 	
 	function writeHxmlToFile(file:File, ?overwrite:Bool=false):Bool
 	{
-		if(file == null) return false;
-		if(file.exists && !overwrite) return false;
-
+		if(file == null || (file.exists && !overwrite)) return false;
 		var src:String = src != null ? config.dir.getRelativePath(src) + "" : "";
-		var bin:String = bin != null ? config.dir.getRelativePath(bin) + "": "";
-
-		var clsPaths:Array<String> = [];
-
-		for(path in classPaths)
-		{
-			clsPaths.push(config.dir.getRelativePath(path));
-		}
-
+		var bin:String = bin != null ? config.dir.getRelativePath(bin) + "" : "";
+		var clsPaths:Array<String> = [for(it in classPaths) config.dir.getRelativePath(it)];
 		var content = TemplateUtil.getTemplate("test-hxml", {src:src, bin:bin, classPaths:clsPaths});
 		file.writeString(content, true);
 		return true;
-		
 	}
-
-	///// utilities
-
 
 	function convertToDirectory(arg:String, defaultValue:String, label:String):File
 	{

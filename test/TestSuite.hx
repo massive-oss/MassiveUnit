@@ -27,7 +27,6 @@ class TestSuite extends massive.munit.TestSuite
 	public function new()
 	{
 		super();
-
 		add(massive.munit.AssertionExceptionTest);
 		add(massive.munit.AssertTest);
 		add(massive.munit.async.AsyncDelegateTest);

@@ -60,7 +60,7 @@ class RunCommand extends MUnitTargetCommandBase
 	var tmpDir:File;
 	var tmpRunnerDir:File;
 	var binDir:File;
-	var killBrowser:Bool;
+	var killBrowser:Bool = false;
 	var indexPage:File;
 	var hasBrowserTests:Bool;
 	var nekoFile:File;
@@ -70,14 +70,9 @@ class RunCommand extends MUnitTargetCommandBase
 	var pythonFile:File;
 	var phpFile:File;
 	var nodejsFiles:Array<File> = [];
+	var hlFile:File;
 	var serverTimeoutTimeSec:Int;
 	var resultExitCode:Bool;
-	
-	public function new()
-	{
-		super();
-		killBrowser = false;
-	}
 
 	override public function initialise()
 	{
@@ -208,6 +203,7 @@ class RunCommand extends MUnitTargetCommandBase
 				case python: pythonFile = file;
 				case php: phpFile = file;
 				case js if(target.flags.exists("nodejs")): nodejsFiles.push(file);
+				case hl: hlFile = file;
 				case _:
 					hasBrowserTests = true;
 					var pageName = Std.string(target.type);
@@ -314,6 +310,7 @@ class RunCommand extends MUnitTargetCommandBase
 		if(pythonFile != null) launchPython(pythonFile);
 		if(phpFile != null) launchPHP(pythonFile);
 		if(nodejsFiles.length > 0) nodejsFiles.iter(launchNodeJS);
+		if(hlFile != null) launchHashLink(hlFile);
 		if(hasBrowserTests) launchFile(indexPage);
 		else resultMonitor.sendMessage("quit");
 		var platformResults:Bool = Thread.readMessage(true);
@@ -535,6 +532,8 @@ class RunCommand extends MUnitTargetCommandBase
 	inline function launchPHP(file:File):Int return launch(file, 'php', [file.nativePath]);
 	
 	inline function launchNodeJS(file:File):Int return launch(file, 'node', [file.nativePath]);
+	
+	inline function launchHashLink(file:File):Int return launch(file, 'hl', [file.nativePath]);
 	
 	function launch(file:File, executor:String, ?args:Array<String>):Int {
 		file.copyTo(reportRunnerDir.resolvePath(file.fileName));

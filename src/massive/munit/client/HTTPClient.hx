@@ -195,7 +195,7 @@ class HTTPClient implements IAdvancedTestResultClient
 		}
 	}
 
-	private function platform():String
+	function platform():String
 	{
 		#if flash return "as3";
 		#elseif js return "js";
@@ -205,11 +205,12 @@ class HTTPClient implements IAdvancedTestResultClient
 		#elseif java return "java";
 		#elseif python return "python";
 		#elseif php return "php";
+		#elseif hl return "hl";
 		#end
 		return "unknown";
 	}
 
-	private function onData(data:String):Void
+	function onData(data:String)
 	{
 		if (queueRequest)
 		{
@@ -220,7 +221,7 @@ class HTTPClient implements IAdvancedTestResultClient
 			completionHandler(this); 
 	}
 
-	private function onError(msg:String):Void
+	function onError(msg:String)
 	{
 		if (queueRequest)
 		{
@@ -231,7 +232,7 @@ class HTTPClient implements IAdvancedTestResultClient
 			completionHandler(this); 
 	}
 
-	private static function dispatchNextRequest():Void
+	static function dispatchNextRequest()
 	{
 		if (responsePending || queue.length == 0) 
 			return;
@@ -247,14 +248,14 @@ class HTTPClient implements IAdvancedTestResultClient
 
 class URLRequest
 {
-	public var onData:Dynamic -> Void;
-	public var onError:Dynamic ->Void;
+	public var onData:Dynamic->Void;
+	public var onError:Dynamic->Void;
 	public var data:Dynamic;
 
 	var url:String;
 	var headers:StringMap<String>;
 
-	#if(js || neko || cpp || java || cs || python || php)
+	#if(js || neko || cpp || java || cs || python || php || hl)
 	public var client:Http;
 	#elseif flash
 	public var client:flash.LoadVars;
@@ -270,7 +271,7 @@ class URLRequest
 
 	function createClient(url:String)
 	{
-		#if(js || neko || cpp || java || cs || python || php)
+		#if(js || neko || cpp || java || cs || python || php || hl)
 		client = new Http(url);
 		#elseif flash
 		client = new flash.LoadVars();
@@ -279,7 +280,7 @@ class URLRequest
 
 	public function setHeader(name:String, value:String)
 	{
-		#if(js || neko || cpp || java || cs || python || php)
+		#if(js || neko || cpp || java || cs || python || php || hl)
 		client.setHeader(name, value);
 		#elseif flash
 		client.addRequestHeader(name, value);
@@ -288,7 +289,7 @@ class URLRequest
 
 	public function send()
 	{
-		#if (js || neko || cpp || java || cs || python || php)
+		#if (js || neko || cpp || java || cs || python || php || hl)
 		client.onData = onData;
 		client.onError = onError;
 			#if(js && !nodejs)

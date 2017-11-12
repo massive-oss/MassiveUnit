@@ -5,64 +5,61 @@ import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 
 /**
-* Auto generated ExampleTest for MassiveUnit. 
-* This is an example test class can be used as a template for writing normal and async tests 
-* Refer to munit command line tool for more information (haxelib run munit)
-*/
+ * Auto generated ExampleTest for MassiveUnit. 
+ * This is an example test class can be used as a template for writing normal and async tests 
+ * Refer to munit command line tool for more information (haxelib run munit)
+ */
 class ExampleTest 
 {
-	private var timer:Timer;
-	
-	public function new() 
+	public function new()
 	{
-		
 	}
 	
 	@BeforeClass
-	public function beforeClass():Void
+	public function beforeClass()
 	{
 	}
 	
 	@AfterClass
-	public function afterClass():Void
+	public function afterClass()
 	{
 	}
 	
 	@Before
-	public function setup():Void
+	public function setup()
 	{
 	}
 	
 	@After
-	public function tearDown():Void
+	public function tearDown()
 	{
 	}
 	
 	@Test
-	public function testExample():Void
+	public function testExample()
 	{
 		Assert.isTrue(true);
 	}
 	
 	@AsyncTest
-	public function testAsyncExample(factory:AsyncFactory):Void
+	public function testAsyncExample(factory:AsyncFactory)
 	{
 		var handler:Dynamic = factory.createHandler(this, onTestAsyncExampleComplete, 300);
-		timer = Timer.delay(handler, 200);
+		var timer = Timer.delay(handler, 200);
 	}
 	
-	private function onTestAsyncExampleComplete():Void
+	function onTestAsyncExampleComplete()
 	{
 		Assert.isFalse(false);
 	}
 	
 	/**
-	* test that only runs when compiled with the -D testDebug flag
-	*/
+	 * test that only runs when compiled with the -D testDebug flag
+	 */
 	@TestDebug
-	public function testExampleThatOnlyRunsWithDebugFlag():Void
+	public function testExampleThatOnlyRunsWithDebugFlag()
 	{
 		Assert.isTrue(true);
 	}
-
+	
 }

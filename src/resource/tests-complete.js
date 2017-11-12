@@ -575,32 +575,21 @@ massive_munit_TestResult.prototype = {
 	}
 	,get_type: function() {
 		if(this.error != null) {
-			return massive_munit_TestResultType.ERROR;
+			return "ERROR";
 		}
 		if(this.failure != null) {
-			return massive_munit_TestResultType.FAIL;
+			return "FAIL";
 		}
 		if(this.ignore) {
-			return massive_munit_TestResultType.IGNORE;
+			return "IGNORE";
 		}
 		if(this.passed) {
-			return massive_munit_TestResultType.PASS;
+			return "PASS";
 		}
-		return massive_munit_TestResultType.UNKNOWN;
+		return "UNKNOWN";
 	}
 	,__class__: massive_munit_TestResult
 };
-var massive_munit_TestResultType = { __ename__ : true, __constructs__ : ["UNKNOWN","PASS","FAIL","ERROR","IGNORE"] };
-massive_munit_TestResultType.UNKNOWN = ["UNKNOWN",0];
-massive_munit_TestResultType.UNKNOWN.__enum__ = massive_munit_TestResultType;
-massive_munit_TestResultType.PASS = ["PASS",1];
-massive_munit_TestResultType.PASS.__enum__ = massive_munit_TestResultType;
-massive_munit_TestResultType.FAIL = ["FAIL",2];
-massive_munit_TestResultType.FAIL.__enum__ = massive_munit_TestResultType;
-massive_munit_TestResultType.ERROR = ["ERROR",3];
-massive_munit_TestResultType.ERROR.__enum__ = massive_munit_TestResultType;
-massive_munit_TestResultType.IGNORE = ["IGNORE",4];
-massive_munit_TestResultType.IGNORE.__enum__ = massive_munit_TestResultType;
 var massive_munit_client_HTTPClient = function(client,url,queueRequest) {
 	if(queueRequest == null) {
 		queueRequest = true;

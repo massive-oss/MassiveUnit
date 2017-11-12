@@ -15,27 +15,27 @@ class ::testName::
 	}
 	
 	@BeforeClass
-	public function beforeClass():Void
+	public function beforeClass()
 	{
 	}
 	
 	@AfterClass
-	public function afterClass():Void
+	public function afterClass()
 	{
 	}
 	
 	@Before
-	public function setup():Void
+	public function setup()
 	{
 	}
 	
 	@After
-	public function tearDown():Void
+	public function tearDown()
 	{
 	}
 	
 	@Test
-	public function testExample():Void
+	public function testExample()
 	{
 		Assert.isTrue(false);
 	}

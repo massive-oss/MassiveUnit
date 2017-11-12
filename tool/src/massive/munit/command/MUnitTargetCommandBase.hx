@@ -16,9 +16,7 @@ class MUnitTargetCommandBase extends MUnitCommand
 	override public function initialise()
 	{
 		super.initialise();
-		//append code coverage
-		var coverage:String  = console.getOption("-coverage");
-		includeCoverage = coverage == "true";
+		includeCoverage = console.getOption("-coverage") == "true";
 	}
 
 	function initialiseTargets(getHxmlFromConsole:Bool)
@@ -43,6 +41,7 @@ class MUnitTargetCommandBase extends MUnitCommand
 		if (console.getOption(cs) == "true") result.push(cs);
 		if (console.getOption(python) == "true") result.push(python);
 		if (console.getOption(php) == "true") result.push(php);
+		if (console.getOption(hl) == "true") result.push(hl);
 		return result;
 	}
 
@@ -120,12 +119,10 @@ class MUnitTargetCommandBase extends MUnitCommand
 	}
 
 	/**
-	Parses the contents of an hxml file and returns contents as an array of targets
-
-	@param hxml: path to hxml file
-	@return array of Targets
-	
-	*/
+	 * Parses the contents of an hxml file and returns contents as an array of targets
+	 * @param hxml: path to hxml file
+	 * @return array of Targets
+	 */
 	function getTargetsFromHXML(hxml:File):Array<Target>
 	{
 		var contents:String = hxml.readString();

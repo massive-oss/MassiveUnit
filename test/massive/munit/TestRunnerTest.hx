@@ -31,7 +31,6 @@ import massive.munit.async.AsyncFactory;
 import massive.munit.async.AsyncTestSuiteStub;
 
 /**
- * ...
  * @author Mike Stead
  */
 class TestRunnerTest
@@ -39,8 +38,7 @@ class TestRunnerTest
     private var runner:TestRunner;
     private var client:TestResultClientStub;
 
-    public function new()
-    {}
+    public function new() {}
 
     @Before
     public function setup():Void
