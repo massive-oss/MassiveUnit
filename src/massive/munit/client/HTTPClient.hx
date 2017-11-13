@@ -90,7 +90,7 @@ class HTTPClient implements IAdvancedTestResultClient
 	 * @param	?queueRequest		[optional] whether to add http requests to a global queue. Default is true.
 	 * @param	?httpRequest		[optional] a custom http request to use to dispatch the result.
 	 */
-	public function new(client:ITestResultClient, ?url:String = DEFAULT_SERVER_URL, ?queueRequest:Bool = true) 
+	public function new(client:ITestResultClient, ?url:String = DEFAULT_SERVER_URL, ?queueRequest:Bool = true)
 	{
 		id = DEFAULT_ID;
 		this.client = client;
@@ -103,7 +103,7 @@ class HTTPClient implements IAdvancedTestResultClient
 	*
 	* @param className		qualified name of current test class
 	*/
-	public function setCurrentTestClass(className:String):Void
+	public function setCurrentTestClass(className:String)
 	{
 		if(Std.is(client, IAdvancedTestResultClient))
 		{
@@ -116,8 +116,9 @@ class HTTPClient implements IAdvancedTestResultClient
 	 *  
 	 * @param	result			a passed test result
 	 */
-	public function addPass(result:TestResult):Void
+	public function addPass(result:TestResult)
 	{
+		Sys.println('addPass($result)');
 		client.addPass(result);
 	}
 
@@ -126,8 +127,9 @@ class HTTPClient implements IAdvancedTestResultClient
 	 *  
 	 * @param	result			a failed test result
 	 */
-	public function addFail(result:TestResult):Void
+	public function addFail(result:TestResult)
 	{
+		Sys.println('addFail($result)');
 		client.addFail(result);
 	}
 
@@ -136,8 +138,9 @@ class HTTPClient implements IAdvancedTestResultClient
 	 *  
 	 * @param	result			an erroneous test result
 	 */
-	public function addError(result:TestResult):Void
+	public function addError(result:TestResult)
 	{
+		Sys.println('addError($result)');
 		client.addError(result);
 	}
 	
@@ -146,8 +149,9 @@ class HTTPClient implements IAdvancedTestResultClient
 	 *
 	 * @param	result			an ignored test
 	 */
-	public function addIgnore(result:TestResult):Void
+	public function addIgnore(result:TestResult)
 	{
+		Sys.println('addIgnore($result)');
 		client.addIgnore(result);
 	}
 
@@ -169,7 +173,7 @@ class HTTPClient implements IAdvancedTestResultClient
 		return result;
 	}
 
-	private function sendResult(result):Void
+	function sendResult(result)
 	{
 		request = new URLRequest(url);
 		request.setHeader(CLIENT_HEADER_KEY, client.id);
@@ -177,7 +181,6 @@ class HTTPClient implements IAdvancedTestResultClient
 		request.onData = onData;
 		request.onError = onError;
 		request.data = result;
-
 		if (queueRequest)
 		{
 			queue.unshift(request);
@@ -212,7 +215,7 @@ class HTTPClient implements IAdvancedTestResultClient
 			dispatchNextRequest();
 		}
 		if (completionHandler != null)
-			completionHandler(this); 
+			completionHandler(this);
 	}
 
 	function onError(msg:String)
@@ -222,8 +225,8 @@ class HTTPClient implements IAdvancedTestResultClient
 			responsePending = false;
 			dispatchNextRequest();
 		}
-		if (completionHandler != null) 
-			completionHandler(this); 
+		if (completionHandler != null)
+			completionHandler(this);
 	}
 
 	static function dispatchNextRequest()
