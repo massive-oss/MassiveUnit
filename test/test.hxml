@@ -1,10 +1,10 @@
-### Neko
-#-main TestMain
-#-cp test
-#-cp src
-#-lib mlib
-#-neko bin/test/core/neko_test.n
-#
+## Neko
+-main TestMain
+-cp test
+-cp src
+-lib mlib
+-neko bin/test/core/neko_test.n
+
 ### CPP
 #--next
 #-main TestMain
@@ -56,11 +56,11 @@
 #-lib nodejs
 #-D nodejs
 #-js bin/test/core/js_test.js
-
-## HashLink
---next
--main TestMain
--cp test
--cp src
--lib mlib
--hl bin/test/core/hl_test.hl
+#
+### HashLink
+#--next
+#-main TestMain
+#-cp test
+#-cp src
+#-lib mlib
+#-hl bin/test/core/hl_test.hl

@@ -306,7 +306,6 @@ class TestRunner implements IAsyncDelegateObserver
         }
         catch(e:Dynamic)
         {
-			Sys.println('e: ${e}');
             if(async && asyncDelegate != null)
             {
                 asyncDelegate.cancelTest();

@@ -120,7 +120,7 @@ class PrintClientBase extends AbstractTestResultClient
 		printLine(divider1);
 
 		if(missingCoverageResults != null && missingCoverageResults.length > 0)
-		{	
+		{
 			printLine("MISSING CODE BLOCKS:");
 			for(result in missingCoverageResults)
 			{

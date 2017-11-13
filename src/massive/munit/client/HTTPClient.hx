@@ -148,7 +148,7 @@ class HTTPClient implements IAdvancedTestResultClient
 	 */
 	public function addIgnore(result:TestResult):Void
 	{
-		client.addIgnore(result);	
+		client.addIgnore(result);
 	}
 
 	/**
