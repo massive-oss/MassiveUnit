@@ -32,72 +32,54 @@ package massive.munit;
  */
 class TestClassHelperTest 
 {
-	public function new() {}
-
 	@Test
 	public function testConstructor()
 	{
 		var helper:TestClassHelper = new TestClassHelper(TestClassStub);
-		
 		Assert.isNotNull(helper.test);
 		Assert.isType(helper.test, TestClassStub);
 		Assert.areEqual(helper.type, TestClassStub);
-		#if !php
 		Assert.areEqual(helper.test.beforeClass, helper.beforeClass);
 		Assert.areEqual(helper.test.afterClass, helper.afterClass);
 		Assert.areEqual(helper.test.before, helper.before);
 		Assert.areEqual(helper.test.after, helper.after);
-		#end
 	}
 	
 	@Test
 	public function testIterator()
 	{
 		var helper:TestClassHelper = new TestClassHelper(TestClassStub);
-		#if !php
 		Assert.isTrue(helper.hasNext());
 		Assert.isNotNull(helper.current());
 		Assert.areEqual(helper.test.exampleTestOne, helper.current().test);
 		Assert.areEqual(helper.test.exampleTestOne, helper.next().test);
 		Assert.areEqual(helper.test.exampleTestOne, helper.current().test);
-		
 		Assert.isFalse(helper.current().result.async);
 		Assert.areEqual(helper.test, helper.current().scope);
-		
 		Assert.areEqual(helper.test.exampleTestTwo, helper.next().test);
 		Assert.areEqual(helper.test.exampleTestTwo, helper.current().test);
-		
 		Assert.isTrue(helper.current().result.async);
 		Assert.areEqual(helper.test, helper.current().scope);
-
 		Assert.isFalse(helper.hasNext());
 		Assert.isNull(helper.next());
-		#end
 	}
 	
 	@Test
 	public function testIteratorDebug()
 	{
 		var helper:TestClassHelper = new TestClassHelper(TestClassStub, true);
-		
 		Assert.isTrue(helper.hasNext());
 		Assert.isNotNull(helper.current());
-		#if !php
 		Assert.areEqual(helper.test.exampleTestOne, helper.current().test);
 		Assert.areEqual(helper.test.exampleTestOne, helper.next().test);
 		Assert.areEqual(helper.test.exampleTestOne, helper.current().test);
-		
-		Assert.isFalse(helper.current().result.async);		
-		Assert.areEqual(helper.test, helper.current().scope);
-		
-		Assert.areEqual(helper.test.exampleTestThree, helper.next().test);
-		Assert.areEqual(helper.test.exampleTestThree, helper.current().test);
-		
 		Assert.isFalse(helper.current().result.async);
 		Assert.areEqual(helper.test, helper.current().scope);
-
+		Assert.areEqual(helper.test.exampleTestThree, helper.next().test);
+		Assert.areEqual(helper.test.exampleTestThree, helper.current().test);
+		Assert.isFalse(helper.current().result.async);
+		Assert.areEqual(helper.test, helper.current().scope);
 		Assert.isFalse(helper.hasNext());
 		Assert.isNull(helper.next());
-		#end
 	}
 }

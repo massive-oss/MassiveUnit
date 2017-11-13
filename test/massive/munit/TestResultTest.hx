@@ -28,16 +28,12 @@
 package massive.munit;
 import massive.haxe.util.ReflectUtil;
 import massive.munit.TestResult;
+
 /**
- * ...
  * @author Mike Stead
  */
-
 class TestResultTest 
 {
-	public function new() 
-	{}
-	
 	@Test
 	public function testConstructor():Void
 	{
@@ -50,7 +46,6 @@ class TestResultTest
 		Assert.isFalse(result.async);
 		Assert.isNull(result.error);
 		Assert.isNull(result.failure);
-
 		Assert.areEqual(TestResultType.UNKNOWN, result.type);
 	}
 	

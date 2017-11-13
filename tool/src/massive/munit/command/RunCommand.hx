@@ -26,9 +26,8 @@
  * or implied, of Massive Interactive.
  */
 package massive.munit.command;
-
+import haxe.ds.StringMap;
 import haxe.io.Eof;
-import haxe.io.Path;
 import massive.haxe.log.Log;
 import massive.haxe.util.RegExpUtil;
 import massive.munit.ServerMain;
@@ -41,13 +40,12 @@ import sys.FileSystem;
 import sys.io.Process;
 import sys.net.Host;
 import sys.net.Socket;
-import haxe.ds.StringMap;
 
 using Lambda;
  
 /**
-Don't ask - compiler always thinks it is massive.munit.TargetType enum 'neko'
-*/
+ * Don't ask - compiler always thinks it is massive.munit.TargetType enum 'neko'
+ */
 typedef SysFile = sys.io.File;
 
 class RunCommand extends MUnitTargetCommandBase
@@ -206,7 +204,7 @@ class RunCommand extends MUnitTargetCommandBase
 				case hl: hlFile = file;
 				case _:
 					hasBrowserTests = true;
-					var pageName = Std.string(target.type);
+					var pageName = target.type;
 					var templateName = file.extension + "_runner-html";
 					var pageContent = getTemplateContent(templateName, {runnerName:file.fileName});
 					var runnerPage = reportRunnerDir.resolvePath(pageName + ".html");
@@ -242,9 +240,9 @@ class RunCommand extends MUnitTargetCommandBase
 	}
 
 	/**
-	Returns content from a html template.
-	Checks for local template before using default template
-	*/
+	 * Returns content from a html template.
+	 * Checks for local template before using default template
+	 */
 	function getTemplateContent(templateName:String, properties:Dynamic)
 	{
 		var content:String = null;
@@ -323,7 +321,6 @@ class RunCommand extends MUnitTargetCommandBase
 		FileSys.setCwd(console.dir.nativePath);
 		if (!platformResults && resultExitCode)
 		{
-			//print("TESTS FAILED");
 			Sys.stderr().writeString("TESTS FAILED\n");
 			Sys.stderr().flush();
 			exit(1);

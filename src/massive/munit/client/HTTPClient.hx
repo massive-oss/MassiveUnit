@@ -26,16 +26,11 @@
 * or implied, of Massive Interactive.
 ****/
 
-
-
 package massive.munit.client;
-
 import haxe.Http;
+import haxe.ds.StringMap;
 import massive.munit.ITestResultClient;
 import massive.munit.TestResult;
-import massive.munit.util.Timer;
-
-import haxe.ds.StringMap;
 
 /**
  * Decorates other ITestResultClient's, adding behavior to post test results to a specified url.
@@ -90,7 +85,6 @@ class HTTPClient implements IAdvancedTestResultClient
 	private var queueRequest:Bool;
 
 	/**
-	 * 
 	 * @param	client				the test result client to decorate
 	 * @param	url					the url to send test results to
 	 * @param	?queueRequest		[optional] whether to add http requests to a global queue. Default is true.
@@ -201,8 +195,8 @@ class HTTPClient implements IAdvancedTestResultClient
 		#elseif js return "js";
 		#elseif neko return "neko";
 		#elseif cpp return "cpp";
-		#elseif php return "php";
 		#elseif java return "java";
+		#elseif cs return "cs";
 		#elseif python return "python";
 		#elseif php return "php";
 		#elseif hl return "hl";

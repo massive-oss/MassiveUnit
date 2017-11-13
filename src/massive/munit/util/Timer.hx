@@ -83,8 +83,8 @@ class Timer
 			var me = this;
 			id = untyped _global["setInterval"](me.run, time_ms);
 		#elseif nodejs
-			var arr :Array<Dynamic> = untyped global.haxe_timers = global.haxe_timers == null ? [] : global.haxe_timers;
-			var me 	= this;
+			var arr:Array<Dynamic> = untyped global.haxe_timers = global.haxe_timers == null ? [] : global.haxe_timers;
+			var me = this;
 			me.id = arr.length;
 			arr[me.id] = me;
 		#elseif js
@@ -147,7 +147,7 @@ class Timer
 	}
 	#end
 
-	public static function delay(f:Void -> Void, time_ms:Int):Timer
+	public static function delay(f:Void->Void, time_ms:Int):Timer
 	{
 		var t = new Timer(time_ms);
 		t.run = function()

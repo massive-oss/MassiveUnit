@@ -26,17 +26,11 @@
 * or implied, of Massive Interactive.
 ****/
 
-
-
 package massive.munit.client;
-import massive.munit.AssertionException;
-import massive.munit.ITestResultClient;
+import massive.munit.ITestResultClient.CoverageResult;
 import massive.munit.TestResult;
-import massive.munit.util.MathUtil;
-import massive.haxe.util.ReflectUtil;
-import massive.munit.util.Timer;
-
 import massive.munit.client.PrintClientBase;
+import massive.munit.util.MathUtil;
 
 class RichPrintClient extends PrintClientBase
 {
@@ -57,10 +51,8 @@ class RichPrintClient extends PrintClientBase
 	override function init()
 	{
 		super.init();
-
 		originalTrace = haxe.Log.trace;
 		haxe.Log.trace = customTrace;
-
 		external = new ExternalPrintClientJS();
 	}
 
@@ -134,8 +126,8 @@ class RichPrintClient extends PrintClientBase
 	{
 		if(errorCount > 0) return TestResultType.ERROR;
 		if(failCount > 0) return TestResultType.FAIL;
-		if(ignoreCount > 0) return TestResultType.IGNORE; 
-		return TestResultType.PASS; 
+		if(ignoreCount > 0) return TestResultType.IGNORE;
+		return TestResultType.PASS;
 	}
 
 	override public function setCurrentTestClassCoverage(result:CoverageResult)
@@ -150,13 +142,13 @@ class RichPrintClient extends PrintClientBase
 		}
 	}
 	
-	override public function reportFinalCoverage(?percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
-		?classBreakdown:String=null,
-		?packageBreakdown:String=null,
-		?executionFrequency:String=null
+	override public function reportFinalCoverage(?percent:Float = 0, missingCoverageResults:Array<CoverageResult>, summary:String,
+		?classBreakdown:String,
+		?packageBreakdown:String,
+		?executionFrequency:String
 		)
 	{
-		super.reportFinalCoverage(percent, missingCoverageResults, summary,classBreakdown,packageBreakdown,executionFrequency);
+		super.reportFinalCoverage(percent, missingCoverageResults, summary, classBreakdown, packageBreakdown, executionFrequency);
 
 		external.createCoverageReport(percent);
 		printMissingCoverage(missingCoverageResults);

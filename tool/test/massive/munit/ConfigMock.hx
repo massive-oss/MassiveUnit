@@ -9,17 +9,16 @@ class ConfigMock
 	public var mockDir:File;
 	public var mockConfigFile:File;
 	
-	public function new():Void
+	public function new()
 	{
 		mockDir = File.createTempDirectory();
 		mockConfigFile = createMockConfigFile();
 		super(mockDir, currentVersion);
 	}
 	
-	override private function createMockConfigFile():Void
+	override private function createMockConfigFile()
 	{
 		var file:File = mockDir.dir.resolveFile(".munit");
-		
 		var str:String = "";
 		str += "version=1.0";
 		str += "\n#this is a comment";
@@ -28,12 +27,10 @@ class ConfigMock
 		str += "\nreport=report";
 		str += "\nclassPaths=src";
 		str += "\nhxml=test.hxml";
-
-
 		file.writeString(str);
 	}
 	
-	public function deleteMock():Void
+	public function deleteMock()
 	{
 		mockDir.deleteDirectory();
 	}

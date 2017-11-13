@@ -27,15 +27,17 @@
 ****/
 
 package massive.munit;
-
-import haxe.PosInfos;
+import haxe.Constraints.Function; 
+import haxe.PosInfos; 
+import haxe.extern.EitherType; 
+ 
+private typedef RefType = EitherType<{}, Function>; 
 
 /**
  * Used to make assertions about values in test cases.
- *  
  * @author Mike Stead
  */
-class Assert 
+class Assert
 {
 	/**
 	 * The incremented number of assertions made during the execution of a set of tests.
@@ -44,11 +46,11 @@ class Assert
 	
 	/**
 	 * Assert that a value is true.
-	 *  
+	 * 
 	 * @param	value				value expected to be true
 	 * @throws	AssertionException	if value is not true
-	 */ 
-	public static function isTrue(value:Bool, ?info:PosInfos):Void
+	 */
+	public static function isTrue(value:Bool, ?info:PosInfos)
 	{
 		assertionCount++;
 		if (!value) fail("Expected TRUE but was [" + value + "]", info);
@@ -56,11 +58,11 @@ class Assert
 	
 	/**
 	 * Assert that a value is false.
-	 *  
+	 * 
 	 * @param	value				value expected to be false
 	 * @throws	AssertionException	if value is not false
-	 */ 
-	public static function isFalse(value:Bool, ?info:PosInfos):Void
+	 */
+	public static function isFalse(value:Bool, ?info:PosInfos)
 	{
 		assertionCount++;
 		if (value) fail("Expected FALSE but was [" + value + "]", info);
@@ -68,11 +70,11 @@ class Assert
 	
 	/**
 	 * Assert that a value is null.
-	 *  
+	 * 
 	 * @param	value				value expected to be null
 	 * @throws	AssertionException	if value is not null
-	 */ 
-	public static function isNull(value:Dynamic, ?info:PosInfos):Void
+	 */
+	public static function isNull<T>(value:Null<T>, ?info:PosInfos)
 	{
 		assertionCount++;
 		if (value != null) fail("Value [" + value + "] was not NULL", info);
@@ -80,11 +82,11 @@ class Assert
 	
 	/**
 	 * Assert that a value is not null.
-	 *  
+	 * 
 	 * @param	value				value expected not to be null
 	 * @throws	AssertionException	if value is null
-	 */ 
-	public static function isNotNull(value:Dynamic, ?info:PosInfos):Void
+	 */
+	public static function isNotNull<T>(value:Null<T>, ?info:PosInfos)
 	{
 		assertionCount++;
 		if (value == null) fail("Value [" + value + "] was NULL", info);
@@ -92,11 +94,11 @@ class Assert
 	
 	/**
 	 * Assert that a value is Math.NaN.
-	 *  
+	 * 
 	 * @param	value				value expected to be Math.NaN
 	 * @throws	AssertionException	if value is not Math.NaN
-	 */ 
-	public static function isNaN(value:Float, ?info:PosInfos):Void
+	 */
+	public static function isNaN(value:Float, ?info:PosInfos)
 	{
 		assertionCount++;
 		if (!Math.isNaN(value)) fail("Value [" + value + "]  was not NaN", info);
@@ -104,11 +106,11 @@ class Assert
 
 	/**
 	 * Assert that a value is not Math.NaN.
-	 *  
+	 * 
 	 * @param	value				value expected not to be Math.NaN
 	 * @throws	AssertionException	if value is Math.NaN
 	 */
-	public static function isNotNaN(value:Float, ?info:PosInfos):Void
+	public static function isNotNaN(value:Float, ?info:PosInfos)
 	{
 		assertionCount++;
 		if (Math.isNaN(value)) fail("Value [" + value + "] was NaN", info);
@@ -120,7 +122,7 @@ class Assert
 	 * @param	value				value expected to be of a given type
 	 * @param	type				type the value should be
 	 */
-	public static function isType(value:Dynamic, type:Dynamic, ?info:PosInfos):Void
+	public static function isType(value:Dynamic, type:Dynamic, ?info:PosInfos)
 	{
 		assertionCount++;
 		if (!Std.is(value, type)) fail("Value [" + value + "] was not of type: " + Type.getClassName(type), info);
@@ -132,7 +134,7 @@ class Assert
 	 * @param	value				value expected to not be of a given type
 	 * @param	type				type the value should not be
 	 */
-	public static function isNotType(value:Dynamic, type:Dynamic, ?info:PosInfos):Void
+	public static function isNotType(value:Dynamic, type:Dynamic, ?info:PosInfos)
 	{
 		assertionCount++;
 		if (Std.is(value, type)) fail("Value [" + value + "] was of type: " + Type.getClassName(type), info);
@@ -143,53 +145,39 @@ class Assert
 	 * 
 	 * If the expected value is an Enum then Type.enumEq will be used to compare the two values.
 	 * Otherwise strict equality is used.
-	 *  
 	 * @param	expected			expected value
 	 * @param	actual				actual value
 	 * @throws	AssertionException	if expected is not equal to the actual value
 	 */
-	public static function areEqual(expected:Dynamic, actual:Dynamic, ?info:PosInfos):Void
+	public static function areEqual<TExpected, TActual>(expected:TExpected, actual:TActual, ?info:PosInfos)
 	{
 		assertionCount++;
-		var equal = switch(Type.typeof(expected))
-		{
-			case TEnum(_): Type.enumEq(expected, actual);
-			case TFunction: Reflect.compareMethods(expected, actual);
-			default: expected == actual;
-		}
-		if (!equal) fail("Value [" + actual +"] was not equal to expected value [" + expected + "]", info);
+		if (!equals(expected, actual)) fail("Value [" + actual +"] was not equal to expected value [" + expected + "]", info);
 	}
 	
 	/**
 	 * Assert that two values are not equal.
-	 *  
+	 * 
 	 * If the expected value is an Enum then Type.enumEq will be used to compare the two values.
 	 * Otherwise strict equality is used.
-	 *  
 	 * @param	expected			expected value
 	 * @param	actual				actual value
 	 * @throws	AssertionException	if expected is equal to the actual value
 	 */
-	public static function areNotEqual(expected:Dynamic, actual:Dynamic, ?info:PosInfos):Void
+	public static function areNotEqual<TExpected, TActual>(expected:TExpected, actual:TActual, ?info:PosInfos)
 	{
 		assertionCount++;
-		var equal = switch(Type.typeof(expected))
-		{
-			case TEnum(_): Type.enumEq(expected, actual);
-			case TFunction: Reflect.compareMethods(expected, actual);
-			default: expected == actual;
-		}
-		if (equal) fail("Value [" + actual +"] was equal to value [" + expected + "]", info);
+		if (equals(expected, actual)) fail("Value [" + actual +"] was equal to value [" + expected + "]", info);
 	}
 
 	/**
 	 * Assert that two values are one and the same.
-	 *  
+	 * 
 	 * @param	expected			expected value
 	 * @param	actual				actual value
 	 * @throws	AssertionException	if expected is not the same as the actual value
 	 */
-	public static function areSame(expected:Dynamic, actual:Dynamic, ?info:PosInfos):Void
+	public static function areSame<T:RefType>(expected:T, actual:T, ?info:PosInfos)
 	{
 		assertionCount++;
 		if (expected != actual) fail("Value [" + actual +"] was not the same as expected value [" + expected + "]", info);
@@ -197,12 +185,12 @@ class Assert
 
 	/**
 	 * Assert that two values are not one and the same.
-	 *  
+	 * 
 	 * @param	expected			expected value
 	 * @param	actual				actual value
 	 * @throws	AssertionException	if expected is the same as the actual value
 	 */
-	public static function areNotSame(expected:Dynamic, actual:Dynamic, ?info:PosInfos):Void
+	public static function areNotSame<T:RefType>(expected:T, actual:T, ?info:PosInfos)
 	{
 		assertionCount++;
 		if (expected == actual) fail("Value [" + actual +"] was the same as expected value [" + expected + "]", info);
@@ -247,7 +235,7 @@ class Assert
 	/**
 	 * Assert that an expectation was thrown. Can expect strings and non-strings.
 	 *
-     * @Param   expectedType        the type of exception expected (eg. String, AssertionException)
+	 * @param   expectedType        the type of exception expected (eg. String, AssertionException)
 	 * @param   code				a function which should throw an exception
 	 * @return					  the exception that was thrown
 	 * @throws  AssertionException  if no expectation is thrown
@@ -264,17 +252,23 @@ class Assert
 			if(Std.is(e, expectedType)) return e;
 			Assert.fail('Expected exception of type ${Type.getClassName(expectedType)} but got ${Type.getClassName(Type.getClass(e))}: ${e}');
 		}
-		return null; // needed to compile
+		return null;
 	}
 
 	/**
-	  * Force an assertion failure.
-	  *  
-	  * @param	msg				message describing the assertion which failed
-	  * @throws	AssertionException	thrown automatically
-	  */
-	public static function fail(msg:String, ?info:PosInfos):Void
+	 * Force an assertion failure.
+	 * 
+	 * @param	msg				message describing the assertion which failed
+	 * @throws	AssertionException	thrown automatically
+	 */
+	public static function fail(msg:String, ?info:PosInfos)
 	{
 		throw new AssertionException(msg, info);
+	}
+	
+	static inline function equals(a:Dynamic, b:Dynamic) return switch(Type.typeof(a)) {
+		case TEnum(_): Type.enumEq(a, b);
+		case TFunction: Reflect.compareMethods(a, b);
+		default: a == b;
 	}
 }

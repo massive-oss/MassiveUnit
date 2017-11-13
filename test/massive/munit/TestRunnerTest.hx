@@ -26,29 +26,27 @@
  * or implied, of Massive Interactive.
  */
 package massive.munit;
-import massive.munit.client.JUnitReportClient;
 import massive.munit.async.AsyncFactory;
 import massive.munit.async.AsyncTestSuiteStub;
+import massive.munit.client.JUnitReportClient;
 
 /**
  * @author Mike Stead
  */
 class TestRunnerTest
 {
-    private var runner:TestRunner;
-    private var client:TestResultClientStub;
-
-    public function new() {}
+    var runner:TestRunner;
+    var client:TestResultClientStub;
 
     @Before
-    public function setup():Void
+    public function setup()
     {
         client = new TestResultClientStub();
         runner = new TestRunner(client);
     }
 
     @After
-    public function tearDown():Void
+    public function tearDown()
     {
         client.completionHandler = null;
         client = null;
@@ -57,14 +55,14 @@ class TestRunnerTest
     }
 
     @Test
-    public function testConstructor():Void
+    public function testConstructor()
     {
         Assert.areEqual(1, runner.clientCount);
         Assert.isFalse(runner.running);
     }
 
     @Test
-    public function testAddResultClient():Void
+    public function testAddResultClient()
     {
         Assert.areEqual(1, runner.clientCount);
         runner.addResultClient(client);
@@ -75,7 +73,7 @@ class TestRunnerTest
     }
 
     @AsyncTest
-    public function testRun(factory:AsyncFactory):Void
+    public function testRun(factory:AsyncFactory)
     {
         var suites = new Array<Class<massive.munit.TestSuite>>();
         suites.push(TestSuiteStub);
@@ -83,7 +81,7 @@ class TestRunnerTest
         runner.run(suites);
     }
 
-    private function completionHandler(isSuccessful:Bool):Void
+    private function completionHandler(isSuccessful:Bool)
     {
         Assert.isFalse(isSuccessful);
         Assert.areEqual(2, client.testCount);
@@ -96,12 +94,11 @@ class TestRunnerTest
         Assert.areEqual(0, client.finalErrorCount);
         Assert.areEqual(1, client.testClasses.length);
         Assert.isNull(client.currentTestClass);
-
         Assert.areEqual("massive.munit.TestClassStub", client.testClasses[client.testClasses.length-1]);
     }
 
     @AsyncTest
-    public function testDebug(factory:AsyncFactory):Void
+    public function testDebug(factory:AsyncFactory)
     {
         var suites = new Array<Class<massive.munit.TestSuite>>();
 
@@ -111,7 +108,7 @@ class TestRunnerTest
     }
 
     @AsyncTest
-    public function noDebugTestsDuringDebugShouldNotRun(factory:AsyncFactory):Void
+    public function noDebugTestsDuringDebugShouldNotRun(factory:AsyncFactory)
     {
         var suites = new Array<Class<massive.munit.TestSuite>>();
 
@@ -120,12 +117,12 @@ class TestRunnerTest
         runner.debug(suites);
     }
 
-    private function debugCompletetionHandler(isSuccessful:Bool):Void {
+    function debugCompletetionHandler(isSuccessful:Bool) {
         Assert.areEqual(0, client.testClasses.length);
     }
 
     @AsyncTest
-    public function testAsyncAssertionTests(factory:AsyncFactory):Void
+    public function testAsyncAssertionTests(factory:AsyncFactory)
     {
         var suites = new Array<Class<massive.munit.TestSuite>>();
 
@@ -134,7 +131,7 @@ class TestRunnerTest
         runner.run(suites);
     }
 
-    private function asyncCompletionHandler(isSuccessful:Bool):Void
+    function asyncCompletionHandler(isSuccessful:Bool)
     {
         Assert.isFalse(isSuccessful);
         Assert.areEqual(8, client.testCount);
@@ -147,7 +144,6 @@ class TestRunnerTest
         Assert.areEqual(2, client.finalErrorCount);
         Assert.areEqual(2, client.testClasses.length);
         Assert.isNull(client.currentTestClass);
-
         Assert.areEqual("massive.munit.async.AsyncTestClassStub2", client.testClasses[client.testClasses.length-1]);
         Assert.areEqual("massive.munit.async.AsyncTestClassStub", client.testClasses[client.testClasses.length-2]);
     }

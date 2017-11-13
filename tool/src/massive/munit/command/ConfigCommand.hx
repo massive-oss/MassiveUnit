@@ -32,9 +32,9 @@ import massive.sys.io.FileSys;
 import massive.haxe.util.TemplateUtil;
 
 /**
-The ConfigCommand provides a number of ways to create and modify the configuration file (.munit) for a project.
-Either from command line args, manual input into the console, or from an external file.
-*/
+ * The ConfigCommand provides a number of ways to create and modify the configuration file (.munit) for a project.
+ * Either from command line args, manual input into the console, or from an external file.
+ */
 class ConfigCommand extends MUnitCommand
 {
 	static inline var DEFAULT_SRC:String = "test";
@@ -113,7 +113,7 @@ class ConfigCommand extends MUnitCommand
 			if(src != null) config.updateSrc(src);
 			if(bin != null) config.updateBin(bin);
 			if(report != null) config.updateReport(report);
-			if(classPaths != null) config.updateClassPaths(classPaths);	
+			if(classPaths != null) config.updateClassPaths(classPaths);
 			if(hxml != null) config.updateHxml(hxml);
 			if(resources != null) config.updateResources(resources);
 			if(templates != null) config.updateTemplates(templates);
@@ -124,26 +124,22 @@ class ConfigCommand extends MUnitCommand
 
 	function hasDeleteArg():Bool
 	{
-		if(console.getOption("delete") != null) return true;
-		return false;
+		return console.getOption("delete") != null;
 	}
 
 	function hasFileArg():Bool
 	{
-		if(console.getOption("file") != null) return true;
-		return false;
+		return console.getOption("file") != null;
 	}
 
 	function hasResetArg():Bool
 	{
-		if(console.getOption("reset") != null) return true;
-		return false;
+		return console.getOption("reset") != null;
 	}
 
 	function hasDefaultArg():Bool
 	{
-		if(console.getOption("default") != null) return true;
-		return false;
+		return console.getOption("default") != null;
 	}
 
 	function hasInlineArgs():Bool

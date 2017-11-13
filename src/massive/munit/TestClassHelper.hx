@@ -45,7 +45,6 @@ import haxe.rtti.Meta;
  * 
  * @author Mike Stead
  */
-
 class TestClassHelper 
 {
 	/**
@@ -146,17 +145,15 @@ class TestClassHelper
 	 * 
 	 * @param	type			type of test class this helper is wrapping
 	 */
-	public function new(type:Class<Dynamic>, ?isDebug:Bool=false) 
+	public function new(type:Class<Dynamic>, isDebug:Bool = false)
 	{
 		this.type = type;
 		this.isDebug = isDebug;
 		className = Type.getClassName(type);
-		
 		beforeClass = nullFunc;
 		afterClass = nullFunc;
 		before = nullFunc;
 		after = nullFunc;
-		
 		parse(type);
 	}
 	
@@ -318,9 +315,11 @@ class TestClassHelper
 	
 	function sortTestsByName(x:TestCaseData, y:TestCaseData):Int
 	{
-		if (x.result.name == y.result.name) return 0;
-		if (x.result.name > y.result.name) return 1;
-		else return -1;
+		var xName = x.result.name;
+		var yName = y.result.name;
+		if (xName == yName) return 0;
+		if (xName > yName) return 1;
+		return -1;
 	}
 
 	public static function nullFunc() {}

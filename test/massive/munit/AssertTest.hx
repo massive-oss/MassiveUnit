@@ -343,36 +343,6 @@ class AssertTest
 	}
 
 	@Test
-	public function testAreSameNumber():Void
-	{
-		Assert.areSame(1, 1);
-		try
-		{
-			Assert.areSame(1, 2);
-		}
-		catch (e:AssertionException)
-		{
-			return;
-		}
-		Assert.fail("Invalid assertion not captured");
-	}
-
-	@Test
-	public function testAreSameEnum():Void
-	{
-		Assert.areSame(ValueA, ValueA);
-		try
-		{
-			Assert.areSame(ValueA, ValueB);
-		}
-		catch (e:AssertionException)
-		{
-			return;
-		}
-		Assert.fail("Invalid assertion not captured");
-	}
-
-	@Test
 	public function testDoesMatch():Void
 	{
 		Assert.doesMatch("regular_example_45-", ~/^regular_example_\d+\-$/);
@@ -411,21 +381,6 @@ class AssertTest
 		try
 		{
 			Assert.areNotSame(obj, obj);
-		}
-		catch (e:AssertionException)
-		{
-			return;
-		}
-		Assert.fail("Invalid assertion not captured");
-	}
-
-	@Test
-	public function testAreNotSameNumber():Void
-	{
-		Assert.areNotSame(1, 2);
-		try
-		{
-			Assert.areNotSame(1, 1);
 		}
 		catch (e:AssertionException)
 		{

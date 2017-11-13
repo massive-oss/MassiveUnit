@@ -92,14 +92,10 @@ class SummaryReportClient extends AbstractTestResultClient
 		output = sb.toString();
 	}
 
-	override function printOverallResult(result:Bool)
-	{
-		//handled by printFinalStatistics
-	}
+	//handled by printFinalStatistics
+	override function printOverallResult(result:Bool) {}
 
-	override function printReports()
-	{
-		//not implemented 
-	}
+	//not implemented 
+	override function printReports() {}
 
 }

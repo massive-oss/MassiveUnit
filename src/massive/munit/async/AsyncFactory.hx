@@ -26,13 +26,9 @@
 * or implied, of Massive Interactive.
 ****/
 
-
-
 package massive.munit.async;
-
 import haxe.Constraints.Function;
 import haxe.PosInfos;
-import massive.munit.MUnitException;
 
 /**
  * Factory for asynchronous delegates.

@@ -50,12 +50,10 @@ class TestCommand extends MUnitTargetCommandBase
 		}
 
 		//prevent generation from occuring
-		var noGen:String  = console.getOption("-nogen");
-		if (noGen != "true") addPreRequisite(GenerateCommand);
+		if (console.getOption("-nogen") != "true") addPreRequisite(GenerateCommand);
 		
 		//prevent generation from occuring
-		var noRun:String  = console.getOption("-norun");
-		if (noRun != "true") addPostRequisite(RunCommand);
+		if (console.getOption("-norun") != "true") addPostRequisite(RunCommand);
 
 		//append code coverage
 		if (missingClassPaths()) testsAborted = true;
@@ -122,7 +120,7 @@ class TestCommand extends MUnitTargetCommandBase
 				target.hxml += "--macro mcover.MCover.coverage(['" + coverPackages + "'],['" + clsPaths.join("','") + "'],['" + coverIgnoredClasses + "'])\n";	
 			}
 			
-			if (target.type == TargetType.as3) target.hxml = updateSwfHeader(target.hxml);
+			if (target.type == as3) target.hxml = updateSwfHeader(target.hxml);
 			if (console.getOption("debug") == "true")
 			{
 				target.hxml += "-D testDebug\n";
