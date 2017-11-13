@@ -53,6 +53,6 @@
 -cp test
 -cp src
 -lib mlib
--lib nodejs
+-lib hxnodejs
 -D nodejs
 -js bin/test/core/js_test.js
