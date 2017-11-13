@@ -99,10 +99,10 @@ class HTTPClient implements IAdvancedTestResultClient
 	}
 
 	/**
-	* Classed when test class changes
-	*
-	* @param className		qualified name of current test class
-	*/
+	 * Classed when test class changes
+	 *
+	 * @param className		qualified name of current test class
+	 */
 	public function setCurrentTestClass(className:String)
 	{
 		if(Std.is(client, IAdvancedTestResultClient))
@@ -118,7 +118,6 @@ class HTTPClient implements IAdvancedTestResultClient
 	 */
 	public function addPass(result:TestResult)
 	{
-		Sys.println('addPass($result)');
 		client.addPass(result);
 	}
 
@@ -129,7 +128,6 @@ class HTTPClient implements IAdvancedTestResultClient
 	 */
 	public function addFail(result:TestResult)
 	{
-		Sys.println('addFail($result)');
 		client.addFail(result);
 	}
 
@@ -140,7 +138,6 @@ class HTTPClient implements IAdvancedTestResultClient
 	 */
 	public function addError(result:TestResult)
 	{
-		Sys.println('addError($result)');
 		client.addError(result);
 	}
 	
@@ -151,7 +148,6 @@ class HTTPClient implements IAdvancedTestResultClient
 	 */
 	public function addIgnore(result:TestResult)
 	{
-		Sys.println('addIgnore($result)');
 		client.addIgnore(result);
 	}
 
@@ -173,7 +169,7 @@ class HTTPClient implements IAdvancedTestResultClient
 		return result;
 	}
 
-	function sendResult(result)
+	function sendResult(result:Dynamic)
 	{
 		request = new URLRequest(url);
 		request.setHeader(CLIENT_HEADER_KEY, client.id);
@@ -286,7 +282,7 @@ class URLRequest
 
 	public function send()
 	{
-		#if (js || neko || cpp || java || cs || python || php || hl)
+		#if(js || neko || cpp || java || cs || python || php || hl)
 		client.onData = onData;
 		client.onError = onError;
 			#if(js && !nodejs)

@@ -62,7 +62,7 @@ import cpp.vm.Thread;
 import java.vm.Thread;
 #end
 
-#if(cs || python || php || nodejs || hl)
+#if(nodejs || cs || python || php || hl)
 typedef Timer = haxe.Timer;
 #else
 @:expose('massive.munit.util.Timer')
