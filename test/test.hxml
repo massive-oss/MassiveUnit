@@ -54,5 +54,4 @@
 -cp src
 -lib mlib
 -lib hxnodejs
--D nodejs
 -js bin/test/core/js_test.js

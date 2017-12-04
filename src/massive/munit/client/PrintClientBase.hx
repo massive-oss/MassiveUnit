@@ -274,7 +274,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 			{
 				printLine("WARNING: Flash Debug Player not installed. May cause unexpected behaviour in MUnit when handling thrown exceptions.");
 			}
-		#elseif(js && !nodejs)
+		#elseif(js && !hxnodejs)
 			var div = js.Browser.document.getElementById("haxe:trace");
 			if (div == null) 
 			{
@@ -406,7 +406,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 
 	public function queue(method:String, ?args:Dynamic):Bool
 	{
-		#if (!js && !flash || nodejs)
+		#if (!js && !flash || hxnodejs)
 			//throw new MUnitException("Cannot call from non JS/Flash targets");
 			return false;
 		#end

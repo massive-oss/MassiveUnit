@@ -15,8 +15,6 @@
 -lib hamcrest
 ::foreach classPaths::-cp ::__current__::
 ::end::
-#-lib hxnodejs
-#-D nodejs
 -cp ::src::
 -js ::bin::/js_test.js
 
@@ -81,3 +79,14 @@
 -cp ::src::
 -D php7
 -php ::bin::/php_test
+
+## JavaScript NodeJS
+--next
+-main TestMain
+-lib munit
+-lib hamcrest
+-lib hxnodejs
+::foreach classPaths::-cp ::__current__::
+::end::
+-cp ::src::
+-js ::bin::/js_test.js

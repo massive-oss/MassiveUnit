@@ -83,7 +83,7 @@ class UnhandledException extends MUnitException
 	        }
 		}
 
-		#if nodejs
+		#if hxnodejs
 		// you might want to use source-map-support package to get haxe sources in the traceback
 		if (s == "") s = untyped source.stack;
 		#end

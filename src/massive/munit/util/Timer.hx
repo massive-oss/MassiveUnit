@@ -62,7 +62,7 @@ import cpp.vm.Thread;
 import java.vm.Thread;
 #end
 
-#if(cs || python || php || nodejs)
+#if(cs || python || php || hxnodejs)
 typedef Timer = haxe.Timer;
 #else
 @:expose('massive.munit.util.Timer')
@@ -82,11 +82,6 @@ class Timer
 		#if flash
 			var me = this;
 			id = untyped _global["setInterval"](me.run, time_ms);
-		#elseif nodejs
-			var arr :Array<Dynamic> = untyped global.haxe_timers = global.haxe_timers == null ? [] : global.haxe_timers;
-			var me 	= this;
-			me.id = arr.length;
-			arr[me.id] = me;
 		#elseif js
 			id = arr.length;
 			arr[id] = this;
@@ -104,8 +99,6 @@ class Timer
 		#end
 		#if flash
 			untyped _global["clearInterval"](id);
-		#elseif nodejs
-			untyped clearInterval(timerId);
 		#elseif js
 			untyped window.clearInterval(timerId);
 			arr[id] = null;
