@@ -10,7 +10,7 @@ Optional Arguments:
    destFile       : Path to save report at
 
 Optional Parameters:
-	
+
     -[platform]       : One or more specific target platforms to compile (defaults to
                         contents of results.txt file in report directory)
     
@@ -21,4 +21,3 @@ Example:
     Output teamcity-info.xml file in project directory
 
         munit report teamcity . -coverage 90
-
