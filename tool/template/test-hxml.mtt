@@ -8,9 +8,8 @@
 -swf-version 11
 -swf ::bin::/as3_test.swf
 
---next
-
 ## JavaScript
+--next
 -main TestMain
 -lib munit
 -lib hamcrest
@@ -19,9 +18,8 @@
 -cp ::src::
 -js ::bin::/js_test.js
 
---next
-
 ## Neko
+--next
 -main TestMain
 -lib munit
 -lib hamcrest
@@ -30,9 +28,8 @@
 -cp ::src::
 -neko ::bin::/neko_test.n
 
---next
-
 ## CPP
+--next
 -main TestMain
 -lib munit
 -lib hamcrest
@@ -42,9 +39,8 @@
 #-D HXCPP_M64
 -cpp ::bin::/cpp_test
 
---next
-
 ## Java
+--next
 -main TestMain
 -lib munit
 -lib hamcrest
@@ -83,3 +79,14 @@
 -cp ::src::
 -D php7
 -php ::bin::/php_test
+
+## JavaScript NodeJS
+--next
+-main TestMain
+-lib munit
+-lib hamcrest
+-lib hxnodejs
+::foreach classPaths::-cp ::__current__::
+::end::
+-cp ::src::
+-js ::bin::/js_test.js

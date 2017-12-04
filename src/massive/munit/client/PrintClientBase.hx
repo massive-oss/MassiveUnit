@@ -160,7 +160,6 @@ class PrintClientBase extends AbstractTestResultClient
 		}
 	}
 
-	////// FINAL REPORTS //////
 	override function printReports()
 	{
 		printFinalIgnoredStatistics(ignoreCount);
@@ -195,15 +194,15 @@ class PrintClientBase extends AbstractTestResultClient
 	override function printFinalStatistics(result:Bool, testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float)
 	{
 		printLine(divider2);
-        var sb = new StringBuf();
-        sb.add(result ? "PASSED" : "FAILED");
-        sb.add("\nTests: "); sb.add(testCount);
-        sb.add("  Passed: "); sb.add(passCount);
-        sb.add("  Failed: "); sb.add(failCount);
-        sb.add(" Errors: "); sb.add(errorCount);
-        sb.add(" Ignored: "); sb.add(ignoreCount);
-        sb.add(" Time: "); sb.add(MathUtil.round(time, 5));
-        printLine(sb.toString());
+		var sb = new StringBuf();
+		sb.add(result ? "PASSED" : "FAILED");
+		sb.add("\nTests: "); sb.add(testCount);
+		sb.add("  Passed: "); sb.add(passCount);
+		sb.add("  Failed: "); sb.add(failCount);
+		sb.add(" Errors: "); sb.add(errorCount);
+		sb.add(" Ignored: "); sb.add(ignoreCount);
+		sb.add(" Time: "); sb.add(MathUtil.round(time, 5));
+		printLine(sb.toString());
 		printLine("");
 	}
 
@@ -275,15 +274,14 @@ class ExternalPrintClientJS implements ExternalPrintClient
 			{
 				printLine("WARNING: Flash Debug Player not installed. May cause unexpected behaviour in MUnit when handling thrown exceptions.");
 			}
-		#elseif js
+		#elseif(js && !hxnodejs)
 			var div = js.Browser.document.getElementById("haxe:trace");
 			if (div == null) 
 			{
 				var positionInfo = ReflectUtil.here();
 				var error:String = "MissingElementException: 'haxe:trace' element not found at " + positionInfo.className + "#" + positionInfo.methodName + "(" + positionInfo.lineNumber + ")";
 				js.Browser.alert(error);
-			}	
-		#else
+			}
 		#end
 	}
 
@@ -408,7 +406,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 
 	public function queue(method:String, ?args:Dynamic):Bool
 	{
-		#if (!js && !flash)
+		#if (!js && !flash || hxnodejs)
 			//throw new MUnitException("Cannot call from non JS/Flash targets");
 			return false;
 		#end

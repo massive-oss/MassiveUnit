@@ -10,11 +10,11 @@ Optional Arguments:
    destFile       : Path to save report at
 
 Optional Parameters:
-	
-    -[platform]       : One or more specific target platforms to compile (defaults to
+
+   -[platform]       : One or more specific target platforms to compile (defaults to
                         contents of results.txt file in report directory)
     
-   -coverage [value]  : Customise the minimum coverage (defaults to 0);
+   -coverage [value] : Customise the minimum coverage (defaults to 0);
 
 Example:
 

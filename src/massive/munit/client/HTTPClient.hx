@@ -291,7 +291,7 @@ class URLRequest
 		#if (js || neko || cpp || java || cs || python || php)
 		client.onData = onData;
 		client.onError = onError;
-			#if js
+			#if(js && !hxnodejs)
 			client.setPostData(data);
 			#else
 			client.setParameter("data", data);

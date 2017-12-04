@@ -109,9 +109,9 @@ class RichPrintClient extends PrintClientBase
 	}
 
 	/**
-	* summarises result for currently executing test class
-	* and update visual state of test class
-	*/
+	 * summarises result for currently executing test class
+	 * and update visual state of test class
+	 */
 	override function finalizeTestClass()
 	{
 		super.finalizeTestClass();
@@ -206,15 +206,15 @@ class RichPrintClient extends PrintClientBase
 	override function printFinalStatistics(result:Bool, testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float)
 	{
 		super.printFinalStatistics(result, testCount, passCount, failCount, errorCount, ignoreCount, time);
-        var sb = new StringBuf();
-        sb.add(result ? "PASSED" : "FAILED");
-        sb.add("\nTests: "); sb.add(testCount);
-        sb.add("  Passed: "); sb.add(passCount);
-        sb.add("  Failed: "); sb.add(failCount);
-        sb.add(" Errors: "); sb.add(errorCount);
-        sb.add(" Ignored: "); sb.add(ignoreCount);
-        sb.add(" Time: "); sb.add(MathUtil.round(time, 5));
-        external.printSummary(sb.toString());
+		var sb = new StringBuf();
+		sb.add(result ? "PASSED" : "FAILED");
+		sb.add("\nTests: "); sb.add(testCount);
+		sb.add("  Passed: "); sb.add(passCount);
+		sb.add("  Failed: "); sb.add(failCount);
+		sb.add(" Errors: "); sb.add(errorCount);
+		sb.add(" Ignored: "); sb.add(ignoreCount);
+		sb.add(" Time: "); sb.add(MathUtil.round(time, 5));
+		external.printSummary(sb.toString());
 	}
 
 	override function printOverallResult(result:Bool)
@@ -234,11 +234,10 @@ class RichPrintClient extends PrintClientBase
 	override public function print(value:Dynamic)
 	{
 		super.print(value);
-		#if (js || flash)
-		//external.queue(ExternalPrintClientJS.PRINT, value);
-		return;
-		#elseif (neko || cpp || php || java || cs || python || php)
+		#if(neko || cpp || java || cs || python || php)
 		Sys.print(value);
+		#elseif hxnodejs
+		js.Node.process.stdout.write(Std.string(value));
 		#end
 	}
 }
