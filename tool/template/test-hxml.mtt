@@ -72,3 +72,14 @@
 ::end::
 -cp ::src::
 -python ::bin::/python_test.py
+
+## PHP 7
+--next
+-main TestMain
+-lib munit
+-lib hamcrest
+::foreach classPaths::-cp ::__current__::
+::end::
+-cp ::src::
+-D php7
+-php ::bin::/php_test

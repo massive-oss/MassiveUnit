@@ -68,6 +68,7 @@ class RunCommand extends MUnitTargetCommandBase
 	var javaFile:File;
 	var csFile:File;
 	var pythonFile:File;
+	var phpFile:File;
 	var serverTimeoutTimeSec:Int;
 	var resultExitCode:Bool;
 	
@@ -205,6 +206,7 @@ class RunCommand extends MUnitTargetCommandBase
 				case java: javaFile = file;
 				case cs: csFile = file;
 				case python: pythonFile = file;
+				case php: phpFile = file;
 				case _:
 					hasBrowserTests = true;
 					var pageName = Std.string(target.type);
@@ -309,6 +311,7 @@ class RunCommand extends MUnitTargetCommandBase
 		if(javaFile != null) launchJava(javaFile);
 		if(csFile != null) launchCS(csFile);
 		if(pythonFile != null) launchPython(pythonFile);
+		if(phpFile != null) launchPHP(pythonFile);
 		if(hasBrowserTests) launchFile(indexPage);
 		else resultMonitor.sendMessage("quit");
 		var platformResults:Bool = Thread.readMessage(true);
@@ -526,6 +529,8 @@ class RunCommand extends MUnitTargetCommandBase
 	inline function launchCS(file:File):Int return FileSys.isWindows ? launch(file, file.nativePath) : launch(file, 'mono', [file.nativePath]);
 	
 	inline function launchPython(file:File):Int return launch(file, FileSys.isWindows ? 'python' : 'python3', [file.nativePath]);
+	
+	inline function launchPHP(file:File):Int return launch(file, 'php', [file.nativePath]);
 	
 	function launch(file:File, executor:String, ?args:Array<String>):Int {
 		file.copyTo(reportRunnerDir.resolvePath(file.fileName));

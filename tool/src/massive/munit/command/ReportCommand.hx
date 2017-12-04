@@ -20,12 +20,8 @@ class ReportCommand extends MUnitTargetCommandBase
 	override public function initialise()
 	{
 		reportDir = config.report;
-
-		if (reportDir == null)
-			error("Default report directory is not set. Please run munit config.");
-		if (!reportDir.exists)
-			reportDir.createDirectory();
-
+		if (reportDir == null) error("Default report directory is not set. Please run munit config.");
+		if (!reportDir.exists) reportDir.createDirectory();
 		getTargetTypes();
 		getReportFormatType();
 		getDestinationDir();
@@ -59,6 +55,7 @@ class ReportCommand extends MUnitTargetCommandBase
 							case java: targetTypes.push(java);
 							case cs: targetTypes.push(cs);
 							case python: targetTypes.push(python);
+							case php: targetTypes.push(php);
 						}
 					}
 				}

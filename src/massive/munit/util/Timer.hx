@@ -62,22 +62,19 @@ import cpp.vm.Thread;
 import java.vm.Thread;
 #end
 
-#if(cs || python)
+#if(cs || python || php)
 typedef Timer = haxe.Timer;
 #else
 @:expose('massive.munit.util.Timer')
 class Timer 
 {
-	#if (php)
-	#else
-
-	private var id:Null<Int>;
+	var id:Null<Int>;
 
 	#if js
-	private static var arr = new Array<Timer>();
-	private var timerId:Int;
+	static var arr = new Array<Timer>();
+	var timerId:Int;
 	#elseif (neko || cpp || java)
-	private var runThread:Thread;
+	var runThread:Thread;
 	#end
 
 	public function new(time_ms:Int)
@@ -102,7 +99,7 @@ class Timer
 
 	public function stop()
 	{
-		#if(php || flash || js)
+		#if(flash || js)
 			if (id == null) return;
 		#end
 		#if flash
@@ -160,7 +157,6 @@ class Timer
 		};
 		return t;
 	}
-	#end
 
 	/**
 		Returns a timestamp, in seconds with fractions.

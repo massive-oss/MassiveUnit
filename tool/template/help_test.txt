@@ -24,7 +24,7 @@ Optional Parameters
 
    -[platform]       : One or more specific target platforms to compile
                        Valid options are '-swf', '-as3', '-js', '-neko',
-                       '-cpp', '-java', '-cs' and '-python'. If not target(s) provided all found
+                       '-cpp', '-java', '-cs', '-python' and '-php'. If not target(s) provided all found
                        test.hxml will be run.
 
    -browser name     : Optional value to launch a URL from a specific browser.

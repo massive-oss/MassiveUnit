@@ -77,13 +77,11 @@ class TestMain
 				flash.external.ExternalInterface.call("testResult", successful);
 			#elseif js
 				js.Lib.eval("testResult(" + successful + ");");
-			#elseif (neko || cpp || php || java || cs || python)
+			#elseif (neko || cpp || php || java || cs || python || php)
 				Sys.exit(0);
 			#end
 		}
 		// if run from outside browser can get error which we can ignore
-		catch (e:Dynamic)
-		{
-		}
+		catch (e:Dynamic) {}
 	}
 }
