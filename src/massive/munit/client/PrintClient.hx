@@ -58,7 +58,7 @@ class PrintClient extends PrintClientBase
 	 */
 	public static inline var DEFAULT_ID:String = "print";
 
-	#if (js||flash)
+	#if (js || flash)
 		var external:ExternalPrintClient;
 		#if flash
 			var textField:flash.text.TextField;
@@ -127,7 +127,7 @@ class PrintClient extends PrintClientBase
 	{
 		super.printOverallResult(result);
 
-		#if (hxnodejs)
+		#if hxnodejs
 		#elseif (js || flash)
 			external.setResult(result);
 			external.setResultBackground(result);

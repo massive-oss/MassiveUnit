@@ -306,7 +306,7 @@ class RunCommand extends MUnitTargetCommandBase
 		if(javaFile != null) launchJava(javaFile);
 		if(csFile != null) launchCS(csFile);
 		if(pythonFile != null) launchPython(pythonFile);
-		if(phpFile != null) launchPHP(pythonFile);
+		if(phpFile != null) launchPHP(phpFile);
 		if(nodejsFiles.length > 0) nodejsFiles.iter(launchNodeJS);
 		if(hlFile != null) launchHashLink(hlFile);
 		if(hasBrowserTests) launchFile(indexPage);
