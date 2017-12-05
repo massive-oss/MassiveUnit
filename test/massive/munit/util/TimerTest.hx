@@ -107,7 +107,7 @@ class TimerTest
 		Assert.isTrue(newStamp > stamp);
 	}
 
-	#if(js && !nodejs)
+	#if(js && !hxnodejs)
 		@AsyncTest
 		public function shouldClearOutIntervals(factory:AsyncFactory)
 		{

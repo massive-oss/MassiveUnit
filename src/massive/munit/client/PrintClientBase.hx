@@ -400,7 +400,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 
 	public function queue(method:String, ?args:Dynamic):Bool
 	{
-		#if (!js && !flash || nodejs)
+		#if (!js && !flash || hxnodejs)
 			//throw new MUnitException("Cannot call from non JS/Flash targets");
 			return false;
 		#end

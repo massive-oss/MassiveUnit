@@ -40,6 +40,7 @@ import sys.FileSystem;
 import sys.io.Process;
 import sys.net.Host;
 import sys.net.Socket;
+import haxe.ds.StringMap;
 
 using Lambda;
  
@@ -200,7 +201,7 @@ class RunCommand extends MUnitTargetCommandBase
 				case cs: csFile = file;
 				case python: pythonFile = file;
 				case php: phpFile = file;
-				case js if(target.flags.exists("nodejs")): nodejsFiles.push(file);
+				case js if(target.flags.exists("hxnodejs")): nodejsFiles.push(file);
 				case hl: hlFile = file;
 				case _:
 					hasBrowserTests = true;

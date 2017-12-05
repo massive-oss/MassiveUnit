@@ -16,7 +16,7 @@ usage: gen [srcPath] [hxmlPath]
     
 Optional Arguments
 
-   srcPath   : Custom test src directory path
+   srcPath  : Custom test src directory path
               (Defaults to test src path in config settings)
 
    hxmlPath : Custom hxml build file path for the tests.

@@ -77,7 +77,7 @@ class PrintClient extends PrintClientBase
 	{
 		super.init();
 
-		#if nodejs
+		#if hxnodejs
 		#elseif (js || flash)
 			external = new ExternalPrintClientJS();
 			#if flash
@@ -127,7 +127,7 @@ class PrintClient extends PrintClientBase
 	{
 		super.printOverallResult(result);
 
-		#if (nodejs)
+		#if (hxnodejs)
 		#elseif (js || flash)
 			external.setResult(result);
 			external.setResultBackground(result);
@@ -148,7 +148,7 @@ class PrintClient extends PrintClientBase
 		textField.scrollV = textField.maxScrollV;
 		#end
 
-		#if nodejs
+		#if hxnodejs
 		untyped process.stdout.write(value);
 		#elseif (neko || cpp || java || cs || python || php || hl)
 		Sys.print(value);
