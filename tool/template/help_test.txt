@@ -26,7 +26,7 @@ Optional Parameters
                        Valid options are '-swf', '-as3', '-js', '-neko',
                        '-cpp', '-java', '-cs', '-python' and '-php'.
                        If not target(s) provided all found test.hxml will be run.
-                       To run js tests with NodeJS, the compiler flags should include '-lib hxnodejs' or '-D hxnodejs'.
+                       To run js tests with NodeJS, the compiler flags should include '-D nodejs'. NOTE: '-lib nodejs', '-lib hxnodejs' set 'nodejs' define automaticaly.
 
    -browser name     : Optional value to launch a URL from a specific browser.
                        Uses the default browser if not set.

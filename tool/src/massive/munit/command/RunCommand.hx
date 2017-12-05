@@ -207,7 +207,7 @@ class RunCommand extends MUnitTargetCommandBase
 				case cs: csFile = file;
 				case python: pythonFile = file;
 				case php: phpFile = file;
-				case js if(target.flags.exists("hxnodejs")): nodejsFiles.push(file);
+				case js if(target.flags.exists("nodejs")): nodejsFiles.push(file);
 				case _:
 					hasBrowserTests = true;
 					var pageName = Std.string(target.type);
@@ -312,7 +312,7 @@ class RunCommand extends MUnitTargetCommandBase
 		if(javaFile != null) launchJava(javaFile);
 		if(csFile != null) launchCS(csFile);
 		if(pythonFile != null) launchPython(pythonFile);
-		if(phpFile != null) launchPHP(pythonFile);
+		if(phpFile != null) launchPHP(phpFile);
 		if(nodejsFiles.length > 0) nodejsFiles.iter(launchNodeJS);
 		if(hasBrowserTests) launchFile(indexPage);
 		else resultMonitor.sendMessage("quit");
