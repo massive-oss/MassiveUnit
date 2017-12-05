@@ -40,7 +40,6 @@ import sys.FileSystem;
 import sys.io.Process;
 import sys.net.Host;
 import sys.net.Socket;
-import haxe.ds.StringMap;
 
 using Lambda;
  
