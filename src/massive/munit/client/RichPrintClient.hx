@@ -228,7 +228,7 @@ class RichPrintClient extends PrintClientBase
 		super.print(value);
 		#if(neko || cpp || java || cs || python || php || hl)
 		Sys.print(value);
-		#elseif hxnodejs
+		#elseif nodejs
 		js.Node.process.stdout.write(Std.string(value));
 		#end
 	}

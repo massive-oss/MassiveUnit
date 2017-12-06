@@ -157,11 +157,12 @@ class MUnitTargetCommandBase extends MUnitCommand
 				target.flags.set(flag.shift(), flag.join(" "));
 			}
 
-			if (!target.flags.exists("hxnodejs")) {
-				var ereg = ~/^-lib (.*)/;
-				if (ereg.match(line)) {
-					var m = ereg.matched(1).split(" ").shift();
-					if(m == "hxnodejs") target.flags.set("hxnodejs", " ");
+			var ereg = ~/^-lib (.*)/;
+			if (ereg.match(line)) {
+				var m = ereg.matched(1).split(" ").shift();
+				switch(m) {
+					case "hxnodejs" | "nodejs": target.flags.set("nodejs", " ");
+					case _:
 				}
 			}
 
