@@ -32,7 +32,7 @@ Features
 
 MUnit has been designed for cross platform Haxe development.
 It currently supports js, swf, as3, neko, c++, java, cs, python and php and the tool chain works on Windows, OSX and Linux.
-To run js tests with NodeJS, the compiler flags should include `-lib hxnodejs` or `-D hxnodejs`.
+To run js tests with NodeJS, add `-lib hxnodejs` or `-D nodejs`.
 
 
 ### Test Metadata
