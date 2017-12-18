@@ -26,16 +26,11 @@
 * or implied, of Massive Interactive.
 ****/
 
-
-
 package massive.munit.client;
-
-import massive.munit.AssertionException;
-import massive.munit.ITestResultClient;
+import massive.haxe.util.ReflectUtil;
+import massive.munit.ITestResultClient.CoverageResult;
 import massive.munit.TestResult;
 import massive.munit.util.MathUtil;
-import massive.haxe.util.ReflectUtil;
-import massive.munit.util.Timer;
 
 class PrintClientBase extends AbstractTestResultClient
 {
@@ -104,18 +99,17 @@ class PrintClientBase extends AbstractTestResultClient
 			}
 		}
 	}
-	/////////  COVERAGE
 
 	override public function setCurrentTestClassCoverage(result:CoverageResult)
-	{	
+	{
 		super.setCurrentTestClassCoverage(result);
 		print(" [" + result.percent + "%]");
 	}
 	
-	override public function reportFinalCoverage(?percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
-		?classBreakdown:String=null,
-		?packageBreakdown:String=null,
-		?executionFrequency:String=null
+	override public function reportFinalCoverage(?percent:Float = 0, missingCoverageResults:Array<CoverageResult>, summary:String,
+		?classBreakdown:String,
+		?packageBreakdown:String,
+		?executionFrequency:String
 		)
 	{
 		super.reportFinalCoverage(percent, missingCoverageResults, summary, classBreakdown, packageBreakdown, executionFrequency);
@@ -126,7 +120,7 @@ class PrintClientBase extends AbstractTestResultClient
 		printLine(divider1);
 
 		if(missingCoverageResults != null && missingCoverageResults.length > 0)
-		{	
+		{
 			printLine("MISSING CODE BLOCKS:");
 			for(result in missingCoverageResults)
 			{

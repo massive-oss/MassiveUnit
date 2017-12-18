@@ -28,49 +28,44 @@
 package massive.munit;
 
 /**
- * ...
  * @author Mike Stead
  */
-
 class TestSuiteTest 
 {
 	private var suite:massive.munit.TestSuite;
 
-	public function new() 
-	{}
-	
 	@Before
-	public function setup():Void
+	public function setup()
 	{
 		suite = new massive.munit.TestSuite();
 	}
 	
 	@After
-	public function tearDown():Void
+	public function tearDown()
 	{
 		suite = null;
 	}
 	
 	@Test
-	public function testConstructor():Void
+	public function testConstructor()
 	{
 		Assert.isFalse(suite.hasNext());
 	}
 	
 	@Test
-	public function testAdd():Void
+	public function testAdd()
 	{
 		suite.add(TestSuiteTest);
 		Assert.isTrue(suite.hasNext());
 	}
 	
 	@Test
-	public function testIterator():Void
+	public function testIterator()
 	{
 		suite.add(TestSuiteTest);
 		suite.add(TestRunnerTest);
 		
-		Assert.isTrue(suite.hasNext());		
+		Assert.isTrue(suite.hasNext());
 		Assert.areEqual(TestRunnerTest, suite.next());
 		Assert.isTrue(suite.hasNext());
 		Assert.areEqual(TestSuiteTest, suite.next());

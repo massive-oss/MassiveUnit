@@ -45,7 +45,6 @@ import haxe.rtti.Meta;
  * 
  * @author Mike Stead
  */
-
 class TestClassHelper 
 {
 	/**
@@ -146,17 +145,15 @@ class TestClassHelper
 	 * 
 	 * @param	type			type of test class this helper is wrapping
 	 */
-	public function new(type:Class<Dynamic>, ?isDebug:Bool=false) 
+	public function new(type:Class<Dynamic>, isDebug:Bool = false)
 	{
 		this.type = type;
 		this.isDebug = isDebug;
 		className = Type.getClassName(type);
-		
 		beforeClass = nullFunc;
 		afterClass = nullFunc;
 		before = nullFunc;
 		after = nullFunc;
-		
 		parse(type);
 	}
 	
@@ -211,9 +208,10 @@ class TestClassHelper
 	function collateFieldMeta(inherintanceChain:Array<Class<Dynamic>>):Dynamic
 	{
 		var meta = {};
-		while (inherintanceChain.length > 0)
+		var i = inherintanceChain.length;
+		while (i-- > 0)
 		{
-			var clazz = inherintanceChain.pop(); // start at root
+			var clazz = inherintanceChain[i]; // start at root
 			var newMeta = Meta.getFields(clazz);
 			var markedFieldNames = Reflect.fields(newMeta);
 			
@@ -304,7 +302,7 @@ class TestClassHelper
 		}
 	}
 	
-	function addTest(field:String, testFunction:Dynamic, testInstance:Dynamic, isAsync:Bool, isIgnored:Bool, description:String)
+	function addTest(field:String, testFunction:Function, testInstance:Dynamic, isAsync:Bool, isIgnored:Bool, description:String)
 	{
 		var result:TestResult = new TestResult();
 		result.async = isAsync;
@@ -312,14 +310,16 @@ class TestClassHelper
 		result.className = className;
 		result.description = description;
 		result.name = field;
-		tests.push({test:testFunction, scope:testInstance, result:result});
+		tests.push({scope:testInstance, test:testFunction, result:result});
 	}
 	
 	function sortTestsByName(x:TestCaseData, y:TestCaseData):Int
 	{
-		if (x.result.name == y.result.name) return 0;
-		if (x.result.name > y.result.name) return 1;
-		else return -1;
+		var xName = x.result.name;
+		var yName = y.result.name;
+		if (xName == yName) return 0;
+		if (xName > yName) return 1;
+		return -1;
 	}
 
 	public static function nullFunc() {}
@@ -327,7 +327,7 @@ class TestClassHelper
 
 typedef TestCaseData =
 {
-	var test:Dynamic;
 	var scope:Dynamic;
+	var test:Function;
 	var result:TestResult;
 }

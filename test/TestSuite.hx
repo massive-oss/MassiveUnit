@@ -21,8 +21,7 @@ import massive.munit.util.TimerTest;
  * Refer to munit command line tool for more information (haxelib run munit)
  */
 class TestSuite extends massive.munit.TestSuite
-{		
-
+{
 	public function new()
 	{
 		super();

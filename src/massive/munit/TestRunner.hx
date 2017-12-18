@@ -26,19 +26,16 @@
 * or implied, of Massive Interactive.
 ****/
 
-
-
 package massive.munit;
 import haxe.Constraints.Function;
-import haxe.PosInfos;
 import massive.munit.Assert;
+import massive.munit.ITestResultClient;
 import massive.munit.async.AsyncDelegate;
 import massive.munit.async.AsyncFactory;
 import massive.munit.async.AsyncTimeoutException;
 import massive.munit.async.IAsyncDelegateObserver;
 import massive.munit.async.MissingAsyncDelegateException;
 import massive.munit.util.Timer;
-import massive.munit.ITestResultClient;
 
 #if neko
 import neko.vm.Thread;
@@ -47,8 +44,6 @@ import cpp.vm.Thread;
 #elseif java
 import java.vm.Thread;
 #end
-
-import haxe.CallStack;
 
 /**
  * Runner used to execute one or more suites of unit tests.
@@ -190,7 +185,7 @@ class TestRunner implements IAsyncDelegateObserver
         testSuites = [for(suiteType in testSuiteClasses) Type.createInstance(suiteType, emptyParams)];
         startTime = Timer.stamp();
 
-        #if (neko || cpp || java) 
+        #if (neko || cpp || java)
 		var self = this;
 		var runThread:Thread = Thread.create(function()
 		{
@@ -287,12 +282,10 @@ class TestRunner implements IAsyncDelegateObserver
             if (async)
             {
                 Reflect.callMethod(testCaseData.scope, testCaseData.test, [asyncFactory]);
-
                 if(asyncDelegate == null)
                 {
                     throw new MissingAsyncDelegateException("No AsyncDelegate was created in async test at " + result.location, null);
                 }
-
                 asyncPending = true;
             }
             else
@@ -358,8 +351,8 @@ class TestRunner implements IAsyncDelegateObserver
     public function asyncResponseHandler(delegate:AsyncDelegate)
     {
         var testCaseData = activeHelper.current();
-        testCaseData.test = delegate.runTest;
         testCaseData.scope = delegate;
+        testCaseData.test = delegate.runTest;
         asyncPending = false;
         asyncDelegate = null;
         executeTestCase(testCaseData, false);

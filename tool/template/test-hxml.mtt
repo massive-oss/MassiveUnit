@@ -90,3 +90,13 @@
 ::end::
 -cp ::src::
 -js ::bin::/js_test.js
+
+## HashLink
+--next
+-main TestMain
+-lib munit
+-lib hamcrest
+::foreach classPaths::-cp ::__current__::
+::end::
+-cp ::src::
+-hl ::bin::/hl_test.hl

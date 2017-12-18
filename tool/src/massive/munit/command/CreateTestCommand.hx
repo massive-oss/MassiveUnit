@@ -1,24 +1,14 @@
 package massive.munit.command;
 
-import massive.haxe.log.Log;
-import massive.sys.haxe.HaxeWrapper;
-import massive.sys.io.File;
-import massive.sys.io.FileSys;
-import massive.sys.util.PathUtil;
-import massive.munit.Config;
 import massive.haxe.util.TemplateUtil;
+import massive.sys.io.File;
 
 class CreateTestCommand extends MUnitCommand
 {
 	var qualifiedTestName:String;
 	var qualifiedClassName:String;
 	
-	public function new():Void
-	{
-		super();
-	}
-
-	override public function initialise():Void
+	override public function initialise()
 	{
 		qualifiedTestName = console.getNextArg();
 		qualifiedClassName = console.getOption("for");
@@ -37,11 +27,10 @@ class CreateTestCommand extends MUnitCommand
 		{
 			error("This command requires an update to your munit project settings. Please re-run 'munit config' to set target class paths (i.e. 'src')");
 			return;
-
 		}
 	}
 
-	override public function execute():Void
+	override public function execute()
 	{
 		var packages = qualifiedTestName.split(".");
 		var testName = packages.pop();

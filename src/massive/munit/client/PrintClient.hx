@@ -26,17 +26,9 @@
 * or implied, of Massive Interactive.
 ****/
 
-
-
 package massive.munit.client;
-import massive.munit.client.PrintClientBase;
-import massive.munit.AssertionException;
-import massive.munit.ITestResultClient;
-import massive.munit.TestResult;
-import massive.munit.util.MathUtil;
 import massive.haxe.util.ReflectUtil;
-import massive.munit.util.Timer;
-
+import massive.munit.client.PrintClientBase;
 
 /**
  * Generates basic text formatted test result output.
@@ -66,7 +58,7 @@ class PrintClient extends PrintClientBase
 	 */
 	public static inline var DEFAULT_ID:String = "print";
 
-	#if (js||flash)
+	#if (js || flash)
 		var external:ExternalPrintClient;
 		#if flash
 			var textField:flash.text.TextField;
@@ -158,7 +150,7 @@ class PrintClient extends PrintClientBase
 
 		#if nodejs
 		untyped process.stdout.write(value);
-		#elseif (neko || cpp || java || cs || python || php)
+		#elseif (neko || cpp || java || cs || python || php || hl)
 		Sys.print(value);
 		#elseif (js || flash)
 		external.print(value);

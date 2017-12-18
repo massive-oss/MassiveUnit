@@ -26,16 +26,13 @@
 * or implied, of Massive Interactive.
 ****/
 
-
-
 package massive.munit.client;
-
+#if !hl
 import haxe.Http;
+#end
+import haxe.ds.StringMap;
 import massive.munit.ITestResultClient;
 import massive.munit.TestResult;
-import massive.munit.util.Timer;
-
-import haxe.ds.StringMap;
 
 /**
  * Decorates other ITestResultClient's, adding behavior to post test results to a specified url.
@@ -90,13 +87,12 @@ class HTTPClient implements IAdvancedTestResultClient
 	private var queueRequest:Bool;
 
 	/**
-	 * 
 	 * @param	client				the test result client to decorate
 	 * @param	url					the url to send test results to
 	 * @param	?queueRequest		[optional] whether to add http requests to a global queue. Default is true.
 	 * @param	?httpRequest		[optional] a custom http request to use to dispatch the result.
 	 */
-	public function new(client:ITestResultClient, ?url:String = DEFAULT_SERVER_URL, ?queueRequest:Bool = true) 
+	public function new(client:ITestResultClient, ?url:String = DEFAULT_SERVER_URL, ?queueRequest:Bool = true)
 	{
 		id = DEFAULT_ID;
 		this.client = client;
@@ -105,11 +101,11 @@ class HTTPClient implements IAdvancedTestResultClient
 	}
 
 	/**
-	* Classed when test class changes
-	*
-	* @param className		qualified name of current test class
-	*/
-	public function setCurrentTestClass(className:String):Void
+	 * Classed when test class changes
+	 *
+	 * @param className		qualified name of current test class
+	 */
+	public function setCurrentTestClass(className:String)
 	{
 		if(Std.is(client, IAdvancedTestResultClient))
 		{
@@ -122,7 +118,7 @@ class HTTPClient implements IAdvancedTestResultClient
 	 *  
 	 * @param	result			a passed test result
 	 */
-	public function addPass(result:TestResult):Void
+	public function addPass(result:TestResult)
 	{
 		client.addPass(result);
 	}
@@ -132,7 +128,7 @@ class HTTPClient implements IAdvancedTestResultClient
 	 *  
 	 * @param	result			a failed test result
 	 */
-	public function addFail(result:TestResult):Void
+	public function addFail(result:TestResult)
 	{
 		client.addFail(result);
 	}
@@ -142,7 +138,7 @@ class HTTPClient implements IAdvancedTestResultClient
 	 *  
 	 * @param	result			an erroneous test result
 	 */
-	public function addError(result:TestResult):Void
+	public function addError(result:TestResult)
 	{
 		client.addError(result);
 	}
@@ -152,9 +148,9 @@ class HTTPClient implements IAdvancedTestResultClient
 	 *
 	 * @param	result			an ignored test
 	 */
-	public function addIgnore(result:TestResult):Void
+	public function addIgnore(result:TestResult)
 	{
-		client.addIgnore(result);	
+		client.addIgnore(result);
 	}
 
 	/**
@@ -175,7 +171,7 @@ class HTTPClient implements IAdvancedTestResultClient
 		return result;
 	}
 
-	private function sendResult(result):Void
+	function sendResult(result:Dynamic)
 	{
 		request = new URLRequest(url);
 		request.setHeader(CLIENT_HEADER_KEY, client.id);
@@ -183,7 +179,6 @@ class HTTPClient implements IAdvancedTestResultClient
 		request.onData = onData;
 		request.onError = onError;
 		request.data = result;
-
 		if (queueRequest)
 		{
 			queue.unshift(request);
@@ -195,21 +190,22 @@ class HTTPClient implements IAdvancedTestResultClient
 		}
 	}
 
-	private function platform():String
+	function platform():String
 	{
 		#if flash return "as3";
 		#elseif js return "js";
 		#elseif neko return "neko";
 		#elseif cpp return "cpp";
-		#elseif php return "php";
 		#elseif java return "java";
+		#elseif cs return "cs";
 		#elseif python return "python";
 		#elseif php return "php";
+		#elseif hl return "hl";
 		#end
 		return "unknown";
 	}
 
-	private function onData(data:String):Void
+	function onData(data:String)
 	{
 		if (queueRequest)
 		{
@@ -217,21 +213,21 @@ class HTTPClient implements IAdvancedTestResultClient
 			dispatchNextRequest();
 		}
 		if (completionHandler != null)
-			completionHandler(this); 
+			completionHandler(this);
 	}
 
-	private function onError(msg:String):Void
+	function onError(msg:String)
 	{
 		if (queueRequest)
 		{
 			responsePending = false;
 			dispatchNextRequest();
 		}
-		if (completionHandler != null) 
-			completionHandler(this); 
+		if (completionHandler != null)
+			completionHandler(this);
 	}
 
-	private static function dispatchNextRequest():Void
+	static function dispatchNextRequest()
 	{
 		if (responsePending || queue.length == 0) 
 			return;
@@ -247,14 +243,14 @@ class HTTPClient implements IAdvancedTestResultClient
 
 class URLRequest
 {
-	public var onData:Dynamic -> Void;
-	public var onError:Dynamic ->Void;
+	public var onData:Dynamic->Void;
+	public var onError:Dynamic->Void;
 	public var data:Dynamic;
 
 	var url:String;
 	var headers:StringMap<String>;
 
-	#if(js || neko || cpp || java || cs || python || php)
+	#if(js || neko || cpp || java || cs || python || php || hl)
 	public var client:Http;
 	#elseif flash
 	public var client:flash.LoadVars;
@@ -270,7 +266,7 @@ class URLRequest
 
 	function createClient(url:String)
 	{
-		#if(js || neko || cpp || java || cs || python || php)
+		#if(js || neko || cpp || java || cs || python || php || hl)
 		client = new Http(url);
 		#elseif flash
 		client = new flash.LoadVars();
@@ -279,7 +275,7 @@ class URLRequest
 
 	public function setHeader(name:String, value:String)
 	{
-		#if(js || neko || cpp || java || cs || python || php)
+		#if(js || neko || cpp || java || cs || python || php || hl)
 		client.setHeader(name, value);
 		#elseif flash
 		client.addRequestHeader(name, value);
@@ -288,7 +284,7 @@ class URLRequest
 
 	public function send()
 	{
-		#if (js || neko || cpp || java || cs || python || php)
+		#if(js || neko || cpp || java || cs || python || php || hl)
 		client.onData = onData;
 		client.onError = onError;
 			#if(js && !nodejs)
@@ -296,6 +292,7 @@ class URLRequest
 			#else
 			client.setParameter("data", data);
 			#end
+		#if hl client.cnxTimeout = 1; #end
 		client.request(true);
 		#elseif flash
 		var result = new flash.LoadVars();
@@ -315,3 +312,153 @@ class URLRequest
 	}
 	#end
 }
+
+#if hl
+class Http extends haxe.Http {
+	override function readHttpResponse(api:haxe.io.Output, sock:sys.net.Socket) {
+		// READ the HTTP header (until \r\n\r\n)
+		var b = new haxe.io.BytesBuffer();
+		var k = 4;
+		var s = haxe.io.Bytes.alloc(4);
+		sock.setTimeout(cnxTimeout);
+		while( true ) {
+			var p = sock.input.readBytes(s,0,k);
+			while( p != k )
+				p += sock.input.readBytes(s,p,k - p);
+			b.addBytes(s,0,k);
+			switch( k ) {
+			case 1:
+				var c = s.get(0);
+				if( c == 10 )
+					break;
+				if( c == 13 )
+					k = 3;
+				else
+					k = 4;
+			case 2:
+				var c = s.get(1);
+				if( c == 10 ) {
+					if( s.get(0) == 13 )
+						break;
+					k = 4;
+				} else if( c == 13 )
+					k = 3;
+				else
+					k = 4;
+			case 3:
+				var c = s.get(2);
+				if( c == 10 ) {
+					if( s.get(1) != 13 )
+						k = 4;
+					else if( s.get(0) != 10 )
+						k = 2;
+					else
+						break;
+				} else if( c == 13 ) {
+					if( s.get(1) != 10 || s.get(0) != 13 )
+						k = 1;
+					else
+						k = 3;
+				} else
+					k = 4;
+			case 4:
+				var c = s.get(3);
+				if( c == 10 ) {
+					if( s.get(2) != 13 )
+						continue;
+					else if( s.get(1) != 10 || s.get(0) != 13 )
+						k = 2;
+					else
+						break;
+				} else if( c == 13 ) {
+					if( s.get(2) != 10 || s.get(1) != 13 )
+						k = 3;
+					else
+						k = 1;
+				}
+			}
+		}
+		#if neko
+		var headers = neko.Lib.stringReference(b.getBytes()).split("\r\n");
+		#else
+		var headers = b.getBytes().toString().split("\r\n");
+		#end
+		var response = headers.shift();
+		var rp = response.split(" ");
+		var status = Std.parseInt(rp[1]);
+		if( status == 0 || status == null )
+			throw "Response status error";
+
+		// remove the two lasts \r\n\r\n
+		headers.pop();
+		headers.pop();
+		responseHeaders = new haxe.ds.StringMap();
+		var size = null;
+		var chunked = false;
+		for( hline in headers ) {
+			var a = hline.split(": ");
+			var hname = a.shift();
+			var hval = if( a.length == 1 ) a[0] else a.join(": ");
+			hval = StringTools.ltrim( StringTools.rtrim( hval ) );
+			responseHeaders.set(hname, hval);
+			switch(hname.toLowerCase())
+			{
+				case "content-length":
+					size = Std.parseInt(hval);
+				case "transfer-encoding":
+					chunked = (hval.toLowerCase() == "chunked");
+			}
+		}
+
+		onStatus(status);
+
+		var chunk_re = ~/^([0-9A-Fa-f]+)[ ]*\r\n/m;
+		chunk_size = null;
+		chunk_buf = null;
+
+		var bufsize = 1024;
+		var buf = haxe.io.Bytes.alloc(bufsize);
+
+		if( chunked ) {
+			try {
+				while( true ) {
+					var len = sock.input.readBytes(buf,0,bufsize);
+					if( !readChunk(chunk_re,api,buf,len) )
+						break;
+				}
+			} catch ( e : haxe.io.Eof ) {
+				throw "Transfer aborted";
+			}
+		} else if( size == null ) {
+			if( !noShutdown )
+				sock.shutdown(false,true);
+			try {
+				while( true ) {
+					var len = sock.input.readBytes(buf, 0, bufsize);
+					//{XXX slavara: quickfix for https://github.com/HaxeFoundation/haxe/issues/6777
+					if(len == 0) break;
+					//}
+					api.writeBytes(buf,0,len);
+				}
+			} catch( e : haxe.io.Eof ) {
+			}
+		} else {
+			api.prepare(size);
+			try {
+				while( size > 0 ) {
+					var len = sock.input.readBytes(buf,0,if( size > bufsize ) bufsize else size);
+					api.writeBytes(buf,0,len);
+					size -= len;
+				}
+			} catch( e : haxe.io.Eof ) {
+				throw "Transfer aborted";
+			}
+		}
+		if( chunked && (chunk_size != null || chunk_buf != null) )
+			throw "Invalid chunk";
+		if( status < 200 || status >= 400 )
+			throw "Http Error #"+status;
+		api.close();
+	}
+}
+#end

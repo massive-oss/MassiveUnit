@@ -26,16 +26,9 @@
 * or implied, of Massive Interactive.
 ****/
 
-
-
 package massive.munit.client;
-
-import massive.munit.AssertionException;
 import massive.munit.ITestResultClient;
 import massive.munit.TestResult;
-import massive.munit.util.MathUtil;
-import massive.haxe.util.ReflectUtil;
-import massive.munit.util.Timer;
 
 class AbstractTestResultClient implements IAdvancedTestResultClient implements ICoverageTestResultClient
 {
@@ -72,23 +65,15 @@ class AbstractTestResultClient implements IAdvancedTestResultClient implements I
 	var failCount:Int;
 	var errorCount:Int;
 	var ignoreCount:Int;
-	
 	var currentTestClass:String;
 	var currentClassResults:Array<TestResult>;
-
-
 	var currentCoverageResult:CoverageResult;
-	
 	static var traces:Array<String>;
-	
 	var totalResults:Array<TestResult>;
-
 	var totalCoveragePercent:Float;
 	var totalCoverageReport:String;
 	var totalCoverageResults:Array<CoverageResult>;
-
 	var originalTrace:Dynamic;
-
 	var finalResult:Bool;
 
 	public function new()
@@ -99,18 +84,13 @@ class AbstractTestResultClient implements IAdvancedTestResultClient implements I
 	function init()
 	{
 		currentTestClass = null;
-
 		currentClassResults = [];
 		traces = [];
-
 		passCount = 0;
 		failCount = 0;
 		errorCount = 0;
 		ignoreCount = 0;
-
 		currentCoverageResult = null;
-
-	
 		totalResults = [];
 		totalCoveragePercent = 0;
 		totalCoverageReport = null;
@@ -118,11 +98,11 @@ class AbstractTestResultClient implements IAdvancedTestResultClient implements I
 	}
 
 	/**
-	* Classed when test class changes
-	*
-	* @param className		qualified name of current test class
-	*/
-	public function setCurrentTestClass(className:String):Void
+	 * Classed when test class changes
+	 * 
+	 * @param className		qualified name of current test class
+	 */
+	public function setCurrentTestClass(className:String)
 	{
 		if(currentTestClass == className) return;
 
@@ -130,19 +110,19 @@ class AbstractTestResultClient implements IAdvancedTestResultClient implements I
 		{
 			finalizeTestClass();
 		}
-			
+		
 		currentTestClass = className;
 		if(currentTestClass != null) initializeTestClass();
 	}
 
 	/**
 	 * Called when a test passes.
-	 *  
+	 * 
 	 * @param	result			a passed test result
 	 */
-	public function addPass(result:TestResult):Void
+	public function addPass(result:TestResult)
 	{
-		passCount ++;
+		passCount++;
 		updateTestClass(result);
 	}
 	
@@ -151,9 +131,9 @@ class AbstractTestResultClient implements IAdvancedTestResultClient implements I
 	 *  
 	 * @param	result			a failed test result
 	 */
-	public function addFail(result:TestResult):Void
+	public function addFail(result:TestResult)
 	{
-		failCount ++;
+		failCount++;
 		updateTestClass(result);
 	}
 	
@@ -162,9 +142,9 @@ class AbstractTestResultClient implements IAdvancedTestResultClient implements I
 	 *  
 	 * @param	result			an erroneous test result
 	 */
-	public function addError(result:TestResult):Void
+	public function addError(result:TestResult)
 	{
-		errorCount ++;
+		errorCount++;
 		updateTestClass(result);
 	}
 
@@ -173,24 +153,22 @@ class AbstractTestResultClient implements IAdvancedTestResultClient implements I
 	 *
 	 * @param	result			an ignored test
 	 */
-	public function addIgnore(result:TestResult):Void
+	public function addIgnore(result:TestResult)
 	{
-		ignoreCount ++;
+		ignoreCount++;
 		updateTestClass(result);
 	}
 
-	public function setCurrentTestClassCoverage(result:CoverageResult):Void
+	public function setCurrentTestClassCoverage(result:CoverageResult)
 	{
 		currentCoverageResult = result;
-
 	}
 
-	////// FINAL REPORTS //////
 	public function reportFinalCoverage(?percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
 		?classBreakdown:String=null,
 		?packageBreakdown:String=null,
 		?executionFrequency:String=null
-	):Void
+	)
 	{
 		totalCoveragePercent = percent;
 		totalCoverageResults = missingCoverageResults;
@@ -198,7 +176,7 @@ class AbstractTestResultClient implements IAdvancedTestResultClient implements I
 	}
 	/**
 	 * Called when all tests are complete.
-	 *  
+	 * 
 	 * @param	testCount		total number of tests run
 	 * @param	passCount		total number of tests which passed
 	 * @param	failCount		total number of tests which failed
@@ -223,11 +201,9 @@ class AbstractTestResultClient implements IAdvancedTestResultClient implements I
 	}
 
 
-	////// TEST CLASS LIFECYCLE //////
-
 	/**
-	* Called when a new test class is about to execute tests
-	*/
+	 * Called when a new test class is about to execute tests
+	 */
 	function initializeTestClass()
 	{
 		currentClassResults = [];
@@ -239,8 +215,8 @@ class AbstractTestResultClient implements IAdvancedTestResultClient implements I
 	}
 
 	/**
-	* Called after every test has executed
-	*/
+	 * Called after every test has executed
+	 */
 	function updateTestClass(result:TestResult)
 	{
 		currentClassResults.push(result);
@@ -248,48 +224,39 @@ class AbstractTestResultClient implements IAdvancedTestResultClient implements I
 	}
 
 	/**
-	* Called when a test class has completed executing all tests
-	*/
+	 * Called when a test class has completed executing all tests
+	 */
 	function finalizeTestClass()
 	{
 		currentClassResults.sort(sortTestResults);
 	}
 
-
-	////// FINAL REPORTS //////
-
 	/**
-	* Override to print any additional reports (e.g. overall coverage)
-	*/
+	 * Override to print any additional reports (e.g. overall coverage)
+	 */
 	function printReports()
 	{
-		
 	}
 
 	/**
-	* Override to print final summary 
-	*/
+	 * Override to print final summary 
+	 */
 	function printFinalStatistics(result:Bool, testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float)
 	{
-		
 	}
 
 	function printOverallResult(result:Bool)
 	{
-		
 	}
-
-	///////
 
 	function addTrace(value:Dynamic, ?info:haxe.PosInfos)
 	{
-		var traceString = info.fileName + "|" + info.lineNumber + "| " + Std.string(value);
-		traces.push(traceString);
+		traces.push(info.fileName + "|" + info.lineNumber + "| " + Std.string(value));
 	}
 
 	/**
-	* returns the current class trace statements
-	*/
+	 * returns the current class trace statements
+	 */
 	function getTraces():Array<String> return traces.copy();
 
 	function sortTestResults(a:TestResult, b:TestResult):Int

@@ -55,3 +55,11 @@
 -lib mlib
 -lib hxnodejs
 -js bin/test/core/js_test.js
+
+## HashLink
+--next
+-main TestMain
+-cp test
+-cp src
+-lib mlib
+-hl bin/test/core/hl_test.hl

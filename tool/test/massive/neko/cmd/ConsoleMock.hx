@@ -6,13 +6,13 @@ class ConsoleMock extends Console
 {
 	private var mockArgs:Array<String>;
 	
-	public function new(?argsString:String = null, ?posInfos:PosInfos)
+	public function new(?argsString:String, ?posInfos:PosInfos)
 	{	
 		if(argsString != null && argsString != "") mockArgs = argsString.split(" ");
 		super();
 	}
 	
-	override private function parseArguments(a:Array<String>):Void
+	override function parseArguments(a:Array<String>)
 	{
 		if(mockArgs != null) systemArgs = mockArgs.copy();
 		super.parseArguments(systemArgs);

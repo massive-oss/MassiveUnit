@@ -26,9 +26,8 @@
  * or implied, of Massive Interactive.
  */
 package massive.munit.command;
-
+import haxe.ds.StringMap;
 import haxe.io.Eof;
-import haxe.io.Path;
 import massive.haxe.log.Log;
 import massive.haxe.util.RegExpUtil;
 import massive.munit.ServerMain;
@@ -41,13 +40,12 @@ import sys.FileSystem;
 import sys.io.Process;
 import sys.net.Host;
 import sys.net.Socket;
-import haxe.ds.StringMap;
 
 using Lambda;
  
 /**
-Don't ask - compiler always thinks it is massive.munit.TargetType enum 'neko'
-*/
+ * Don't ask - compiler always thinks it is massive.munit.TargetType enum 'neko'
+ */
 typedef SysFile = sys.io.File;
 
 class RunCommand extends MUnitTargetCommandBase
@@ -60,7 +58,7 @@ class RunCommand extends MUnitTargetCommandBase
 	var tmpDir:File;
 	var tmpRunnerDir:File;
 	var binDir:File;
-	var killBrowser:Bool;
+	var killBrowser:Bool = false;
 	var indexPage:File;
 	var hasBrowserTests:Bool;
 	var nekoFile:File;
@@ -70,14 +68,9 @@ class RunCommand extends MUnitTargetCommandBase
 	var pythonFile:File;
 	var phpFile:File;
 	var nodejsFiles:Array<File> = [];
+	var hlFile:File;
 	var serverTimeoutTimeSec:Int;
 	var resultExitCode:Bool;
-	
-	public function new()
-	{
-		super();
-		killBrowser = false;
-	}
 
 	override public function initialise()
 	{
@@ -208,9 +201,10 @@ class RunCommand extends MUnitTargetCommandBase
 				case python: pythonFile = file;
 				case php: phpFile = file;
 				case js if(target.flags.exists("nodejs")): nodejsFiles.push(file);
+				case hl: hlFile = file;
 				case _:
 					hasBrowserTests = true;
-					var pageName = Std.string(target.type);
+					var pageName = target.type;
 					var templateName = file.extension + "_runner-html";
 					var pageContent = getTemplateContent(templateName, {runnerName:file.fileName});
 					var runnerPage = reportRunnerDir.resolvePath(pageName + ".html");
@@ -246,9 +240,9 @@ class RunCommand extends MUnitTargetCommandBase
 	}
 
 	/**
-	Returns content from a html template.
-	Checks for local template before using default template
-	*/
+	 * Returns content from a html template.
+	 * Checks for local template before using default template
+	 */
 	function getTemplateContent(templateName:String, properties:Dynamic)
 	{
 		var content:String = null;
@@ -314,6 +308,7 @@ class RunCommand extends MUnitTargetCommandBase
 		if(pythonFile != null) launchPython(pythonFile);
 		if(phpFile != null) launchPHP(phpFile);
 		if(nodejsFiles.length > 0) nodejsFiles.iter(launchNodeJS);
+		if(hlFile != null) launchHashLink(hlFile);
 		if(hasBrowserTests) launchFile(indexPage);
 		else resultMonitor.sendMessage("quit");
 		var platformResults:Bool = Thread.readMessage(true);
@@ -326,7 +321,6 @@ class RunCommand extends MUnitTargetCommandBase
 		FileSys.setCwd(console.dir.nativePath);
 		if (!platformResults && resultExitCode)
 		{
-			//print("TESTS FAILED");
 			Sys.stderr().writeString("TESTS FAILED\n");
 			Sys.stderr().flush();
 			exit(1);
@@ -535,6 +529,8 @@ class RunCommand extends MUnitTargetCommandBase
 	inline function launchPHP(file:File):Int return launch(file, 'php', [file.nativePath]);
 	
 	inline function launchNodeJS(file:File):Int return launch(file, 'node', [file.nativePath]);
+	
+	inline function launchHashLink(file:File):Int return launch(file, 'hl', [file.nativePath]);
 	
 	function launch(file:File, executor:String, ?args:Array<String>):Int {
 		file.copyTo(reportRunnerDir.resolvePath(file.fileName));

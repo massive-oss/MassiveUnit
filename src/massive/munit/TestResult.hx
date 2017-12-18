@@ -110,11 +110,12 @@ class TestResult
 
 }
 
-enum TestResultType
+@:enum
+abstract TestResultType(String) to String
 {
-	UNKNOWN;
-	PASS;
-	FAIL;
-	ERROR;
-	IGNORE;
+	var UNKNOWN = "UNKNOWN";
+	var PASS = "PASS";
+	var FAIL = "FAIL";
+	var ERROR = "ERROR";
+	var IGNORE = "IGNORE";
 }

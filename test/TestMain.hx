@@ -40,7 +40,6 @@ import js.Lib;
  * Auto generated Test Application.
  * Refer to munit command line tool for more information (haxelib run munit)
  */
-
 class TestMain
 {
 	static function main(){	new TestMain();}
@@ -49,7 +48,6 @@ class TestMain
 	{
 		var suites = new Array<Class<massive.munit.TestSuite>>();
 		suites.push(TestSuite);
-
 		#if MCOVER
 			var client = new mcover.coverage.munit.client.MCoverPrintClient();
 			var httpClient = new HTTPClient(new mcover.coverage.munit.client.MCoverSummaryReportClient());
@@ -57,7 +55,6 @@ class TestMain
 			var client = new RichPrintClient();
 			var httpClient = new HTTPClient(new SummaryReportClient());
 		#end
-
 		var runner:TestRunner = new TestRunner(client);
 		runner.addResultClient(httpClient);
 		runner.addResultClient(new HTTPClient(new JUnitReportClient()));
@@ -77,7 +74,7 @@ class TestMain
 				flash.external.ExternalInterface.call("testResult", successful);
 			#elseif js
 				js.Lib.eval("testResult(" + successful + ");");
-			#elseif (neko || cpp || php || java || cs || python || php)
+			#elseif (neko || cpp || java || cs || python || php || hl)
 				Sys.exit(0);
 			#end
 		}

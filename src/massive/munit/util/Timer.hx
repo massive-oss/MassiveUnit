@@ -62,7 +62,7 @@ import cpp.vm.Thread;
 import java.vm.Thread;
 #end
 
-#if(cs || python || php || nodejs)
+#if(cs || python || php || nodejs || hl)
 typedef Timer = haxe.Timer;
 #else
 @:expose('massive.munit.util.Timer')
@@ -140,7 +140,7 @@ class Timer
 	}
 	#end
 
-	public static function delay(f:Void -> Void, time_ms:Int):Timer
+	public static function delay(f:Void->Void, time_ms:Int):Timer
 	{
 		var t = new Timer(time_ms);
 		t.run = function()
