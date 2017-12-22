@@ -26,15 +26,17 @@
  * or implied, of Massive Interactive.
  */
 package massive.munit.command;
+
 import haxe.ds.StringMap;
 import haxe.io.Eof;
 import massive.haxe.log.Log;
 import massive.haxe.util.RegExpUtil;
-import massive.munit.ServerMain;
 import massive.munit.client.HTTPClient;
+import massive.munit.ServerMain;
 import massive.munit.util.MathUtil;
 import massive.sys.io.File;
 import massive.sys.io.FileSys;
+import neko.vm.Module;
 import neko.vm.Thread;
 import sys.FileSystem;
 import sys.io.Process;
@@ -230,7 +232,7 @@ class RunCommand extends MUnitTargetCommandBase
 		indexPage = reportRunnerDir.resolvePath("index.html");
 		indexPage.writeString(pageContent, true);
 		var commonResourceDir:File = console.originalDir.resolveDirectory("resource");
-		commonResourceDir.copyTo(reportRunnerDir);
+		if(commonResourceDir.exists) commonResourceDir.copyTo(reportRunnerDir);
 		if (config.resources != null) config.resources.copyTo(reportRunnerDir);
 		for (target in targets)
 		{
@@ -267,7 +269,8 @@ class RunCommand extends MUnitTargetCommandBase
 			//Windows has issue releasing port registries reliably.
 			//To prevent possibility of nekotools server failing, on
 			//windows the tmp directory is always located inside the munit install
-			FileSys.setCwd(console.originalDir.nativePath);
+			var nekoLocalDirectory = haxe.io.Path.directory(Module.local().name);
+			FileSys.setCwd(nekoLocalDirectory != "" ? nekoLocalDirectory : console.originalDir.nativePath);
 		}
 		else
 		{
