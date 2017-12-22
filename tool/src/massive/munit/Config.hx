@@ -26,11 +26,14 @@
  * or implied, of Massive Interactive.
  */
 package massive.munit;
+
 import massive.sys.io.File;
 import massive.munit.Target;
 
 class Config
 {
+	inline public static var CLI_CONFIG:String = "cliconfig";
+
 	public var currentVersion(default, null):String;
 	public var configVersion(default, null):String;
 	public var dir(default, null):File;
@@ -54,9 +57,103 @@ class Config
 		this.dir = dir;
 		this.currentVersion = currentVersion;
 		targetTypes = defaultTargetTypes;
-		configFile = dir.resolveFile(".munit");
-		exists = configFile.exists;
-		if(exists) load();
+		if(!parseCommandLineConfig())
+		{
+			configFile = dir.resolveFile(".munit");
+			exists = configFile.exists;
+			if(exists) load();
+		}
+	}
+
+	private function parseCommandLineConfig():Bool
+	{
+		var args = Sys.args();
+		if(args[1] != CLI_CONFIG)
+			return false;
+
+		src = File.create(args[2], dir);
+		bin = File.create(args[3], dir, true);
+		report = File.create(args[4], dir, true);
+		hxml = null;
+
+		configVersion = getCommandLineConfigValue("version");
+
+		var resources = getCommandLineConfigValue("resources");
+		this.resources = resources != null ? File.create(resources, dir) : null;
+
+		var templates = getCommandLineConfigValue("templates");
+		this.templates = templates != null ? File.create(templates, dir) : null;
+
+		var classPaths = getCommandLineConfigValues("classPath");
+		this.classPaths = [];
+		if(classPaths != null)
+			for(classPath in classPaths)
+				this.classPaths.push(File.create(classPath, dir));
+
+		coveragePackages = getCommandLineConfigValues("coveragePackage");
+		coverageIgnoredClasses = getCommandLineConfigValues("coverageIgnoredClass");
+
+		targets.push(getCommandLineTarget());
+		return true;
+	}
+
+	private function getCommandLineConfigValue(name:String):String
+	{
+		var result = getCommandLineConfigValues(name);
+		return result == null ? null : result[0];
+	}
+
+	private function getCommandLineConfigValues(name:String):Array<String>
+	{
+		var args = Sys.args();
+		var result:Array<String> = [];
+		var length = args.length;
+		for(i in 0...length)
+		{
+			if(args[i] == ("config:" + name) && length > i)
+				result.push(args[i + 1]);
+		}
+		return result.length > 0 ? result : null;
+	}
+
+	private function getCommandLineTarget():Target
+	{
+		var hxml = "";
+		var flag = "target:";
+		var args = Sys.args();
+		var type:TargetType = null;
+		var file:File = null;
+		var length = args.length;
+		for(i in 0...length)
+		{
+			var arg = args[i];
+			if(StringTools.startsWith(arg, flag) && length > i)
+			{
+				var command = arg.substr(flag.length);
+				var value = args[i + 1];
+				hxml += command + " " + value + "\n";
+				switch(command)
+				{
+					case "-as3":
+						type = TargetType.as3;
+						file = File.create(value, dir, true);
+					case "-js":
+						type = TargetType.js;
+						file = File.create(value, dir, true);
+					case "-neko":
+						type = TargetType.neko;
+						file = File.create(value, dir, true);
+					case "-cpp":
+						type = TargetType.cpp;
+						file = File.create(value, dir, true);
+				}
+			}
+		}
+		var result = new Target();
+		result.hxml = hxml;
+		result.type = type;
+		result.file = file;
+		return result;
 	}
 	
 	public function load(?file:File)

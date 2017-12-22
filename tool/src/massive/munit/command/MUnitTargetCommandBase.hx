@@ -64,6 +64,9 @@ class MUnitTargetCommandBase extends MUnitCommand
 		var hxml:File = null;
 		var hxmlPath:String = null;
 		if (checkConsole) hxmlPath = console.getNextArg();
+		if (hxmlPath == Config.CLI_CONFIG || hxmlPath == null)
+			return;
+
 		if (hxmlPath != null)
 		{
 			hxml = File.create(hxmlPath, console.dir);
