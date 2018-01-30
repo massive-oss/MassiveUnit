@@ -331,7 +331,7 @@ class Assert
 			case TEnum(_): Type.enumEq(a, b);
 			case TFunction: Reflect.compareMethods(a, b);
 			case TClass(_):
-				if(Std.is(a, Array)) {
+				if(Std.is(a, Array) && Std.is(b, Array)) {
 					var a:Array<Dynamic> = cast a;
 					var b:Array<Dynamic> = cast b;
 					if(a.length != b.length) return false;
@@ -340,12 +340,12 @@ class Assert
 					}
 					return true;
 				}
-				if(Std.is(a, Date)) {
+				if(Std.is(a, Date) && Std.is(b, Date)) {
 					var a = cast(a, Date).getTime();
 					var b = cast(b, Date).getTime();
 					return a == b;
 				}
-				if(Std.is(a, Bytes)) {
+				if(Std.is(a, Bytes) && Std.is(b, Bytes)) {
 					var a = cast(a, Bytes);
 					var b = cast(b, Bytes);
 					if(a.length != b.length) return false;
