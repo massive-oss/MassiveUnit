@@ -325,22 +325,33 @@ class Assert
 		throw new AssertionException(message, info);
 	}
 	
-	static inline function equals(a:Dynamic, b:Dynamic):Bool return switch(Type.typeof(a)) {
-		case TEnum(_): Type.enumEq(a, b);
-		case TFunction: Reflect.compareMethods(a, b);
-		default: a == b;
+	static function equals(a:Dynamic, b:Dynamic):Bool {
+		return switch(Type.typeof(a)) {
+			case TEnum(_): Type.enumEq(a, b);
+			case TFunction: Reflect.compareMethods(a, b);
+			case TClass(_):
+				if(Std.is(a, Array)) {
+					var r:Array<Dynamic> = cast a;
+					var l:Array<Dynamic> = cast b;
+					if(r.length != l.length) return false;
+					for(i in 0...r.length) {
+						if(!equals(r[i], l[i])) return false;
+					}
+					return true;
+				}
+				return a == b;
+			case _: a == b;
+		}
 	}
 	
 	static inline function empty(anObject:StringOrIterable):Bool {
-		var result = false;
 		if(Std.is(anObject, String)) {
-			if((anObject:String).length == 0) result = true;
-		} else if((anObject is Array<Dynamic>)) {
+			return (anObject:String).length == 0;
+		} else if(Std.is(anObject, Array)) {
 			var a:Array<Dynamic> = cast anObject;
-			if(a.length == 0) result = true;
+			return a.length == 0;
 		} else {
-			if(!(anObject:Iterable<Dynamic>).iterator().hasNext()) result = true;
+			return !(anObject:Iterable<Dynamic>).iterator().hasNext();
 		}
-		return result;
 	}
 }

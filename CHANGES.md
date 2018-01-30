@@ -1,4 +1,8 @@
 ## dev
+- Added `Assert.isEmpty(anObject:StringOrIterable, ?message)`. Assert that a string or iterable is empty.
+- Added `Assert.isNotEmpty(anObject:StringOrIterable, ?message)`. Assert that a string or iterable is not empty.
+
+## 2.2.0
 - Added support for hl
 - Added support for nodejs
 - Added support for php
@@ -39,7 +43,7 @@
 - Cleaned up folder structure to support haxelib dev path on src
 
 ## 0.9.6.x - 
--  Minor tweaks for Haxe svn (2.11) using --no-inline and mockatoo
+- Minor tweaks for Haxe svn (2.11) using --no-inline and mockatoo
 
 ## 0.9.6 - 09-11-12
 - Included support for enum equality checking through Assert.areEqual/areNotEqual.

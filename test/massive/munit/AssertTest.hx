@@ -349,6 +349,28 @@ class AssertTest
 	}
 	
 	@Test
+	public function areEqualArray() {
+		Assert.areEqual([1, 2, 3], [1, 2, 3]);
+		try {
+			Assert.areEqual([1, 2, 3], [4, 5, 6]);
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function areEqualArray2() {
+		Assert.areEqual([[1], [2], [3]], [[1], [2], [3]]);
+		try {
+			Assert.areEqual([1, 2, 3], ["4", "5", "6"]);
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
 	public function testAreNotEqualString()
 	{
 		Assert.areNotEqual("", "yoyo");
