@@ -26,6 +26,7 @@
  * or implied, of Massive Interactive.
  */
 package massive.munit;
+import haxe.io.Bytes;
 import massive.munit.Assert;
 
 /**
@@ -375,6 +376,17 @@ class AssertTest
 		Assert.areEqual(new Date(2017, 0, 30, 0, 0, 0), new Date(2017, 0, 30, 0, 0, 0));
 		try {
 			Assert.areEqual(new Date(2016, 0, 30, 0, 0, 0), Date.now());
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function areEqualBytes() {
+		Assert.areEqual(Bytes.ofString("0xFF0000"), Bytes.ofString("0xFF0000"));
+		try {
+			Assert.areEqual(Bytes.ofString("0xFF0000"), Bytes.ofString("0x00FF00"));
 		} catch(e:AssertionException) {
 			return;
 		}

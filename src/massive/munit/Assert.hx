@@ -30,6 +30,7 @@ package massive.munit;
 import haxe.Constraints.Function; 
 import haxe.PosInfos; 
 import haxe.extern.EitherType; 
+import haxe.io.Bytes;
  
 private typedef RefType = EitherType<{}, Function>;
 private typedef StringOrIterable = EitherType<String, Iterable<Dynamic>>;
@@ -343,6 +344,15 @@ class Assert
 					var a = cast(a, Date).getTime();
 					var b = cast(b, Date).getTime();
 					return a == b;
+				}
+				if(Std.is(a, Bytes)) {
+					var a = cast(a, Bytes);
+					var b = cast(b, Bytes);
+					if(a.length != b.length) return false;
+					for(i in 0...a.length) {
+						if(a.get(i) != b.get(i)) return false;
+					}
+					return true;
 				}
 				return a == b;
 			case _: a == b;
