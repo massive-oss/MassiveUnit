@@ -26,22 +26,17 @@
  * or implied, of Massive Interactive.
  */
 package massive.munit;
-
 import massive.munit.Assert;
 
 /**
- * ...
  * @author Mike Stead
  */
 class AssertTest 
 {
-	public function new() 
-	{
-		
-	}
+	static inline var FAILURE_MESSAGE = "failure message";
 	
 	@Test
-	public function testIsTrue():Void
+	public function testIsTrue()
 	{
 		Assert.isTrue(true);
 		try 
@@ -56,7 +51,16 @@ class AssertTest
 	}
 	
 	@Test
-	public function testIsFalse():Void
+	public function isTrueWithMessage() {
+		try {
+			Assert.isTrue(false, FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+	
+	@Test
+	public function testIsFalse()
 	{
 		Assert.isFalse(false);
 		try 
@@ -71,7 +75,16 @@ class AssertTest
 	}
 	
 	@Test
-	public function testIsNull():Void
+	public function isFalseWithMessage() {
+		try {
+			Assert.isFalse(true, FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+	
+	@Test
+	public function testIsNull()
 	{
 		Assert.isNull(null);
 		try 
@@ -86,7 +99,16 @@ class AssertTest
 	}
 	
 	@Test
-	public function testIsNotNull():Void
+	public function isNullWithMessage() {
+		try {
+			Assert.isNull({}, FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+	
+	@Test
+	public function testIsNotNull()
 	{
 		Assert.isNotNull({});
 		try 
@@ -101,7 +123,16 @@ class AssertTest
 	}
 	
 	@Test
-	public function testIsNaN():Void
+	public function isNotNullWithMessage() {
+		try {
+			Assert.isNotNull(null, FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+	
+	@Test
+	public function testIsNaN()
 	{
 		Assert.isNaN(Math.NaN);
 		try 
@@ -116,7 +147,16 @@ class AssertTest
 	}
 	
 	@Test
-	public function testIsNotNaN():Void
+	public function isNaNWithMessage() {
+		try {
+			Assert.isNaN(1, FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+	
+	@Test
+	public function testIsNotNaN()
 	{
 		Assert.isNotNaN(1);
 		try 
@@ -131,7 +171,16 @@ class AssertTest
 	}
 	
 	@Test
-	public function testIsType():Void
+	public function isNotNaNWithMessage() {
+		try {
+			Assert.isNotNaN(Math.NaN, FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+	
+	@Test
+	public function testIsType()
 	{
 		Assert.isType(1, Int);
 		try 
@@ -146,7 +195,16 @@ class AssertTest
 	}
 	
 	@Test
-	public function testIsNotType():Void
+	public function isTypeWithMessage() {
+		try {
+			Assert.isType(1, String, FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+	
+	@Test
+	public function testIsNotType()
 	{
 		Assert.isNotType(1, String);
 		try 
@@ -161,7 +219,16 @@ class AssertTest
 	}
 	
 	@Test
-	public function testAreEqualString():Void
+	public function isNotTypeWithMessage() {
+		try {
+			Assert.isType(1, Int, FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+	
+	@Test
+	public function testAreEqualString()
 	{
 		Assert.areEqual("yoyo", "yoyo");
 		try 
@@ -176,7 +243,16 @@ class AssertTest
 	}
 	
 	@Test
-	public function testAreEqualObject():Void
+	public function areEqualStringWithMessage() {
+		try {
+			Assert.areEqual("", "yoyo", FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+	
+	@Test
+	public function testAreEqualObject()
 	{
 		var obj:Dynamic = { };
 		Assert.areEqual(obj, obj);
@@ -192,7 +268,16 @@ class AssertTest
 	}
 	
 	@Test
-	public function testAreEqualNumber():Void
+	public function areEqualObjectWithMessage() {
+		try {
+			Assert.areEqual({}, {}, FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+	
+	@Test
+	public function testAreEqualNumber()
 	{
 		Assert.areEqual(1, 1);
 		try 
@@ -207,7 +292,16 @@ class AssertTest
 	}
 	
 	@Test
-	public function testAreEqualEnum():Void
+	public function areEqualNumberWithMessage() {
+		try {
+			Assert.areEqual(1, 2, FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+	
+	@Test
+	public function testAreEqualEnum()
 	{
 		Assert.areEqual(ValueA, ValueA);
 		try
@@ -220,9 +314,18 @@ class AssertTest
 		}
 		Assert.fail("Invalid assertion not captured");
 	}
+	
+	@Test
+	public function areEqualEnumWithMessage() {
+		try {
+			Assert.areEqual(ValueA, ValueB, FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
 
 	@Test
-	public function testAreEqualEnumWithParam():Void
+	public function testAreEqualEnumWithParam()
 	{
 		Assert.areEqual(ValueC("foo"), ValueC("foo"));
 		try
@@ -237,7 +340,16 @@ class AssertTest
 	}
 	
 	@Test
-	public function testAreNotEqualString():Void
+	public function areEqualEnum2WithMessage() {
+		try {
+			Assert.areEqual(ValueC("foo"), ValueC("bar"), FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+	
+	@Test
+	public function testAreNotEqualString()
 	{
 		Assert.areNotEqual("", "yoyo");
 		try 
@@ -252,7 +364,16 @@ class AssertTest
 	}
 	
 	@Test
-	public function testAreNotEqualObject():Void
+	public function areNotEqualStringWithMessage() {
+		try {
+			Assert.areNotEqual("yoyo", "yoyo", FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+	
+	@Test
+	public function testAreNotEqualObject()
 	{
 		var obj:Dynamic = { };
 		Assert.areNotEqual({}, obj);
@@ -268,7 +389,17 @@ class AssertTest
 	}
 	
 	@Test
-	public function testAreNotEqualNumber():Void
+	public function areNotEqualObjectWithMessage() {
+		try {
+			var o = {};
+			Assert.areNotEqual(o, o, FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+	
+	@Test
+	public function testAreNotEqualNumber()
 	{
 		Assert.areNotEqual(1, 2);
 		try 
@@ -281,9 +412,18 @@ class AssertTest
 		}
 		Assert.fail("Invalid assertion not captured");
 	}
+	
+	@Test
+	public function areNotEqualNumberWithMessage() {
+		try {
+			Assert.areNotEqual(1, 1, FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
 
 	@Test
-	public function testAreNotEqualEnum():Void
+	public function testAreNotEqualEnum()
 	{
 		Assert.areNotEqual(ValueA, ValueB);
 		try
@@ -296,9 +436,18 @@ class AssertTest
 		}
 		Assert.fail("Invalid assertion not captured");
 	}
+	
+	@Test
+	public function areNotEqualEnumWithMessage() {
+		try {
+			Assert.areNotEqual(ValueA, ValueA, FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
 
 	@Test
-	public function testAreNotEqualEnumWithParam():Void
+	public function testAreNotEqualEnumWithParam()
 	{
 		Assert.areNotEqual(ValueC("foo"), ValueC("bar"));
 		try
@@ -311,8 +460,17 @@ class AssertTest
 		}
 		Assert.fail("Invalid assertion not captured");
 	}
+	
+	@Test
+	public function areNotEqualEnum2WithMessage() {
+		try {
+			Assert.areNotEqual(ValueC("foo"), ValueC("foo"), FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
 
-	public function testAreSameString():Void
+	public function testAreSameString()
 	{
 		Assert.areSame("yoyo", "yoyo");
 		try
@@ -325,9 +483,18 @@ class AssertTest
 		}
 		Assert.fail("Invalid assertion not captured");
 	}
+	
+	@Test
+	public function areSameStringWithMessage() {
+		try {
+			Assert.areSame("", "yoyo", FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
 
 	@Test
-	public function testAreSameObject():Void
+	public function testAreSameObject()
 	{
 		var obj:Dynamic = {};
 		Assert.areSame(obj, obj);
@@ -341,25 +508,19 @@ class AssertTest
 		}
 		Assert.fail("Invalid assertion not captured");
 	}
-
+	
 	@Test
-	public function testDoesMatch():Void
-	{
-		Assert.doesMatch("regular_example_45-", ~/^regular_example_\d+\-$/);
-
-		try
-		{
-			Assert.doesMatch("regular_example_45", ~/^regular_\d+$/);
+	public function areSameObjectWithMessage() {
+		try {
+			var o = {};
+			Assert.areSame({}, o, FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
 		}
-		catch (e:AssertionException)
-		{
-			return;
-		}
-		Assert.fail("Invalid assertion not captured");
 	}
 
 	@Test
-	public function testAreNotSameString():Void
+	public function testAreNotSameString()
 	{
 		Assert.areNotSame("", "yoyo");
 		try
@@ -372,9 +533,18 @@ class AssertTest
 		}
 		Assert.fail("Invalid assertion not captured");
 	}
+	
+	@Test
+	public function areNotSameStringWithMessage() {
+		try {
+			Assert.areNotSame("yoyo", "yoyo", FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
 
 	@Test
-	public function testAreNotSameObject():Void
+	public function testAreNotSameObject()
 	{
 		var obj:Dynamic = {};
 		Assert.areNotSame({}, obj);
@@ -388,9 +558,44 @@ class AssertTest
 		}
 		Assert.fail("Invalid assertion not captured");
 	}
+	
+	@Test
+	public function areNotSameObjectWithMessage() {
+		try {
+			var o = {};
+			Assert.areNotSame(o, o, FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
 
 	@Test
-	public function testDoesNotMatch():Void
+	public function testDoesMatch()
+	{
+		Assert.doesMatch("regular_example_45-", ~/^regular_example_\d+\-$/);
+
+		try
+		{
+			Assert.doesMatch("regular_example_45", ~/^regular_\d+$/);
+		}
+		catch (e:AssertionException)
+		{
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function doesMatchWithMessage() {
+		try {
+			Assert.doesMatch("regular_example_45", ~/^regular_\d+$/, FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+
+	@Test
+	public function testDoesNotMatch()
 	{
 		Assert.doesNotMatch("this is a string", ~/^This is a string$/);
 		Assert.doesNotMatch("fff", ~/^\d+$/);
@@ -405,24 +610,33 @@ class AssertTest
 		}
 		Assert.fail("Invalid assertion not captured");
 	}
+	
+	@Test
+	public function doesNotMatchWithMessage() {
+		try {
+			Assert.doesNotMatch("#198c19", ~/^#[0-9a-c]+$/i, FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
 
 	@Test
-	public function testFail():Void
+	public function testFail()
 	{
 		try 
 		{
-			Assert.fail("failure message");
+			Assert.fail(FAILURE_MESSAGE);
 		}
 		catch (e:AssertionException) 
 		{
-			Assert.areEqual("failure message", e.message); 
+			Assert.areEqual(FAILURE_MESSAGE, e.message); 
 			return;
 		}
 		Assert.fail("Invalid assertion not captured");
 	}
 	
 	@Test
-	public function testThrowsStringAndObject():Void
+	public function testThrowsStringAndObject()
 	{
 		// Positive case: throws expected string
 		var expectedMessage:String = "Invalid operation!";
@@ -456,7 +670,7 @@ class AssertTest
 	}
 
 	@Test
-	public function testThrowsFailsIfWrongExceptionTypeThrown():Void
+	public function testThrowsFailsIfWrongExceptionTypeThrown()
 	{
 		try
 		{
