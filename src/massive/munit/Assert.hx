@@ -276,7 +276,7 @@ class Assert
 	 * @return					  the exception that was thrown
 	 * @throws  AssertionException  if no expectation is thrown
 	 */
-	public static function throws(expectedType:Dynamic, code:Dynamic, ?info:PosInfos):Null<Dynamic>
+	public static function throws(expectedType:Dynamic, code:Function, ?info:PosInfos):Null<Dynamic>
 	{
 		try
 		{
