@@ -108,9 +108,9 @@ class Config
 		var args = Sys.args();
 		var result:Array<String> = [];
 		var length = args.length;
-		for(i in 0...length)
+		for(i in 0...length-1)
 		{
-			if(args[i] == ("config:" + name) && length > i)
+			if(args[i] == ("config:" + name))
 				result.push(args[i + 1]);
 		}
 		return result.length > 0 ? result : null;
@@ -124,10 +124,10 @@ class Config
 		var type:TargetType = null;
 		var file:File = null;
 		var length = args.length;
-		for(i in 0...length)
+		for(i in 0...length-1)
 		{
 			var arg = args[i];
-			if(StringTools.startsWith(arg, flag) && length > i)
+			if(StringTools.startsWith(arg, flag))
 			{
 				var command = arg.substr(flag.length);
 				var value = args[i + 1];
