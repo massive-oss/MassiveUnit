@@ -203,7 +203,7 @@ class Assert
 	}
 
 	/**
-	 * Assert that two values are one and the same.
+	 * Asserts that two objects refer to the same object.
 	 * 
 	 * @param	expected			expected value
 	 * @param	actual				actual value
@@ -219,7 +219,7 @@ class Assert
 	}
 
 	/**
-	 * Assert that two values are not one and the same.
+	 * Asserts that two objects do not refer to the same object.
 	 * 
 	 * @param	expected			expected value
 	 * @param	actual				actual value
