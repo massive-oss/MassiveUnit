@@ -371,6 +371,17 @@ class AssertTest
 	}
 	
 	@Test
+	public function areEqualDate() {
+		Assert.areEqual(new Date(2017, 0, 30, 0, 0, 0), new Date(2017, 0, 30, 0, 0, 0));
+		try {
+			Assert.areEqual(new Date(2016, 0, 30, 0, 0, 0), Date.now());
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
 	public function testAreNotEqualString()
 	{
 		Assert.areNotEqual("", "yoyo");

@@ -331,13 +331,18 @@ class Assert
 			case TFunction: Reflect.compareMethods(a, b);
 			case TClass(_):
 				if(Std.is(a, Array)) {
-					var r:Array<Dynamic> = cast a;
-					var l:Array<Dynamic> = cast b;
-					if(r.length != l.length) return false;
-					for(i in 0...r.length) {
-						if(!equals(r[i], l[i])) return false;
+					var a:Array<Dynamic> = cast a;
+					var b:Array<Dynamic> = cast b;
+					if(a.length != b.length) return false;
+					for(i in 0...a.length) {
+						if(!equals(a[i], b[i])) return false;
 					}
 					return true;
+				}
+				if(Std.is(a, Date)) {
+					var a = cast(a, Date).getTime();
+					var b = cast(b, Date).getTime();
+					return a == b;
 				}
 				return a == b;
 			case _: a == b;
