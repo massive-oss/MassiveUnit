@@ -686,6 +686,89 @@ class AssertTest
 		}
 	}
     
+	@Test
+	public function isEmptyString() {
+		Assert.isEmpty("");
+		try {
+			Assert.isEmpty("1,2,3");
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function isEmptyStringWithMessage() {
+		try {
+			Assert.isEmpty("1,2,3", FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+	
+	@Test
+	public function isEmptyArray() {
+		Assert.isEmpty([]);
+		try {
+			Assert.isEmpty([1,2,3]);
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function isEmptyMap() {
+		Assert.isEmpty(new Map<Int, Int>());
+		try {
+			Assert.isEmpty([0 => 1]);
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+    
+	@Test
+	public function isNotEmptyString() {
+		Assert.isNotEmpty("1,2,3");
+		try {
+			Assert.isNotEmpty("");
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function isNotEmptyStringWithMessage() {
+		try {
+			Assert.isNotEmpty("", FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+    
+	@Test
+	public function isNotEmptyArray() {
+		Assert.isNotEmpty([1,2,3]);
+		try {
+			Assert.isNotEmpty([]);
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+    
+	@Test
+	public function isNotEmptyMap() {
+		Assert.isNotEmpty([0 => 1]);
+		try {
+			Assert.isNotEmpty(new Map<Int, Int>());
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
 }
 
 private enum DummyEnum

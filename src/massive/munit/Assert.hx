@@ -31,7 +31,8 @@ import haxe.Constraints.Function;
 import haxe.PosInfos; 
 import haxe.extern.EitherType; 
  
-private typedef RefType = EitherType<{}, Function>; 
+private typedef RefType = EitherType<{}, Function>;
+private typedef StringOrIterable = EitherType<String, Iterable<Dynamic>>;
 
 /**
  * Used to make assertions about values in test cases.
@@ -274,7 +275,7 @@ class Assert
 	 * @return					  the exception that was thrown
 	 * @throws  AssertionException  if no expectation is thrown
 	 */
-	public static function throws(expectedType:Dynamic, code:Dynamic, ?info:PosInfos):Dynamic
+	public static function throws(expectedType:Dynamic, code:Dynamic, ?info:PosInfos):Null<Dynamic>
 	{
 		try
 		{
@@ -290,6 +291,30 @@ class Assert
 	}
 
 	/**
+	 * Assert that a string or iterable is empty
+	 * @param anObject The string or iterable to be tested
+	 * @param message The message to display in case of failure
+	 * @throws AssertionException if value is not empty
+	 */
+	public static function isEmpty(anObject:StringOrIterable, ?message:String, ?info:PosInfos) {
+		if(empty(anObject)) return;
+		if(message == null) message == 'Value [${anObject}] was not EMPTY';
+		fail(message, info);
+	}
+	
+	/**
+	 * Assert that a string or iterable is not empty
+	 * @param anObject The string or iterable to be tested
+	 * @param message The message to display in case of failure
+	 * @throws AssertionException if value is empty
+	 */
+	public static function isNotEmpty(anObject:StringOrIterable, ?message:String, ?info:PosInfos) {
+		if(!empty(anObject)) return;
+		if(message == null) message == 'Value [${anObject}] was EMPTY';
+		fail(message, info);
+	}
+	
+	/**
 	 * Force an assertion failure.
 	 * 
 	 * @param	message				message describing the assertion which failed
@@ -300,9 +325,22 @@ class Assert
 		throw new AssertionException(message, info);
 	}
 	
-	static inline function equals(a:Dynamic, b:Dynamic) return switch(Type.typeof(a)) {
+	static inline function equals(a:Dynamic, b:Dynamic):Bool return switch(Type.typeof(a)) {
 		case TEnum(_): Type.enumEq(a, b);
 		case TFunction: Reflect.compareMethods(a, b);
 		default: a == b;
+	}
+	
+	static inline function empty(anObject:StringOrIterable):Bool {
+		var result = false;
+		if(Std.is(anObject, String)) {
+			if((anObject:String).length == 0) result = true;
+		} else if((anObject is Array<Dynamic>)) {
+			var a:Array<Dynamic> = cast anObject;
+			if(a.length == 0) result = true;
+		} else {
+			if(!(anObject:Iterable<Dynamic>).iterator().hasNext()) result = true;
+		}
+		return result;
 	}
 }
