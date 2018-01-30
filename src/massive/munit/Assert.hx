@@ -48,72 +48,90 @@ class Assert
 	 * Assert that a value is true.
 	 * 
 	 * @param	value				value expected to be true
+	 * @param message The message to display in case of failure
 	 * @throws	AssertionException	if value is not true
 	 */
-	public static function isTrue(value:Bool, ?info:PosInfos)
+	public static function isTrue(value:Bool, ?message:String, ?info:PosInfos)
 	{
 		assertionCount++;
-		if (!value) fail("Expected TRUE but was [" + value + "]", info);
+		if(value) return;
+		if(message == null) message = "Expected TRUE but was [" + value + "]";
+		fail(message, info);
 	}
 	
 	/**
 	 * Assert that a value is false.
 	 * 
 	 * @param	value				value expected to be false
+	 * @param message The message to display in case of failure
 	 * @throws	AssertionException	if value is not false
 	 */
-	public static function isFalse(value:Bool, ?info:PosInfos)
+	public static function isFalse(value:Bool, ?message:String, ?info:PosInfos)
 	{
 		assertionCount++;
-		if (value) fail("Expected FALSE but was [" + value + "]", info);
+		if(!value) return;
+		if(message == null) message = "Expected FALSE but was [" + value + "]";
+		fail(message, info);
 	}
 	
 	/**
 	 * Assert that a value is null.
 	 * 
 	 * @param	value				value expected to be null
+	 * @param message The message to display in case of failure
 	 * @throws	AssertionException	if value is not null
 	 */
-	public static function isNull<T>(value:Null<T>, ?info:PosInfos)
+	public static function isNull<T>(value:Null<T>, ?message:String, ?info:PosInfos)
 	{
 		assertionCount++;
-		if (value != null) fail("Value [" + value + "] was not NULL", info);
+		if(value == null) return;
+		if(message == null) message = "Value [" + value + "] was not NULL";
+		fail(message, info);
 	}
 	
 	/**
 	 * Assert that a value is not null.
 	 * 
 	 * @param	value				value expected not to be null
+	 * @param message The message to display in case of failure
 	 * @throws	AssertionException	if value is null
 	 */
-	public static function isNotNull<T>(value:Null<T>, ?info:PosInfos)
+	public static function isNotNull<T>(value:Null<T>, ?message:String, ?info:PosInfos)
 	{
 		assertionCount++;
-		if (value == null) fail("Value [" + value + "] was NULL", info);
+		if(value != null) return;
+		if(message == null) message = "Value [" + value + "] was NULL";
+		fail(message, info);
 	}
 	
 	/**
 	 * Assert that a value is Math.NaN.
 	 * 
 	 * @param	value				value expected to be Math.NaN
+	 * @param message The message to display in case of failure
 	 * @throws	AssertionException	if value is not Math.NaN
 	 */
-	public static function isNaN(value:Float, ?info:PosInfos)
+	public static function isNaN(value:Float, ?message:String, ?info:PosInfos)
 	{
 		assertionCount++;
-		if (!Math.isNaN(value)) fail("Value [" + value + "]  was not NaN", info);
+		if(Math.isNaN(value)) return;
+		if(message == null) message = "Value [" + value + "]  was not NaN";
+		fail(message, info);
 	}
 
 	/**
 	 * Assert that a value is not Math.NaN.
 	 * 
 	 * @param	value				value expected not to be Math.NaN
+	 * @param message The message to display in case of failure
 	 * @throws	AssertionException	if value is Math.NaN
 	 */
-	public static function isNotNaN(value:Float, ?info:PosInfos)
+	public static function isNotNaN(value:Float, ?message:String, ?info:PosInfos)
 	{
 		assertionCount++;
-		if (Math.isNaN(value)) fail("Value [" + value + "] was NaN", info);
+		if(!Math.isNaN(value)) return;
+		if(message == null) message = "Value [" + value + "] was NaN";
+		fail(message, info);
 	}
 	
 	/**
@@ -121,11 +139,14 @@ class Assert
 	 * 
 	 * @param	value				value expected to be of a given type
 	 * @param	type				type the value should be
+	 * @param message The message to display in case of failure
 	 */
-	public static function isType(value:Dynamic, type:Dynamic, ?info:PosInfos)
+	public static function isType(value:Dynamic, type:Dynamic, ?message:String, ?info:PosInfos)
 	{
 		assertionCount++;
-		if (!Std.is(value, type)) fail("Value [" + value + "] was not of type: " + Type.getClassName(type), info);
+		if(Std.is(value, type)) return;
+		if(message == null) message = "Value [" + value + "] was not of type: " + Type.getClassName(type);
+		fail(message, info);
 	}
 	
 	/**
@@ -133,11 +154,14 @@ class Assert
 	 * 
 	 * @param	value				value expected to not be of a given type
 	 * @param	type				type the value should not be
+	 * @param message The message to display in case of failure
 	 */
-	public static function isNotType(value:Dynamic, type:Dynamic, ?info:PosInfos)
+	public static function isNotType(value:Dynamic, type:Dynamic, ?message:String, ?info:PosInfos)
 	{
 		assertionCount++;
-		if (Std.is(value, type)) fail("Value [" + value + "] was of type: " + Type.getClassName(type), info);
+		if(!Std.is(value, type)) return;
+		if(message == null) message = "Value [" + value + "] was of type: " + Type.getClassName(type);
+		fail(message, info);
 	}
 	
 	/**
@@ -147,12 +171,15 @@ class Assert
 	 * Otherwise strict equality is used.
 	 * @param	expected			expected value
 	 * @param	actual				actual value
+	 * @param message The message to display in case of failure
 	 * @throws	AssertionException	if expected is not equal to the actual value
 	 */
-	public static function areEqual<TExpected, TActual>(expected:TExpected, actual:TActual, ?info:PosInfos)
+	public static function areEqual<TExpected, TActual>(expected:TExpected, actual:TActual, ?message:String, ?info:PosInfos)
 	{
 		assertionCount++;
-		if (!equals(expected, actual)) fail("Value [" + actual +"] was not equal to expected value [" + expected + "]", info);
+		if(equals(expected, actual)) return;
+		if(message == null) message = "Value [" + actual + "] was not equal to expected value [" + expected + "]";
+		fail(message, info);
 	}
 	
 	/**
@@ -162,12 +189,15 @@ class Assert
 	 * Otherwise strict equality is used.
 	 * @param	expected			expected value
 	 * @param	actual				actual value
+	 * @param message The message to display in case of failure
 	 * @throws	AssertionException	if expected is equal to the actual value
 	 */
-	public static function areNotEqual<TExpected, TActual>(expected:TExpected, actual:TActual, ?info:PosInfos)
+	public static function areNotEqual<TExpected, TActual>(expected:TExpected, actual:TActual, ?message:String, ?info:PosInfos)
 	{
 		assertionCount++;
-		if (equals(expected, actual)) fail("Value [" + actual +"] was equal to value [" + expected + "]", info);
+		if(!equals(expected, actual)) return;
+		if(message == null) message = "Value [" + actual + "] was equal to value [" + expected + "]";
+		fail(message, info);
 	}
 
 	/**
@@ -175,12 +205,15 @@ class Assert
 	 * 
 	 * @param	expected			expected value
 	 * @param	actual				actual value
+	 * @param message The message to display in case of failure
 	 * @throws	AssertionException	if expected is not the same as the actual value
 	 */
-	public static function areSame<T:RefType>(expected:T, actual:T, ?info:PosInfos)
+	public static function areSame<T:RefType>(expected:T, actual:T, ?message:String, ?info:PosInfos)
 	{
 		assertionCount++;
-		if (expected != actual) fail("Value [" + actual +"] was not the same as expected value [" + expected + "]", info);
+		if(expected == actual) return;
+		if(message == null) message = "Value [" + actual + "] was not the same as expected value [" + expected + "]";
+		fail(message, info);
 	}
 
 	/**
@@ -188,12 +221,15 @@ class Assert
 	 * 
 	 * @param	expected			expected value
 	 * @param	actual				actual value
+	 * @param message The message to display in case of failure
 	 * @throws	AssertionException	if expected is the same as the actual value
 	 */
-	public static function areNotSame<T:RefType>(expected:T, actual:T, ?info:PosInfos)
+	public static function areNotSame<T:RefType>(expected:T, actual:T, ?message:String, ?info:PosInfos)
 	{
 		assertionCount++;
-		if (expected == actual) fail("Value [" + actual +"] was the same as expected value [" + expected + "]", info);
+		if(expected != actual) return;
+		if(message == null) message = "Value [" + actual + "] was the same as expected value [" + expected + "]";
+		fail(message, info);
 	}
 
 	/**
@@ -202,16 +238,15 @@ class Assert
 	 *
 	 * @param	string			value expected to match the regular expression
 	 * @param	regex			a regular expression that should match the string value
+	 * @param message The message to display in case of failure
 	 * @throws	AssertionException	if regex does not match string
 	 */
-	public static function doesMatch(string:String, regexp:EReg, ?info:PosInfos)
+	public static function doesMatch(string:String, regexp:EReg, ?message:String, ?info:PosInfos)
 	{
 		assertionCount++;
-
-		var matches:Bool = regexp.match(string);
-		if (matches) return;
-
-		fail("Value [" + string +"] was expected to match [" + regexp + "]", info);
+		if(regexp.match(string)) return;
+		if(message == null) message = "Value [" + string + "] was expected to match [" + regexp + "]";
+		fail(message, info);
 	}
 
 	/**
@@ -220,16 +255,15 @@ class Assert
 	 *
 	 * @param	string			value expected to not match the regular expression
 	 * @param	regex			a regular expression that should not match the string value
+	 * @param message The message to display in case of failure
 	 * @throws	AssertionException	if regex matches string
 	 */
-	public static function doesNotMatch(string:String, regexp:EReg, ?info:PosInfos)
+	public static function doesNotMatch(string:String, regexp:EReg, ?message:String, ?info:PosInfos)
 	{
 		assertionCount++;
-
-		var matches:Bool = regexp.match(string);
-		if (!matches) return;
-
-		fail("Value [" + string +"] was expected to not match [" + regexp + "], and matched at [" + regexp.matchedPos().pos + "]", info);
+		if(!regexp.match(string)) return;
+		if(message == null) message = "Value [" + string + "] was expected to not match [" + regexp + "], and matched at [" + regexp.matchedPos().pos + "]";
+		fail(message, info);
 	}
 
 	/**
@@ -258,12 +292,12 @@ class Assert
 	/**
 	 * Force an assertion failure.
 	 * 
-	 * @param	msg				message describing the assertion which failed
+	 * @param	message				message describing the assertion which failed
 	 * @throws	AssertionException	thrown automatically
 	 */
-	public static function fail(msg:String, ?info:PosInfos)
+	public static function fail(message:String, ?info:PosInfos)
 	{
-		throw new AssertionException(msg, info);
+		throw new AssertionException(message, info);
 	}
 	
 	static inline function equals(a:Dynamic, b:Dynamic) return switch(Type.typeof(a)) {
