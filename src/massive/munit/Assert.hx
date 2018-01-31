@@ -336,6 +336,7 @@ class Assert
 			case TEnum(_): Type.enumEq(a, b);
 			case TFunction: Reflect.compareMethods(a, b);
 			case TClass(_):
+				if(Std.is(a, String) && Std.is(b, String)) return a == b;
 				if(Std.is(a, Array) && Std.is(b, Array)) {
 					var a:Array<Dynamic> = cast a;
 					var b:Array<Dynamic> = cast b;
@@ -370,8 +371,22 @@ class Assert
 					var b = cast(b, Date).getTime();
 					return a == b;
 				}
-				return a == b;
+				if(a == b) return true;
+				// custom class
+				var afields = Type.getInstanceFields(Type.getClass(a));
+				for(it in afields) {
+					var av = Reflect.field(a, it);
+					if(Reflect.isFunction(av)) continue;
+					var bv = Reflect.field(b, it);
+					if(!equals(av, bv)) return false;
+				}
+				return true;
 			case TObject:
+				if(Std.is(a, Class) && Std.is(b, Class)) {
+					var a = Type.getClassName(a);
+					var b = Type.getClassName(b);
+					return a == b;
+				}
 				var afields = Reflect.fields(a);
 				var bfields = Reflect.fields(b);
 				#if python
@@ -383,10 +398,10 @@ class Assert
 				for(it in afields) {
 					bfields.remove(it);
 					if(!Reflect.hasField(b, it)) return false;
-					var avalue = Reflect.field(a, it);
-					if(Reflect.isFunction(avalue)) continue;
-					var bvalue = Reflect.field(b, it);
-					if(!equals(avalue, bvalue)) return false;
+					var av = Reflect.field(a, it);
+					if(Reflect.isFunction(av)) continue;
+					var bv = Reflect.field(b, it);
+					if(!equals(av, bv)) return false;
 				}
 				return bfields.length == 0;
 			case _: a == b;

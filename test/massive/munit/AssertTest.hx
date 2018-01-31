@@ -400,6 +400,50 @@ class AssertTest
 	}
 	
 	@Test
+	public function areEqualClass() {
+		Assert.areEqual(CustomException, CustomException);
+		try {
+			Assert.areEqual(CustomException, AssertionException);
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function areEqualInstance() {
+		Assert.areEqual(new CustomException("0", 1), new CustomException("0", 1));
+		try {
+			Assert.areEqual(new CustomException("0", 1), new CustomException("0", 10));
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function areEqualBool() {
+		Assert.areEqual(true, true);
+		try {
+			Assert.areEqual(true, false);
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function areEqualNull() {
+		Assert.areEqual(null, null);
+		try {
+			Assert.areEqual(null, {});
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
 	public function testAreNotEqualString()
 	{
 		Assert.areNotEqual("", "yoyo");
