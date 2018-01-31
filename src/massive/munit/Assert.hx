@@ -374,12 +374,12 @@ class Assert
 			case TObject:
 				var afields = Reflect.fields(a);
 				var bfields = Reflect.fields(b);
-				if(afields.length == 0 && bfields.length == 0) return true;
 				#if python
 				function isValid(v:String) return v.length <= 4 || (!v.startsWith("__") && !v.startsWith("_hx_") && !v.startsWith("__"));
 				afields = afields.filter(isValid);
 				bfields = bfields.filter(isValid);
 				#end
+				if(afields.length == 0 && bfields.length == 0) return true;
 				for(it in afields) {
 					bfields.remove(it);
 					if(!Reflect.hasField(b, it)) return false;
