@@ -253,25 +253,9 @@ class AssertTest
 	}
 	
 	@Test
-	public function testAreEqualObject()
-	{
-		var obj:Dynamic = { };
-		Assert.areEqual(obj, obj);
-		try 
-		{
-			Assert.areEqual({ }, obj);
-		}
-		catch (e:AssertionException) 
-		{
-			return;
-		}
-		Assert.fail("Invalid assertion not captured");
-	}
-	
-	@Test
 	public function areEqualObjectWithMessage() {
 		try {
-			Assert.areEqual({}, {}, FAILURE_MESSAGE);
+			Assert.areEqual({x:1}, {y:1}, FAILURE_MESSAGE);
 		} catch(e:AssertionException) {
 			Assert.areEqual(FAILURE_MESSAGE, e.message);
 		}
@@ -372,6 +356,28 @@ class AssertTest
 	}
 	
 	@Test
+	public function areEqualBytes() {
+		Assert.areEqual(Bytes.ofString("0xFF0000"), Bytes.ofString("0xFF0000"));
+		try {
+			Assert.areEqual(Bytes.ofString("0xFF0000"), Bytes.ofString("0x00FF00"));
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function areEqualMap() {
+		Assert.areEqual([1 => [1,2,3]], [1 => [1,2,3]]);
+		try {
+			Assert.areEqual(new Map<Int, Int>(), [1 => 1]);
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
 	public function areEqualDate() {
 		Assert.areEqual(new Date(2017, 0, 30, 0, 0, 0), new Date(2017, 0, 30, 0, 0, 0));
 		try {
@@ -383,10 +389,10 @@ class AssertTest
 	}
 	
 	@Test
-	public function areEqualBytes() {
-		Assert.areEqual(Bytes.ofString("0xFF0000"), Bytes.ofString("0xFF0000"));
+	public function areEqualDynamic() {
+		Assert.areEqual({x:1, a:[1,2,3]}, {x:1, a:[1,2,3]});
 		try {
-			Assert.areEqual(Bytes.ofString("0xFF0000"), Bytes.ofString("0x00FF00"));
+			Assert.areEqual({x:1, a:[1,2,3]}, {x:10, y: 10});
 		} catch(e:AssertionException) {
 			return;
 		}
@@ -420,11 +426,11 @@ class AssertTest
 	@Test
 	public function testAreNotEqualObject()
 	{
-		var obj:Dynamic = { };
-		Assert.areNotEqual({}, obj);
+		var o = {x:10};
+		Assert.areNotEqual({}, o);
 		try 
 		{
-			Assert.areNotEqual(obj, obj);
+			Assert.areNotEqual(o, o);
 		}
 		catch (e:AssertionException) 
 		{
@@ -541,11 +547,11 @@ class AssertTest
 	@Test
 	public function testAreSameObject()
 	{
-		var obj:Dynamic = {};
-		Assert.areSame(obj, obj);
+		var o = {};
+		Assert.areSame(o, o);
 		try
 		{
-			Assert.areSame({}, obj);
+			Assert.areSame({}, o);
 		}
 		catch (e:AssertionException)
 		{

@@ -28,9 +28,14 @@
 
 package massive.munit;
 import haxe.Constraints.Function; 
+import haxe.Constraints.IMap;
 import haxe.PosInfos; 
 import haxe.extern.EitherType; 
 import haxe.io.Bytes;
+
+#if python
+using StringTools;
+#end
  
 private typedef RefType = EitherType<{}, Function>;
 private typedef StringOrIterable = EitherType<String, Iterable<Dynamic>>;
@@ -340,11 +345,6 @@ class Assert
 					}
 					return true;
 				}
-				if(Std.is(a, Date) && Std.is(b, Date)) {
-					var a = cast(a, Date).getTime();
-					var b = cast(b, Date).getTime();
-					return a == b;
-				}
 				if(Std.is(a, Bytes) && Std.is(b, Bytes)) {
 					var a = cast(a, Bytes);
 					var b = cast(b, Bytes);
@@ -354,7 +354,41 @@ class Assert
 					}
 					return true;
 				}
+				if(Std.is(a, IMap) && Std.is(b, IMap)) {
+					var a:IMap<Dynamic, Dynamic> = cast a;
+					var b:IMap<Dynamic, Dynamic> = cast b;
+					var akeys = [for(it in a.keys()) it];
+					var bkeys = [for(it in b.keys()) it];
+					if(akeys.length != bkeys.length) return false;
+					for(it in akeys) {
+						if(!equals(a.get(it), b.get(it))) return false;
+					}
+					return true;
+				}
+				if(Std.is(a, Date) && Std.is(b, Date)) {
+					var a = cast(a, Date).getTime();
+					var b = cast(b, Date).getTime();
+					return a == b;
+				}
 				return a == b;
+			case TObject:
+				var afields = Reflect.fields(a);
+				var bfields = Reflect.fields(b);
+				if(afields.length == 0 && bfields.length == 0) return true;
+				#if python
+				function isValid(v:String) return v.length <= 4 || (!v.startsWith("__") && !v.startsWith("_hx_") && !v.startsWith("__"));
+				afields = afields.filter(isValid);
+				bfields = bfields.filter(isValid);
+				#end
+				for(it in afields) {
+					bfields.remove(it);
+					if(!Reflect.hasField(b, it)) return false;
+					var avalue = Reflect.field(a, it);
+					if(Reflect.isFunction(avalue)) continue;
+					var bvalue = Reflect.field(b, it);
+					if(!equals(avalue, bvalue)) return false;
+				}
+				return bfields.length == 0;
 			case _: a == b;
 		}
 	}
