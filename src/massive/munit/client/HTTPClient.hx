@@ -284,20 +284,24 @@ class URLRequest
 
 	public function send()
 	{
+		var body = Std.string(data);
 		#if(js || neko || cpp || java || cs || python || php || hl)
 		client.onData = onData;
 		client.onError = onError;
-			#if(js && !nodejs)
-			client.setPostData(data);
+			#if js
+				#if nodejs
+				client.setHeader('Content-Length', Std.string(body.length));
+				#end
+			client.setPostData(body);
 			#else
-			client.setParameter("data", data);
+			client.setParameter("data", body);
 			#end
 		#if hl client.cnxTimeout = 1; #end
 		client.request(true);
 		#elseif flash
 		var result = new flash.LoadVars();
 		result.onData = internalOnData;
-		client.data = data;
+		client.data = body;
 		client.sendAndLoad(url, result, "POST");
 		#end
 	}

@@ -689,9 +689,10 @@ massive_munit_client_URLRequest.prototype = {
 		this.client.setHeader(name,value);
 	}
 	,send: function() {
+		var body = Std.string(this.data);
 		this.client.onData = this.onData;
 		this.client.onError = this.onError;
-		this.client.setPostData(this.data);
+		this.client.setPostData(body);
 		this.client.request(true);
 	}
 	,__class__: massive_munit_client_URLRequest
