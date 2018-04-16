@@ -1,3 +1,8 @@
+## 2.2.2
+
+- Fixed regression in JS/NodeJS unit tests: results aren't correctly reported on some host platforms
+- Fixed/Modernised HTML runner template: charset utf-8 and HTML5 doctype
+
 ## 2.2.1
 
 - Additional optional `message` parameter for assertion tests
