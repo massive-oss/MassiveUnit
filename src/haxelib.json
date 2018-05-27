@@ -13,7 +13,7 @@
 		"massive"
 	],
 	"releasenote": "See https://github.com/massiveinteractive/MassiveUnit/blob/master/CHANGES.md",
-	"version": "2.2.2",
+	"version": "2.2.3",
 	"url": "http://github.com/massiveinteractive/MassiveUnit",
 	"dependencies": {
 		"mlib": "",
