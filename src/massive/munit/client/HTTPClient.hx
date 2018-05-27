@@ -253,7 +253,7 @@ class URLRequest
 	#if(js || neko || cpp || java || cs || python || php || hl)
 	public var client:Http;
 	#elseif flash
-	public var client:flash.LoadVars;
+	public var client:flash.net.URLRequest;
 	#end
 
 
@@ -269,7 +269,7 @@ class URLRequest
 		#if(js || neko || cpp || java || cs || python || php || hl)
 		client = new Http(url);
 		#elseif flash
-		client = new flash.LoadVars();
+		client = new flash.net.URLRequest(url);
 		#end
 	}
 
@@ -278,7 +278,7 @@ class URLRequest
 		#if(js || neko || cpp || java || cs || python || php || hl)
 		client.setHeader(name, value);
 		#elseif flash
-		client.addRequestHeader(name, value);
+		client.requestHeaders.push(new flash.net.URLRequestHeader(name, value)); 
 		#end
 	}
 
@@ -299,21 +299,24 @@ class URLRequest
 		#if hl client.cnxTimeout = 1; #end
 		client.request(true);
 		#elseif flash
-		var result = new flash.LoadVars();
-		result.onData = internalOnData;
-		client.data = body;
-		client.sendAndLoad(url, result, "POST");
+		client.data = data;
+		client.method = "POST";
+		var loader = new flash.net.URLLoader();
+		loader.addEventListener(flash.events.Event.COMPLETE, internalOnData);
+		loader.addEventListener(flash.events.IOErrorEvent.IO_ERROR, internalOnError);
+		loader.load(client); 
 		#end
 	}
 
 	#if flash
-	function internalOnData(value:String)
+	function internalOnData(event:flash.events.Event) 
 	{
-		if (value == null)
-			onError("Invalid Server Response.");
-		else
-			onData(value);
+		onData(cast (event.target, URLRequest).data);
 	}
+	function internalOnError(event:flash.events.Event)
+	{
+		onError("Invalid Server Response.");
+	} 
 	#end
 }
 
