@@ -1,3 +1,11 @@
+## 2.3.0
+
+- Added support for `eval` target
+
+## 2.2.3
+
+- Fixed regressions in AS3 support
+
 ## 2.2.2
 
 - Fixed regression in JS/NodeJS unit tests: results aren't correctly reported on some host platforms
