@@ -201,6 +201,7 @@ class HTTPClient implements IAdvancedTestResultClient
 		#elseif python return "python";
 		#elseif php return "php";
 		#elseif hl return "hl";
+		#elseif eval return "eval";
 		#end
 		return "unknown";
 	}
@@ -250,7 +251,7 @@ class URLRequest
 	var url:String;
 	var headers:StringMap<String>;
 
-	#if(js || neko || cpp || java || cs || python || php || hl)
+	#if(js || neko || cpp || java || cs || python || php || hl || eval)
 	public var client:Http;
 	#elseif flash
 	public var client:flash.net.URLRequest;
@@ -266,7 +267,7 @@ class URLRequest
 
 	function createClient(url:String)
 	{
-		#if(js || neko || cpp || java || cs || python || php || hl)
+		#if(js || neko || cpp || java || cs || python || php || hl || eval)
 		client = new Http(url);
 		#elseif flash
 		client = new flash.net.URLRequest(url);
@@ -275,7 +276,7 @@ class URLRequest
 
 	public function setHeader(name:String, value:String)
 	{
-		#if(js || neko || cpp || java || cs || python || php || hl)
+		#if(js || neko || cpp || java || cs || python || php || hl || eval)
 		client.setHeader(name, value);
 		#elseif flash
 		client.requestHeaders.push(new flash.net.URLRequestHeader(name, value)); 
@@ -285,7 +286,7 @@ class URLRequest
 	public function send()
 	{
 		var body = Std.string(data);
-		#if(js || neko || cpp || java || cs || python || php || hl)
+		#if(js || neko || cpp || java || cs || python || php || hl || eval)
 		client.onData = onData;
 		client.onError = onError;
 			#if js

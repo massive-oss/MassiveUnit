@@ -150,7 +150,7 @@ class PrintClient extends PrintClientBase
 
 		#if nodejs
 		untyped process.stdout.write(value);
-		#elseif (neko || cpp || java || cs || python || php || hl)
+		#elseif (neko || cpp || java || cs || python || php || hl || eval)
 		Sys.print(value);
 		#elseif (js || flash)
 		external.print(value);
