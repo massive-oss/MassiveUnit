@@ -124,6 +124,7 @@ class Config
 		var type:TargetType = null;
 		var file:File = null;
 		var length = args.length;
+		var flags:haxe.ds.StringMap<String> = new haxe.ds.StringMap();
 		for(i in 0...length-1)
 		{
 			var arg = args[i];
@@ -146,6 +147,8 @@ class Config
 					case "-cpp":
 						type = TargetType.cpp;
 						file = File.create(value, dir, true);
+					case "-D":
+						flags.set(value, value);
 				}
 			}
 		}
@@ -153,6 +156,7 @@ class Config
 		result.hxml = hxml;
 		result.type = type;
 		result.file = file;
+		result.flags = flags;
 		return result;
 	}
 	
