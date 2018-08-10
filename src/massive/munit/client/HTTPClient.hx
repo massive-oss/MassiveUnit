@@ -291,7 +291,7 @@ class URLRequest
 		client.onError = onError;
 			#if js
 				#if nodejs
-				client.setHeader('Content-Length', Std.string(body.length));
+				client.setHeader('Content-Length', Std.string(haxe.io.Bytes.ofString(body).length));
 				#end
 			client.setPostData(body);
 			#else
