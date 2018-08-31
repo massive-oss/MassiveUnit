@@ -92,7 +92,7 @@ class TestResult
 	 */
 	public var error:Dynamic;
 
-	public var type(get_type, null):TestResultType;
+	public var type(get, null):TestResultType;
 	
 	/**
 	 * Class constructor.
