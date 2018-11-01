@@ -223,11 +223,23 @@ class RichPrintClient extends PrintClientBase
 		external.trace(t);
 	}
 	
+	#if (flash && air)
+	private var flashOutput = "";
+	#end
+	
 	override public function print(value:Dynamic)
 	{
 		super.print(value);
 		#if(neko || cpp || java || cs || python || php || hl || eval)
 		Sys.print(value);
+		#elseif (flash && air)
+		flashOutput += value;
+		while (flashOutput.indexOf("\n") > -1)
+		{
+			var index = flashOutput.indexOf("\n");
+			flash.Lib.trace(flashOutput.substr(0, index));
+			flashOutput = flashOutput.substr(index + 1);
+		}
 		#elseif nodejs
 		js.Node.process.stdout.write(Std.string(value));
 		#end

@@ -136,7 +136,7 @@ class AsyncDelegate
 
 	function timeoutHandler()
 	{
-		#if flash
+		#if (flash && !air)
 			//pushing timeout onto next frame to prevent raxe condition bug when flash framerate drops too low and timeout timer executes prior to response on same frame
 			deferredTimer = Timer.delay(actualTimeoutHandler, 1);
 		#else
