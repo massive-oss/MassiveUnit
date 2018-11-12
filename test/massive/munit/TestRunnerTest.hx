@@ -73,11 +73,11 @@ class TestRunnerTest
     }
 
     @AsyncTest
-    public function testRun(factory:AsyncFactory)
+    public function testRun():Void
     {
         var suites = new Array<Class<massive.munit.TestSuite>>();
         suites.push(TestSuiteStub);
-        runner.completionHandler = factory.createHandler(this, completionHandler, 5000);
+        runner.completionHandler = Async.handler(this, completionHandler, 5000);
         runner.run(suites);
     }
 
@@ -98,36 +98,22 @@ class TestRunnerTest
     }
 
     @AsyncTest
-    public function testDebug(factory:AsyncFactory)
+    public function testDebug():Void
     {
         var suites = new Array<Class<massive.munit.TestSuite>>();
 
         suites.push(TestSuiteStub);
-        runner.completionHandler = factory.createHandler(this, completionHandler, 5000);
+        runner.completionHandler = Async.handler(this, completionHandler, 5000);
         runner.debug(suites);
     }
 
     @AsyncTest
-    public function noDebugTestsDuringDebugShouldNotRun(factory:AsyncFactory)
-    {
-        var suites = new Array<Class<massive.munit.TestSuite>>();
-
-        suites.push(DebuglessTestSuiteStub);
-        runner.completionHandler = factory.createHandler(this, debugCompletetionHandler, 5000);
-        runner.debug(suites);
-    }
-
-    function debugCompletetionHandler(isSuccessful:Bool) {
-        Assert.areEqual(0, client.testClasses.length);
-    }
-
-    @AsyncTest
-    public function testAsyncAssertionTests(factory:AsyncFactory)
+    public function testAsyncAssertionTests():Void
     {
         var suites = new Array<Class<massive.munit.TestSuite>>();
 
         suites.push(AsyncTestSuiteStub);
-        runner.completionHandler = factory.createHandler(this, asyncCompletionHandler, 5000);
+        runner.completionHandler = Async.handler(this, asyncCompletionHandler, 5000);
         runner.run(suites);
     }
 

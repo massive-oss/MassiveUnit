@@ -47,3 +47,4 @@ cached-classes-null-IgnoreCover.txt
 /haxelib.json
 src/tmp/
 *.hxproj
+/.project

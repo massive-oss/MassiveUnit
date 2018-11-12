@@ -39,10 +39,19 @@ class TestClassHelperTest
 		Assert.isNotNull(helper.test);
 		Assert.isType(helper.test, TestClassStub);
 		Assert.areEqual(helper.type, TestClassStub);
-		Assert.areEqual(helper.test.beforeClass, helper.beforeClass);
-		Assert.areEqual(helper.test.afterClass, helper.afterClass);
-		Assert.areEqual(helper.test.before, helper.before);
-		Assert.areEqual(helper.test.after, helper.after);
+		
+		Assert.areEqual(helper.beforeClass.length, 2);
+		Assert.areEqual(helper.afterClass.length, 2);
+		Assert.areEqual(helper.before.length, 2);
+		Assert.areEqual(helper.after.length, 2);
+		Assert.areEqual(helper.test.beforeClassSuper, helper.beforeClass[0]);
+		Assert.areEqual(helper.test.afterClassSuper, helper.afterClass[1]);
+		Assert.areEqual(helper.test.beforeSuper, helper.before[0]);
+		Assert.areEqual(helper.test.afterSuper, helper.after[1]);
+		Assert.areEqual(helper.test.beforeClass, helper.beforeClass[1]);
+		Assert.areEqual(helper.test.afterClass, helper.afterClass[0]);
+		Assert.areEqual(helper.test.before, helper.before[1]);
+		Assert.areEqual(helper.test.after, helper.after[0]);
 	}
 	
 	@Test
