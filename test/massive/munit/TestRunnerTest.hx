@@ -108,7 +108,21 @@ class TestRunnerTest
     }
 
     @AsyncTest
-    public function testAsyncAssertionTests():Void
+    public function noDebugTestsDuringDebugShouldNotRun()
+    {
+        var suites = new Array<Class<massive.munit.TestSuite>>();
+
+        suites.push(DebuglessTestSuiteStub);
+        runner.completionHandler = Async.handler(this, debugCompletetionHandler, 5000);
+        runner.debug(suites);
+    }
+
+    function debugCompletetionHandler(isSuccessful:Bool) {
+        Assert.areEqual(0, client.testClasses.length);
+    }
+
+    @AsyncTest
+    public function testAsyncAssertionTests(factory:AsyncFactory)
     {
         var suites = new Array<Class<massive.munit.TestSuite>>();
 

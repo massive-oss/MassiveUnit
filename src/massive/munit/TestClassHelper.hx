@@ -162,12 +162,10 @@ class TestClassHelper
 		this.type = type;
 		this.isDebug = isDebug;
 		className = Type.getClassName(type);
-		
 		beforeClass = new Array();
 		afterClass = new Array();
 		before = new Array();
 		after = new Array();
-		
 		parse(type);
 	}
 	
@@ -226,9 +224,10 @@ class TestClassHelper
 	{
 		var meta = {};
 		var depth = -1; // initially negative since incremented at top of loop
-		while (inherintanceChain.length > 0)
+		var i = inherintanceChain.length;
+		while (i-- > 0)
 		{
-			var clazz = inherintanceChain.pop(); // start at root
+			var clazz = inherintanceChain[i]; // start at root
 			// go to next inheritance depth
 			depth++;
 			// update lifecycle function arrays with new depth
@@ -308,70 +307,46 @@ class TestClassHelper
 			var description = (args != null) ? args[0] : "";
 			var isAsync = (args != null && description == META_PARAM_ASYNC_TEST); // deprecated support for @Test("Async")
 			var isIgnored = Reflect.hasField(funcMeta, META_TAG_IGNORE);
+			var hasDataProvider = Reflect.hasField(funcMeta, META_TAG_DATA_PROVIDER);
+			var dataProvider:String = null;
 			
 			if (isAsync) 
 			{
-				var args:Array<String> = Reflect.field(funcMeta, tag);
-				var description = (args != null) ? args[0] : "";
-				var isAsync = (args != null && description == META_PARAM_ASYNC_TEST); // deprecated support for @Test("Async")
-				var isIgnored = Reflect.hasField(funcMeta, META_TAG_IGNORE);
-				var hasDataProvider = Reflect.hasField(funcMeta, META_TAG_DATA_PROVIDER);
-				var dataProvider:String = null;
+				description = "";
+			}
+			else if (isIgnored)
+			{
+				args = Reflect.field(funcMeta, META_TAG_IGNORE);
+				description = (args != null) ? args[0] : "";
+			}
+			
+			if (hasDataProvider)
+			{
+				args = Reflect.field(funcMeta, META_TAG_DATA_PROVIDER);
+				if (args != null)
+				{
+					dataProvider = args[0];
+				}
+				else
+				{
+					throw new MUnitException("Missing dataProvider source", null);
+				}
+			}
 
-				if (isAsync) 
-				{
-					description = "";
-				}
-				else if (isIgnored)
-				{
-					args = Reflect.field(funcMeta, META_TAG_IGNORE);
-					description = (args != null) ? args[0] : "";
-				}
-
-				if (hasDataProvider)
-				{
-					args = Reflect.field(funcMeta, META_TAG_DATA_PROVIDER);
-					if (args != null)
-					{
-						dataProvider = args[0];
-					}
-					else
-					{
-						throw new MUnitException("Missing dataProvider source", null);
-					}
-				}
-
-				switch(tag)
-				{
-					case META_TAG_BEFORE_CLASS:
-						beforeClass[depth] = func;
-					case META_TAG_AFTER_CLASS:
-						afterClass[depth] = func;
-					case META_TAG_BEFORE:
-						before[depth] = func;
-					case META_TAG_AFTER:
-						after[depth] = func;
-					case META_TAG_ASYNC_TEST:
-						if (!isDebug)
-							addTest(fieldName, func, test, true, isIgnored, description, dataProvider);
-					case META_TAG_TEST:
-						if (!isDebug)
-							addTest(fieldName, func, test, isAsync, isIgnored, description, dataProvider);
-					case META_TAG_TEST_DEBUG:
-						if (isDebug)
-							addTest(fieldName, func, test, isAsync, isIgnored, description, dataProvider);
-				}
+			switch(tag)
+			{
+				case META_TAG_BEFORE_CLASS: beforeClass[depth] = func;
+				case META_TAG_AFTER_CLASS: afterClass[depth] = func;
+				case META_TAG_BEFORE: before[depth] = func;
+				case META_TAG_AFTER: after[depth] = func;
+				case META_TAG_ASYNC_TEST: if(!isDebug) addTest(fieldName, func, test, true, isIgnored, description, dataProvider);
+				case META_TAG_TEST: if(!isDebug) addTest(fieldName, func, test, isAsync, isIgnored, description, dataProvider);
+				case META_TAG_TEST_DEBUG: if(isDebug) addTest(fieldName, func, test, isAsync, isIgnored, description, dataProvider);
 			}
 		}
 	}
 	
-	private function addTest(field:String, 
-							testFunction:Function, 
-							testInstance:Dynamic, 
-							isAsync:Bool, 
-							isIgnored:Bool, 
-							description:String,
-							dataProvider:String):Void
+	function addTest(field:String, testFunction:Function, testInstance:Dynamic, isAsync:Bool, isIgnored:Bool, description:String, dataProvider:String)
 	{
 		var argsData:Array<Array<Dynamic>> = [[]];
 		if (dataProvider != null)

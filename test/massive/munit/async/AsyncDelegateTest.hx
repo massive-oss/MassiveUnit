@@ -93,7 +93,7 @@ class AsyncDelegateTest implements IAsyncDelegateObserver
 	{
 		delegate = new AsyncDelegate(this, asyncTestHandler, 10); 
 		delegate.observer = this;
-		handler = Async.handler(this, onTestTimeout);//created after delegate to ensure delegate timer executes beofre handler one (interval bug in flash when under heavy load)
+		handler = Async.handler(this, onTestTimeout);//created after delegate to ensure delegate timer executes before handler one (interval bug in flash when under heavy load)
 	}
 		
 	public function asyncTimeoutHandler(delegate:AsyncDelegate):Void

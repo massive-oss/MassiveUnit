@@ -107,30 +107,26 @@ class TestRunner implements IAsyncDelegateObserver
      * Handler called when all tests have been executed and all clients
      * have completed processing the results.
      */
-    public var completionHandler:Bool -> Void;
+    public var completionHandler:Bool->Void;
 
-    public var clientCount(get_clientCount, null):Int;
-    private function get_clientCount():Int { return clients.length; }
+    public var clientCount(get, null):Int;
+    function get_clientCount():Int { return clients.length; }
 
-    public var running(default, null):Bool;
+    public var running(default, null):Bool = false;
+    var testCount:Int;
+    var failCount:Int;
+    var errorCount:Int;
+    var passCount:Int;
+    var ignoreCount:Int;
+    var clientCompleteCount:Int;
+    var clients:Array<ITestResultClient> = [];
+    var activeHelper:TestClassHelper;
+    var testSuites:Array<TestSuite>;
+    var asyncDelegates:Array<AsyncDelegate>; // array to support multiple async handlers (chaining, or simultaneous)
+    var suiteIndex:Int;
 
-    private var testCount:Int;
-    private var failCount:Int;
-    private var errorCount:Int;
-    private var passCount:Int;
-    private var ignoreCount:Int;
-    private var clientCompleteCount:Int;
-
-    private var clients:Array<ITestResultClient>;
-
-    private var activeHelper:TestClassHelper;
-    private var testSuites:Array<TestSuite>;
-
-    private var asyncDelegates:Array<AsyncDelegate>; // array to support multiple async handlers (chaining, or simultaneous)
-    private var suiteIndex:Int;
-
-    public var asyncFactory(default, set_asyncFactory):AsyncFactory;
-    private function set_asyncFactory(value:AsyncFactory):AsyncFactory
+    public var asyncFactory(default, set):AsyncFactory;
+    function set_asyncFactory(value:AsyncFactory):AsyncFactory
     {
         if (value == asyncFactory) return value;
         if (running) throw new MUnitException("Can't change AsyncFactory while tests are running");
@@ -251,13 +247,16 @@ class TestRunner implements IAsyncDelegateObserver
 
     private inline function exceptionHandler ( e:Dynamic, result:TestResult ):Void
     {
+        #if hamcrest
         if (Std.is(e, org.hamcrest.AssertionException))
         {
             e = new AssertionException(e.message, e.info);
         }
+        #end
 
         result.executionTime = Timer.stamp() - testStartTime;
 
+        #if hamcrest
         if (Std.is(e, AssertionException))
         {
             result.failure = e;
@@ -265,7 +264,7 @@ class TestRunner implements IAsyncDelegateObserver
             for (c in clients)
                 c.addFail(result);
         }
-        else
+        else #end
         {
             if (!Std.is(e, MUnitException))
                 e = new UnhandledException(e, result.location);
@@ -355,7 +354,7 @@ class TestRunner implements IAsyncDelegateObserver
         }
     }
 
-    private function executeTestCase(testCaseData:Dynamic):Void
+    function executeTestCase(testCaseData:Dynamic)
     {
         var result:TestResult = testCaseData.result;
         try

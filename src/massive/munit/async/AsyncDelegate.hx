@@ -66,15 +66,15 @@ class AsyncDelegate
 	 */
 	public var delegateHandler(default, null):Dynamic;
 	public var timeoutDelay(default, null):Int;
-	public var timedOut(default, null):Bool;
-	
-	private var testCase:Dynamic;
-	private var handler:Dynamic;
-	private var timeoutHandler:Dynamic;
-	private var timer:Timer;
+	public var timedOut(default, null):Bool = false;
+	public var canceled(default, null):Bool = false;
+	var testCase:Dynamic;
+	var handler:Function;
+	var timer:Timer;
+	var deferredTimer:Timer;
+	var timeoutHandler:Function;
 
-	public var canceled(default, null):Bool;
-	public var hasTimeoutHandler(get_hasTimeoutHandler, never):Bool;
+	public var hasTimeoutHandler(get, never):Bool;
 
 	/**
 	 * An array of values to be passed as parameters to the test class handler.
@@ -166,9 +166,9 @@ class AsyncDelegate
 		observer = null; 
 	}
 
-	private function noResponseHandler():Void
+	function noResponseHandler():Void
 	{
-		#if flash
+		#if (flash && !air)
 			//pushing timeout onto next frame to prevent race condition bug when flash framerate drops too low and timeout timer executes prior to response on same frame
 			deferredTimer = Timer.delay(actualNoResponseHandler, 1);
 		#else
@@ -176,7 +176,7 @@ class AsyncDelegate
 		#end
 	}
 
-	private function actualNoResponseHandler()
+	function actualNoResponseHandler()
 	{
 		deferredTimer = null;
 		handler = null;
