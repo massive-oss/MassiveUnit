@@ -256,7 +256,6 @@ class TestRunner implements IAsyncDelegateObserver
 
         result.executionTime = Timer.stamp() - testStartTime;
 
-        #if hamcrest
         if (Std.is(e, AssertionException))
         {
             result.failure = e;
@@ -264,7 +263,7 @@ class TestRunner implements IAsyncDelegateObserver
             for (c in clients)
                 c.addFail(result);
         }
-        else #end
+        else
         {
             if (!Std.is(e, MUnitException))
                 e = new UnhandledException(e, result.location);
@@ -400,6 +399,7 @@ class TestRunner implements IAsyncDelegateObserver
     public function asyncResponseHandler(delegate:AsyncDelegate)
     {
         var testCaseData = activeHelper.current();
+        testCaseData.test = delegate.runTest;
         testCaseData.scope = delegate;
 
         asyncDelegates.remove(delegate);

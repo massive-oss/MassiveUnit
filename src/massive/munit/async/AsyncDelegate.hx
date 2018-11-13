@@ -64,7 +64,7 @@ class AsyncDelegate
 	 * it is ready for the remainder of the async test to be run.
 	 * </p>
 	 */
-	public var delegateHandler(default, null):Dynamic;
+	public var delegateHandler(default, null):Function;
 	public var timeoutDelay(default, null):Int;
 	public var timedOut(default, null):Bool = false;
 	public var canceled(default, null):Bool = false;
