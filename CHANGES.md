@@ -1,3 +1,6 @@
+## 2.3.1
+- js: Using `===` instead of `==` in `Assert.areEqual`
+
 ## 2.3.0
 
 - Added support for `eval` target
