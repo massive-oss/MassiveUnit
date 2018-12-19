@@ -312,7 +312,7 @@ class URLRequest
 	#if flash
 	function internalOnData(event:flash.events.Event) 
 	{
-		onData(cast (event.target, URLRequest).data);
+		onData(cast (event.target, flash.net.URLLoader).data);
 	}
 	function internalOnError(event:flash.events.Event)
 	{
