@@ -213,7 +213,7 @@ class TestRunner implements IAsyncDelegateObserver
             {
                 if (activeHelper == null || activeHelper.type != testClass)
                 {
-                    activeHelper = new TestClassHelper(testClass, isDebug);
+                    activeHelper = createTestClassHelper(testClass);
                     tryCallMethod(activeHelper.test, activeHelper.beforeClass, emptyParams);
                 }
                 executeTestCases();
@@ -391,4 +391,6 @@ class TestRunner implements IAsyncDelegateObserver
         if(Reflect.compareMethods(func, TestClassHelper.nullFunc)) return null;
         return Reflect.callMethod(o, func, args);
     }
+
+    function createTestClassHelper(testClass:Class<Dynamic>):TestClassHelper return new TestClassHelper(testClass, isDebug);
 }
