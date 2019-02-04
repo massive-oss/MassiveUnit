@@ -1,4 +1,14 @@
+## 2.3.3
+
+- Flash cast fix
+- Remove custom setter/getter functions (Haxe 4)
+
+## 2.3.2
+
+- Fixed invalid XML length
+
 ## 2.3.1
+
 - js: Using `===` instead of `==` in `Assert.areEqual`
 
 ## 2.3.0
