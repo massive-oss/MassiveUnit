@@ -109,12 +109,9 @@ class TimerTest
 
 	#if(js && !nodejs)
 		@AsyncTest
-		public function shouldClearOutIntervals(factory:AsyncFactory):Void
+		public function shouldClearOutIntervals(factory:AsyncFactory)
 		{
-			var timer:Timer;
-
 			handler = factory.createHandler(this, onMegaTimerDelay);
-
 			for(i in 1...102)
 			{
 				var timer = Timer.delay(timerHandler, i);

@@ -116,7 +116,7 @@ class AsyncDelegate
 	}
 
 	/**
-	 * Return true iff there is a timeout handler
+	 * Return true if there is a timeout handler
 	 **/
 	private function get_hasTimeoutHandler():Bool
 	{

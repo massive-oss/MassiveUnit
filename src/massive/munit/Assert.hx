@@ -303,6 +303,15 @@ class Assert
 	static inline function equals(a:Dynamic, b:Dynamic) return switch(Type.typeof(a)) {
 		case TEnum(_): Type.enumEq(a, b);
 		case TFunction: Reflect.compareMethods(a, b);
-		default: a == b;
+		default:
+			#if(js)
+				#if(haxe_ver >= "4.0.0")
+				js.Syntax.strictEq(a, b);
+				#else
+				untyped __strict_eq__(a, b);
+				#end
+			#else
+			a == b;
+			#end
 	}
 }

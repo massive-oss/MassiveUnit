@@ -68,9 +68,9 @@ class TestClassStub extends TestClassStubSuper
 	}
 	
 	@AsyncTest
-	public function exampleTestTwo():Void
+	public function exampleTestTwo(factory:AsyncFactory):Void
 	{
-		var handler:Dynamic = Async.handler(this, onExampleTestTwo, 200);
+		var handler:Dynamic = factory.createHandler(this, onExampleTestTwo, 200);
 		Timer.delay(handler, 100);
 	}
 	

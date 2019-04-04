@@ -73,7 +73,7 @@ class TestRunnerTest
     }
 
     @AsyncTest
-    public function testRun(factory:AsyncFactory):Void
+    public function testRun(factory:AsyncFactory)
     {
         var suites = new Array<Class<massive.munit.TestSuite>>();
         suites.push(TestSuiteStub);
@@ -98,7 +98,7 @@ class TestRunnerTest
     }
 
     @AsyncTest
-    public function testDebug(factory:AsyncFactory):Void
+    public function testDebug(factory:AsyncFactory)
     {
         var suites = new Array<Class<massive.munit.TestSuite>>();
 
