@@ -83,6 +83,11 @@ class TestResult
     public var ignore:Bool = false;
 	
 	/**
+	 * Arguments for the test, or null if no args
+	 **/
+	public var args:Array<Dynamic>;
+	
+	/**
 	 * If this test failed, the assertion exception that was captured.
 	 */
 	public var failure:AssertionException;
@@ -97,7 +102,19 @@ class TestResult
 	/**
 	 * Class constructor.
 	 */
-	public function new() {}
+	public function new() 
+	{
+		passed = false;
+		executionTime = 0.0;
+		name = "";
+		className = "";
+		description = "";
+		async = false;
+		ignore = false;
+		args = null;
+		error = null;
+		failure = null;
+	}
 
 	function get_type():TestResultType
 	{

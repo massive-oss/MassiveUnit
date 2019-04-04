@@ -64,7 +64,7 @@ class AsyncDelegate
 	 * it is ready for the remainder of the async test to be run.
 	 * </p>
 	 */
-	public var delegateHandler(default, null):Dynamic;
+	public var delegateHandler(default, null):Function;
 	public var timeoutDelay(default, null):Int;
 	public var timedOut(default, null):Bool = false;
 	public var canceled(default, null):Bool = false;
@@ -72,6 +72,9 @@ class AsyncDelegate
 	var handler:Function;
 	var timer:Timer;
 	var deferredTimer:Timer;
+	var timeoutHandler:Function;
+
+	public var hasTimeoutHandler(get, never):Bool;
 
 	/**
 	 * An array of values to be passed as parameters to the test class handler.
@@ -85,17 +88,22 @@ class AsyncDelegate
 	 * @param	testCase			test case instance where the async test originated
 	 * @param	handler				the handler in the test case for a successful async response
 	 * @param	?timeout			[optional] number of milliseconds to wait before timing out. Defaults to 400
+	 * @param	?timeoutHandler			[optional] a handler that is called if there is no async response.
+	 * 						If none provided, the test will be marked failing if the timeout
+	 * 						expires.  Otherwise, it is up to the handler to determine if the
+	 * 						test failed.
 	 * @param	?info				[optional] pos infos of the test which requests an instance of this delegate
 	 */
-	public function new(testCase:Dynamic, handler:Function, ?timeout:Int, ?info:PosInfos)
+	public function new(testCase:Dynamic, handler:Function, ?timeout:Int, ?timeoutHandler:Function, ?info:PosInfos)
 	{
 		this.testCase = testCase;
 		this.handler = handler;
+		this.timeoutHandler = timeoutHandler;
 		this.delegateHandler = Reflect.makeVarArgs(responseHandler);
 		this.info = info;
 		if (timeout == null || timeout <= 0) timeout = DEFAULT_TIMEOUT;
 		timeoutDelay = timeout;
-		timer = Timer.delay(timeoutHandler, timeoutDelay);
+		timer = Timer.delay(noResponseHandler, timeoutDelay);
 	}
 	
 	/**
@@ -105,6 +113,30 @@ class AsyncDelegate
 	public function runTest()
 	{
 		Reflect.callMethod(testCase, handler, params);
+	}
+
+	/**
+	 * Return true if there is a timeout handler
+	 **/
+	private function get_hasTimeoutHandler():Bool
+	{
+		return timeoutHandler != null;
+	}
+
+	/**
+	 * Execute the timeout handler for the asynchronous test.  This should be called by
+	 * the observer when it has been informed there is a timeout *only* when hasTimeoutHandler
+	 * returns true.
+	 **/
+	public function runTimeout():Void
+	{
+        if (canceled) return;
+
+        if (timeoutHandler == null)
+		{
+			throw new MUnitException("Observer attempted to run timeout handler when none set!");
+		}
+		Reflect.callMethod(testCase, timeoutHandler, []);
 	}
 
 	/**
@@ -134,17 +166,17 @@ class AsyncDelegate
 		observer = null; 
 	}
 
-	function timeoutHandler()
+	function noResponseHandler():Void
 	{
-		#if flash
-			//pushing timeout onto next frame to prevent raxe condition bug when flash framerate drops too low and timeout timer executes prior to response on same frame
-			deferredTimer = Timer.delay(actualTimeoutHandler, 1);
+		#if (flash && !air)
+			//pushing timeout onto next frame to prevent race condition bug when flash framerate drops too low and timeout timer executes prior to response on same frame
+			deferredTimer = Timer.delay(actualNoResponseHandler, 1);
 		#else
-			actualTimeoutHandler();
+			actualNoResponseHandler();
 		#end
 	}
 
-	function actualTimeoutHandler()
+	function actualNoResponseHandler()
 	{
 		deferredTimer = null;
 		handler = null;

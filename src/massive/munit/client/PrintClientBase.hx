@@ -89,8 +89,8 @@ class PrintClientBase extends AbstractTestResultClient
 		{
 			switch(result.type)
 			{
-				case ERROR: printLine("ERROR: " + Std.string(result.error), 1);
-				case FAIL: printLine("FAIL: " + Std.string(result.failure), 1);
+				case ERROR: printLine("ERROR: " + result.location + " - "+ Std.string(result.error), 1);
+				case FAIL: printLine("FAIL: " + result.location + " - " + Std.string(result.failure), 1);
 				case IGNORE:
 					var ingoredString = result.location;
 					if(result.description != null) ingoredString += " - " + result.description;
@@ -252,7 +252,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 {
 	public function new()
 	{
-		#if flash
+		#if (flash && !air)
 			if(!flash.external.ExternalInterface.available)
 			{
 				throw new MUnitException("ExternalInterface not available");
@@ -279,7 +279,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 		#end
 	}
 
-	#if flash
+	#if (flash && !air)
 		static var externalInterfaceQueue:Array<String> = [];
 		static var flashInitialised:Bool = false;
 		static var externalInterfaceCounter:Int = 0;
@@ -400,7 +400,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 
 	public function queue(method:String, ?args:Dynamic):Bool
 	{
-		#if (!js && !flash || nodejs)
+		#if (!js && (!flash || air) || nodejs)
 			//throw new MUnitException("Cannot call from non JS/Flash targets");
 			return false;
 		#end
@@ -411,7 +411,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 		var jsCode = convertToJavaScript(method, a);
 		#if js
 		return js.Lib.eval(jsCode);
-		#elseif flash
+		#elseif (flash && !air)
 		externalInterfaceQueue.push(jsCode);
 		#end
 		return false;

@@ -1,5 +1,5 @@
-/**************************************** ****************************************
- * Copyright 2010 Massive Interactive. All rights reserved.
+/*
+ * Copyright 2013 Massive Interactive. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,63 +25,31 @@
  * authors and should not be interpreted as representing official policies, either expressed
  * or implied, of Massive Interactive.
  */
+
 package massive.munit;
-import massive.munit.async.AsyncFactory;
-import massive.munit.util.Timer;
 
-/**
- * @author Mike Stead
- */
-
-class TestClassStub extends TestClassStubSuper
+class TestClassStubSuper
 {
 	public function new() 
-	{
-	    super();
-	}
+	{}
 	
 	@BeforeClass
-	public function beforeClass():Void
+	public function beforeClassSuper():Void
 	{
 	}
 	
 	@AfterClass
-	public function afterClass():Void
+	public function afterClassSuper():Void
 	{
 	}
 	
 	@Before
-	public function before():Void
+	public function beforeSuper():Void
 	{
 	}
 	
 	@After
-	public function after():Void
+	public function afterSuper():Void
 	{
-	}
-	
-	@Test
-	@TestDebug
-	public function exampleTestOne():Void
-	{
-		Assert.isTrue(false);
-	}
-	
-	@AsyncTest
-	public function exampleTestTwo(factory:AsyncFactory):Void
-	{
-		var handler:Dynamic = factory.createHandler(this, onExampleTestTwo, 200);
-		Timer.delay(handler, 100);
-	}
-	
-	private function onExampleTestTwo():Void
-	{
-		Assert.isTrue(true);
-	}
-	
-	@TestDebug
-	public function exampleTestThree():Void
-	{
-		Assert.isTrue(true);
 	}
 }
