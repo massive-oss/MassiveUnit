@@ -62,17 +62,17 @@ class ParallelAsyncTest
     *  This test should always Succeed.
     */
     @AsyncTest
-    public function testResponseSuccess() : Void
+    public function testResponseSuccess(factory:AsyncFactory) : Void
     {
         expectedValue = SUCCESS_RESPONS_FACTOR * SUCCESS_RESPONS_FACTOR * SUCCESS_RESPONS_FACTOR;
 
-        h1 = Async.handler ( this, responseHandler, 250, forbiddenTimeOutHandler );
+        h1 = factory.createHandler ( this, responseHandler, 250, forbiddenTimeOutHandler );
         Timer.delay ( h1, 10 );
 
-        h2 = Async.handler ( this, responseHandler, 250, forbiddenTimeOutHandler );
+        h2 = factory.createHandler ( this, responseHandler, 250, forbiddenTimeOutHandler );
         Timer.delay ( h2, 10 );
 
-        h3 = Async.handler ( this, responseHandler, 250, forbiddenTimeOutHandler );
+        h3 = factory.createHandler ( this, responseHandler, 250, forbiddenTimeOutHandler );
         Timer.delay ( h3, 10 );
     }
 
@@ -83,19 +83,19 @@ class ParallelAsyncTest
     *  This test should always Succeed.
     */
     @AsyncTest
-    public function testTimeoutHandlerSuccess() : Void
+    public function testTimeoutHandlerSuccess(factory:AsyncFactory) : Void
     {
         expectedValue = SUCCESS_TIMEOUT_FACTOR * SUCCESS_RESPONS_FACTOR * SUCCESS_RESPONS_FACTOR;
 
-        t1 = Async.handler ( this, forbiddenResponseHandler,   10, basicTimeOutHandler );
+        t1 = factory.createHandler ( this, forbiddenResponseHandler,   10, basicTimeOutHandler );
 
         // as the above time-out handler is NOT a failure handler,
         // these should CONTINUE to execute!
 
-        h4 = Async.handler ( this, responseHandler, 3000, forbiddenTimeOutHandler );
+        h4 = factory.createHandler ( this, responseHandler, 3000, forbiddenTimeOutHandler );
         Timer.delay ( h4, 1000 ); 
 
-        h5 = Async.handler ( this, responseHandler, 3000, forbiddenTimeOutHandler );
+        h5 = factory.createHandler ( this, responseHandler, 3000, forbiddenTimeOutHandler );
         Timer.delay ( h5, 1000 ); 
     }
 
@@ -106,18 +106,18 @@ class ParallelAsyncTest
     *  This test is expected to be reported as FAILed with "Ignore: this is EXPECTED" as part of its error message.
     */
     @AsyncTest
-    public function testTimeoutHandlerFailure() : Void
+    public function testTimeoutHandlerFailure(factory:AsyncFactory) : Void
     {
         expectedValue = FAILURE_TIMEOUT_FACTOR;
 
-        t2 = Async.handler ( this, forbiddenResponseHandler,   10, failingTimeOutHandler );
+        t2 = factory.createHandler ( this, forbiddenResponseHandler,   10, failingTimeOutHandler );
 
         // as the above time-out handler IS A failure handler, these should be CANCELLED (if not already triggered) !
 
-        h6 = Async.handler ( this, forbiddenResponseHandler, 3000, forbiddenTimeOutHandler );
+        h6 = factory.createHandler ( this, forbiddenResponseHandler, 3000, forbiddenTimeOutHandler );
         Timer.delay ( h6, 1000 ); 
 
-        h7 = Async.handler ( this, forbiddenResponseHandler, 3000, forbiddenTimeOutHandler );
+        h7 = factory.createHandler ( this, forbiddenResponseHandler, 3000, forbiddenTimeOutHandler );
         Timer.delay ( h7, 1000 ); 
     }
 

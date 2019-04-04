@@ -69,11 +69,11 @@ class ChainedAsyncTest
     *  This test should always Succeed.
     */
     @AsyncTest
-    public function testResponseChainSuccess() : Void
+    public function testResponseChainSuccess(factory:AsyncFactory) : Void
     {
         expectedValue = L1_RESPONS_FACTOR * L2_RESPONS_FACTOR;
 
-        h1 = Async.handler ( this, responseHandler11, 250, forbiddenTimeOutHandler );
+        h1 = factory.createHandler ( this, responseHandler11, 250, forbiddenTimeOutHandler );
         Timer.delay ( h1, 10 );
     }
 
@@ -100,11 +100,11 @@ class ChainedAsyncTest
     *  This test is expected to be reported as FAILed with "Ignore: this is EXPECTED" as part of its error message.
     */
     @AsyncTest
-    public function testTimeoutHandlerFailure() : Void
+    public function testTimeoutHandlerFailure(factory:AsyncFactory) : Void
     {
         expectedValue = L1_RESPONS_FACTOR * FAILURE_TIMEOUT_FACTOR;
 
-        h2 = Async.handler ( this, responseHandler21, 250, forbiddenTimeOutHandler );
+        h2 = factory.createHandler ( this, responseHandler21, 250, forbiddenTimeOutHandler );
         Timer.delay ( h2, 10 );
     }
 
@@ -125,11 +125,11 @@ class ChainedAsyncTest
     *  This test should always Succeed.
     */
     @AsyncTest
-    public function testTimeoutHandlerSuccess() : Void
+    public function testTimeoutHandlerSuccess(factory:AsyncFactory) : Void
     {
         expectedValue = L1_RESPONS_FACTOR * L2_TIMEOUT_FACTOR;
 
-        h3 = Async.handler ( this, responseHandler31, 250, forbiddenTimeOutHandler );
+        h3 = factory.createHandler ( this, responseHandler31, 250, forbiddenTimeOutHandler );
         Timer.delay ( h3, 10 );
     }
 
@@ -150,11 +150,11 @@ class ChainedAsyncTest
     *  This test should always Succeed.
     */
     @AsyncTest
-    public function testChainedTimeoutHandlerSuccess() : Void
+    public function testChainedTimeoutHandlerSuccess(factory:AsyncFactory) : Void
     {
         expectedValue = L1_TIMEOUT_FACTOR * L2_TIMEOUT_FACTOR;
 
-        h4 = Async.handler ( this, forbiddenResponseHandler, 250, chainABasicTimeOutHandler );
+        h4 = factory.createHandler ( this, forbiddenResponseHandler, 250, chainABasicTimeOutHandler );
     }
 
     public function chainABasicTimeOutHandler() : Void
@@ -174,11 +174,11 @@ class ChainedAsyncTest
     *  This test is expected to be reported as FAILed with "Ignore: this is EXPECTED" as part of its error message.
     */
     @AsyncTest
-    public function testChainedTimeoutHandlerFailure() : Void
+    public function testChainedTimeoutHandlerFailure(factory:AsyncFactory) : Void
     {
         expectedValue = L1_TIMEOUT_FACTOR * FAILURE_TIMEOUT_FACTOR;
 
-        h5 = Async.handler ( this, forbiddenResponseHandler, 250, chainAFailureTimeOutHandler );
+        h5 = factory.createHandler ( this, forbiddenResponseHandler, 250, chainAFailureTimeOutHandler );
     }
 
     public function chainAFailureTimeOutHandler() : Void

@@ -43,9 +43,9 @@ class ExampleTest
 	}
 	
 	@AsyncTest
-	public function testAsyncExample()
+	public function testAsyncExample(factory:AsyncFactory)
 	{
-		var handler:Dynamic = Async.handler(this, onTestAsyncExampleComplete, 300);
+		var handler:Dynamic = factory.createHandler(this, onTestAsyncExampleComplete, 300);
 		var timer = Timer.delay(handler, 200);
 	}
 	

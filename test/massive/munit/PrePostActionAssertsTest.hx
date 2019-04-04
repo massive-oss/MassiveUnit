@@ -1,5 +1,6 @@
 package massive.munit;
 
+import massive.munit.async.AsyncFactory;
 import massive.munit.util.Timer;
 
 /**
@@ -49,9 +50,9 @@ class PrePostActionAssertsTest
     }
 
     @AsyncTest
-    public function testAsync() : Void
+    public function testAsync(factory:AsyncFactory) : Void
     {
-        h1 = Async.handler ( this, responseHandlerFunc );
+        h1 = factory.createHandler ( this, responseHandlerFunc );
         Timer.delay ( h1,  100 );
     }
 

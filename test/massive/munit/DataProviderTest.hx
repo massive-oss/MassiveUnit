@@ -1,8 +1,10 @@
 package massive.munit;
 
+#if hamcrest
 import org.hamcrest.Matcher;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+#end
 
 /**
 *  Unit tests for Data Provider feature.
@@ -57,9 +59,11 @@ class DataProviderTest
     @AfterClass
     public function afterClass():Void
     {
+        #if hamcrest
         Assert.isTrue ( new MultiDimensionArrayMatcher( actualData01 ).matches( integerValues ));
         Assert.isTrue ( new MultiDimensionArrayMatcher( actualData02 ).matches( booleanValues() ));
         Assert.isTrue ( new MultiDimensionArrayMatcher( actualData03 ).matches( multipleParameters() ));
+        #end
     }
 
     @DataProvider("integerValues")
@@ -86,6 +90,7 @@ class DataProviderTest
 
 
 // --- NOTE: below class should probably go into hamcrest repo
+#if hamcrest
 
 /**
  * A Hamcrest Matcher to match a multi-dimensional array values, in any order.
@@ -139,3 +144,4 @@ class MultiDimensionArrayMatcher<T> extends BaseMatcher<T>
         description.appendText("an n-dimensional array that has same values, in any order ").appendValue( lhsArray) ;
     }
 }
+#end

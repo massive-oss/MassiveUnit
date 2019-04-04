@@ -341,7 +341,7 @@ class TestRunner implements IAsyncDelegateObserver
                 testCount++; // note we don't include ignored in final test count
                 activeHelper.before.iter(callHelperMethod);
                 testStartTime = Timer.stamp();
-                executeTestCase(testCaseData);
+                executeTestCase(testCaseData, testCaseData.result.async);
 
                 if ( ! isAsyncPending() ) {
                     activeRunner = null;  // for SYNC tests: resetting this here instead of clientCompletionHandler
@@ -353,7 +353,7 @@ class TestRunner implements IAsyncDelegateObserver
         }
     }
 
-    function executeTestCase(testCaseData:Dynamic)
+    function executeTestCase(testCaseData:Dynamic, async:Bool):Void
     {
         var result:TestResult = testCaseData.result;
         try
@@ -364,7 +364,23 @@ class TestRunner implements IAsyncDelegateObserver
             // By setting this here, this runner value will be valid right when tests (Sync/ASync) are about to run.
             activeRunner = this;
 
-            Reflect.callMethod(testCaseData.scope, testCaseData.test, result.args);
+            if (async)
+            {
+                var args:Array<Dynamic> = [asyncFactory];
+                if (result.args != null) args = args.concat(result.args);
+                
+                var delegateCount = asyncFactory.asyncDelegateCount;
+                Reflect.callMethod(testCaseData.scope, testCaseData.test, args);
+
+                if(asyncFactory.asyncDelegateCount <= delegateCount)
+                {
+                    throw new MissingAsyncDelegateException("No AsyncDelegate was created in async test at " + result.location, null);
+                }
+            }
+            else
+            {
+                Reflect.callMethod(testCaseData.scope, testCaseData.test, result.args);
+            }
 
             if (! isAsyncPending())
             {
@@ -403,7 +419,7 @@ class TestRunner implements IAsyncDelegateObserver
         testCaseData.scope = delegate;
 
         asyncDelegates.remove(delegate);
-        executeTestCase(testCaseData);
+        executeTestCase(testCaseData, false);
         if ( ! isAsyncPending() ) {
             activeRunner = null; // for ASync regular cases: resetting this here instead of clientCompletionHandler
             activeHelper.after.iter(callHelperMethod);
@@ -426,7 +442,7 @@ class TestRunner implements IAsyncDelegateObserver
         {
             testCaseData.test = delegate.runTimeout;
             testCaseData.scope = delegate;
-            executeTestCase(testCaseData);
+            executeTestCase(testCaseData, false);
         }
         else
         {

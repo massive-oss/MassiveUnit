@@ -63,7 +63,7 @@ class AsyncFactoryTest implements IAsyncDelegateObserver
 	}
 	
 	@AsyncTest
-	public function testCreateBasicHandler():Void
+	public function testCreateBasicHandler(factory:AsyncFactory):Void
 	{
 		var tempFactory:AsyncFactory = new AsyncFactory(this);
 		var tempHandler:Dynamic = tempFactory.createHandler(this, onTestCreateBasicHandler, 333);
@@ -78,7 +78,7 @@ class AsyncFactoryTest implements IAsyncDelegateObserver
 		
 		tempHandler();
 
-		var actualHandler:Dynamic = Async.handler(this, assertOnTestCreateBasicHandlerCalled, 333);
+		var actualHandler:Dynamic = factory.createHandler(this, assertOnTestCreateBasicHandlerCalled, 333);
 		Timer.delay(actualHandler, 10);
 	}
 
