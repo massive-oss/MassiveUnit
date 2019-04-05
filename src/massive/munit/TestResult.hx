@@ -59,8 +59,8 @@ class TestResult
 	public var className:String = "";
 	
 	/**
-     * An optional description.
-     */
+	 * An optional description.
+	 */
 	public var description:String = "";
 	
 	/**
@@ -78,9 +78,9 @@ class TestResult
 	public var async:Bool = false;
 	
 	/**
-     * Whether the test is ignored or not.
-     */
-    public var ignore:Bool = false;
+	 * Whether the test is ignored or not.
+	 */
+	public var ignore:Bool = false;
 	
 	/**
 	 * Arguments for the test, or null if no args
@@ -102,19 +102,7 @@ class TestResult
 	/**
 	 * Class constructor.
 	 */
-	public function new() 
-	{
-		passed = false;
-		executionTime = 0.0;
-		name = "";
-		className = "";
-		description = "";
-		async = false;
-		ignore = false;
-		args = null;
-		error = null;
-		failure = null;
-	}
+	public function new() {}
 
 	function get_type():TestResultType
 	{

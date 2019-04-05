@@ -48,12 +48,6 @@ import java.vm.Thread;
 #end
 
 using Lambda;
-#if haxe3
-import haxe.CallStack;
-#else
-import haxe.Stack;
-private typedef CallStack = Stack;
-#end
 
 /**
  * Runner used to execute one or more suites of unit tests.
@@ -195,17 +189,11 @@ class TestRunner implements IAsyncDelegateObserver
         suiteIndex = 0;
         clientCompleteCount = 0;
         Assert.assertionCount = 0; // don't really like this static but can't see way around it atm. ms 17/12/10
-        emptyParams = new Array();
         asyncDelegates = new Array<AsyncDelegate>();
-        testSuites = new Array<TestSuite>();
+        testSuites = [for(suiteType in testSuiteClasses) Type.createInstance(suiteType, emptyParams)];
         startTime = Timer.stamp();
 
-        for (suiteType in testSuiteClasses)
-        {
-            testSuites.push(Type.createInstance(suiteType, new Array()));
-        }
-
-        #if (!lime && !nme && (neko||cpp))
+        #if (!lime && !nme && (neko || cpp || java))
             var self = this;
             var runThread:Thread = Thread.create(function()
             {
@@ -225,7 +213,7 @@ class TestRunner implements IAsyncDelegateObserver
         #end
     }
 
-    private function callHelperMethod ( method:Dynamic ):Void
+    private function callHelperMethod(method:Dynamic):Void
     {
         try
         {
@@ -239,13 +227,13 @@ class TestRunner implements IAsyncDelegateObserver
         }
         catch (e:Dynamic)
         {
-            var testcaseData: Dynamic = activeHelper.current(); // fetch the test context
-            exceptionHandler ( e, testcaseData.result );
+            var testcaseData:Dynamic = activeHelper.current(); // fetch the test context
+            exceptionHandler(e, testcaseData.result);
         }
     }
 
 
-    private inline function exceptionHandler ( e:Dynamic, result:TestResult ):Void
+    private inline function exceptionHandler(e:Dynamic, result:TestResult):Void
     {
         #if hamcrest
         if (Std.is(e, org.hamcrest.AssertionException))
@@ -289,7 +277,7 @@ class TestRunner implements IAsyncDelegateObserver
                     activeHelper.beforeClass.iter(callHelperMethod);
                 }
                 executeTestCases();
-                if ( ! isAsyncPending() )
+                if (!isAsyncPending())
                 {
                     activeHelper.afterClass.iter(callHelperMethod);
                 }
@@ -303,7 +291,7 @@ class TestRunner implements IAsyncDelegateObserver
             testSuites[i] = null;
         }
 
-        if ( ! isAsyncPending() )
+        if (!isAsyncPending())
         {
             var time:Float = Timer.stamp() - startTime;
             for (client in clients)
@@ -343,7 +331,8 @@ class TestRunner implements IAsyncDelegateObserver
                 testStartTime = Timer.stamp();
                 executeTestCase(testCaseData, testCaseData.result.async);
 
-                if ( ! isAsyncPending() ) {
+                if (!isAsyncPending())
+                {
                     activeRunner = null;  // for SYNC tests: resetting this here instead of clientCompletionHandler
                     activeHelper.after.iter(callHelperMethod);
                 }
@@ -382,7 +371,7 @@ class TestRunner implements IAsyncDelegateObserver
                 Reflect.callMethod(testCaseData.scope, testCaseData.test, result.args);
             }
 
-            if (! isAsyncPending())
+            if (!isAsyncPending())
             {
                 result.passed = true;
                 result.executionTime = Timer.stamp() - testStartTime;
@@ -394,7 +383,7 @@ class TestRunner implements IAsyncDelegateObserver
         catch(e:Dynamic)
         {
             cancelAllPendingAsyncTests();
-            exceptionHandler ( e, result );
+            exceptionHandler(e, result);
         }
     }
 
@@ -420,7 +409,8 @@ class TestRunner implements IAsyncDelegateObserver
 
         asyncDelegates.remove(delegate);
         executeTestCase(testCaseData, false);
-        if ( ! isAsyncPending() ) {
+        if (!isAsyncPending())
+        {
             activeRunner = null; // for ASync regular cases: resetting this here instead of clientCompletionHandler
             activeHelper.after.iter(callHelperMethod);
             execute();
@@ -455,7 +445,8 @@ class TestRunner implements IAsyncDelegateObserver
             errorCount++;
             for (c in clients) c.addError(result);
         }
-        if ( ! isAsyncPending() ) {
+        if (!isAsyncPending())
+        {
              activeRunner = null; // for ASync Time-out cases: resetting this here instead of clientCompletionHandler
              activeHelper.after.iter(callHelperMethod);
              execute();
