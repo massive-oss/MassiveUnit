@@ -136,9 +136,10 @@ class PrintClient extends PrintClientBase
 
 	function customTrace(value, ?info:haxe.PosInfos)
 	{
+		if(info != null && info.customParams != null) value = '${value}, ${info.customParams.join(", ")}';
 		addTrace(value, info);
 	}
-	
+
 	override public function print(value:Dynamic)
 	{
 		super.print(value);
