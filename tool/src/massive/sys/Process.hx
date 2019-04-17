@@ -13,7 +13,9 @@ typedef Sys = java.Sys;
 typedef NativeProcess = java.io.Process;
 #end
 
-#if neko
+#if ((haxe_ver >= 4.0) && (neko || cpp || java || hl || eval))
+typedef Thread = sys.thread.Thread;
+#elseif neko
 typedef Thread = neko.vm.Thread;
 #elseif cpp
 typedef Thread = cpp.vm.Thread;
@@ -58,7 +60,7 @@ class Process
 		var process = new NativeProcess(command, args);
 
 		// If the target supports it, spawn a new thread to stream stderr and stdout in parallel 
-		#if (neko || cpp || java)
+		#if (neko || cpp || java || hl || eval)
 		var monitor = Thread.create(function()
 		{
 			var process:NativeProcess = Thread.readMessage(true);
