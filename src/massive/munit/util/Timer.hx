@@ -26,8 +26,6 @@
 * or implied, of Massive Interactive.
 ****/
 
-
-
 /*
  * Copyright (c) 2005, The haXe Project Contributors
  * All rights reserved.
@@ -54,7 +52,7 @@
  */
 package massive.munit.util;
 
-#if (haxe_ver >= 4.0 && (neko || cpp || java || hl || eval))
+#if ((haxe_ver >= 4.0) && (neko || cpp || java || hl || eval))
 import sys.thread.Thread;
 #elseif neko
 import neko.vm.Thread;
