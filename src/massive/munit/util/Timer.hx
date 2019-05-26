@@ -26,8 +26,6 @@
 * or implied, of Massive Interactive.
 ****/
 
-
-
 /*
  * Copyright (c) 2005, The haXe Project Contributors
  * All rights reserved.
@@ -54,7 +52,9 @@
  */
 package massive.munit.util;
 
-#if neko
+#if ((haxe_ver >= 4.0) && (neko || cpp || java || hl || eval))
+import sys.thread.Thread;
+#elseif neko
 import neko.vm.Thread;
 #elseif cpp
 import cpp.vm.Thread;
@@ -118,7 +118,7 @@ class Timer
 
 	public dynamic function run() {}
 
-	#if (neko || cpp || java)
+	#if (neko || cpp || java || hl || eval)
 	function runLoop(time_ms:Int)
 	{
 		var shouldStop = false;

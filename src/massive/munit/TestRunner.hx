@@ -37,7 +37,9 @@ import massive.munit.async.IAsyncDelegateObserver;
 import massive.munit.async.MissingAsyncDelegateException;
 import massive.munit.util.Timer;
 
-#if neko
+#if ((haxe_ver >= 4.0) && (neko || cpp || java || hl || eval))
+import sys.thread.Thread;
+#elseif neko
 import neko.vm.Thread;
 #elseif cpp
 import cpp.vm.Thread;
@@ -185,7 +187,7 @@ class TestRunner implements IAsyncDelegateObserver
         testSuites = [for(suiteType in testSuiteClasses) Type.createInstance(suiteType, emptyParams)];
         startTime = Timer.stamp();
 
-        #if (neko || cpp || java)
+        #if (neko || cpp || java || hl || eval)
 		var self = this;
 		var runThread:Thread = Thread.create(function()
 		{
