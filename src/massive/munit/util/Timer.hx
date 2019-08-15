@@ -83,9 +83,10 @@ class Timer
 			var me = this;
 			id = untyped __global__["flash.utils.setInterval"](function() { me.run(); },time_ms);
 		#elseif js
-			id = arr.length;
-			arr[id] = this;
-			timerId = untyped window.setInterval("massive.munit.util.Timer.arr[" + id + "].run();", time_ms);
+			var localID = arr.length;
+			id = localID;
+			arr[localID] = this;
+			timerId = untyped window.setInterval(function() { massive.munit.util.Timer.arr[localID].run(); }, time_ms);
 		#elseif (neko || cpp || java)
 			var me = this;
 			runThread = Thread.create(me.runLoop.bind(time_ms));
