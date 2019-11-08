@@ -37,7 +37,11 @@ import massive.munit.util.MathUtil;
 import massive.sys.io.File;
 import massive.sys.io.FileSys;
 import neko.vm.Module;
+#if (haxe_ver >= 4.0)
+import sys.thread.Thread;
+#else
 import neko.vm.Thread;
+#end
 import sys.FileSystem;
 import sys.io.Process;
 import sys.net.Host;

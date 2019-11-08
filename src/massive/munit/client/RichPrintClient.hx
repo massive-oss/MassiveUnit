@@ -41,6 +41,10 @@ class RichPrintClient extends PrintClientBase
 
 	var testClassResultType:TestResultType;
 	var external:ExternalPrintClient;
+  
+  #if (flash && air)
+	var flashOutput = "";
+	#end
 	
 	public function new()
 	{
@@ -217,16 +221,13 @@ class RichPrintClient extends PrintClientBase
 
 	function customTrace(value, ?info:haxe.PosInfos)
 	{
+		if(info != null && info.customParams != null) value = '${value}, ${info.customParams.join(", ")}';
 		addTrace(value, info);
 		var traces = getTraces();
 		var t = traces[traces.length - 1];
 		external.trace(t);
 	}
-	
-	#if (flash && air)
-	private var flashOutput = "";
-	#end
-	
+
 	override public function print(value:Dynamic)
 	{
 		super.print(value);

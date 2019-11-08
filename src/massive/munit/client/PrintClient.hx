@@ -65,8 +65,12 @@ class PrintClient extends PrintClientBase
 		#elseif js
 			var textArea:Dynamic;
 		#end
-	#end 
-	
+	#end
+
+  #if (flash && air)
+	var flashOutput = "";
+	#end
+
 	public function new(?includeIgnoredReport:Bool = true)
 	{
 		super(includeIgnoredReport);
@@ -136,13 +140,10 @@ class PrintClient extends PrintClientBase
 
 	function customTrace(value, ?info:haxe.PosInfos)
 	{
+		if(info != null && info.customParams != null) value = '${value}, ${info.customParams.join(", ")}';
 		addTrace(value, info);
 	}
-	
-	#if (flash && air)
-	private var flashOutput = "";
-	#end
-	
+
 	override public function print(value:Dynamic)
 	{
 		super.print(value);

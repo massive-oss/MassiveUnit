@@ -1,3 +1,7 @@
+## 2.3.4
+
+- Haxe 4 compatibility
+
 ## 2.3.3
 
 - Flash cast fix

@@ -39,7 +39,9 @@ import massive.munit.async.UnexpectedAsyncDelegateException;
 import massive.munit.util.Timer;
 import massive.munit.TestResult;
 
-#if neko
+#if ((haxe_ver >= 4.0) && (neko || cpp || java || hl || eval))
+import sys.thread.Thread;
+#elseif neko
 import neko.vm.Thread;
 #elseif cpp
 import cpp.vm.Thread;
@@ -193,21 +195,21 @@ class TestRunner implements IAsyncDelegateObserver
         testSuites = [for(suiteType in testSuiteClasses) Type.createInstance(suiteType, emptyParams)];
         startTime = Timer.stamp();
 
-        #if (!lime && !nme && (neko || cpp || java))
-            var self = this;
-            var runThread:Thread = Thread.create(function()
+        #if (!lime && !nme && (neko || cpp || java || hl || eval))
+        var self = this;
+        var runThread:Thread = Thread.create(function()
+        {
+            self.execute();
+            while (self.running)
             {
-                self.execute();
-                while (self.running)
-                {
-                    Sys.sleep(.2);
-                }
-                var mainThead:Thread = Thread.readMessage(true);
-                mainThead.sendMessage("done");
-            });
+                Sys.sleep(.2);
+            }
+            var mainThead:Thread = Thread.readMessage(true);
+            mainThead.sendMessage("done");
+        });
 
-            runThread.sendMessage(Thread.current());
-            Thread.readMessage(true);
+        runThread.sendMessage(Thread.current());
+        Thread.readMessage(true);
         #else
         execute();
         #end
