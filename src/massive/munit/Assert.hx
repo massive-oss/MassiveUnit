@@ -371,6 +371,8 @@ class Assert
 				if(a == b) return true;
 				// custom class
 				var afields = Type.getInstanceFields(Type.getClass(a));
+				var bfields = Type.getInstanceFields(Type.getClass(b));
+				if (afields.length != bfields.length) return false;
 				for(it in afields) {
 					var av = Reflect.field(a, it);
 					if(Reflect.isFunction(av)) continue;

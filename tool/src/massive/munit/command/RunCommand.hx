@@ -362,7 +362,7 @@ class RunCommand extends MUnitTargetCommandBase
 
 	function monitorResults()
 	{
-		var mainThread = Thread.readMessage(true);
+		var mainThread:Thread = Thread.readMessage(true);
 		var serverProcess = Thread.readMessage(true);
 		var serverTimeoutTimeSec = Thread.readMessage(true);
 		var testPassCount = 0;
@@ -443,6 +443,7 @@ class RunCommand extends MUnitTargetCommandBase
 			print("ERROR: Local results server appeared to hang so test reporting was cancelled.");
 		}
 		var platformResult:Bool = platformCount > 0 && testFailCount == 0 && testErrorCount == 0 && !serverHung;
+		print(Type.typeof(mainThread));
 		mainThread.sendMessage(platformResult);
 	}
 
