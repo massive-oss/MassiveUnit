@@ -443,7 +443,6 @@ class RunCommand extends MUnitTargetCommandBase
 			print("ERROR: Local results server appeared to hang so test reporting was cancelled.");
 		}
 		var platformResult:Bool = platformCount > 0 && testFailCount == 0 && testErrorCount == 0 && !serverHung;
-		print(Type.typeof(mainThread));
 		mainThread.sendMessage(platformResult);
 	}
 
@@ -497,10 +496,7 @@ class RunCommand extends MUnitTargetCommandBase
 		parameters.push(targetLocation);
 
 		var exitCode:Int = Sys.command(parameters.join(" "));
-		
-		if (exitCode > 0)
-			error("Error running " + targetLocation, exitCode);
-  
+		if (exitCode > 0) error("Error running " + targetLocation, exitCode);
 		return exitCode;
 	}
 	
