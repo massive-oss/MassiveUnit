@@ -304,7 +304,7 @@ class Assert
 	 */
 	public static function isEmpty(anObject:StringOrIterable, ?message:String, ?info:PosInfos) {
 		if(empty(anObject)) return;
-		if(message == null) message == 'Value [${anObject}] was not EMPTY';
+		if(message == null) message = 'Value [${anObject}] was not EMPTY';
 		fail(message, info);
 	}
 	
@@ -316,7 +316,7 @@ class Assert
 	 */
 	public static function isNotEmpty(anObject:StringOrIterable, ?message:String, ?info:PosInfos) {
 		if(!empty(anObject)) return;
-		if(message == null) message == 'Value [${anObject}] was EMPTY';
+		if(message == null) message = 'Value [${anObject}] was EMPTY';
 		fail(message, info);
 	}
 	
@@ -326,10 +326,7 @@ class Assert
 	 * @param	message				message describing the assertion which failed
 	 * @throws	AssertionException	thrown automatically
 	 */
-	public static function fail(message:String, ?info:PosInfos)
-	{
-		throw new AssertionException(message, info);
-	}
+	public static function fail(message:String, ?info:PosInfos) throw new AssertionException(message, info);
 	
 	static function equals(a:Dynamic, b:Dynamic):Bool {
 		return switch(Type.typeof(a)) {

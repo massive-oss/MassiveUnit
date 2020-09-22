@@ -109,8 +109,7 @@ class ServerMain
 		{
 			var file:File = tmpDir.resolvePath("results.txt");
 			var contents = file.readString();
-			if (contents == null)
-				contents = "";
+			if (contents == null) contents = "";
 			contents += result;
 			
 			try {
