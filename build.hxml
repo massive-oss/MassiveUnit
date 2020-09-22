@@ -7,8 +7,7 @@
 -cmd haxelib dev munit ./src
 -cmd echo run tool tests
 -cmd cd ./tool
-#-cmd haxelib run munit test -coverage
--cmd haxelib run munit test
+-cmd haxelib run munit test -coverage
 -cmd cd ..
 -cmd echo run core tests
 #-cmd haxelib run munit test -coverage
