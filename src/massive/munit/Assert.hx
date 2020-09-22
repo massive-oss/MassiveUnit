@@ -28,10 +28,17 @@
 
 package massive.munit;
 import haxe.Constraints.Function; 
+import haxe.Constraints.IMap;
 import haxe.PosInfos; 
 import haxe.extern.EitherType; 
+import haxe.io.Bytes;
+
+#if python
+using StringTools;
+#end
  
-private typedef RefType = EitherType<{}, Function>; 
+private typedef RefType = EitherType<{}, Function>;
+private typedef StringOrIterable = EitherType<String, Iterable<Dynamic>>;
 
 /**
  * Used to make assertions about values in test cases.
@@ -201,7 +208,7 @@ class Assert
 	}
 
 	/**
-	 * Assert that two values are one and the same.
+	 * Asserts that two objects refer to the same object.
 	 * 
 	 * @param	expected			expected value
 	 * @param	actual				actual value
@@ -217,7 +224,7 @@ class Assert
 	}
 
 	/**
-	 * Assert that two values are not one and the same.
+	 * Asserts that two objects do not refer to the same object.
 	 * 
 	 * @param	expected			expected value
 	 * @param	actual				actual value
@@ -274,7 +281,7 @@ class Assert
 	 * @return					  the exception that was thrown
 	 * @throws  AssertionException  if no expectation is thrown
 	 */
-	public static function throws(expectedType:Dynamic, code:Dynamic, ?info:PosInfos):Dynamic
+	public static function throws(expectedType:Dynamic, code:Function, ?info:PosInfos):Null<Dynamic>
 	{
 		try
 		{
@@ -290,28 +297,133 @@ class Assert
 	}
 
 	/**
+	 * Assert that a string or iterable is empty
+	 * @param anObject The string or iterable to be tested
+	 * @param message The message to display in case of failure
+	 * @throws AssertionException if value is not empty
+	 */
+	public static function isEmpty(anObject:StringOrIterable, ?message:String, ?info:PosInfos) {
+		if(empty(anObject)) return;
+		if(message == null) message = 'Value [${anObject}] was not EMPTY';
+		fail(message, info);
+	}
+	
+	/**
+	 * Assert that a string or iterable is not empty
+	 * @param anObject The string or iterable to be tested
+	 * @param message The message to display in case of failure
+	 * @throws AssertionException if value is empty
+	 */
+	public static function isNotEmpty(anObject:StringOrIterable, ?message:String, ?info:PosInfos) {
+		if(!empty(anObject)) return;
+		if(message == null) message = 'Value [${anObject}] was EMPTY';
+		fail(message, info);
+	}
+	
+	/**
 	 * Force an assertion failure.
 	 * 
 	 * @param	message				message describing the assertion which failed
 	 * @throws	AssertionException	thrown automatically
 	 */
-	public static function fail(message:String, ?info:PosInfos)
-	{
-		throw new AssertionException(message, info);
+	public static function fail(message:String, ?info:PosInfos) throw new AssertionException(message, info);
+	
+	static function equals(a:Dynamic, b:Dynamic):Bool {
+		return switch(Type.typeof(a)) {
+			case TEnum(_): Type.enumEq(a, b);
+			case TFunction: Reflect.compareMethods(a, b);
+			case TClass(_):
+				if(Std.is(a, String) && Std.is(b, String)) return a == b;
+				if(Std.is(a, Array) && Std.is(b, Array)) {
+					var a:Array<Dynamic> = cast a;
+					var b:Array<Dynamic> = cast b;
+					if(a.length != b.length) return false;
+					for(i in 0...a.length) {
+						if(!equals(a[i], b[i])) return false;
+					}
+					return true;
+				}
+				if(Std.is(a, Bytes) && Std.is(b, Bytes)) {
+					var a = cast(a, Bytes);
+					var b = cast(b, Bytes);
+					if(a.length != b.length) return false;
+					for(i in 0...a.length) {
+						if(a.get(i) != b.get(i)) return false;
+					}
+					return true;
+				}
+				if(Std.is(a, IMap) && Std.is(b, IMap)) {
+					var a:IMap<Dynamic, Dynamic> = cast a;
+					var b:IMap<Dynamic, Dynamic> = cast b;
+					var akeys = [for(it in a.keys()) it];
+					var bkeys = [for(it in b.keys()) it];
+					if(akeys.length != bkeys.length) return false;
+					for(it in akeys) {
+						if(!equals(a.get(it), b.get(it))) return false;
+					}
+					return true;
+				}
+				if(Std.is(a, Date) && Std.is(b, Date)) {
+					var a = cast(a, Date).getTime();
+					var b = cast(b, Date).getTime();
+					return a == b;
+				}
+				if(a == b) return true;
+				// custom class
+				var afields = Type.getInstanceFields(Type.getClass(a));
+				var bfields = Type.getInstanceFields(Type.getClass(b));
+				if (afields.length != bfields.length) return false;
+				for(it in afields) {
+					var av = Reflect.field(a, it);
+					if(Reflect.isFunction(av)) continue;
+					var bv = Reflect.field(b, it);
+					if(!equals(av, bv)) return false;
+				}
+				return true;
+			case TObject:
+				if(Std.is(a, Class) && Std.is(b, Class)) {
+					var a = Type.getClassName(a);
+					var b = Type.getClassName(b);
+					return a == b;
+				}
+				var afields = Reflect.fields(a);
+				var bfields = Reflect.fields(b);
+				#if python
+				function isValid(v:String) return v.length <= 4 || (!v.startsWith("__") && !v.startsWith("_hx_") && !v.startsWith("__"));
+				afields = afields.filter(isValid);
+				bfields = bfields.filter(isValid);
+				#end
+				if(afields.length == 0 && bfields.length == 0) return true;
+				for(it in afields) {
+					bfields.remove(it);
+					if(!Reflect.hasField(b, it)) return false;
+					var av = Reflect.field(a, it);
+					if(Reflect.isFunction(av)) continue;
+					var bv = Reflect.field(b, it);
+					if(!equals(av, bv)) return false;
+				}
+				return bfields.length == 0;
+			case _:
+				#if(js)
+					#if(haxe_ver >= "4.0.0")
+					js.Syntax.strictEq(a, b);
+					#else
+					untyped __strict_eq__(a, b);
+					#end
+				#else
+				a == b;
+				#end
+		}
 	}
 	
-	static inline function equals(a:Dynamic, b:Dynamic) return switch(Type.typeof(a)) {
-		case TEnum(_): Type.enumEq(a, b);
-		case TFunction: Reflect.compareMethods(a, b);
-		default:
-			#if(js)
-				#if(haxe_ver >= "4.0.0")
-				js.Syntax.strictEq(a, b);
-				#else
-				untyped __strict_eq__(a, b);
-				#end
-			#else
-			a == b;
-			#end
+	static inline function empty(anObject:StringOrIterable):Bool {
+		if(Std.is(anObject, String)) {
+			return (anObject:String).length == 0;
+		} else if(Std.is(anObject, Array)) {
+			var a:Array<Dynamic> = cast anObject;
+			return a.length == 0;
+		} else {
+			return !(anObject:Iterable<Dynamic>).iterator().hasNext();
+		}
 	}
 }

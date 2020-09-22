@@ -26,6 +26,7 @@
  * or implied, of Massive Interactive.
  */
 package massive.munit;
+import haxe.io.Bytes;
 import massive.munit.Assert;
 
 /**
@@ -252,25 +253,9 @@ class AssertTest
 	}
 	
 	@Test
-	public function testAreEqualObject()
-	{
-		var obj:Dynamic = { };
-		Assert.areEqual(obj, obj);
-		try 
-		{
-			Assert.areEqual({ }, obj);
-		}
-		catch (e:AssertionException) 
-		{
-			return;
-		}
-		Assert.fail("Invalid assertion not captured");
-	}
-	
-	@Test
 	public function areEqualObjectWithMessage() {
 		try {
-			Assert.areEqual({}, {}, FAILURE_MESSAGE);
+			Assert.areEqual({x:1}, {y:1}, FAILURE_MESSAGE);
 		} catch(e:AssertionException) {
 			Assert.areEqual(FAILURE_MESSAGE, e.message);
 		}
@@ -362,6 +347,116 @@ class AssertTest
 	#end
 	
 	@Test
+	public function areEqualArray() {
+		Assert.areEqual([1, 2, 3], [1, 2, 3]);
+		try {
+			Assert.areEqual([1, 2, 3], [4, 5, 6]);
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function areEqualArray2() {
+		Assert.areEqual([[1], [2], [3]], [[1], [2], [3]]);
+		try {
+			Assert.areEqual([1, 2, 3], ["4", "5", "6"]);
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function areEqualBytes() {
+		Assert.areEqual(Bytes.ofString("0xFF0000"), Bytes.ofString("0xFF0000"));
+		try {
+			Assert.areEqual(Bytes.ofString("0xFF0000"), Bytes.ofString("0x00FF00"));
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function areEqualMap() {
+		Assert.areEqual([1 => [1,2,3]], [1 => [1,2,3]]);
+		try {
+			Assert.areEqual(new Map<Int, Int>(), [1 => 1]);
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function areEqualDate() {
+		Assert.areEqual(new Date(2017, 0, 30, 0, 0, 0), new Date(2017, 0, 30, 0, 0, 0));
+		try {
+			Assert.areEqual(new Date(2016, 0, 30, 0, 0, 0), Date.now());
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function areEqualDynamic() {
+		Assert.areEqual({x:1, a:[1,2,3]}, {x:1, a:[1,2,3]});
+		try {
+			Assert.areEqual({x:1, a:[1,2,3]}, {x:10, y: 10});
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function areEqualClass() {
+		Assert.areEqual(CustomException, CustomException);
+		try {
+			Assert.areEqual(CustomException, AssertionException);
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function areEqualInstance() {
+		Assert.areEqual(new CustomException("0", 1), new CustomException("0", 1));
+		try {
+			Assert.areEqual(new CustomException("0", 1), new CustomException("0", 10));
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function areEqualBool() {
+		Assert.areEqual(true, true);
+		try {
+			Assert.areEqual(true, false);
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function areEqualNull() {
+		Assert.areEqual(null, null);
+		try {
+			Assert.areEqual(null, {});
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
 	public function testAreNotEqualString()
 	{
 		Assert.areNotEqual("", "yoyo");
@@ -388,11 +483,11 @@ class AssertTest
 	@Test
 	public function testAreNotEqualObject()
 	{
-		var obj:Dynamic = { };
-		Assert.areNotEqual({}, obj);
+		var o = {x:10};
+		Assert.areNotEqual({}, o);
 		try 
 		{
-			Assert.areNotEqual(obj, obj);
+			Assert.areNotEqual(o, o);
 		}
 		catch (e:AssertionException) 
 		{
@@ -522,11 +617,11 @@ class AssertTest
 	@Test
 	public function testAreSameObject()
 	{
-		var obj:Dynamic = {};
-		Assert.areSame(obj, obj);
+		var o = {};
+		Assert.areSame(o, o);
 		try
 		{
-			Assert.areSame({}, obj);
+			Assert.areSame({}, o);
 		}
 		catch (e:AssertionException)
 		{
@@ -712,6 +807,89 @@ class AssertTest
 		}
 	}
     
+	@Test
+	public function isEmptyString() {
+		Assert.isEmpty("");
+		try {
+			Assert.isEmpty("1,2,3");
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function isEmptyStringWithMessage() {
+		try {
+			Assert.isEmpty("1,2,3", FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+	
+	@Test
+	public function isEmptyArray() {
+		Assert.isEmpty([]);
+		try {
+			Assert.isEmpty([1,2,3]);
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function isEmptyMap() {
+		Assert.isEmpty(new Map<Int, Int>());
+		try {
+			Assert.isEmpty([0 => 1]);
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+    
+	@Test
+	public function isNotEmptyString() {
+		Assert.isNotEmpty("1,2,3");
+		try {
+			Assert.isNotEmpty("");
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	
+	@Test
+	public function isNotEmptyStringWithMessage() {
+		try {
+			Assert.isNotEmpty("", FAILURE_MESSAGE);
+		} catch(e:AssertionException) {
+			Assert.areEqual(FAILURE_MESSAGE, e.message);
+		}
+	}
+    
+	@Test
+	public function isNotEmptyArray() {
+		Assert.isNotEmpty([1,2,3]);
+		try {
+			Assert.isNotEmpty([]);
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+    
+	@Test
+	public function isNotEmptyMap() {
+		Assert.isNotEmpty([0 => 1]);
+		try {
+			Assert.isNotEmpty(new Map<Int, Int>());
+		} catch(e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
 }
 
 private enum DummyEnum

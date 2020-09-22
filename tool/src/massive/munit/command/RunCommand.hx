@@ -362,7 +362,7 @@ class RunCommand extends MUnitTargetCommandBase
 
 	function monitorResults()
 	{
-		var mainThread = Thread.readMessage(true);
+		var mainThread:Thread = Thread.readMessage(true);
 		var serverProcess = Thread.readMessage(true);
 		var serverTimeoutTimeSec = Thread.readMessage(true);
 		var testPassCount = 0;
@@ -496,10 +496,7 @@ class RunCommand extends MUnitTargetCommandBase
 		parameters.push(targetLocation);
 
 		var exitCode:Int = Sys.command(parameters.join(" "));
-		
-		if (exitCode > 0)
-			error("Error running " + targetLocation, exitCode);
-  
+		if (exitCode > 0) error("Error running " + targetLocation, exitCode);
 		return exitCode;
 	}
 	
