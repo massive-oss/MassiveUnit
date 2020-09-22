@@ -217,16 +217,17 @@ class RichPrintClient extends PrintClientBase
 
 	function customTrace(value, ?info:haxe.PosInfos)
 	{
+		if(info != null && info.customParams != null) value = '${value}, ${info.customParams.join(", ")}';
 		addTrace(value, info);
 		var traces = getTraces();
 		var t = traces[traces.length - 1];
 		external.trace(t);
 	}
-	
+
 	override public function print(value:Dynamic)
 	{
 		super.print(value);
-		#if(neko || cpp || java || cs || python || php || hl)
+		#if(neko || cpp || java || cs || python || php || hl || eval)
 		Sys.print(value);
 		#elseif nodejs
 		js.Node.process.stdout.write(Std.string(value));

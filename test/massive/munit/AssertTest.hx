@@ -333,6 +333,19 @@ class AssertTest
 		}
 	}
 	
+	#if(js)
+	@Test
+	public function areEqualJS() {
+		Assert.areEqual(1, 1);
+		try {
+			Assert.areEqual(1, "1");
+		} catch (e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	#end
+	
 	@Test
 	public function areEqualArray() {
 		Assert.areEqual([1, 2, 3], [1, 2, 3]);
@@ -565,6 +578,19 @@ class AssertTest
 		}
 	}
 
+	#if(js)
+	@Test
+	public function areNotEqualJS() {
+		Assert.areNotEqual(1, "1");
+		try {
+			Assert.areNotEqual(1, 1);
+		} catch (e:AssertionException) {
+			return;
+		}
+		Assert.fail("Invalid assertion not captured");
+	}
+	#end
+	
 	public function testAreSameString()
 	{
 		Assert.areSame("yoyo", "yoyo");

@@ -1,8 +1,40 @@
-## dev
-- Added `Assert.isEmpty(anObject:StringOrIterable, ?message)`. Assert that a string or iterable is empty.
-- Added `Assert.isNotEmpty(anObject:StringOrIterable, ?message)`. Assert that a string or iterable is not empty.
+## 2.3.4
+
+- Haxe 4 compatibility
+
+## 2.3.3
+
+- Flash cast fix
+- Remove custom setter/getter functions (Haxe 4)
+
+## 2.3.2
+
+- Fixed invalid XML length
+
+## 2.3.1
+
+- js: Using `===` instead of `==` in `Assert.areEqual`
+
+## 2.3.0
+
+- Added support for `eval` target
+
+## 2.2.3
+
+- Fixed regressions in AS3 support
+
+## 2.2.2
+
+- Fixed regression in JS/NodeJS unit tests: results aren't correctly reported on some host platforms
+- Fixed/Modernised HTML runner template: charset utf-8 and HTML5 doctype
+
+## 2.2.1
+
+- Additional optional `message` parameter for assertion tests
+- Fix: length check for input arguments
 
 ## 2.2.0
+
 - Added support for hl
 - Added support for nodejs
 - Added support for php
@@ -23,6 +55,7 @@
 - [#106](https://github.com/massiveinteractive/MassiveUnit/pull/106) Adding custom timeout option.
 
 ## 2.1.1
+
 - Recompile binaries for backwards compatibility with neko v1.8
 - Remove dependency on hamcrest
 
@@ -42,12 +75,12 @@
 - Some breaking changes to APIs and interfaces for Haxe 3 compatibility
 - Cleaned up folder structure to support haxelib dev path on src
 
-## 0.9.6.x - 
-- Minor tweaks for Haxe svn (2.11) using --no-inline and mockatoo
+## 0.9.6.x -
+-  Minor tweaks for Haxe svn (2.11) using --no-inline and mockatoo
 
 ## 0.9.6 - 09-11-12
 - Included support for enum equality checking through Assert.areEqual/areNotEqual.
-- Added Assert.areSame/areNotSame for strict equality checks. 
+- Added Assert.areSame/areNotSame for strict equality checks.
 - Update to fix --js-modern errors.
 
 ## 0.9.5.2.2 - 21.08.12
@@ -76,7 +109,7 @@
 - neko : updated references to use Sys rather than neko.Sys
 - all : run command only copies compiled target files from bin directory to test-runner (ignores other directories and files)
 - cpp: compile coverage and non-coverage versions of cpp target to different directories (appends '-coverage' to cpp output dir) to prevent full recompile when switching between the two
-- all: merged pull request #38 from tynril - adding custom coverage include/ignored packages to munit config 
+- all: merged pull request #38 from tynril - adding custom coverage include/ignored packages to munit config
 
 ## 0.9.4.3 - 17.08.12
 - all: Fixed issue #36 - trace statements no longer appear in print client output
@@ -87,7 +120,7 @@
 - all: Fixed Issue #35 - TestMain template uses incorrect coverage package
 
 ## 0.9.4.1 - 14.07.12
-- flash: Fixed issue #32 - icons don't always appear in result client for AS3 
+- flash: Fixed issue #32 - icons don't always appear in result client for AS3
 - flash, js : moved html print client icons into single spritesheet
 - flash, js : cleaned up js and css on html print client (and html templates)
 - flash : Fixed issue #29 detect debug flash player for as3 targets and print warning if not available
@@ -131,7 +164,7 @@
 ## 0.9.2.3 - 31.03.12
 - Added configuration for project specific html templates
 - Added configuration for project specific runner resources
-- Added new example: examples/02_customTemplates 
+- Added new example: examples/02_customTemplates
 
 ## 0.9.2.2 - 28.02.12
 - Added support for synchronous assertions inside async tests.

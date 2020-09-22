@@ -34,7 +34,11 @@ import massive.munit.client.PrintClient;
 import massive.munit.client.JUnitReportClient;
 import massive.munit.client.SummaryReportClient;
 import massive.munit.util.Timer;
+#if (haxe_ver >= 4.0)
+import sys.thread.Thread;
+#else
 import neko.vm.Thread;
+#end
 
 class ServerMain
 {

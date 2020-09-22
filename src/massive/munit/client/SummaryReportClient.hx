@@ -69,13 +69,13 @@ class SummaryReportClient extends AbstractTestResultClient
 	override function printFinalStatistics(result:Bool, testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float)
 	{
 		var sb = new StringBuf();
-		sb.add('result: ${result}');
-		sb.add('\ncount: ${testCount}');
-		sb.add('\npass: ${passCount}');
-		sb.add('\nfail: ${failCount}');
-		sb.add('\nerror: ${errorCount}');
-		sb.add('\nignore: ${ignoreCount}');
-		sb.add('\ntime: ${time}');
+		sb.add('result:${result}');
+		sb.add('\ncount:${testCount}');
+		sb.add('\npass:${passCount}');
+		sb.add('\nfail:${failCount}');
+		sb.add('\nerror:${errorCount}');
+		sb.add('\nignore:${ignoreCount}');
+		sb.add('\ntime:${time}');
 		sb.add('\n');
 		var resultCount = 0;
 		while(totalResults.length > 0 && resultCount < 10)

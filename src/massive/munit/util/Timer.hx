@@ -26,8 +26,6 @@
 * or implied, of Massive Interactive.
 ****/
 
-
-
 /*
  * Copyright (c) 2005, The haXe Project Contributors
  * All rights reserved.
@@ -54,7 +52,9 @@
  */
 package massive.munit.util;
 
-#if neko
+#if ((haxe_ver >= 4.0) && (neko || cpp || java || hl || eval))
+import sys.thread.Thread;
+#elseif neko
 import neko.vm.Thread;
 #elseif cpp
 import cpp.vm.Thread;
@@ -62,7 +62,7 @@ import cpp.vm.Thread;
 import java.vm.Thread;
 #end
 
-#if(cs || python || php || nodejs || hl)
+#if(cs || python || php || nodejs || hl || eval)
 typedef Timer = haxe.Timer;
 #else
 @:expose('massive.munit.util.Timer')
@@ -81,7 +81,7 @@ class Timer
 	{
 		#if flash
 			var me = this;
-			id = untyped _global["setInterval"](me.run, time_ms);
+			id = untyped __global__["flash.utils.setInterval"](function() { me.run(); },time_ms);
 		#elseif js
 			id = arr.length;
 			arr[id] = this;
@@ -98,7 +98,7 @@ class Timer
 			if (id == null) return;
 		#end
 		#if flash
-			untyped _global["clearInterval"](id);
+			untyped __global__["flash.utils.clearInterval"](id);
 		#elseif js
 			untyped window.clearInterval(timerId);
 			arr[id] = null;
@@ -118,7 +118,7 @@ class Timer
 
 	public dynamic function run() {}
 
-	#if (neko || cpp || java)
+	#if (neko || cpp || java || hl || eval)
 	function runLoop(time_ms:Int)
 	{
 		var shouldStop = false;

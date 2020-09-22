@@ -401,7 +401,16 @@ class Assert
 					if(!equals(av, bv)) return false;
 				}
 				return bfields.length == 0;
-			case _: a == b;
+			case _:
+				#if(js)
+					#if(haxe_ver >= "4.0.0")
+					js.Syntax.strictEq(a, b);
+					#else
+					untyped __strict_eq__(a, b);
+					#end
+				#else
+				a == b;
+				#end
 		}
 	}
 	
