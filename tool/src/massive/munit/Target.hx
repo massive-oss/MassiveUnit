@@ -44,4 +44,5 @@ abstract TargetType(String) from String to String
 	var python = "python";
 	var php = "php";
 	var hl = "hl";
+	var lua = "lua";
 }

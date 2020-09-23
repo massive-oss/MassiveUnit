@@ -227,7 +227,7 @@ class RichPrintClient extends PrintClientBase
 	override public function print(value:Dynamic)
 	{
 		super.print(value);
-		#if(neko || cpp || java || cs || python || php || hl || eval)
+		#if(neko || cpp || java || cs || python || php || hl || eval || lua)
 		Sys.print(value);
 		#elseif nodejs
 		js.Node.process.stdout.write(Std.string(value));

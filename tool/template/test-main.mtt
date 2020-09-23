@@ -11,7 +11,7 @@ import massive.munit.TestRunner;
  */
 class TestMain
 {
-	static function main(){	new TestMain(); }
+	static function main() new TestMain();
 
 	public function new()
 	{
@@ -33,23 +33,24 @@ class TestMain
 		runner.completionHandler = completionHandler;
 
 		#if (js && !nodejs)
-		var seconds = 0; // edit here to add some startup delay
-		function delayStartup()
-		{
-			if (seconds > 0) {
-				seconds--;
-				js.Browser.document.getElementById("munit").innerHTML =
-					"Tests will start in " + seconds + "s...";
-				haxe.Timer.delay(delayStartup, 1000);
+			var seconds = 0; // edit here to add some startup delay
+			function delayStartup()
+			{
+				if (seconds > 0)
+				{
+					seconds--;
+					js.Browser.document.getElementById("munit").innerHTML =	"Tests will start in " + seconds + "s...";
+					haxe.Timer.delay(delayStartup, 1000);
+				}
+				else
+				{
+					js.Browser.document.getElementById("munit").innerHTML = "";
+					runner.run(suites);
+				}
 			}
-			else {
-				js.Browser.document.getElementById("munit").innerHTML = "";
-				runner.run(suites);
-			}
-		}
-		delayStartup();
+			delayStartup();
 		#else
-		runner.run(suites);
+			runner.run(suites);
 		#end
 	}
 
@@ -65,7 +66,7 @@ class TestMain
 				flash.external.ExternalInterface.call("testResult", successful);
 			#elseif js
 				js.Lib.eval("testResult(" + successful + ");");
-			#elseif (neko || cpp || java || cs || python || php || hl || eval)
+			#elseif (neko || cpp || java || cs || python || php || hl || eval || lua)
 				Sys.exit(0);
 			#end
 		}

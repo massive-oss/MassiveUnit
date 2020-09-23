@@ -202,6 +202,7 @@ class HTTPClient implements IAdvancedTestResultClient
 		#elseif php return "php";
 		#elseif hl return "hl";
 		#elseif eval return "eval";
+		#elseif lua return "lua";
 		#end
 		return "unknown";
 	}
@@ -251,7 +252,7 @@ class URLRequest
 	var url:String;
 	var headers:StringMap<String>;
 
-	#if(js || neko || cpp || java || cs || python || php || hl || eval)
+	#if(js || neko || cpp || java || cs || python || php || hl || eval || lua)
 	public var client:Http;
 	#elseif flash
 	public var client:flash.net.URLRequest;
@@ -267,7 +268,7 @@ class URLRequest
 
 	function createClient(url:String)
 	{
-		#if(js || neko || cpp || java || cs || python || php || hl || eval)
+		#if(js || neko || cpp || java || cs || python || php || hl || eval || lua)
 		client = new Http(url);
 		#elseif flash
 		client = new flash.net.URLRequest(url);
@@ -276,7 +277,7 @@ class URLRequest
 
 	public function setHeader(name:String, value:String)
 	{
-		#if(js || neko || cpp || java || cs || python || php || hl || eval)
+		#if(js || neko || cpp || java || cs || python || php || hl || eval || lua)
 		client.setHeader(name, value);
 		#elseif flash
 		client.requestHeaders.push(new flash.net.URLRequestHeader(name, value)); 
@@ -286,7 +287,7 @@ class URLRequest
 	public function send()
 	{
 		var body = Std.string(data);
-		#if(js || neko || cpp || java || cs || python || php || hl || eval)
+		#if(js || neko || cpp || java || cs || python || php || hl || eval || lua)
 		client.onData = onData;
 		client.onError = onError;
 			#if js
@@ -297,7 +298,9 @@ class URLRequest
 			#else
 			client.setParameter("data", body);
 			#end
-		#if hl client.cnxTimeout = 1; #end
+			#if hl
+			client.cnxTimeout = 1;
+			#end
 		client.request(true);
 		#elseif flash
 		client.data = data;
