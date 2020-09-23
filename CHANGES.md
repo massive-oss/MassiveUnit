@@ -1,8 +1,8 @@
 ## 2.3.5
 
 - Added support for `lua` target
-- Added `Assert.isEmpty(anObject:StringOrIterable, ?message)`. Assert that a `String` or iterable is empty.
-- Added `Assert.isNotEmpty(anObject:StringOrIterable, ?message)`. Assert that a `String` or iterable is not empty.
+- Added `Assert.isEmpty(anObject:StringOrIterable, ?message)`. Assert that a `String` or `Iterable` is empty.
+- Added `Assert.isNotEmpty(anObject:StringOrIterable, ?message)`. Assert that a `String` or `Iterable` is not empty.
 - Starting with version 2.3.5, special provision has been made for comparing collections(`Array`, `IMap` or `Bytes`). Two collections will be treated as equal by `Assert.areEqual` if they are the same `length` and each of the corresponding elements is equal.
 - Starting with version 2.3.5, special provision has been made for comparing dates. Two dates will be treated as equal by `Assert.areEqual` if their `getTime()` values are equal.
 - Starting with version 2.3.5, special provision has been made for comparing types. Two types will be treated as equal by `Assert.areEqual` if their classname are equal.
