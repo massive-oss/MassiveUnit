@@ -1,8 +1,7 @@
-import massive.munit.client.RichPrintClient;
-import massive.munit.client.HTTPClient;
-import massive.munit.client.SummaryReportClient;
-
 import massive.munit.TestRunner;
+import massive.munit.client.HTTPClient;
+import massive.munit.client.RichPrintClient;
+import massive.munit.client.SummaryReportClient;
 
 #if js
 import js.Lib;

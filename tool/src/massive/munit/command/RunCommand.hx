@@ -75,6 +75,7 @@ class RunCommand extends MUnitTargetCommandBase
 	var phpFile:File;
 	var nodejsFiles:Array<File> = [];
 	var hlFile:File;
+	var luaFile:File;
 	var serverTimeoutTimeSec:Int;
 	var resultExitCode:Bool;
 
@@ -208,6 +209,7 @@ class RunCommand extends MUnitTargetCommandBase
 				case php: phpFile = file;
 				case js if(target.flags.exists("nodejs")): nodejsFiles.push(file);
 				case hl: hlFile = file;
+				case lua: luaFile = file;
 				case _:
 					hasBrowserTests = true;
 					var pageName = target.type;
@@ -316,6 +318,7 @@ class RunCommand extends MUnitTargetCommandBase
 		if(phpFile != null) launchPHP(phpFile);
 		if(nodejsFiles.length > 0) nodejsFiles.iter(launchNodeJS);
 		if(hlFile != null) launchHashLink(hlFile);
+		if(luaFile != null) launchLUA(luaFile);
 		if(hasBrowserTests) launchFile(indexPage);
 		else resultMonitor.sendMessage("quit");
 		var platformResults:Bool = Thread.readMessage(true);
@@ -335,8 +338,8 @@ class RunCommand extends MUnitTargetCommandBase
 	}
 
 	/**
-	Generates an alias to the nekotools server file on osx/linux
-	*/
+	 * Generates an alias to the nekotools server file on osx/linux
+	 */
 	function createServerAlias():File
 	{
 		var serverFile = console.originalDir.resolveFile("index.n");
@@ -430,7 +433,7 @@ class RunCommand extends MUnitTargetCommandBase
 					break;
 				}
 			}
-		} while (true);
+		} while(true);
 		var platformCount = Lambda.count(platformMap);
 		if (platformCount > 0)
 		{
@@ -446,20 +449,11 @@ class RunCommand extends MUnitTargetCommandBase
 		mainThread.sendMessage(platformResult);
 	}
 
-	function getTargetName(result:String):String
-	{
-		return result.split("under ")[1].split(" using")[0];
-	}
+	function getTargetName(result:String):String return result.split("under ")[1].split(" using")[0];
 
-	function checkIfTestPassed(result:String):Bool
-	{
-		return result.indexOf(ServerMain.PASSED) != -1;
-	}
+	function checkIfTestPassed(result:String):Bool return result.indexOf(ServerMain.PASSED) != -1;
 
-	function checkIfTestFailed(result:String):Bool
-	{
-		return result.indexOf(ServerMain.FAILED) != -1;
-	}
+	function checkIfTestFailed(result:String):Bool return result.indexOf(ServerMain.FAILED) != -1;
 
 	function launchFile(file:File):Int
 	{
@@ -482,15 +476,12 @@ class RunCommand extends MUnitTargetCommandBase
 		else if (FileSys.isMac)
 		{
 			parameters.push("open");
-			if (browser != null)
-				parameters.push("-a " + browser);
+			if (browser != null) parameters.push("-a " + browser);
 		}
 		else if (FileSys.isLinux)
 		{
-			if (browser != null)
-				parameters.push(browser);
-			else 
-				parameters.push("xdg-open");
+			if (browser != null) parameters.push(browser);
+			else parameters.push("xdg-open");
 		}
 
 		parameters.push(targetLocation);
@@ -536,6 +527,8 @@ class RunCommand extends MUnitTargetCommandBase
 	
 	inline function launchHashLink(file:File):Int return launch(file, 'hl', [file.nativePath]);
 	
+	inline function launchLUA(file:File):Int return launch(file, 'lua', [file.nativePath]);
+	
 	function launch(file:File, executor:String, ?args:Array<String>):Int {
 		file.copyTo(reportRunnerDir.resolvePath(file.fileName));
 		FileSys.setCwd(config.dir.nativePath);
@@ -548,7 +541,6 @@ class RunCommand extends MUnitTargetCommandBase
 	function runProgram(name:String, ?args:Array<String>)
 	{
 		var process = new Process(name, args);
-
 		try
 		{
 			while (true)
@@ -582,17 +574,13 @@ class RunCommand extends MUnitTargetCommandBase
 			exitCode = 1;
 			error = Std.string(e).split("\n").join("\n\t");
 		}
-
 		var stfErrString = process.stderr.readAll().toString().split("\n").join("\n\t");
-
 		if(stfErrString == null) stfErrString = "";
-
-		if (exitCode > 0 || stfErrString.length > 0)
+		if(exitCode > 0 || stfErrString.length > 0)
 		{
 			if(error != null) error += "\n\t";
 			Sys.println("Error running '" + name + "'\n\t" + error);
 		}
-
 		return exitCode;
 	}
 }

@@ -57,6 +57,7 @@ class ReportCommand extends MUnitTargetCommandBase
 							case python: targetTypes.push(python);
 							case php: targetTypes.push(php);
 							case hl: targetTypes.push(hl);
+							case lua: targetTypes.push(lua);
 						}
 					}
 				}
@@ -93,17 +94,14 @@ class ReportCommand extends MUnitTargetCommandBase
 	function getDestinationDir()
 	{
 		var dest:String = console.getNextArg();
-
 		if (dest != null)
 		{
 			destDir = config.dir.resolveDirectory(dest);
-
 		}
 		else
 		{
 			destDir =  config.report;
 		}
-
 		Log.debug("destDir: " + destDir);
 	}
 

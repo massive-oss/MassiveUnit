@@ -63,3 +63,11 @@
 -cp src
 -lib mlib
 -hl bin/test/core/hl_test.hl
+
+## LUA
+--next
+-main TestMain
+-cp test
+-cp src
+-lib mlib
+-lua bin/test/core/lua_test.lua

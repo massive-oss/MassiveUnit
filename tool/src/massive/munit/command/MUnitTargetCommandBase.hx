@@ -42,6 +42,7 @@ class MUnitTargetCommandBase extends MUnitCommand
 		if (console.getOption(python) == "true") result.push(python);
 		if (console.getOption(php) == "true") result.push(php);
 		if (console.getOption(hl) == "true") result.push(hl);
+		if (console.getOption(lua) == "true") result.push(lua);
 		return result;
 	}
 

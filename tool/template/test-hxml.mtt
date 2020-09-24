@@ -100,3 +100,13 @@
 ::end::
 -cp ::src::
 -hl ::bin::/hl_test.hl
+
+## LUA
+--next
+-main TestMain
+-lib munit
+-lib hamcrest
+::foreach classPaths::-cp ::__current__::
+::end::
+-cp ::src::
+-lua ::bin::/lua_test.lua

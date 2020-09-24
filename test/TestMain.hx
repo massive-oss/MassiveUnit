@@ -26,12 +26,11 @@
  * or implied, of Massive Interactive.
  */
 
-import massive.munit.client.PrintClient;
-import massive.munit.client.RichPrintClient;
+import massive.munit.TestRunner;
 import massive.munit.client.HTTPClient;
 import massive.munit.client.JUnitReportClient;
+import massive.munit.client.RichPrintClient;
 import massive.munit.client.SummaryReportClient;
-import massive.munit.TestRunner;
 #if js
 import js.Lib;
 #end
@@ -42,7 +41,7 @@ import js.Lib;
  */
 class TestMain
 {
-	static function main(){	new TestMain();}
+	static function main() new TestMain();
 
 	public function new()
 	{
@@ -74,7 +73,7 @@ class TestMain
 				flash.external.ExternalInterface.call("testResult", successful);
 			#elseif js
 				js.Lib.eval("testResult(" + successful + ");");
-			#elseif (neko || cpp || java || cs || python || php || hl || eval)
+			#elseif (neko || cpp || java || cs || python || php || hl || eval || lua)
 				Sys.exit(0);
 			#end
 		}
