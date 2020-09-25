@@ -3,10 +3,12 @@
 - Added support for `lua` target
 - Added `Assert.isEmpty(anObject:StringOrIterable, ?message)`. Assert that a `String` or `Iterable` is empty.
 - Added `Assert.isNotEmpty(anObject:StringOrIterable, ?message)`. Assert that a `String` or `Iterable` is not empty.
-- Starting with version 2.3.5, special provision has been made for comparing collections(`Array`, `IMap` or `Bytes`). Two collections will be treated as equal by `Assert.areEqual` if they are the same `length` and each of the corresponding elements is equal.
-- Starting with version 2.3.5, special provision has been made for comparing dates. Two dates will be treated as equal by `Assert.areEqual` if their `getTime()` values are equal.
-- Starting with version 2.3.5, special provision has been made for comparing types. Two types will be treated as equal by `Assert.areEqual` if their classname are equal.
-- Starting with version 2.3.5, special provision has been made for comparing custom structures. Two structures will be treated as equal by `Assert.areEqual` if each of the corresponding fields is equal.
+- [BREAKING CHANGE] `Assert.equals/Assert.areEqual` comparison logic has changed:
+
+	- Comparing collections (`Array`, `IMap` or `Bytes`): two collections will be treated as equal if they are the same `length` and each of the corresponding elements is equal.
+	- Comparing Date objects: two dates will be treated as equal if their `getTime()` values are equal.
+	- Comparing types: two types will be treated as equal if their classname are equal.
+	- Comparing custom structures: two structures will be treated as equal if each of the corresponding fields is equal.
 
 ## 2.3.4
 
