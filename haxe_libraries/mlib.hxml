@@ -1,0 +1,4 @@
+# @install: lix --silent download "haxelib:/mlib#2.0.3" into mlib/2.0.3/haxelib
+# @run: haxelib run-dir mlib ${HAXE_LIBCACHE}/mlib/2.0.3/haxelib
+-cp ${HAXE_LIBCACHE}/mlib/2.0.3/haxelib/
+-D mlib=2.0.3

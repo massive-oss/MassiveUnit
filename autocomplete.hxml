@@ -1,0 +1,5 @@
+-main massive.munit.MunitCommandLineRunner
+-lib mlib
+-cp src
+-cp tool/src
+-neko src/run.n
