@@ -41,6 +41,10 @@ class RichPrintClient extends PrintClientBase
 
 	var testClassResultType:TestResultType;
 	var external:ExternalPrintClient;
+  
+  #if (flash && air)
+	var flashOutput = "";
+	#end
 	
 	public function new()
 	{
@@ -229,6 +233,14 @@ class RichPrintClient extends PrintClientBase
 		super.print(value);
 		#if(neko || cpp || java || cs || python || php || hl || eval || lua)
 		Sys.print(value);
+		#elseif (flash && air)
+		flashOutput += value;
+		while (flashOutput.indexOf("\n") > -1)
+		{
+			var index = flashOutput.indexOf("\n");
+			flash.Lib.trace(flashOutput.substr(0, index));
+			flashOutput = flashOutput.substr(index + 1);
+		}
 		#elseif nodejs
 		js.Node.process.stdout.write(Std.string(value));
 		#end

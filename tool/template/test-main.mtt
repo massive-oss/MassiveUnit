@@ -62,7 +62,9 @@ class TestMain
 	{
 		try
 		{
-			#if flash
+			#if (flash && air)
+				flash.desktop.NativeApplication.nativeApplication.exit();
+			#elseif flash
 				flash.external.ExternalInterface.call("testResult", successful);
 			#elseif js
 				js.Lib.eval("testResult(" + successful + ");");

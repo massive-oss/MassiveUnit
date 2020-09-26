@@ -85,12 +85,16 @@ class AsyncFactory
 	 * @param	testCase			test case instance where the async test originated
 	 * @param	handler				the handler in the test case for a successful async response
 	 * @param	?timeout			[optional] number of milliseconds to wait before timing out
+	 * @param	?timeoutHandler			[optional] a handler that is called if there is no async response.
+	 * 						If none provided, the test will be marked failing if the timeout
+	 * 						expires.  Otherwise, it is up to the handler to determine if the
+	 * 						test failed.
 	 * @param	?info				[optional] pos infos of the test which requests an instance of this delegate
 	 * @return	a delegate function for handling the asynchronous response from an async test case
 	 */
-	public function createHandler(testCase:Dynamic, handler:Function, ?timeout:Int, ?info:PosInfos):Dynamic
+	public function createHandler(testCase:Dynamic, handler:Function, ?timeout:Int, ?timeoutHandler:Function, ?info:PosInfos):Dynamic
 	{
-		var delegate:AsyncDelegate = new AsyncDelegate(testCase, handler, timeout, info);
+		var delegate:AsyncDelegate = new AsyncDelegate(testCase, handler, timeout, timeoutHandler, info);
 		delegate.observer = observer;
 		asyncDelegateCount++;
 		observer.asyncDelegateCreatedHandler(delegate);

@@ -59,8 +59,8 @@ class TestResult
 	public var className:String = "";
 	
 	/**
-     * An optional description.
-     */
+	 * An optional description.
+	 */
 	public var description:String = "";
 	
 	/**
@@ -78,9 +78,14 @@ class TestResult
 	public var async:Bool = false;
 	
 	/**
-     * Whether the test is ignored or not.
-     */
-    public var ignore:Bool = false;
+	 * Whether the test is ignored or not.
+	 */
+	public var ignore:Bool = false;
+	
+	/**
+	 * Arguments for the test, or null if no args
+	 **/
+	public var args:Array<Dynamic>;
 	
 	/**
 	 * If this test failed, the assertion exception that was captured.

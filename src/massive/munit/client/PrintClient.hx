@@ -58,15 +58,19 @@ class PrintClient extends PrintClientBase
 	 */
 	public static inline var DEFAULT_ID:String = "print";
 
-	#if (js || flash)
+	#if (js || (flash && !air))
 		var external:ExternalPrintClient;
 		#if flash
 			var textField:flash.text.TextField;
 		#elseif js
 			var textArea:Dynamic;
 		#end
-	#end 
-	
+	#end
+
+  #if (flash && air)
+	var flashOutput = "";
+	#end
+
 	public function new(?includeIgnoredReport:Bool = true)
 	{
 		super(includeIgnoredReport);
@@ -78,7 +82,7 @@ class PrintClient extends PrintClientBase
 		super.init();
 
 		#if nodejs
-		#elseif (js || flash)
+		#elseif (js || (flash && !air))
 			external = new ExternalPrintClientJS();
 			#if flash
 				initFlash();
@@ -91,7 +95,7 @@ class PrintClient extends PrintClientBase
 		haxe.Log.trace = customTrace;
 	}
 
-	#if flash
+	#if (flash && !air)
 	function initFlash()
 	{
 		if(!flash.external.ExternalInterface.available)
@@ -128,7 +132,7 @@ class PrintClient extends PrintClientBase
 		super.printOverallResult(result);
 
 		#if nodejs
-		#elseif (js || flash)
+		#elseif (js || (flash && !air))
 			external.setResult(result);
 			external.setResultBackground(result);
 		#end
@@ -144,7 +148,7 @@ class PrintClient extends PrintClientBase
 	{
 		super.print(value);
 
-		#if flash
+		#if (flash && !air)
 		textField.appendText(value);
 		textField.scrollV = textField.maxScrollV;
 		#end
@@ -153,8 +157,16 @@ class PrintClient extends PrintClientBase
 		untyped process.stdout.write(value);
 		#elseif (neko || cpp || java || cs || python || php || hl || eval || lua)
 		Sys.print(value);
-		#elseif (js || flash)
+		#elseif (js || (flash && !air))
 		external.print(value);
+		#elseif (flash && air)
+		flashOutput += value;
+		while (flashOutput.indexOf("\n") > -1)
+		{
+			var index = flashOutput.indexOf("\n") + 1;
+			flash.Lib.trace(flashOutput.substr(0, index));
+			flashOutput = flashOutput.substr(index);
+		}
 		#end
 	}
 }
