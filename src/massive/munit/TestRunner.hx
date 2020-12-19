@@ -189,7 +189,11 @@ class TestRunner implements IAsyncDelegateObserver
 
         #if (neko || cpp || java || hl || eval)
 		var self = this;
-		var runThread:Thread = Thread.create(function()
+		var createThread = Thread.create;
+		#if (haxe4 && (haxe >= version("4.2.0-rc.1")))
+		createThread = Thread.createWithEventLoop;
+		#end
+		var runThread:Thread = createThread(function()
 		{
 			self.execute();
 			while (self.running)
