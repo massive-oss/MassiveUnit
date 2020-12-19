@@ -1,0 +1,6 @@
+# @install: lix --silent download "haxelib:/munit#2.3.5" into munit/2.3.5/haxelib
+# @run: haxelib run-dir munit ${HAXE_LIBCACHE}/munit/2.3.5/haxelib
+-lib mcover
+-lib mlib
+-cp src
+-D munit=2.3.5

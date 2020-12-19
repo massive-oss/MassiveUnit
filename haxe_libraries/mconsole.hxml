@@ -1,0 +1,3 @@
+# @install: lix --silent download "haxelib:/mconsole#1.6.0" into mconsole/1.6.0/haxelib
+-cp ${HAXE_LIBCACHE}/mconsole/1.6.0/haxelib/
+-D mconsole=1.6.0

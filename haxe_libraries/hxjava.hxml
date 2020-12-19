@@ -1,0 +1,5 @@
+# @install: lix --silent download "haxelib:/hxjava#3.2.0" into hxjava/3.2.0/haxelib
+# @run: haxelib run-dir hxjava ${HAXE_LIBCACHE}/hxjava/3.2.0/haxelib
+-cp ${HAXE_LIBCACHE}/hxjava/3.2.0/haxelib/
+-D hxjava=3.2.0
+-java-lib lib/hxjava-std.jar
