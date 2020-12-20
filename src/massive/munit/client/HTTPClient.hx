@@ -107,7 +107,7 @@ class HTTPClient implements IAdvancedTestResultClient
 	 */
 	public function setCurrentTestClass(className:String)
 	{
-		if(Std.is(client, IAdvancedTestResultClient))
+		if(isTypeof(client, IAdvancedTestResultClient))
 		{
 			cast(client, IAdvancedTestResultClient).setCurrentTestClass(className);
 		}
