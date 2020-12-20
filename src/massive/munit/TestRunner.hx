@@ -241,7 +241,7 @@ class TestRunner implements IAsyncDelegateObserver
             var time:Float = Timer.stamp() - startTime;
             for (client in clients)
             {
-                if(isTypeof(client, IAdvancedTestResultClient))
+                if(isOfType(client, IAdvancedTestResultClient))
                 {
                     var cl:IAdvancedTestResultClient = cast client;
                     cl.setCurrentTestClass(null);
@@ -255,7 +255,7 @@ class TestRunner implements IAsyncDelegateObserver
     {
         for(c in clients)
         {
-            if(isTypeof(c, IAdvancedTestResultClient) && activeHelper.hasNext())
+            if(isOfType(c, IAdvancedTestResultClient) && activeHelper.hasNext())
 			{
 				var cl:IAdvancedTestResultClient = cast c;
 				cl.setCurrentTestClass(activeHelper.className);
@@ -316,11 +316,11 @@ class TestRunner implements IAsyncDelegateObserver
             }
 
 			#if hamcrest
-			if (isTypeof(e, org.hamcrest.AssertionException))
+			if (isOfType(e, org.hamcrest.AssertionException))
 				e = new AssertionException(e.message, e.info);
 			#end
 
-            if (isTypeof(e, AssertionException))
+            if (isOfType(e, AssertionException))
             {
                 result.executionTime = Timer.stamp() - testStartTime;
                 result.failure = e;
@@ -331,7 +331,7 @@ class TestRunner implements IAsyncDelegateObserver
             else
             {
                 result.executionTime = Timer.stamp() - testStartTime;
-                if (!isTypeof(e, MUnitException))
+                if (!isOfType(e, MUnitException))
                     e = new UnhandledException(e, result.location);
 
                 result.error = e;

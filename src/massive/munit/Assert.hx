@@ -151,7 +151,7 @@ class Assert
 	public static function isType(value:Dynamic, type:Dynamic, ?message:String, ?info:PosInfos)
 	{
 		assertionCount++;
-		if(isTypeof(value, type)) return;
+		if(isOfType(value, type)) return;
 		if(message == null) message = "Value [" + value + "] was not of type: " + Type.getClassName(type);
 		fail(message, info);
 	}
@@ -166,7 +166,7 @@ class Assert
 	public static function isNotType(value:Dynamic, type:Dynamic, ?message:String, ?info:PosInfos)
 	{
 		assertionCount++;
-		if(!isTypeof(value, type)) return;
+		if(!isOfType(value, type)) return;
 		if(message == null) message = "Value [" + value + "] was of type: " + Type.getClassName(type);
 		fail(message, info);
 	}
@@ -290,7 +290,7 @@ class Assert
 		}
 		catch (e:Dynamic)
 		{
-			if(isTypeof(e, expectedType)) return e;
+			if(isOfType(e, expectedType)) return e;
 			Assert.fail('Expected exception of type ${Type.getClassName(expectedType)} but got ${Type.getClassName(Type.getClass(e))}: ${e}');
 		}
 		return null;
@@ -334,8 +334,8 @@ class Assert
 			case TFunction: Reflect.compareMethods(a, b);
 			case TClass(_):
 				if(a == b) return true;
-				if(isTypeof(a, String) && isTypeof(b, String)) return false; // previous comparison failed
-				if(isTypeof(a, Array) && isTypeof(b, Array)) {
+				if(isOfType(a, String) && isOfType(b, String)) return false; // previous comparison failed
+				if(isOfType(a, Array) && isOfType(b, Array)) {
 					var a:Array<Dynamic> = cast a;
 					var b:Array<Dynamic> = cast b;
 					if(a.length != b.length) return false;
@@ -344,7 +344,7 @@ class Assert
 					}
 					return true;
 				}
-				if(isTypeof(a, Bytes) && isTypeof(b, Bytes)) {
+				if(isOfType(a, Bytes) && isOfType(b, Bytes)) {
 					var a = cast(a, Bytes);
 					var b = cast(b, Bytes);
 					if(a.length != b.length) return false;
@@ -353,7 +353,7 @@ class Assert
 					}
 					return true;
 				}
-				if(isTypeof(a, IMap) && isTypeof(b, IMap)) {
+				if(isOfType(a, IMap) && isOfType(b, IMap)) {
 					var a:IMap<Dynamic, Dynamic> = cast a;
 					var b:IMap<Dynamic, Dynamic> = cast b;
 					var akeys = [for(it in a.keys()) it];
@@ -364,7 +364,7 @@ class Assert
 					}
 					return true;
 				}
-				if(isTypeof(a, Date) && isTypeof(b, Date)) {
+				if(isOfType(a, Date) && isOfType(b, Date)) {
 					var a = cast(a, Date).getTime();
 					var b = cast(b, Date).getTime();
 					return a == b;
@@ -381,7 +381,7 @@ class Assert
 				}
 				return true;
 			case TObject:
-				if(isTypeof(a, Class) && isTypeof(b, Class)) {
+				if(isOfType(a, Class) && isOfType(b, Class)) {
 					var a = Type.getClassName(a);
 					var b = Type.getClassName(b);
 					return a == b;
@@ -417,9 +417,9 @@ class Assert
 	}
 	
 	static inline function empty(anObject:StringOrIterable):Bool {
-		if(isTypeof(anObject, String)) {
+		if(isOfType(anObject, String)) {
 			return (anObject:String).length == 0;
-		} else if(isTypeof(anObject, Array)) {
+		} else if(isOfType(anObject, Array)) {
 			var a:Array<Dynamic> = cast anObject;
 			return a.length == 0;
 		} else {

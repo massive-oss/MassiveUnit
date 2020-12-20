@@ -62,7 +62,7 @@ class UnhandledException extends MUnitException
 	{
 		var s = "";
 		#if flash
-		if (isTypeof(source, flash.errors.Error) && flash.system.Capabilities.isDebugger)
+		if (isOfType(source, flash.errors.Error) && flash.system.Capabilities.isDebugger)
 		{
 			var lines = source.getStackTrace().split("\n");
 			lines.shift(); // remove repeated error name

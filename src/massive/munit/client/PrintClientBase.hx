@@ -406,7 +406,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 		#end
 		
 		var a:Array<Dynamic> = [];
-		if(isTypeof(args, Array)) a = a.concat(cast(args, Array<Dynamic>));
+		if(isOfType(args, Array)) a = a.concat(cast(args, Array<Dynamic>));
 		else a.push(args);
 		var jsCode = convertToJavaScript(method, a);
 		#if js
