@@ -34,6 +34,12 @@ import haxe.ds.StringMap;
 import massive.munit.ITestResultClient;
 import massive.munit.TestResult;
 
+#if (haxe_ver >= 4.2)
+import Std.isOfType;
+#else
+import Std.is as isOfType;
+#end
+
 /**
  * Decorates other ITestResultClient's, adding behavior to post test results to a specified url.
  * 
@@ -107,7 +113,7 @@ class HTTPClient implements IAdvancedTestResultClient
 	 */
 	public function setCurrentTestClass(className:String)
 	{
-		if(Std.is(client, IAdvancedTestResultClient))
+		if(isOfType(client, IAdvancedTestResultClient))
 		{
 			cast(client, IAdvancedTestResultClient).setCurrentTestClass(className);
 		}
