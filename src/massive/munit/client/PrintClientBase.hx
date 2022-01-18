@@ -32,6 +32,12 @@ import massive.munit.ITestResultClient.CoverageResult;
 import massive.munit.TestResult;
 import massive.munit.util.MathUtil;
 
+#if (haxe_ver >= 4.2)
+import Std.isOfType;
+#else
+import Std.is as isOfType;
+#end
+
 class PrintClientBase extends AbstractTestResultClient
 {
 	/**
@@ -406,7 +412,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 		#end
 		
 		var a:Array<Dynamic> = [];
-		if(Std.is(args, Array)) a = a.concat(cast(args, Array<Dynamic>));
+		if(isOfType(args, Array)) a = a.concat(cast(args, Array<Dynamic>));
 		else a.push(args);
 		var jsCode = convertToJavaScript(method, a);
 		#if js

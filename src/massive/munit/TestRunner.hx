@@ -47,6 +47,12 @@ import cpp.vm.Thread;
 import java.vm.Thread;
 #end
 
+#if (haxe_ver >= 4.2)
+import Std.isOfType;
+#else
+import Std.is as isOfType;
+#end
+
 /**
  * Runner used to execute one or more suites of unit tests.
  *
@@ -235,7 +241,7 @@ class TestRunner implements IAsyncDelegateObserver
             var time:Float = Timer.stamp() - startTime;
             for (client in clients)
             {
-                if(Std.is(client, IAdvancedTestResultClient))
+                if(isOfType(client, IAdvancedTestResultClient))
                 {
                     var cl:IAdvancedTestResultClient = cast client;
                     cl.setCurrentTestClass(null);
@@ -249,7 +255,7 @@ class TestRunner implements IAsyncDelegateObserver
     {
         for(c in clients)
         {
-            if(Std.is(c, IAdvancedTestResultClient) && activeHelper.hasNext())
+            if(isOfType(c, IAdvancedTestResultClient) && activeHelper.hasNext())
 			{
 				var cl:IAdvancedTestResultClient = cast c;
 				cl.setCurrentTestClass(activeHelper.className);
@@ -310,11 +316,11 @@ class TestRunner implements IAsyncDelegateObserver
             }
 
 			#if hamcrest
-			if (Std.is(e, org.hamcrest.AssertionException))
+			if (isOfType(e, org.hamcrest.AssertionException))
 				e = new AssertionException(e.message, e.info);
 			#end
 
-            if (Std.is(e, AssertionException))
+            if (isOfType(e, AssertionException))
             {
                 result.executionTime = Timer.stamp() - testStartTime;
                 result.failure = e;
@@ -325,7 +331,7 @@ class TestRunner implements IAsyncDelegateObserver
             else
             {
                 result.executionTime = Timer.stamp() - testStartTime;
-                if (!Std.is(e, MUnitException))
+                if (!isOfType(e, MUnitException))
                     e = new UnhandledException(e, result.location);
 
                 result.error = e;
