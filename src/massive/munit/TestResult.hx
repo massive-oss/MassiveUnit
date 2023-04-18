@@ -110,8 +110,7 @@ class TestResult
 
 }
 
-@:enum
-abstract TestResultType(String) to String
+enum abstract TestResultType(String) to String
 {
 	var UNKNOWN = "UNKNOWN";
 	var PASS = "PASS";
