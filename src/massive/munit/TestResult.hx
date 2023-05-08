@@ -110,7 +110,8 @@ class TestResult
 
 }
 
-enum abstract TestResultType(String) to String
+#if haxe4 enum #else @:enum #end
+abstract TestResultType(String) to String
 {
 	var UNKNOWN = "UNKNOWN";
 	var PASS = "PASS";

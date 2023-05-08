@@ -47,21 +47,25 @@ import Std.is as isOfType;
  */
 class HTTPClient implements IAdvancedTestResultClient
 {
-	extern public inline static var DEFAULT_SERVER_URL:String = "http://localhost:2000";
+	#if haxe4 extern #else @:extern #end
+	public inline static var DEFAULT_SERVER_URL:String = "http://localhost:2000";
 	/**
 	 * Default id of this client.
 	 */
-	extern public inline static var DEFAULT_ID:String = "HTTPClient";
+	#if haxe4 extern #else @:extern #end
+	public inline static var DEFAULT_ID:String = "HTTPClient";
 
 	/**
 	 * HTTP header key. Contains id of client the HTTPClient is decorating.
 	 */
-	extern public inline static var CLIENT_HEADER_KEY:String = "munit-clientId";
+	#if haxe4 extern #else @:extern #end
+	public inline static var CLIENT_HEADER_KEY:String = "munit-clientId";
 
 	/**
 	 * HTTP header key. Contains id of platform being tests (flash,js,neko,cpp,php).
 	 */
-	extern public inline static var PLATFORM_HEADER_KEY:String = "munit-platformId";
+	#if haxe4 extern #else @:extern #end
+	public inline static var PLATFORM_HEADER_KEY:String = "munit-platformId";
 
 	/* Global sequental (FIFO) http request queue */
 	private static var queue:Array<URLRequest> = [];
